@@ -1,0 +1,12 @@
+#ifndef SAMBA_CORE_GLOBAL_H
+#define SAMBA_CORE_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(SAMBACORE_LIBRARY)
+#  define SAMBACORESHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define SAMBACORESHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // SAMBA_CORE_GLOBAL_H
