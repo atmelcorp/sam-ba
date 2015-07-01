@@ -1,5 +1,7 @@
 TEMPLATE = subdirs
 
+DISTFILES += TODO README.md LICENSE.txt
+
 SUBDIRS = \
     sambacore \
     devices \
@@ -8,6 +10,5 @@ SUBDIRS = \
     sambaconnectionjlink
 
 sambacmd.depends = sambacore
-samba.depends = sambacore
 sambaconnectionserial.depends = sambacore
 sambaconnectionjlink.depends = sambacore
