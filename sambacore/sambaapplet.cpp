@@ -2,6 +2,8 @@
 
 SambaApplet::SambaApplet(QObject *parent)
 	: SambaObject(parent),
+	  m_appletAddress(0),
+	  m_mailboxAddress(0),
 	  m_loaded(false),
 	  m_initialized(false),
 	  m_memorySize(0),
