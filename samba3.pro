@@ -5,6 +5,7 @@ DISTFILES += TODO README.md LICENSE.txt
 SUBDIRS = \
     sambacore \
     devices \
+    examples \
     sambacmd \
     sambaconnectionserial \
     sambaconnectionjlink
