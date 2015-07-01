@@ -1,0 +1,4 @@
+* text
+*.sh text eol=cr
+*.bat text eol=crlf
+*.bin binary
