@@ -4,6 +4,7 @@ Script {
     onScriptStarted: {
         print("Opening SAMBA connection")
         var port = samba.connection('at91').ports[0]
+        port.baudRate = 57600
         port.connect()
 
         var device = samba.device("sama5d2")

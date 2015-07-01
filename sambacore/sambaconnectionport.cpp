@@ -2,7 +2,11 @@
 
 #define MAX_APPLET_RETRIES 4
 
-SambaConnectionPort::SambaConnectionPort(QObject *parent) : SambaObject(parent), m_appletTraceLevel(4), m_currentApplet(NULL)
+SambaConnectionPort::SambaConnectionPort(QObject *parent)
+    : SambaObject(parent),
+      m_traceLevel(0),
+      m_appletTraceLevel(4),
+      m_currentApplet(NULL)
 {
 }
 
@@ -47,18 +51,26 @@ quint32 SambaConnectionPort::readMailbox(int index)
 
 qint32 SambaConnectionPort::executeApplet(quint32 cmd, quint32 arg0, quint32 arg1, quint32 arg2, quint32 arg3, quint32 arg4)
 {
-	// write applet command / status / comm type / trace level
+    quint32 mailboxArgsOffset = 8;
+
+    // write applet command / status
 	writeu32(m_currentApplet->mailboxAddress(), cmd);
 	writeu32(m_currentApplet->mailboxAddress() + 4, 0xffffffff);
-	writeu32(m_currentApplet->mailboxAddress() + 8, appletCommType());
-	writeu32(m_currentApplet->mailboxAddress() + 12, m_appletTraceLevel);
+
+    // write comm type / trace level if command is "Initialize"
+    if (cmd == SambaApplet::CmdInit)
+    {
+        writeu32(m_currentApplet->mailboxAddress() + 8, appletCommType());
+        writeu32(m_currentApplet->mailboxAddress() + 12, m_appletTraceLevel);
+        mailboxArgsOffset = 16;
+    }
 
 	// write applet arguments
-	writeu32(m_currentApplet->mailboxAddress() + 16, arg0);
-	writeu32(m_currentApplet->mailboxAddress() + 20, arg1);
-	writeu32(m_currentApplet->mailboxAddress() + 24, arg2);
-	writeu32(m_currentApplet->mailboxAddress() + 28, arg3);
-	writeu32(m_currentApplet->mailboxAddress() + 32, arg4);
+    writeu32(m_currentApplet->mailboxAddress() + mailboxArgsOffset, arg0);
+    writeu32(m_currentApplet->mailboxAddress() + mailboxArgsOffset + 4, arg1);
+    writeu32(m_currentApplet->mailboxAddress() + mailboxArgsOffset + 8, arg2);
+    writeu32(m_currentApplet->mailboxAddress() + mailboxArgsOffset + 12, arg3);
+    writeu32(m_currentApplet->mailboxAddress() + mailboxArgsOffset + 16, arg4);
 
 	// run applet
 	go(m_currentApplet->appletAddress());
@@ -72,7 +84,11 @@ qint32 SambaConnectionPort::executeApplet(quint32 cmd, quint32 arg0, quint32 arg
 		if (ack == ~cmd)
 			break;
 
-		QThread::msleep(delay);
+        if (m_traceLevel > 1)
+            qDebug("Applet %s command %u did not complete, waiting %dms",
+                   m_currentApplet->name().toLatin1().constData(), cmd, delay);
+
+        QThread::msleep(delay);
 
 		retries++;
 		delay *= 2;
@@ -118,9 +134,9 @@ bool SambaConnectionPort::executeAppletRead(quint32 offset, quint32 size, const 
         return false;
     }
 
-	if (offset + size > m_currentApplet->memorySize())
+    if (offset + size > m_currentApplet->memorySize())
 	{
-		quint32 remaining = m_currentApplet->memorySize() - offset;
+        quint32 remaining = m_currentApplet->memorySize() - offset;
 		qDebug("Error: trying to read past end of memory, only %d bytes remaining at offset 0x%08x (file size is %d)",
 			   remaining, offset, size);
 		return false;
@@ -163,9 +179,9 @@ bool SambaConnectionPort::executeAppletWrite(quint32 offset, const QString& file
 
 	quint32 size = (quint32)file.size();
 
-	if (offset + size > m_currentApplet->memorySize())
+    if (offset + size > m_currentApplet->memorySize())
 	{
-		quint32 remaining = m_currentApplet->memorySize() - offset;
+        quint32 remaining = m_currentApplet->memorySize() - offset;
 		qDebug("Error: trying to write past end of memory, only %d bytes remaining at offset %08x (file size is %d)",
 			   remaining, offset, size);
 		return false;

@@ -11,7 +11,8 @@ class SAMBACORESHARED_EXPORT SambaConnectionPort : public SambaObject
 {
 	Q_OBJECT
 
-	Q_PROPERTY(quint32 appletTraceLevel READ appletTraceLevel WRITE setAppletTraceLevel NOTIFY appletTraceLevelChanged)
+    Q_PROPERTY(quint32 traceLevel READ traceLevel WRITE setTraceLevel NOTIFY traceLevelChanged)
+    Q_PROPERTY(quint32 appletTraceLevel READ appletTraceLevel WRITE setAppletTraceLevel NOTIFY appletTraceLevelChanged)
 	Q_PROPERTY(SambaApplet *currentApplet READ currentApplet NOTIFY currentAppletChanged)
 
 public:
@@ -19,6 +20,17 @@ public:
 	~SambaConnectionPort();
 
 	// General
+
+    quint32 traceLevel() const
+    {
+        return m_traceLevel;
+    }
+
+    void setTraceLevel(quint32 traceLevel)
+    {
+        m_traceLevel = traceLevel;
+        emit traceLevelChanged();
+    }
 
 	Q_INVOKABLE virtual bool connect()
 	{
@@ -169,7 +181,8 @@ public:
 	Q_INVOKABLE virtual bool executeAppletWrite(quint32 offset, const QString& fileName);
 
 signals:
-	void appletTraceLevelChanged();
+    void traceLevelChanged();
+    void appletTraceLevelChanged();
 	void currentAppletChanged();
 
 protected:
@@ -179,7 +192,8 @@ protected:
 	}
 
 private:
-	quint32 m_appletTraceLevel;
+    quint32 m_traceLevel;
+    quint32 m_appletTraceLevel;
 	SambaApplet *m_currentApplet;
 };
 
