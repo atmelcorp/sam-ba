@@ -25,14 +25,14 @@ INCLUDEPATH += $$PWD/../sambacore
 DEPENDPATH += $$PWD/../sambacore
 
 unix:{
-JLINKDIR = /opt/SEGGER/JLinkSDK_Linux_V500b_x86_64
-INCLUDEPATH += $$JLINKDIR/Inc
-LIBS += -L$$JLINKDIR -ljlinkarm
+    JLINKDIR = /opt/SEGGER/JLinkSDK_Linux_V500b_x86_64
+    INCLUDEPATH += $$JLINKDIR/Inc
+    LIBS += -L$$JLINKDIR -ljlinkarm
 }
 else:win32:{
-JLINKDIR = "C:/Program Files (x86)/SEGGER/JLink_SDK_V500b"
-INCLUDEPATH += $$JLINKDIR/Inc
-LIBS += -L$$JLINKDIR -lJLinkARM
+    JLINKDIR = "C:/Program Files (x86)/SEGGER/JLink_SDK_V500b"
+    INCLUDEPATH += $$JLINKDIR/Inc
+    LIBS += -L$$JLINKDIR -lJLinkARM
 }
 
 # install
