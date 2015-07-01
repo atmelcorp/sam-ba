@@ -19,7 +19,7 @@ INCLUDEPATH += $$PWD/../sambacore
 DEPENDPATH += $$PWD/../sambacore
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH += $$PWD/../devices $$PWD/../qml
+QML_IMPORT_PATH += $$PWD/../devices
 
 # install launch script
 script.path = /
