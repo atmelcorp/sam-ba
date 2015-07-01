@@ -9,7 +9,7 @@
 
 class SAMBACORESHARED_EXPORT SambaPlugin : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
 	SambaPlugin(QObject *parent = 0) { Q_UNUSED(parent); }

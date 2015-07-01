@@ -4,4 +4,3 @@ SambaObject::SambaObject(QObject *parent) : QObject(parent)
 {
 
 }
-

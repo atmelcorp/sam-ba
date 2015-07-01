@@ -6,16 +6,16 @@
 
 class Q_DECL_EXPORT SambaConnectionPortSerial : public SambaConnectionPort
 {
-    Q_PROPERTY(qint32 baudRate READ baudRate WRITE setBaudRate)
+	Q_PROPERTY(qint32 baudRate READ baudRate WRITE setBaudRate)
 
 public:
-    SambaConnectionPortSerial(QObject *parent, const QSerialPortInfo &info, bool at91);
+	SambaConnectionPortSerial(QObject *parent, const QSerialPortInfo &info, bool at91);
 	~SambaConnectionPortSerial();
 
 	// General
-    qint32 baudRate();
-    void setBaudRate(qint32 baudRate);
-    bool connect();
+	qint32 baudRate();
+	void setBaudRate(qint32 baudRate);
+	bool connect();
 	void disconnect();
 
 	// Memory read

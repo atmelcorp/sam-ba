@@ -6,7 +6,7 @@
 
 class SAMBACORESHARED_EXPORT SambaObject : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
 	Q_PROPERTY(QString tag READ tag WRITE setTag NOTIFY tagChanged)
 	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)

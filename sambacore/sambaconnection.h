@@ -19,6 +19,7 @@ public:
 	~SambaConnection();
 
 	// properties
+
 	QQmlListProperty<SambaConnectionPort> getPortsListProperty();
 
 	// script methods

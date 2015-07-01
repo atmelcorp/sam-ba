@@ -21,6 +21,7 @@ public:
 	QString text() const;
 
 	// script methods
+
 	Q_INVOKABLE void append(const QString& message);
 	Q_INVOKABLE void append(const QString& subsystem, const QString& message);
 

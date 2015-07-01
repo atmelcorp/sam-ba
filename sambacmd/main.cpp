@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 	QCoreApplication app(argc, argv);
 
 	QCoreApplication::setApplicationName("sambacmd");
-    QCoreApplication::setApplicationVersion("3.0-pre1");
+	QCoreApplication::setApplicationVersion("3.0-pre1");
 
 	QCommandLineParser parser;
 	parser.setApplicationDescription("SAM-BA Command Line Tool");
@@ -23,18 +23,18 @@ int main(int argc, char *argv[])
 	parser.process(app);
 
 	QString script = parser.value(scriptOption);
-    if (script.isEmpty())
-    {
-        qDebug().noquote() << parser.helpText();
-        return -1;
-    }
+	if (script.isEmpty())
+	{
+		qDebug().noquote() << parser.helpText();
+		return -1;
+	}
 
 	SambaCore core(&app);
 
 	qDebug("Loading script from %s", script.toLatin1().constData());
 	QVariant result = core.evaluateScript(QUrl::fromLocalFile(script));
-    if (result.isValid())
-        qDebug().noquote() << result.toString();
+	if (result.isValid())
+		qDebug().noquote() << result.toString();
 
-    //return app.exec();
+	//return app.exec();
 }

@@ -68,7 +68,7 @@ static void jlink_debug_log(const char* sErr)
 
 bool SambaConnectionPortJlink::connect()
 {
-    qDebug("Connecting to %s", description().toLatin1().constData());
+	qDebug("Connecting to %s", description().toLatin1().constData());
 
 	JLINKARM_EnableLog(jlink_debug_log);
 	JLINKARM_EnableLogCom(jlink_debug_log);

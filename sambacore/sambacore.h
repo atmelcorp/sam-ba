@@ -27,14 +27,17 @@ public:
 	void registerConnection(SambaConnection *conn);
 
 	// properties
+
 	QQmlListProperty<SambaConnection> getConnectionsListProperty();
 	QQmlListProperty<QObject> getDevicesListProperty();
 
 	// script methods
+
 	Q_INVOKABLE SambaConnection *connection(const QString &tag);
 	Q_INVOKABLE QObject *device(const QString &tag);
 
 	// script utils
+
 	Q_INVOKABLE void sleep(int secs);
 	Q_INVOKABLE void msleep(int msecs);
 	Q_INVOKABLE void usleep(int usecs);

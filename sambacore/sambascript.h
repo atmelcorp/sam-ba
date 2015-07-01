@@ -6,7 +6,7 @@
 
 class SAMBACORESHARED_EXPORT SambaScript : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
 	explicit SambaScript(QObject *parent = 0);

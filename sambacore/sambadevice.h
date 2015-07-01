@@ -9,7 +9,7 @@
 
 class SAMBACORESHARED_EXPORT SambaDevice : public SambaObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
 	Q_PROPERTY(QQmlListProperty<SambaApplet> applets READ getAppletsListProperty NOTIFY appletsChanged)
 

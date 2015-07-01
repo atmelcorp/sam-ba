@@ -6,16 +6,16 @@
 #define MAX_BUF_SIZE (16*1024)
 
 SambaConnectionPortSerial::SambaConnectionPortSerial(QObject* parent, const QSerialPortInfo &info, bool at91)
-    : SambaConnectionPort(parent), m_at91(at91)
+	: SambaConnectionPort(parent), m_at91(at91)
 {
 	m_serial.setPort(info);
 	if (at91)
 		m_serial.setBaudRate(921600);
 	else
-        m_serial.setBaudRate(115200);
+		m_serial.setBaudRate(115200);
 	m_serial.setDataBits(QSerialPort::Data8);
-    m_serial.setParity(QSerialPort::NoParity);
-    m_serial.setStopBits(QSerialPort::OneStop);
+	m_serial.setParity(QSerialPort::NoParity);
+	m_serial.setStopBits(QSerialPort::OneStop);
 	m_serial.setFlowControl(QSerialPort::NoFlowControl);
 
 	m_tag = info.portName();
@@ -34,19 +34,19 @@ SambaConnectionPortSerial::~SambaConnectionPortSerial()
 
 qint32 SambaConnectionPortSerial::baudRate()
 {
-    return m_serial.baudRate();
+	return m_serial.baudRate();
 }
 
 void SambaConnectionPortSerial::setBaudRate(qint32 baudRate)
 {
-    m_serial.setBaudRate(baudRate);
+	m_serial.setBaudRate(baudRate);
 }
 
 bool SambaConnectionPortSerial::connect()
 {
-    qDebug("Connecting to %s", description().toLatin1().constData());
+	qDebug("Connecting to %s", description().toLatin1().constData());
 
-    bool ok = m_serial.open(QIODevice::ReadWrite);
+	bool ok = m_serial.open(QIODevice::ReadWrite);
 	if (ok)
 	{
 		writeSerial(QString("N#"));
@@ -57,8 +57,8 @@ bool SambaConnectionPortSerial::connect()
 
 void SambaConnectionPortSerial::writeSerial(const QString &str)
 {
-    if (traceLevel() > 0)
-        qDebug().noquote().nospace() << "SERIAL<<" << str;
+	if (traceLevel() > 0)
+		qDebug().noquote().nospace() << "SERIAL<<" << str;
 
 	QByteArray data = str.toLatin1();
 	m_serial.write(data.constData(), data.length());
@@ -67,8 +67,8 @@ void SambaConnectionPortSerial::writeSerial(const QString &str)
 
 void SambaConnectionPortSerial::writeSerial(const QByteArray &data)
 {
-    if (traceLevel() > 0)
-        qDebug().noquote().nospace() << "SERIAL<<" << data.toHex();
+	if (traceLevel() > 0)
+		qDebug().noquote().nospace() << "SERIAL<<" << data.toHex();
 
 	m_serial.write(data.constData(), data.length());
 	m_serial.waitForBytesWritten(100);
@@ -85,10 +85,10 @@ QByteArray SambaConnectionPortSerial::readAllSerial()
 		resp.append(m_serial.readAll());
 	};
 
-    if (traceLevel() > 0)
-        qDebug().noquote().nospace() << "SERIAL>>" << resp.toHex();
+	if (traceLevel() > 0)
+		qDebug().noquote().nospace() << "SERIAL>>" << resp.toHex();
 
-    return resp;
+	return resp;
 }
 
 void SambaConnectionPortSerial::disconnect()

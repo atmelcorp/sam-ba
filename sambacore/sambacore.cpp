@@ -28,17 +28,17 @@ SambaCore::SambaCore(QObject *parent) :	QObject(parent)
 	m_scriptEngine.rootContext()->setContextProperty("logger", SambaLogger::getInstance());
 	m_scriptEngine.addImportPath(QCoreApplication::applicationDirPath() + "/qml");
 
-    loadPlugins(QDir(QCoreApplication::applicationDirPath() + "/../plugins"));
+	loadPlugins(QDir(QCoreApplication::applicationDirPath() + "/../plugins"));
 	emit connectionsChanged();
 
-    loadDevices(QDir(QCoreApplication::applicationDirPath() + "/../devices"));
+	loadDevices(QDir(QCoreApplication::applicationDirPath() + "/../devices"));
 	emit devicesChanged();
 }
 
 void SambaCore::loadPlugins(const QDir &pluginsDir)
 {
-    qDebug("Loading plugins from %s", pluginsDir.path().toLatin1().constData());
-    foreach (QString fileName, pluginsDir.entryList(QDir::Files))
+	qDebug("Loading plugins from %s", pluginsDir.path().toLatin1().constData());
+	foreach (QString fileName, pluginsDir.entryList(QDir::Files))
 	{
 		qDebug("Loading plugin %s", fileName.toLatin1().constData());
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
@@ -73,8 +73,8 @@ void SambaCore::loadPlugins(const QDir &pluginsDir)
 
 void SambaCore::loadDevices(const QDir &devicesDir)
 {
-    qDebug("Loading devices from %s", devicesDir.path().toLatin1().constData());
-    foreach (QString fileName, devicesDir.entryList(QStringList() << "*.qml", QDir::Files))
+	qDebug("Loading devices from %s", devicesDir.path().toLatin1().constData());
+	foreach (QString fileName, devicesDir.entryList(QStringList() << "*.qml", QDir::Files))
 	{
 		qDebug("Loading device file %s", fileName.toLatin1().constData());
 		QQmlComponent component(&m_scriptEngine, QUrl::fromLocalFile(devicesDir.absoluteFilePath(fileName)));
