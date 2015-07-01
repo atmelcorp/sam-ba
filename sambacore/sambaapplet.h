@@ -41,8 +41,12 @@ public:
 
 	enum AppletCommand {
 		CmdInit      = 0x00000000,
+		CmdErase     = 0x00000001,
 		CmdWrite     = 0x00000002,
-		CmdRead      = 0x00000003
+		CmdRead      = 0x00000003,
+		CmdLock      = 0x00000004,
+		CmdUnlock    = 0x00000005,
+		CmdGPNVM     = 0x00000006
 	};
 
 	enum AppletStatus {
