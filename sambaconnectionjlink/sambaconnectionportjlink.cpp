@@ -43,11 +43,15 @@ static const struct atmel_a5_regs atmel_a5_regs[] = {
 /* Maximum applet run time in milliseconds */
 #define MAX_APPLET_RUN_TIME 5000
 
-SambaConnectionPortJlink::SambaConnectionPortJlink(QObject* parent, U32 serial)
-	: SambaConnectionPort(parent), m_serial(serial), m_devFamily(-1), m_device(-1)
+SambaConnectionPortJlink::SambaConnectionPortJlink(QObject* parent, U32 serialNumber)
+	: SambaConnectionPort(parent),
+	  m_serialNumber(serialNumber),
+	  m_devFamily(-1),
+	  m_device(-1),
+	  m_useSWD(false)
 {
-	m_tag = QString().sprintf("jlink:%u", m_serial);
-	m_name = QString().sprintf("J-Link (%u)", m_serial);
+	m_tag = QString().sprintf("jlink:%u", m_serialNumber);
+	m_name = QString().sprintf("J-Link (%u)", m_serialNumber);
 	m_description = m_name;
 }
 
@@ -66,6 +70,16 @@ static void jlink_debug_log(const char* sErr)
 	jlink_debug_log(QString().sprintf("%s", sErr));
 }
 
+bool SambaConnectionPortJlink::useSWD()
+{
+	return m_useSWD;
+}
+
+void SambaConnectionPortJlink::setUseSWD(bool useSWD)
+{
+	m_useSWD = useSWD;
+}
+
 bool SambaConnectionPortJlink::connect()
 {
 	qDebug("Connecting to %s", description().toLatin1().constData());
@@ -73,27 +87,27 @@ bool SambaConnectionPortJlink::connect()
 	JLINKARM_EnableLog(jlink_debug_log);
 	JLINKARM_EnableLogCom(jlink_debug_log);
 
-	if (JLINKARM_EMU_SelectByUSBSN(m_serial))
+	if (JLINKARM_EMU_SelectByUSBSN(m_serialNumber))
 	{
-		jlink_debug_log(QString().sprintf("Error while selecting J-Link with serial '%u'", m_serial));
+		jlink_debug_log(QString().sprintf("Error while selecting J-Link with serial '%u'", m_serialNumber));
 		return false;
 	}
 
 	if (JLINKARM_Open() != NULL)
 	{
-		jlink_debug_log(QString().sprintf("Error while opening J-Link with serial '%u'", m_serial));
+		jlink_debug_log(QString().sprintf("Error while opening J-Link with serial '%u'", m_serialNumber));
 		return false;
 	}
 
 	// Set JLINK JTAG speed to 100 kHz
 	JLINKARM_SetSpeed(100);
 
-	if (0)
+	if (m_useSWD)
 	{
 		// Select SWD interface
 		if (JLINKARM_TIF_Select(JLINKARM_TIF_SWD) != 0)
 		{
-			jlink_debug_log(QString().sprintf("Error while enabling SWD mode for J-Link with serial '%u'", m_serial));
+			jlink_debug_log(QString().sprintf("Error while enabling SWD mode"));
 			return false;
 		}
 	}

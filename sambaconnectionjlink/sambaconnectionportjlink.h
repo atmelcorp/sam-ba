@@ -6,11 +6,15 @@
 
 class Q_DECL_EXPORT SambaConnectionPortJlink : public SambaConnectionPort
 {
+	Q_PROPERTY(bool useSWD READ useSWD WRITE setUseSWD)
+
 public:
-	SambaConnectionPortJlink(QObject *parent, U32 serial);
+	SambaConnectionPortJlink(QObject *parent, U32 serialNumber);
 	~SambaConnectionPortJlink();
 
 	// General
+	bool useSWD();
+	void setUseSWD(bool useSWD);
 	bool connect();
 	void disconnect();
 
@@ -33,8 +37,9 @@ protected:
 	virtual quint32 appletCommType();
 
 private:
-	U32 m_serial;
+	U32 m_serialNumber;
 	int m_devFamily, m_device;
+	bool m_useSWD;
 };
 
 #endif // SAMBA_CONNECTION_PORT_JLINK_H
