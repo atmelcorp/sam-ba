@@ -24,7 +24,7 @@ else:unix:LIBS += -L$$OUT_PWD/../sambacore/ -lsambacore
 INCLUDEPATH += $$PWD/../sambacore
 DEPENDPATH += $$PWD/../sambacore
 
-unix:{
+unix:contains(QT_ARCH, x86_64):{
     JLINKDIR = /opt/SEGGER/JLinkSDK_Linux_V500b_x86_64
     INCLUDEPATH += $$JLINKDIR/Inc
     LIBS += -L$$JLINKDIR -ljlinkarm
