@@ -30,7 +30,7 @@ Script {
 		}
 
 		// erase first 64K block
-		//port.executeApplet(8, 0)
+		//port.executeApplet(Applet.CmdBufferErase, 0)
 
 		port.executeAppletWrite(0x00000, "at91bootstrap.bin")
 		port.executeAppletWrite(0x04000, "u-boot-env.bin")

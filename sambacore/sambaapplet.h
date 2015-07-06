@@ -40,13 +40,27 @@ public:
 	};
 
 	enum AppletCommand {
-		CmdInit      = 0x00000000,
-		CmdErase     = 0x00000001,
-		CmdWrite     = 0x00000002,
-		CmdRead      = 0x00000003,
-		CmdLock      = 0x00000004,
-		CmdUnlock    = 0x00000005,
-		CmdGPNVM     = 0x00000006
+		CmdInit          = 0x00000000, /* Applet Initialization */
+		CmdErase         = 0x00000001, /* Full Erase */
+		CmdWrite         = 0x00000002, /* Write */
+		CmdRead          = 0x00000003, /* Read */
+		CmdLock          = 0x00000004, /* Lock */
+		CmdUnlock        = 0x00000005, /* Unlock */
+		CmdGPNVM         = 0x00000006, /* Set/Clear GPNVM */
+		CmdSecurityBit   = 0x00000007, /* Set Security Nit */
+		CmdBufferErase   = 0x00000008, /* Buffer Erase */
+		CmdBinaryPage    = 0x00000009, /* Binary Page (dataflash) */
+		CmdReadOTP       = 0x0000000a, /* Read OTP */
+		CmdWriteOTP      = 0x0000000b, /* Write OTP */
+		CmdListBadBlocks = 0x00000010, /* List Bad Blocks (nandflash) */
+		CmdTagBlock      = 0x00000011, /* Tag Block (nandflash) */
+		CmdReadUniqueID  = 0x00000012, /* Read Unique ID Bits (SAM3) */
+		CmdEraseBlocks   = 0x00000013, /* Erase Blocks */
+		CmdBatchErase    = 0x00000014, /* Batch Full Erase */
+		CmdPMECCParams   = 0x00000015, /* Set PMECC Parameter Header */
+		CmdSendBoot      = 0x00000016, /* Send Boot File */
+		CmdSwitchECC     = 0x00000017, /* Switch ECC Mode */
+		CmdTrimFFS       = 0x00000018, /* Enable/Disable drop jss */
 	};
 
 	enum AppletStatus {
