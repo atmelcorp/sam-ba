@@ -1,2 +1,2 @@
 - return error code from sambacmd
-- add parameters to connections (for ex: baudrate for serial, chain info for jtag, ...)
+- add parameters to connections (for ex: chain info for jtag, ...)

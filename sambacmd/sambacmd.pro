@@ -34,3 +34,11 @@ INSTALLS += target
 unix:!mac{
     QMAKE_RPATH=
 }
+
+# make launch script executable
+unix:{
+	scriptexec.path = /
+	scriptexec.commands = chmod +x \$(INSTALL_ROOT)/sambacmd
+	scriptexec.depends = install_script
+	INSTALLS += scriptexec
+}

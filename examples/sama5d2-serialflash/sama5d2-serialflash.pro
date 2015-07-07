@@ -7,6 +7,8 @@ example.files = \
     write-serialflash-jlink.qml \
     write-serialflash-usb.qml
 
+INSTALLS += example
+
 win32: {
 	example.files += \
 	    write-serialflash-jlink.bat \
@@ -16,6 +18,10 @@ else:unix: {
 	example.files += \
 	    write-serialflash-jlink.sh \
 	    write-serialflash-usb.sh
-}
 
-INSTALLS += example
+	# make launch scripts executable
+	scriptexec.path = /
+	scriptexec.commands = chmod +x \$(INSTALL_ROOT)/$$example.path/*.sh
+	scriptexec.depends = install_example
+	INSTALLS += scriptexec
+}

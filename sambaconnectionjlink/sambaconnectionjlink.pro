@@ -28,6 +28,10 @@ unix:contains(QT_ARCH, x86_64):{
     JLINKDIR = /opt/SEGGER/JLinkSDK_Linux_V500b_x86_64
     INCLUDEPATH += $$JLINKDIR/Inc
     LIBS += -L$$JLINKDIR -ljlinkarm
+
+    jlinklibs.path = /libs
+    jlinklibs.commands = cp -a $$JLINKDIR/libjlinkarm.so.* \$(INSTALL_ROOT)/libs
+    INSTALLS += jlinklibs
 }
 else:win32:{
     JLINKDIR = "C:/Program Files (x86)/SEGGER/JLink_SDK_V500b"

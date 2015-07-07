@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 	QCoreApplication app(argc, argv);
 
 	QCoreApplication::setApplicationName("sambacmd");
-	QCoreApplication::setApplicationVersion("3.0-pre1");
+	QCoreApplication::setApplicationVersion("3.0-pre2");
 
 	QCommandLineParser parser;
 	parser.setApplicationDescription("SAM-BA Command Line Tool");
