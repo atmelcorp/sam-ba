@@ -23,6 +23,15 @@ Device {
 			fileName: Qt.resolvedUrl("sama5d2/applet-serialflash-sama5d2.bin")
 			appletAddress: 0x220000
 			mailboxAddress: 0x220004
+		},
+		Applet {
+			enabled: lowlevel.initialized
+			kind: Applet.NVM
+			tag: "qspiflash"
+			name: "QSPI Flash"
+			fileName: Qt.resolvedUrl("sama5d2/applet-qspiflash-sama5d2.bin")
+			appletAddress: 0x220000
+			mailboxAddress: 0x220004
 		}
 	]
 }
