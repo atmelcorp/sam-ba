@@ -5,8 +5,8 @@ DISTFILES += TODO
 docs.path = /
 
 docs.files = \
-        README.md \
-        LICENSE.txt
+	README.md \
+	LICENSE.txt
 
 unix:contains(QT_ARCH, arm):docs.files += README.armv7.md
 

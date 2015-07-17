@@ -29,7 +29,7 @@ Script {
 			print("appletBufferSize: " + port.readMailbox(2) + " bytes")
 		}
 
-		// erase first 64K block
+		// erase first 64K block (block 0)
 		//port.executeApplet(Applet.CmdBufferErase, 0)
 
 		port.executeAppletWrite(0x00000, "at91bootstrap.bin")
