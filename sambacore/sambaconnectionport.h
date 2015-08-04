@@ -11,6 +11,7 @@ class SAMBACORESHARED_EXPORT SambaConnectionPort : public SambaObject
 {
 	Q_OBJECT
 
+	Q_PROPERTY(quint32 retries READ retries WRITE setRetries NOTIFY retriesChanged)
 	Q_PROPERTY(quint32 traceLevel READ traceLevel WRITE setTraceLevel NOTIFY traceLevelChanged)
 	Q_PROPERTY(quint32 appletTraceLevel READ appletTraceLevel WRITE setAppletTraceLevel NOTIFY appletTraceLevelChanged)
 	Q_PROPERTY(SambaApplet *currentApplet READ currentApplet NOTIFY currentAppletChanged)
@@ -20,6 +21,17 @@ public:
 	~SambaConnectionPort();
 
 	// General
+
+	quint32 retries() const
+	{
+		return m_retries;
+	}
+
+	void setRetries(quint32 retries)
+	{
+		m_retries = retries;
+		emit retriesChanged();
+	}
 
 	quint32 traceLevel() const
 	{
@@ -169,18 +181,15 @@ public:
 
 	Q_INVOKABLE virtual quint32 readMailbox(int index);
 
-	Q_INVOKABLE virtual qint32 executeApplet(quint32 cmd,
-											 quint32 arg0 = 0,
-											 quint32 arg1 = 0,
-											 quint32 arg2 = 0,
-											 quint32 arg3 = 0,
-											 quint32 arg4 = 0);
+	Q_INVOKABLE virtual qint32 executeApplet(quint32 cmd, quint32 arg0 = 0, quint32 arg1 = 0,
+			quint32 arg2 = 0, quint32 arg3 = 0, quint32 arg4 = 0);
 
 	Q_INVOKABLE virtual bool executeAppletRead(quint32 offset, quint32 size, const QString& fileName);
 
 	Q_INVOKABLE virtual bool executeAppletWrite(quint32 offset, const QString& fileName);
 
 signals:
+	void retriesChanged();
 	void traceLevelChanged();
 	void appletTraceLevelChanged();
 	void currentAppletChanged();
@@ -192,6 +201,7 @@ protected:
 	}
 
 private:
+	quint32 m_retries;
 	quint32 m_traceLevel;
 	quint32 m_appletTraceLevel;
 	SambaApplet *m_currentApplet;

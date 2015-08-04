@@ -1,9 +1,8 @@
 #include "sambaconnectionport.h"
 
-#define MAX_APPLET_RETRIES 4
-
 SambaConnectionPort::SambaConnectionPort(QObject *parent)
 	: SambaObject(parent),
+	  m_retries(7),
 	  m_traceLevel(0),
 	  m_appletTraceLevel(4),
 	  m_currentApplet(NULL)
@@ -76,9 +75,10 @@ qint32 SambaConnectionPort::executeApplet(quint32 cmd, quint32 arg0, quint32 arg
 	go(m_currentApplet->appletAddress());
 
 	// wait for completion
-	int retries = 0;
+	quint32 maxRetries = m_retries;
+	quint32 retries = 0;
 	int delay = 50;
-	while (retries < MAX_APPLET_RETRIES)
+	while (retries < maxRetries)
 	{
 		quint32 ack = readu32(m_currentApplet->mailboxAddress());
 		if (ack == ~cmd)
@@ -94,7 +94,7 @@ qint32 SambaConnectionPort::executeApplet(quint32 cmd, quint32 arg0, quint32 arg
 		delay *= 2;
 	}
 
-	if (retries == MAX_APPLET_RETRIES)
+	if (retries == maxRetries)
 	{
 		qDebug("Error: applet %s command %u did not complete in time",
 			   m_currentApplet->name().toLatin1().constData(), cmd);
