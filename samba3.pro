@@ -38,6 +38,20 @@ unix:{
 		cp -a $$[QT_INSTALL_LIBS]/libicuuc.so.* \$(INSTALL_ROOT)/libs
 	INSTALLS += qtlibs
 }
+else:win32:{
+	qtlibs.path = /libs
+	qtlibs.commands = \
+		copy /y $$[QT_INSTALL_LIBS]\\Qt5Core.dll \$(INSTALL_ROOT)\\libs && \
+		copy /y $$[QT_INSTALL_LIBS]\\Qt5Network.dll \$(INSTALL_ROOT)\\libs && \
+		copy /y $$[QT_INSTALL_LIBS]\\Qt5Qml.dll \$(INSTALL_ROOT)\\libs && \
+		copy /y $$[QT_INSTALL_LIBS]\\Qt5SerialPort.dll \$(INSTALL_ROOT)\\libs && \
+		copy /y $$[QT_INSTALL_LIBS]\\icudt53.dll \$(INSTALL_ROOT)\\libs && \
+		copy /y $$[QT_INSTALL_LIBS]\\icuin53.dll \$(INSTALL_ROOT)\\libs && \
+		copy /y $$[QT_INSTALL_LIBS]\\icuuc53.dll \$(INSTALL_ROOT)\\libs && \
+		copy /y $$[QT_INSTALL_LIBS]\\libstdc++-6.dll \$(INSTALL_ROOT)\\libs
+		copy /y $$[QT_INSTALL_LIBS]\\libgcc_s_dw2-1.dll \$(INSTALL_ROOT)\\libs
+	INSTALLS += qtlibs
+}
 
 sambacmd.depends = sambacore
 sambaconnectionserial.depends = sambacore
