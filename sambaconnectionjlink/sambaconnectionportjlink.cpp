@@ -1,6 +1,6 @@
+#include "sambaconnectionjlink.h"
 #include "sambaconnectionportjlink.h"
 #include "sambalogger.h"
-#include <QDebug>
 #include <QThread>
 #include <QElapsedTimer>
 #include <JLinkARMDLL.h>
@@ -62,7 +62,7 @@ SambaConnectionPortJlink::~SambaConnectionPortJlink()
 
 static void jlink_debug_log(const QString& text)
 {
-	SambaLogger::getInstance()->append(QString("JLINK"), text);
+	qCDebug(sambaLogConnJlink) << text;
 }
 
 static void jlink_debug_log(const char* sErr)
@@ -82,20 +82,20 @@ void SambaConnectionPortJlink::setUseSWD(bool useSWD)
 
 bool SambaConnectionPortJlink::connect()
 {
-	qDebug("Connecting to %s", description().toLatin1().constData());
+	qCDebug(sambaLogConnJlink, "Connecting to %s", description().toLatin1().constData());
 
 	JLINKARM_EnableLog(jlink_debug_log);
 	JLINKARM_EnableLogCom(jlink_debug_log);
 
 	if (JLINKARM_EMU_SelectByUSBSN(m_serialNumber))
 	{
-		jlink_debug_log(QString().sprintf("Error while selecting J-Link with serial '%u'", m_serialNumber));
+		qCCritical(sambaLogConnJlink, "Error while selecting J-Link with serial '%u'", m_serialNumber);
 		return false;
 	}
 
 	if (JLINKARM_Open() != NULL)
 	{
-		jlink_debug_log(QString().sprintf("Error while opening J-Link with serial '%u'", m_serialNumber));
+		qCCritical(sambaLogConnJlink, "Error while opening J-Link with serial '%u'", m_serialNumber);
 		return false;
 	}
 
@@ -107,7 +107,7 @@ bool SambaConnectionPortJlink::connect()
 		// Select SWD interface
 		if (JLINKARM_TIF_Select(JLINKARM_TIF_SWD) != 0)
 		{
-			jlink_debug_log(QString().sprintf("Error while enabling SWD mode"));
+			qCCritical(sambaLogConnJlink, "Error while enabling SWD mode");
 			return false;
 		}
 	}
@@ -157,7 +157,7 @@ bool SambaConnectionPortJlink::connect()
 		}
 		if (m_device >= 0)
 		{
-			jlink_debug_log(QString().sprintf("Found Atmel %s device, disabling watchdog", atmel_a5_regs[m_device].name));
+			qCDebug(sambaLogConnJlink, "Found Atmel %s device, disabling watchdog", atmel_a5_regs[m_device].name);
 
 			// Disable Watchdog
 			JLINKARM_WriteU32(atmel_a5_regs[m_device].wdt_mr, WDT_MR_WDDIS);
@@ -173,7 +173,7 @@ bool SambaConnectionPortJlink::connect()
 		}
 		else
 		{
-			jlink_debug_log("Found Unknown Cortex-A5 device");
+			qCDebug(sambaLogConnJlink, "Found Unknown Cortex-A5 device");
 
 			// Set JTAG speed
 			JLINKARM_SetSpeed(JLINKARM_SPEED_AUTO);

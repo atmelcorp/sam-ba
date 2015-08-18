@@ -5,9 +5,12 @@
 #include "sambadevice.h"
 #include "sambaplugin.h"
 #include "utils.h"
-#include <QDebug>
 #include <QFile>
 #include <QThread>
+
+Q_LOGGING_CATEGORY(sambaLogCore, "samba.core")
+Q_LOGGING_CATEGORY(sambaLogApplet, "samba.applet")
+Q_LOGGING_CATEGORY(sambaLogQml, "samba.qml")
 
 SambaCore::SambaCore(QObject *parent) :	QObject(parent)
 {
@@ -37,10 +40,10 @@ SambaCore::SambaCore(QObject *parent) :	QObject(parent)
 
 void SambaCore::loadPlugins(const QDir &pluginsDir)
 {
-	qDebug("Loading plugins from %s", pluginsDir.path().toLatin1().constData());
+	qCDebug(sambaLogCore, "Loading plugins from %s", pluginsDir.path().toLatin1().constData());
 	foreach (QString fileName, pluginsDir.entryList(QStringList("*sambaplugin_*"), QDir::Files))
 	{
-		qDebug("Loading plugin %s", fileName.toLatin1().constData());
+		qCDebug(sambaLogCore, "Loading plugin %s", fileName.toLatin1().constData());
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
 		QObject *plugin = loader.instance();
 		if (plugin)
@@ -50,43 +53,33 @@ void SambaCore::loadPlugins(const QDir &pluginsDir)
 			{
 				if (sambaPlugin->initPlugin(this))
 				{
-					qDebug("Plugin %s loaded", fileName.toLatin1().constData());
+					qCDebug(sambaLogCore, "Plugin %s loaded", fileName.toLatin1().constData());
 				}
 			}
 		}
 		else
 		{
-			qDebug("Error while loading plugin %s: %s", fileName.toLatin1().constData(), loader.errorString().toLatin1().constData());
-		}
-	}
-
-	foreach (QString dirName, pluginsDir.entryList(QDir::Dirs))
-	{
-		if (dirName != "." && dirName != "..")
-		{
-			QDir subDir(pluginsDir);
-			subDir.cd(dirName);
-			loadPlugins(subDir);
+			qCWarning(sambaLogCore, "Error while loading plugin %s: %s", fileName.toLatin1().constData(), loader.errorString().toLatin1().constData());
 		}
 	}
 }
 
 void SambaCore::loadDevices(const QDir &devicesDir)
 {
-	qDebug("Loading devices from %s", devicesDir.path().toLatin1().constData());
-	foreach (QString fileName, devicesDir.entryList(QStringList() << "*.qml", QDir::Files))
+	qCDebug(sambaLogCore, "Loading devices from %s", devicesDir.path().toLatin1().constData());
+	foreach (QString fileName, devicesDir.entryList(QStringList("*.qml"), QDir::Files))
 	{
-		qDebug("Loading device file %s", fileName.toLatin1().constData());
+		qCDebug(sambaLogCore, "Loading device file %s", fileName.toLatin1().constData());
 		QQmlComponent component(&m_scriptEngine, QUrl::fromLocalFile(devicesDir.absoluteFilePath(fileName)));
 		QObject* dev = component.create();
 		if (!dev)
 		{
-			qDebug() << component.errors();
+			qCCritical(sambaLogCore) << component.errors();
 		}
 		else
 		{
 			m_devices.append(dev);
-			qDebug("Registered device %s (%s)", dev->property("tag").toString().toLatin1().constData(),
+			qCDebug(sambaLogCore, "Registered device %s (%s)", dev->property("tag").toString().toLatin1().constData(),
 				   dev->property("name").toString().toLatin1().constData());
 		}
 	}
@@ -99,7 +92,7 @@ void SambaCore::engineQuit()
 
 void SambaCore::engineWarnings(const QList<QQmlError> &warnings)
 {
-	qDebug() << warnings;
+	qCWarning(sambaLogQml) << warnings;
 }
 
 SambaCore::~SambaCore()
@@ -111,31 +104,37 @@ QQmlEngine* SambaCore::scriptEngine()
 	return &m_scriptEngine;
 }
 
-QVariant SambaCore::evaluateScript(const QString &program)
+void SambaCore::evaluateScript(const QString &program)
 {
-	return m_scriptEngine.evaluate(program).toVariant();
+	m_scriptEngine.evaluate(program);
 }
 
-QVariant SambaCore::evaluateScript(const QUrl &url)
+bool SambaCore::evaluateScript(const QUrl &url)
 {
 	QQmlComponent component(&m_scriptEngine, url);
 	if (component.status() != QQmlComponent::Ready)
-		return QVariant(component.errorString());
+	{
+		qCCritical(sambaLogCore) << component.errorString();
+		return false;
+	}
 
 	SambaScript* obj = qobject_cast<SambaScript*>(component.create());
 	if (!obj)
-		return QVariant("Script root component must be SambaScript");
+	{
+		qCCritical(sambaLogCore, "Script root component must be SambaScript");
+		return false;
+	}
 	obj->startScript();
 	delete obj;
 
-	return QVariant();
+	return true;
 }
 
 void SambaCore::registerConnection(SambaConnection *conn)
 {
 	conn->refreshPorts();
 	m_connections.append(conn);
-	qDebug("Registered connection %s (%s)", conn->tag().toLatin1().constData(),
+	qCDebug(sambaLogCore, "Registered connection %s (%s)", conn->tag().toLatin1().constData(),
 		   conn->name().toLatin1().constData());
 }
 

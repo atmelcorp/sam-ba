@@ -3,6 +3,8 @@
 
 #include "sambaconnection.h"
 
+Q_DECLARE_LOGGING_CATEGORY(sambaLogConnJlink)
+
 class Q_DECL_EXPORT SambaConnectionJlink : public SambaConnection
 {
 public:

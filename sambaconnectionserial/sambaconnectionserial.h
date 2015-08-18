@@ -3,6 +3,8 @@
 
 #include "sambaconnection.h"
 
+Q_DECLARE_LOGGING_CATEGORY(sambaLogConnSerial)
+
 class Q_DECL_EXPORT SambaConnectionSerial : public SambaConnection
 {
 public:

@@ -1,3 +1,4 @@
+#include "sambacore.h"
 #include "sambaconnectionport.h"
 
 SambaConnectionPort::SambaConnectionPort(QObject *parent)
@@ -21,7 +22,7 @@ SambaApplet *SambaConnectionPort::currentApplet() const
 
 void SambaConnectionPort::writeApplet(SambaApplet *applet)
 {
-	qDebug("Loading applet '%s'", applet->name().toLatin1().constData());
+	qCInfo(sambaLogApplet, "Loading applet '%s'", applet->name().toLatin1().constData());
 
 	if (m_currentApplet)
 	{
@@ -84,9 +85,8 @@ qint32 SambaConnectionPort::executeApplet(quint32 cmd, quint32 arg0, quint32 arg
 		if (ack == ~cmd)
 			break;
 
-		if (m_traceLevel > 1)
-			qDebug("Applet %s command %u did not complete, waiting %dms",
-				   m_currentApplet->name().toLatin1().constData(), cmd, delay);
+		qCDebug(sambaLogApplet, "Applet %s command %u did not complete, waiting %dms",
+			   m_currentApplet->name().toLatin1().constData(), cmd, delay);
 
 		QThread::msleep(delay);
 
@@ -96,7 +96,7 @@ qint32 SambaConnectionPort::executeApplet(quint32 cmd, quint32 arg0, quint32 arg
 
 	if (retries == maxRetries)
 	{
-		qDebug("Error: applet %s command %u did not complete in time",
+		qCCritical(sambaLogApplet, "Error: applet %s command %u did not complete in time",
 			   m_currentApplet->name().toLatin1().constData(), cmd);
 		return -1;
 	}
@@ -130,14 +130,14 @@ bool SambaConnectionPort::executeAppletRead(quint32 offset, quint32 size, const 
 
 	if (!file.open(QIODevice::WriteOnly))
 	{
-		qDebug("Error: Could not open file '%s' for writing", fileName.toLatin1().constData());
+		qCCritical(sambaLogApplet, "Error: Could not open file '%s' for writing", fileName.toLatin1().constData());
 		return false;
 	}
 
 	if (offset + size > m_currentApplet->memorySize())
 	{
 		quint32 remaining = m_currentApplet->memorySize() - offset;
-		qDebug("Error: trying to read past end of memory, only %d bytes remaining at offset 0x%08x (file size is %d)",
+		qCCritical(sambaLogApplet, "Error: trying to read past end of memory, only %d bytes remaining at offset 0x%08x (file size is %d)",
 			   remaining, offset, size);
 		return false;
 	}
@@ -157,7 +157,7 @@ bool SambaConnectionPort::executeAppletRead(quint32 offset, quint32 size, const 
 		if (file.write(data) != count)
 			break;
 
-		qDebug("Read %d bytes at address 0x%08x", count, offset);
+		qCInfo(sambaLogApplet, "Read %d bytes at address 0x%08x", count, offset);
 
 		offset += count;
 		size -= count;
@@ -173,7 +173,7 @@ bool SambaConnectionPort::executeAppletWrite(quint32 offset, const QString& file
 
 	if (!file.open(QIODevice::ReadOnly))
 	{
-		qDebug("Error: Could not open file '%s' for reading", fileName.toLatin1().constData());
+		qCCritical(sambaLogApplet, "Error: Could not open file '%s' for reading", fileName.toLatin1().constData());
 		return false;
 	}
 
@@ -182,7 +182,7 @@ bool SambaConnectionPort::executeAppletWrite(quint32 offset, const QString& file
 	if (offset + size > m_currentApplet->memorySize())
 	{
 		quint32 remaining = m_currentApplet->memorySize() - offset;
-		qDebug("Error: trying to write past end of memory, only %d bytes remaining at offset %08x (file size is %d)",
+		qCCritical(sambaLogApplet, "Error: trying to write past end of memory, only %d bytes remaining at offset %08x (file size is %d)",
 			   remaining, offset, size);
 		return false;
 	}
@@ -202,7 +202,7 @@ bool SambaConnectionPort::executeAppletWrite(quint32 offset, const QString& file
 						  data.size(), offset) != SambaApplet::StatusSuccess)
 			break;
 
-		qDebug("Wrote %d bytes at address 0x%08x", count, offset);
+		qCInfo(sambaLogApplet, "Wrote %d bytes at address 0x%08x", count, offset);
 
 		offset += data.size();
 		size -= data.size();

@@ -7,6 +7,8 @@
 #define ATMEL_USB_VID 0x03eb
 #define SAMBA_USB_PID 0x6124
 
+Q_LOGGING_CATEGORY(sambaLogConnSerial, "samba.connserial")
+
 SambaConnectionSerial::SambaConnectionSerial(QObject* parent, bool at91)
 	: SambaConnection(parent), m_at91(at91)
 {

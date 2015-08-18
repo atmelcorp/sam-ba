@@ -5,9 +5,14 @@
 #include "sambaconnection.h"
 #include "sambadevice.h"
 #include <QObject>
+#include <QLoggingCategory>
 #include <QScopedPointer>
 #include <QUrl>
 #include <QtQml>
+
+Q_DECLARE_LOGGING_CATEGORY(sambaLogCore)
+Q_DECLARE_LOGGING_CATEGORY(sambaLogApplet)
+Q_DECLARE_LOGGING_CATEGORY(sambaLogQml)
 
 class SAMBACORESHARED_EXPORT SambaCore : public QObject
 {
@@ -21,8 +26,8 @@ public:
 	~SambaCore();
 
 	QQmlEngine *scriptEngine();
-	QVariant evaluateScript(const QString &program);
-	QVariant evaluateScript(const QUrl &url);
+	void evaluateScript(const QString &program);
+	bool evaluateScript(const QUrl &url);
 
 	void registerConnection(SambaConnection *conn);
 

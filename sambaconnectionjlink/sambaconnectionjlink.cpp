@@ -3,6 +3,8 @@
 #include <QStringList>
 #include <JLinkARMDLL.h>
 
+Q_LOGGING_CATEGORY(sambaLogConnJlink, "samba.connjlink")
+
 SambaConnectionJlink::SambaConnectionJlink(QObject* parent)
 	: SambaConnection(parent)
 {

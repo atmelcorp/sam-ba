@@ -1,5 +1,5 @@
+#include "sambaconnectionserial.h"
 #include "sambaconnectionportserial.h"
-#include <QDebug>
 #include <QThread>
 #include <QSerialPortInfo>
 
@@ -44,7 +44,7 @@ void SambaConnectionPortSerial::setBaudRate(qint32 baudRate)
 
 bool SambaConnectionPortSerial::connect()
 {
-	qDebug("Connecting to %s", description().toLatin1().constData());
+	qCDebug(sambaLogConnSerial, "Connecting to %s", description().toLatin1().constData());
 
 	bool ok = m_serial.open(QIODevice::ReadWrite);
 	if (ok)
@@ -58,7 +58,7 @@ bool SambaConnectionPortSerial::connect()
 void SambaConnectionPortSerial::writeSerial(const QString &str)
 {
 	if (traceLevel() > 0)
-		qDebug().noquote().nospace() << "SERIAL<<" << str;
+		qCDebug(sambaLogConnSerial).noquote().nospace() << "SERIAL<<" << str;
 
 	QByteArray data = str.toLatin1();
 	m_serial.write(data.constData(), data.length());
@@ -68,7 +68,7 @@ void SambaConnectionPortSerial::writeSerial(const QString &str)
 void SambaConnectionPortSerial::writeSerial(const QByteArray &data)
 {
 	if (traceLevel() > 0)
-		qDebug().noquote().nospace() << "SERIAL<<" << data.toHex();
+		qCDebug(sambaLogConnSerial).noquote().nospace() << "SERIAL<<" << data.toHex();
 
 	m_serial.write(data.constData(), data.length());
 	m_serial.waitForBytesWritten(100);
@@ -86,7 +86,7 @@ QByteArray SambaConnectionPortSerial::readAllSerial()
 	};
 
 	if (traceLevel() > 0)
-		qDebug().noquote().nospace() << "SERIAL>>" << resp.toHex();
+		qCDebug(sambaLogConnSerial).noquote().nospace() << "SERIAL>>" << resp.toHex();
 
 	return resp;
 }
