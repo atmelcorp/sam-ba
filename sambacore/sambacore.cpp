@@ -28,17 +28,17 @@ SambaCore::SambaCore(QObject *parent) :	QObject(parent)
 	m_scriptEngine.rootContext()->setContextProperty("logger", SambaLogger::getInstance());
 	m_scriptEngine.addImportPath(QCoreApplication::applicationDirPath() + "/qml");
 
-	loadPlugins(QDir(QCoreApplication::applicationDirPath() + "/../plugins"));
+	loadPlugins(QDir(QCoreApplication::applicationDirPath()));
 	emit connectionsChanged();
 
-	loadDevices(QDir(QCoreApplication::applicationDirPath() + "/../devices"));
+	loadDevices(QDir(QCoreApplication::applicationDirPath() + "/devices"));
 	emit devicesChanged();
 }
 
 void SambaCore::loadPlugins(const QDir &pluginsDir)
 {
 	qDebug("Loading plugins from %s", pluginsDir.path().toLatin1().constData());
-	foreach (QString fileName, pluginsDir.entryList(QDir::Files))
+	foreach (QString fileName, pluginsDir.entryList(QStringList("*sambaplugin_*"), QDir::Files))
 	{
 		qDebug("Loading plugin %s", fileName.toLatin1().constData());
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));

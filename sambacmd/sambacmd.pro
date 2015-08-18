@@ -3,7 +3,7 @@ TEMPLATE = app
 QT -= gui
 QT += core qml
 
-TARGET = sambacmd.bin
+TARGET = sambacmd
 
 CONFIG += console
 CONFIG -= app_bundle
@@ -15,30 +15,18 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../sambacore/release/ 
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../sambacore/debug/ -lsambacore3
 else:unix: LIBS += -L$$OUT_PWD/../sambacore/ -lsambacore
 
+# set RPATH to $ORIGIN on Linux
+unix:!mac{
+    QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\''
+    QMAKE_RPATH =
+}
+
 INCLUDEPATH += $$PWD/../sambacore
 DEPENDPATH += $$PWD/../sambacore
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH += $$PWD/../devices
 
-# install launch script
-script.path = /
-win32:script.files += sambacmd.bat
-else:unix:script.files += sambacmd
-INSTALLS += script
-
 # install executable
-target.path = /libs
+target.path = /
 INSTALLS += target
-
-unix:!mac{
-    QMAKE_RPATH=
-}
-
-# make launch script executable
-unix:{
-	scriptexec.path = /
-	scriptexec.commands = chmod +x \$(INSTALL_ROOT)/sambacmd
-	scriptexec.depends = install_script
-	INSTALLS += scriptexec
-}

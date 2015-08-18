@@ -3,7 +3,7 @@ TEMPLATE = lib
 QT -= gui
 QT += core serialport qml
 
-TARGET = sambaconnectionserial
+TARGET = sambaplugin_conn_serial
 
 CONFIG += plugin
 
@@ -24,10 +24,12 @@ else:unix: LIBS += -L$$OUT_PWD/../sambacore/ -lsambacore
 INCLUDEPATH += $$PWD/../sambacore
 DEPENDPATH += $$PWD/../sambacore
 
-# install
-target.path = /plugins
-INSTALLS += target
-
+# set RPATH to $ORIGIN on Linux
 unix:!mac{
-    QMAKE_RPATH=
+    QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\''
+    QMAKE_RPATH =
 }
+
+# install
+target.path = /
+INSTALLS += target

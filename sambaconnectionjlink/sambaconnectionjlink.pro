@@ -3,7 +3,7 @@ TEMPLATE = lib
 QT -= gui
 QT += core qml
 
-TARGET = sambaconnectionjlink
+TARGET = sambaplugin_conn_jlink
 
 CONFIG += plugin
 
@@ -29,8 +29,8 @@ unix:contains(QT_ARCH, x86_64):{
     INCLUDEPATH += $$JLINKDIR/Inc
     LIBS += -L$$JLINKDIR -ljlinkarm
 
-    jlinklibs.path = /libs
-    jlinklibs.commands = cp -a $$JLINKDIR/libjlinkarm.so.* \$(INSTALL_ROOT)/libs
+    jlinklibs.path = /
+    jlinklibs.commands = cp -a $$JLINKDIR/libjlinkarm.so.* \$(INSTALL_ROOT)/
     INSTALLS += jlinklibs
 }
 else:win32:{
@@ -39,10 +39,12 @@ else:win32:{
     LIBS += -L$$JLINKDIR -lJLinkARM
 }
 
-# install
-target.path = /plugins
-INSTALLS += target
-
+# set RPATH to $ORIGIN on Linux
 unix:!mac{
-    QMAKE_RPATH=
+    QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\''
+    QMAKE_RPATH =
 }
+
+# install
+target.path = /
+INSTALLS += target
