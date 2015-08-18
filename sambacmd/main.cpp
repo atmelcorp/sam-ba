@@ -15,7 +15,8 @@ int main(int argc, char *argv[])
 	QCoreApplication::setApplicationName("sambacmd");
 	QCoreApplication::setApplicationVersion("3.0-pre3");
 
-	QLoggingCategory::setFilterRules("*.debug=false");
+	QLoggingCategory::setFilterRules("*.debug=false\n"
+									 "qml.debug=true");
 	qSetMessagePattern("%{message}");
 
 	QCommandLineParser parser;
