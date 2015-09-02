@@ -1,14 +1,14 @@
 #ifndef SAMBA_CONNECTION_H
 #define SAMBA_CONNECTION_H
 
-#include "sambacore_global.h"
+#include "sambacommon.h"
 #include "sambaobject.h"
 #include "sambaconnectionport.h"
 #include <QObject>
 #include <QStringList>
 #include <QtQml>
 
-class SAMBACORESHARED_EXPORT SambaConnection : public SambaObject
+class SAMBACOMMONSHARED_EXPORT SambaConnection : public SambaObject
 {
 	Q_OBJECT
 

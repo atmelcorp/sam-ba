@@ -1,4 +1,4 @@
-#include "sambacore.h"
+#include "sambacommon.h"
 #include "sambaconnectionport.h"
 
 SambaConnectionPort::SambaConnectionPort(QObject *parent)

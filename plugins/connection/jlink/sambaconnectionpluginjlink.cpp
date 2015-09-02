@@ -6,8 +6,8 @@ SambaConnectionPluginJlink::SambaConnectionPluginJlink(QObject *parent) :
 {
 }
 
-bool SambaConnectionPluginJlink::initPlugin(SambaCore* core)
+bool SambaConnectionPluginJlink::initPlugin(SambaEngine* engine)
 {
-	core->registerConnection(new SambaConnectionJlink(core));
+	engine->registerConnection(new SambaConnectionJlink(engine));
 	return true;
 }

@@ -1,20 +1,14 @@
-#ifndef SAMBA_CORE_H
-#define SAMBA_CORE_H
+#ifndef SAMBA_ENGINE_H
+#define SAMBA_ENGINE_H
 
-#include "sambacore_global.h"
+#include "sambacommon.h"
 #include "sambaconnection.h"
 #include "sambadevice.h"
 #include <QObject>
-#include <QLoggingCategory>
-#include <QScopedPointer>
 #include <QUrl>
 #include <QtQml>
 
-Q_DECLARE_LOGGING_CATEGORY(sambaLogCore)
-Q_DECLARE_LOGGING_CATEGORY(sambaLogApplet)
-Q_DECLARE_LOGGING_CATEGORY(sambaLogQml)
-
-class SAMBACORESHARED_EXPORT SambaCore : public QObject
+class SAMBACOMMONSHARED_EXPORT SambaEngine : public QObject
 {
 	Q_OBJECT
 
@@ -22,8 +16,8 @@ class SAMBACORESHARED_EXPORT SambaCore : public QObject
 	Q_PROPERTY(QQmlListProperty<QObject> devices READ getDevicesListProperty NOTIFY devicesChanged)
 
 public:
-	explicit SambaCore(QObject *parent = 0);
-	~SambaCore();
+	explicit SambaEngine(QObject *parent = 0);
+	~SambaEngine();
 
 	QQmlEngine *scriptEngine();
 	void evaluateScript(const QString &program);
@@ -65,4 +59,4 @@ private:
 	QList<QObject*> m_devices;
 };
 
-#endif // SAMBA_CORE_H
+#endif // SAMBA_ENGINE_H

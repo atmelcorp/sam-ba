@@ -1,13 +1,13 @@
 #ifndef SAMBA_DEVICE_H
 #define SAMBA_DEVICE_H
 
-#include "sambacore_global.h"
+#include "sambacommon.h"
 #include "sambaobject.h"
 #include "sambaapplet.h"
 #include <QObject>
 #include <QtQml>
 
-class SAMBACORESHARED_EXPORT SambaDevice : public SambaObject
+class SAMBACOMMONSHARED_EXPORT SambaDevice : public SambaObject
 {
 	Q_OBJECT
 

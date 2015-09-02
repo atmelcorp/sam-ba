@@ -1,10 +1,10 @@
 #ifndef SAMBA_SCRIPT_H
 #define SAMBA_SCRIPT_H
 
-#include "sambacore_global.h"
+#include "sambacommon.h"
 #include <QObject>
 
-class SAMBACORESHARED_EXPORT SambaScript : public QObject
+class SAMBACOMMONSHARED_EXPORT SambaScript : public QObject
 {
 	Q_OBJECT
 

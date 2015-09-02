@@ -1,4 +1,4 @@
-#include "sambacore.h"
+#include "sambaengine.h"
 #include "sambalogger.h"
 #include "sambascript.h"
 #include "sambaapplet.h"
@@ -8,15 +8,11 @@
 #include <QFile>
 #include <QThread>
 
-Q_LOGGING_CATEGORY(sambaLogCore, "samba.core")
-Q_LOGGING_CATEGORY(sambaLogApplet, "samba.applet")
-Q_LOGGING_CATEGORY(sambaLogQml, "samba.qml")
-
-SambaCore::SambaCore(QObject *parent) :	QObject(parent)
+SambaEngine::SambaEngine(QObject *parent) :	QObject(parent)
 {
 	// forward signals from engine
-	QObject::connect(&m_scriptEngine, &QQmlEngine::quit, this, &SambaCore::engineQuit, Qt::QueuedConnection);
-	QObject::connect(&m_scriptEngine, &QQmlEngine::warnings, this, &SambaCore::engineWarnings);
+	QObject::connect(&m_scriptEngine, &QQmlEngine::quit, this, &SambaEngine::engineQuit, Qt::QueuedConnection);
+	QObject::connect(&m_scriptEngine, &QQmlEngine::warnings, this, &SambaEngine::engineWarnings);
 
 	// register singletons
 	m_scriptEngine.rootContext()->setContextProperty("samba", this);
@@ -30,7 +26,7 @@ SambaCore::SambaCore(QObject *parent) :	QObject(parent)
 	emit devicesChanged();
 }
 
-void SambaCore::loadPlugins(const QDir &pluginsDir)
+void SambaEngine::loadPlugins(const QDir &pluginsDir)
 {
 	qCDebug(sambaLogCore, "Loading plugins from %s", pluginsDir.path().toLatin1().constData());
 	foreach (QString fileName, pluginsDir.entryList(QStringList("*sambaplugin_*"), QDir::Files))
@@ -56,7 +52,7 @@ void SambaCore::loadPlugins(const QDir &pluginsDir)
 	}
 }
 
-void SambaCore::loadDevices(const QDir &devicesDir)
+void SambaEngine::loadDevices(const QDir &devicesDir)
 {
 	qCDebug(sambaLogCore, "Loading devices from %s", devicesDir.path().toLatin1().constData());
 	foreach (QString fileName, devicesDir.entryList(QStringList("*.qml"), QDir::Files))
@@ -77,31 +73,31 @@ void SambaCore::loadDevices(const QDir &devicesDir)
 	}
 }
 
-void SambaCore::engineQuit()
+void SambaEngine::engineQuit()
 {
 	QCoreApplication::quit();
 }
 
-void SambaCore::engineWarnings(const QList<QQmlError> &warnings)
+void SambaEngine::engineWarnings(const QList<QQmlError> &warnings)
 {
 	qCWarning(sambaLogQml) << warnings;
 }
 
-SambaCore::~SambaCore()
+SambaEngine::~SambaEngine()
 {
 }
 
-QQmlEngine* SambaCore::scriptEngine()
+QQmlEngine* SambaEngine::scriptEngine()
 {
 	return &m_scriptEngine;
 }
 
-void SambaCore::evaluateScript(const QString &program)
+void SambaEngine::evaluateScript(const QString &program)
 {
 	m_scriptEngine.evaluate(program);
 }
 
-bool SambaCore::evaluateScript(const QUrl &url)
+bool SambaEngine::evaluateScript(const QUrl &url)
 {
 	QQmlComponent component(&m_scriptEngine, url);
 	if (component.status() != QQmlComponent::Ready)
@@ -122,7 +118,7 @@ bool SambaCore::evaluateScript(const QUrl &url)
 	return true;
 }
 
-void SambaCore::registerConnection(SambaConnection *conn)
+void SambaEngine::registerConnection(SambaConnection *conn)
 {
 	conn->refreshPorts();
 	m_connections.append(conn);
@@ -130,17 +126,17 @@ void SambaCore::registerConnection(SambaConnection *conn)
 		   conn->name().toLatin1().constData());
 }
 
-QQmlListProperty<SambaConnection> SambaCore::getConnectionsListProperty()
+QQmlListProperty<SambaConnection> SambaEngine::getConnectionsListProperty()
 {
 	return QQmlListPropertyOnQList<
-				SambaCore,
+				SambaEngine,
 				SambaConnection,
 				QList<SambaConnection*>,
-				&SambaCore::m_connections,
-				&SambaCore::connectionsChanged>::createList(this);
+				&SambaEngine::m_connections,
+				&SambaEngine::connectionsChanged>::createList(this);
 }
 
-SambaConnection *SambaCore::connection(const QString &tag)
+SambaConnection *SambaEngine::connection(const QString &tag)
 {
 	SambaConnection *conn;
 	foreach (conn, m_connections)
@@ -151,17 +147,17 @@ SambaConnection *SambaCore::connection(const QString &tag)
 	return NULL;
 }
 
-QQmlListProperty<QObject> SambaCore::getDevicesListProperty()
+QQmlListProperty<QObject> SambaEngine::getDevicesListProperty()
 {
 	return QQmlListPropertyOnQList<
-				SambaCore,
+				SambaEngine,
 				QObject,
 				QList<QObject*>,
-				&SambaCore::m_devices,
-				&SambaCore::devicesChanged>::createList(this);
+				&SambaEngine::m_devices,
+				&SambaEngine::devicesChanged>::createList(this);
 }
 
-QObject *SambaCore::device(const QString &tag)
+QObject *SambaEngine::device(const QString &tag)
 {
 	QObject *device;
 	foreach (device, m_devices)
@@ -172,17 +168,17 @@ QObject *SambaCore::device(const QString &tag)
 	return NULL;
 }
 
-void SambaCore::sleep(int secs)
+void SambaEngine::sleep(int secs)
 {
 	QThread::sleep(secs);
 }
 
-void SambaCore::msleep(int msecs)
+void SambaEngine::msleep(int msecs)
 {
 	QThread::msleep(msecs);
 }
 
-void SambaCore::usleep(int usecs)
+void SambaEngine::usleep(int usecs)
 {
 	QThread::usleep(usecs);
 }

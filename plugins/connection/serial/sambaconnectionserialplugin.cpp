@@ -7,9 +7,9 @@ SambaConnectionPluginSerial::SambaConnectionPluginSerial(QObject *parent)
 
 }
 
-bool SambaConnectionPluginSerial::initPlugin(SambaCore* core)
+bool SambaConnectionPluginSerial::initPlugin(SambaEngine* engine)
 {
-	core->registerConnection(new SambaConnectionSerial(core, false));
-	core->registerConnection(new SambaConnectionSerial(core, true));
+	engine->registerConnection(new SambaConnectionSerial(engine, false));
+	engine->registerConnection(new SambaConnectionSerial(engine, true));
 	return true;
 }

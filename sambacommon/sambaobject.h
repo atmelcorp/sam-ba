@@ -1,10 +1,10 @@
 #ifndef SAMBA_OBJECT_H
 #define SAMBA_OBJECT_H
 
-#include "sambacore_global.h"
+#include "sambacommon.h"
 #include <QObject>
 
-class SAMBACORESHARED_EXPORT SambaObject : public QObject
+class SAMBACOMMONSHARED_EXPORT SambaObject : public QObject
 {
 	Q_OBJECT
 

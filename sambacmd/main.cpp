@@ -1,4 +1,4 @@
-#include "sambacore.h"
+#include "sambaengine.h"
 
 #include <QCoreApplication>
 #include <QTimer>
@@ -36,10 +36,10 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	SambaCore core(&app);
+	SambaEngine engine(&app);
 
 	qCDebug(sambaLogCmd, "Loading script from %s", script.toLatin1().constData());
-	core.evaluateScript(QUrl::fromLocalFile(script));
+	engine.evaluateScript(QUrl::fromLocalFile(script));
 
 	//return app.exec();
 }

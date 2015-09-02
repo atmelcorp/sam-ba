@@ -13,7 +13,7 @@ class Q_DECL_EXPORT SambaConnectionPluginSerial : public SambaPlugin
 public:
 	SambaConnectionPluginSerial(QObject *parent = 0);
 
-	virtual bool initPlugin(SambaCore* core);
+	virtual bool initPlugin(SambaEngine* engine);
 };
 
 #endif // SAMBA_CONNECTION_PLUGIN_SERIAL_H

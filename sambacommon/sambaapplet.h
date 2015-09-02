@@ -1,12 +1,12 @@
 #ifndef SAMBA_APPLET_H
 #define SAMBA_APPLET_H
 
-#include "sambacore_global.h"
+#include "sambacommon.h"
 #include "sambaobject.h"
 #include <QObject>
 #include <QtQml>
 
-class SAMBACORESHARED_EXPORT SambaApplet : public SambaObject
+class SAMBACOMMONSHARED_EXPORT SambaApplet : public SambaObject
 {
 	Q_OBJECT
 

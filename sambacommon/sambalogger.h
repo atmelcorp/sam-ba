@@ -1,12 +1,12 @@
 #ifndef SAMBALOGGER_H
 #define SAMBALOGGER_H
 
-#include "sambacore_global.h"
+#include "sambacommon.h"
 #include <QObject>
 
 class SambaLoggerEntry;
 
-class SAMBACORESHARED_EXPORT SambaLogger : public QObject
+class SAMBACOMMONSHARED_EXPORT SambaLogger : public QObject
 {
 	Q_OBJECT
 

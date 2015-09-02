@@ -12,7 +12,8 @@ CONFIG += dll
 DEFINES += SAMBACOMMON_LIBRARY
 
 SOURCES += \
-    sambacore.cpp \
+    sambacommon.cpp \
+    sambaengine.cpp \
     sambascript.cpp \
     sambaconnection.cpp \
     sambaconnectionport.cpp \
@@ -22,8 +23,8 @@ SOURCES += \
     sambalogger.cpp
 
 HEADERS += \
-    sambacore.h\
-    sambacore_global.h \
+    sambacommon.h\
+    sambaengine.h \
     sambascript.h \
     sambaconnection.h \
     sambaconnectionport.h \
