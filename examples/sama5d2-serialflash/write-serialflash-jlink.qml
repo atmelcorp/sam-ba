@@ -1,7 +1,8 @@
+import QtQuick 2.3
 import SAMBA 1.0
 
-Script {
-	onScriptStarted: {
+Item {
+	Component.onCompleted: {
 		print("Opening SAMBA connection")
 		var port = samba.connection('jlink').ports[0]
 		port.connect()

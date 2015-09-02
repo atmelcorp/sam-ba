@@ -1,6 +1,5 @@
 #include "sambaengine.h"
 #include "sambalogger.h"
-#include "sambascript.h"
 #include "sambaapplet.h"
 #include "sambadevice.h"
 #include "sambaplugin.h"
@@ -105,13 +104,12 @@ bool SambaEngine::evaluateScript(const QUrl &url)
 		return false;
 	}
 
-	SambaScript* obj = qobject_cast<SambaScript*>(component.create());
+	QObject* obj = component.create();
 	if (!obj)
 	{
-		qCCritical(sambaLogCore, "Script root component must be SambaScript");
+		qCCritical(sambaLogCore, "Cannot create script component");
 		return false;
 	}
-	obj->startScript();
 	delete obj;
 
 	return true;

@@ -1,10 +1,11 @@
+import QtQuick 2.3
 import SAMBA 1.0
 
 // import helper javascript functions in namespace "BootCfg"
 import "sama5d2-boot-config.js" as BootCfg
 
-Script {
-	onScriptStarted: {
+Item {
+	Component.onCompleted: {
 		print("Opening SAMBA connection")
 		var port = samba.connection('at91').ports[0]
 		port.baudRate = 57600

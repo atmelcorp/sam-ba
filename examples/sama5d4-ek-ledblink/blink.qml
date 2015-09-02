@@ -1,8 +1,9 @@
+import QtQuick 2.3
 import SAMBA 1.0
 import "led.js" as Led
 
-Script {
-	onScriptStarted: {
+Item {
+	Component.onCompleted: {
 		print("Opening SAMBA connection")
 		var port = samba.connection('at91').ports[0]
 		port.connect()

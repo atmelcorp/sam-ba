@@ -1,7 +1,6 @@
 #include "sambacore.h"
 #include "sambautils.h"
 #include "sambabytearray.h"
-#include "sambascript.h"
 #include "sambaapplet.h"
 #include "sambadevice.h"
 #include "sambaconnection.h"
@@ -20,7 +19,6 @@ void SambaCorePlugin::registerTypes(const char *uri)
 
 	qmlRegisterSingletonType<SambaUtils>("SAMBA", 1, 0, "Utils", sambautils_singletontype_provider);
 	qmlRegisterType<SambaByteArray>("SAMBA", 1, 0, "ByteArray");
-	qmlRegisterType<SambaScript>(uri, 1, 0, "Script");
 	qmlRegisterType<SambaApplet>(uri, 1, 0, "Applet");
 	qmlRegisterType<SambaDevice>(uri, 1, 0, "Device");
 	qmlRegisterType<SambaConnection>(uri, 1, 0, "Connection");

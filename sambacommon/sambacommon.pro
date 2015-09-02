@@ -16,7 +16,6 @@ SOURCES += \
     sambaengine.cpp \
     sambabytearray.cpp \
     sambautils.cpp \
-    sambascript.cpp \
     sambaconnection.cpp \
     sambaconnectionport.cpp \
     sambaobject.cpp \
@@ -29,7 +28,6 @@ HEADERS += \
     sambaengine.h \
     sambabytearray.h \
     sambautils.h \
-    sambascript.h \
     sambaconnection.h \
     sambaconnectionport.h \
     utils.h \
