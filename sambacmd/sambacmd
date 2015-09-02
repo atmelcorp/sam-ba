@@ -1,4 +1,0 @@
-#!/bin/sh
-
-BASEDIR=$(dirname $0)
-LD_LIBRARY_PATH=$BASEDIR/libs $BASEDIR/libs/sambacmd.bin $*
