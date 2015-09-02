@@ -3,14 +3,13 @@ TEMPLATE = subdirs
 DISTFILES += TODO
 
 docs.path = /
-
-docs.files = \
-	README.md \
-	LICENSE.txt
-
+docs.files = README.md LICENSE.txt
 unix:contains(QT_ARCH, arm):docs.files += README.armv7.md
-
 INSTALLS += docs
+
+qtconf.path = /
+qtconf.files = qt.conf
+INSTALLS += qtconf
 
 SUBDIRS = \
 	sambacore \
