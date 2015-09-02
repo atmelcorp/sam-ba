@@ -18,14 +18,6 @@ SambaCore::SambaCore(QObject *parent) :	QObject(parent)
 	QObject::connect(&m_scriptEngine, &QQmlEngine::quit, this, &SambaCore::engineQuit, Qt::QueuedConnection);
 	QObject::connect(&m_scriptEngine, &QQmlEngine::warnings, this, &SambaCore::engineWarnings);
 
-	// register Samba types
-	qmlRegisterType<SambaScript>("SAMBA", 1, 0, "Script");
-	qmlRegisterType<SambaApplet>("SAMBA", 1, 0, "Applet");
-	qmlRegisterType<SambaDevice>("SAMBA", 1, 0, "Device");
-	qmlRegisterType<SambaConnection>("SAMBA", 1, 0, "Connection");
-	qmlRegisterType<SambaConnectionPort>("SAMBA", 1, 0, "ConnectionPort");
-	qRegisterMetaType<SambaApplet::AppletKind>("SambaApplet::AppletKind");
-
 	// register singletons
 	m_scriptEngine.rootContext()->setContextProperty("samba", this);
 	m_scriptEngine.rootContext()->setContextProperty("logger", SambaLogger::getInstance());

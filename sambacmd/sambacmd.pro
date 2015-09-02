@@ -11,18 +11,18 @@ CONFIG(debug, debug|release):CONFIG += qml_debug
 
 SOURCES += main.cpp
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../sambacore/release/ -lsambacore3
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../sambacore/debug/ -lsambacore3
-else:unix: LIBS += -L$$OUT_PWD/../sambacore/ -lsambacore
+# include/link sambacommon library
+INCLUDEPATH += $$PWD/../sambacommon
+DEPENDPATH += $$PWD/../sambacommon
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../sambacommon/release/ -lsambacommon3
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../sambacommon/debug/ -lsambacommon3
+else:unix: LIBS += -L$$OUT_PWD/../sambacommon/ -lsambacommon
 
 # set RPATH to $ORIGIN on Linux
 unix:!mac{
     QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\''
     QMAKE_RPATH =
 }
-
-INCLUDEPATH += $$PWD/../sambacore
-DEPENDPATH += $$PWD/../sambacore
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH += $$PWD/../devices

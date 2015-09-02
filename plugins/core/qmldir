@@ -1,0 +1,3 @@
+module SAMBA
+plugin samba_core
+classname SambaCorePlugin

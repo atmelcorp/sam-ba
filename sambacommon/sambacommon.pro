@@ -3,13 +3,13 @@ TEMPLATE = lib
 QT -= gui
 QT += qml
 
-TARGET = sambacore
+TARGET = sambacommon
 
 VERSION = 3.0.0
 
 CONFIG += dll
 
-DEFINES += SAMBACORE_LIBRARY
+DEFINES += SAMBACOMMON_LIBRARY
 
 SOURCES += \
     sambacore.cpp \

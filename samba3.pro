@@ -12,7 +12,8 @@ qtconf.files = qt.conf
 INSTALLS += qtconf
 
 SUBDIRS = \
-	sambacore \
+	sambacommon \
+	plugins \
 	devices \
 	examples \
 	sambacmd \
@@ -53,6 +54,6 @@ else:win32:{
 	INSTALLS += qtlibs
 }
 
-sambacmd.depends = sambacore
-sambaconnectionserial.depends = sambacore
-sambaconnectionjlink.depends = sambacore
+sambacmd.depends = sambacommon
+sambaconnectionserial.depends = sambacommon
+sambaconnectionjlink.depends = sambacommon

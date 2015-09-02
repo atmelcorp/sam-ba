@@ -17,12 +17,12 @@ HEADERS += \
     sambaconnectionportjlink.h \
     sambaconnectionpluginjlink.h
 
-win32:CONFIG(release, debug|release):LIBS += -L$$OUT_PWD/../sambacore/release/ -lsambacore3
-else:win32:CONFIG(debug, debug|release):LIBS += -L$$OUT_PWD/../sambacore/debug/ -lsambacore3
-else:unix:LIBS += -L$$OUT_PWD/../sambacore/ -lsambacore
-
-INCLUDEPATH += $$PWD/../sambacore
-DEPENDPATH += $$PWD/../sambacore
+# include/link sambacommon library
+INCLUDEPATH += $$PWD/../sambacommon
+DEPENDPATH += $$PWD/../sambacommon
+win32:CONFIG(release, debug|release):LIBS += -L$$OUT_PWD/../sambacommon/release/ -lsambacommon3
+else:win32:CONFIG(debug, debug|release):LIBS += -L$$OUT_PWD/../sambacommon/debug/ -lsambacommon3
+else:unix:LIBS += -L$$OUT_PWD/../sambacommon/ -lsambacommon
 
 unix:contains(QT_ARCH, x86_64):{
     JLINKDIR = /opt/SEGGER/JLinkSDK_Linux_V500b_x86_64

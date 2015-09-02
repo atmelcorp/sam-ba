@@ -3,7 +3,7 @@
 
 #include <QtCore/qglobal.h>
 
-#if defined(SAMBACORE_LIBRARY)
+#if defined(SAMBACOMMON_LIBRARY)
 #  define SAMBACORESHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define SAMBACORESHARED_EXPORT Q_DECL_IMPORT
