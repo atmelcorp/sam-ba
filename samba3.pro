@@ -14,7 +14,6 @@ INSTALLS += qtconf
 SUBDIRS = \
 	sambacommon \
 	plugins \
-	devices \
 	examples \
 	sambacmd
 
