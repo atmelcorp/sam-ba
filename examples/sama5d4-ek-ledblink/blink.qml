@@ -1,28 +1,30 @@
-import QtQuick 2.3
+import QtQuick 2.0
 import SAMBA 1.0
+import SAMBA.Connection.Serial 1.0
 import "led.js" as Led
 
 Item {
-	Component.onCompleted: {
-		print("Opening SAMBA connection")
-		var port = samba.connection('at91').ports[0]
-		port.connect()
+	SerialConnection {
+		id: connection
 
-		Led.setup(port)
+		onConnectionOpened: {
+			// Setup GPIO
+			Led.setup(this)
 
-		var led = 0
-		for (var i = 0; i < 40; i++) {
-			Utils.msleep(250)
-			Led.set(port, led, true)
-			led++
-			if (led >= 3)
-				led = 0
+			// Blink LEDs a few times
+			var led = 0
+			for (var i = 0; i < 40; i++) {
+				Utils.msleep(250)
+				Led.set(this, led, true)
+				led++
+				if (led >= 3)
+					led = 0
+			}
 		}
 
-		print("Closing SAMBA connection")
-		port.disconnect()
-
-		print("Exiting")
-		Qt.quit()
+		onConnectionFailed: print("Connection failed: " + message)
 	}
+
+	Component.onCompleted: connection.open()
+	Component.onDestruction: connection.close()
 }

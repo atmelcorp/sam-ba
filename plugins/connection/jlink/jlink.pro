@@ -3,19 +3,12 @@ CONFIG += plugin
 QT -= gui
 QT += core qml
 
-TARGET = $$qtLibraryTarget(sambaplugin_conn_jlink)
+TARGET = $$qtLibraryTarget(samba_conn_jlink)
 
-DESTPATH = /
+DESTPATH = /qml/SAMBA/Connection/JLink
 
-SOURCES += \
-    sambaconnectionjlink.cpp \
-    sambaconnectionportjlink.cpp \
-    sambaconnectionpluginjlink.cpp
-
-HEADERS += \
-    sambaconnectionjlink.h \
-    sambaconnectionportjlink.h \
-    sambaconnectionpluginjlink.h
+SOURCES += sambaconnectionjlink.cpp
+HEADERS += sambaconnectionjlink.h
 
 # include/link sambacommon library
 INCLUDEPATH += $$PWD/../../../sambacommon
@@ -33,7 +26,7 @@ unix:contains(QT_ARCH, x86_64):{
     jlinklibs.commands = cp -a $$JLINKDIR/libjlinkarm.so.* \$(INSTALL_ROOT)/lib
     INSTALLS += jlinklibs
 
-    QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/lib\''
+    QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../../../../lib\''
     QMAKE_RPATH =
 }
 else:win32:{
@@ -46,6 +39,12 @@ else:win32:{
     INSTALLS += jlinklibs
 }
 
+qml.files = qmldir \
+    JLinkConnection.qml
+
 # install
 target.path = $$DESTPATH
-INSTALLS += target
+qml.path = $$DESTPATH
+INSTALLS += target qml
+
+OTHER_FILES += $$qml.files

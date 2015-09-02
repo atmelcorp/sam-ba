@@ -10,14 +10,13 @@ Q_LOGGING_CATEGORY(sambaLogCmd, "samba.cmd")
 
 int main(int argc, char *argv[])
 {
-	QCoreApplication app(argc, argv);
+	QLoggingCategory::setFilterRules("*.debug=false\n"
+			"qml.debug=true");
+	qSetMessagePattern("%{message}");
 
+	QCoreApplication app(argc, argv);
 	QCoreApplication::setApplicationName("sambacmd");
 	QCoreApplication::setApplicationVersion("3.0-pre3");
-
-	QLoggingCategory::setFilterRules("*.debug=false\n"
-									 "qml.debug=true");
-	qSetMessagePattern("%{message}");
 
 	QCommandLineParser parser;
 	parser.setApplicationDescription("SAM-BA Command Line Tool");
@@ -38,7 +37,7 @@ int main(int argc, char *argv[])
 
 	SambaEngine engine(&app);
 
-	qCDebug(sambaLogCmd, "Loading script from %s", script.toLatin1().constData());
+	qCDebug(sambaLogCmd, "Loading script from %s", script.toLocal8Bit().constData());
 	engine.evaluateScript(QUrl::fromLocalFile(script));
 
 	//return app.exec();

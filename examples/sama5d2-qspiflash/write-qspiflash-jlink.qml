@@ -1,68 +1,42 @@
-import QtQuick 2.3
 import SAMBA 1.0
+import SAMBA.Connection.JLink 1.0
+import SAMBA.Device.SAMA5D2 1.0
 
-Item {
-	Component.onCompleted: {
-		print("Opening SAMBA connection")
-		var port = samba.connection('jlink').ports[0]
-		port.connect()
+AppletLoader {
+	connection: JLinkConnection {
+		//port: "99999999"
+	}
 
-		var device = samba.device("sama5d2")
-		var status
+	device: SAMA5D2 { }
 
-		// Reconfigure L2-Cache as SRAM
-		var SFR_L2CC_HRAMC = 0xf8030058
-		port.writeu32(SFR_L2CC_HRAMC, 0)
+	onConnectionOpened: {
+		// initialize QSPI applet
+		if (!appletInitialize("qspiflash"))
+			return
 
-		// qspiflash
-		port.writeApplet(device.applet("qspiflash"))
-		status = port.executeApplet(Applet.CmdInit, 0)
-		print("qspiflash applet status -> " + status)
-		if (status === 0)
-		{
-			print("memorySize: " + port.readMailbox(0) + " bytes")
-			print("appletBufferAddress: 0x" + port.readMailbox(1).toString(16))
-			print("appletBufferSize: " + port.readMailbox(2) + " bytes")
-		}
+		// erase first 4MB
+		appletErase(0, 4 * 1024 * 1024)
 
-		// erase first 6MB
-		var offset = 0
-		while (offset < 6 * 1024 * 1024) {
-			port.executeApplet(Applet.CmdBufferErase, offset)
-			offset += 64 * 1024
-		}
-
-		port.executeAppletWrite(0x00000, "at91bootstrap.bin")
-		port.executeAppletWrite(0x04000, "u-boot-env.bin")
-		port.executeAppletWrite(0x08000, "u-boot.bin")
-		port.executeAppletWrite(0x60000, "at91-sama5d2_xplained.dtb")
-		port.executeAppletWrite(0x6c000, "zImage")
+		// write files
+		appletWrite(0x00000, "at91bootstrap.bin")
+		appletWrite(0x04000, "u-boot-env.bin")
+		appletWrite(0x08000, "u-boot.bin")
+		appletWrite(0x60000, "at91-sama5d2_xplained.dtb")
+		appletWrite(0x6c000, "zImage")
 
 		// Use GPBR_0 as boot configuration word
-		var BSC_CR = 0xf8048054
-		var BSC_CR_WPKEY = 0x6683 << 16
-		var BSC_CR_GPBR_VALID = 1 << 2
-		port.writeu32(BSC_CR, BSC_CR_WPKEY | BSC_CR_GPBR_VALID | 0)
+		BootCfg.writeBSCR(connection, BootCfg.BSC_CR_GPBR_VALID | BootCfg.BSC_CR_GPBR_0)
 
-		// Enable external boot only on QSPI0 IOSET 3
-		var GPBR_0 = 0xf8045400
-		var EXT_MEM_BOOT_ENABLE = 1 << 18
-		var SDMMC_1_DISABLE = 1 << 11
-		var SDMMC_0_DISABLE = 1 << 10
-		var NFC_DISABLE = 2 << 8
-		var SPI_1_DISABLE = 3 << 6
-		var SPI_0_DISABLE = 3 << 4
-		var QSPI_1_DISABLE = 3 << 2
-		var QSPI_0_IOSET_3 = 2 << 0
-		port.writeu32(GPBR_0, EXT_MEM_BOOT_ENABLE | SDMMC_1_DISABLE |
-					  SDMMC_0_DISABLE | NFC_DISABLE |
-					  SPI_1_DISABLE | SPI_0_DISABLE |
-					  QSPI_1_DISABLE | QSPI_0_IOSET_3)
-
-		print("Closing SAMBA connection")
-		port.disconnect()
-
-		print("Exiting")
-		Qt.quit()
+		// Enable external boot only on QSPI0 IOSET3
+		BootCfg.writeGPBR(connection, 0, BootCfg.BCW_EXT_MEM_BOOT_ENABLE |
+						  BootCfg.BCW_CONSOLE1_IOSET1 |
+						  BootCfg.BCW_JTAG_IOSET1 |
+						  BootCfg.BCW_SDMMC1_DISABLE |
+						  BootCfg.BCW_SDMMC0_DISABLE |
+						  BootCfg.BCW_NFC_DISABLE |
+						  BootCfg.BCW_SPI1_DISABLE |
+						  BootCfg.BCW_SPI0_DISABLE |
+						  BootCfg.BCW_QSPI1_DISABLE |
+						  BootCfg.BCW_QSPI0_IOSET3)
 	}
 }

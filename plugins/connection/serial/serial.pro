@@ -3,19 +3,12 @@ CONFIG += plugin
 QT -= gui
 QT += core serialport qml
 
-TARGET = $$qtLibraryTarget(sambaplugin_conn_serial)
+TARGET = $$qtLibraryTarget(samba_conn_serial)
 
-DESTPATH = /
+DESTPATH = /qml/SAMBA/Connection/Serial
 
-SOURCES += \
-    sambaconnectionserialplugin.cpp \
-    sambaconnectionserial.cpp \
-    sambaconnectionportserial.cpp
-
-HEADERS += \
-    sambaconnectionserial.h \
-    sambaconnectionportserial.h \
-    sambaconnectionpluginserial.h
+SOURCES += sambaconnectionserial.cpp
+HEADERS += sambaconnectionserial.h
 
 # include/link sambacommon library
 INCLUDEPATH += $$PWD/../../../sambacommon
@@ -24,12 +17,18 @@ win32:CONFIG(release, debug|release):LIBS += -L$$OUT_PWD/../../../sambacommon/re
 else:win32:CONFIG(debug, debug|release):LIBS += -L$$OUT_PWD/../../../sambacommon/debug/ -lsambacommon3
 else:unix:LIBS += -L$$OUT_PWD/../../../sambacommon/ -lsambacommon
 
-# set RPATH to $ORIGIN on Linux
+# set RPATH on Linux
 unix:!mac:{
-    QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/lib\''
+    QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../../../../lib\''
     QMAKE_RPATH =
 }
 
+qml.files = qmldir \
+    SerialConnection.qml
+
 # install
 target.path = $$DESTPATH
-INSTALLS += target
+qml.path = $$DESTPATH
+INSTALLS += target qml
+
+OTHER_FILES += $$qml.files

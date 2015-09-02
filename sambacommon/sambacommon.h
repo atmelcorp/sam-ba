@@ -1,5 +1,5 @@
-#ifndef SAMBA_COMMON_H
-#define SAMBA_COMMON_H
+#ifndef SAMBA_COMMON_GLOBAL_H
+#define SAMBA_COMMON_GLOBAL_H
 
 #include <QtCore/qglobal.h>
 #include <QLoggingCategory>
@@ -11,7 +11,6 @@
 #endif
 
 Q_DECLARE_LOGGING_CATEGORY(sambaLogCore)
-Q_DECLARE_LOGGING_CATEGORY(sambaLogApplet)
 Q_DECLARE_LOGGING_CATEGORY(sambaLogQml)
 
-#endif // SAMBA_COMMON_H
+#endif // SAMBA_COMMON_GLOBAL_H

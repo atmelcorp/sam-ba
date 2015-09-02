@@ -15,27 +15,13 @@ SOURCES += \
     sambacommon.cpp \
     sambaengine.cpp \
     sambabytearray.cpp \
-    sambautils.cpp \
-    sambaconnection.cpp \
-    sambaconnectionport.cpp \
-    sambaobject.cpp \
-    sambaapplet.cpp \
-    sambadevice.cpp \
-    sambalogger.cpp
+    sambautils.cpp
 
 HEADERS += \
-    sambacommon.h\
-    sambaengine.h \
+    sambacommon.h \
+    sambaengine.h\
     sambabytearray.h \
-    sambautils.h \
-    sambaconnection.h \
-    sambaconnectionport.h \
-    utils.h \
-    sambaobject.h \
-    sambaplugin.h \
-    sambaapplet.h \
-    sambadevice.h \
-    sambalogger.h
+    sambautils.h
 
 unix:!mac:{
     QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\''

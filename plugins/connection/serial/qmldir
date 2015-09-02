@@ -1,0 +1,5 @@
+module SAMBA.Connection.Serial
+depends SAMBA 1.0
+plugin samba_conn_serial
+classname SambaConnectionSerialPlugin
+SerialConnection 1.0 SerialConnection.qml

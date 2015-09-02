@@ -111,94 +111,94 @@ var BCW_FUSE_JTAG_DIS       = 1 << 31
 /**
  * Read Chip ID
  */
-function readChipId(port) {
-	return port.readu32(REG_CHIPID)
+function readChipId(conn) {
+	return conn.readu32(REG_CHIPID)
 }
 
 /**
  * Read BSCR
  */
-function readBSCR(port) {
-	return port.readu32(REG_BSC_CR)
+function readBSCR(conn) {
+	return conn.readu32(REG_BSC_CR)
 }
 
 /**
  * Write BSCR
  */
-function writeBSCR(port, value) {
-	port.writeu32(REG_BSC_CR, BSC_CR_WPKEY | (value & 0xffff))
+function writeBSCR(conn, value) {
+	conn.writeu32(REG_BSC_CR, BSC_CR_WPKEY | (value & 0xffff))
 }
 
 /**
  * Read GPBR
  */
-function readGPBR(port, index) {
-	return port.readu32(REG_GPBR[index])
+function readGPBR(conn, index) {
+	return conn.readu32(REG_GPBR[index])
 }
 
 /**
  * Write GPBR
  */
-function writeGPBR(port, index, value) {
-	port.writeu32(REG_GPBR[index], value)
+function writeGPBR(conn, index, value) {
+	conn.writeu32(REG_GPBR[index], value)
 }
 
 /**
  * Enable SFC clock using PMC
  */
-function enableSFC(port) {
-	port.writeu32(REG_PMC_PCR, PMC_PCR_CMD | PMC_PCR_EN | ID_SFC)
+function enableSFC(conn) {
+	conn.writeu32(REG_PMC_PCR, PMC_PCR_CMD | PMC_PCR_EN | ID_SFC)
 }
 
 /**
  * Disable SFC clock using PMC
  */
-function disableSFC(port) {
-	port.writeu32(REG_PMC_PCR, PMC_PCR_CMD | ID_SFC)
+function disableSFC(conn) {
+	conn.writeu32(REG_PMC_PCR, PMC_PCR_CMD | ID_SFC)
 }
 
 /**
  * Read Boot Config Fuse (DR16)
  */
-function readFuse(port, value) {
-	return port.readu32(REG_SFC_DR16)
+function readFuse(conn, value) {
+	return conn.readu32(REG_SFC_DR16)
 }
 
 /**
  * Write Boot Config Fuse (DR16)
  */
-function writeFuse(port, value) {
+function writeFuse(conn, value) {
 	// Write the key to SFC_KR register
-	port.writeu32(REG_SFC_KR, SFC_KR_KEY)
+	conn.writeu32(REG_SFC_KR, SFC_KR_KEY)
 
 	// Write value to data register 16
-	port.writeu32(REG_SFC_DR16, value)
+	conn.writeu32(REG_SFC_DR16, value)
 
 	// Wait for completion by polling SFC_SR register
-	while ((port.readu32(REG_SFC_SR) & SFC_SR_PGMC) != SFC_SR_PGMC) {}
+	while ((conn.readu32(REG_SFC_SR) & SFC_SR_PGMC) != SFC_SR_PGMC) {}
 }
 
 /**
  * Clear BSCR and all GPBRs
  */
-function resetConfig(port) {
-	writeBSCR(port, 0)
-	writeGPBR(port, 0, 0)
-	writeGPBR(port, 1, 0)
-	writeGPBR(port, 2, 0)
-	writeGPBR(port, 3, 0)
+function resetConfig(conn) {
+	writeBSCR(conn, 0)
+	writeGPBR(conn, 0, 0)
+	writeGPBR(conn, 1, 0)
+	writeGPBR(conn, 2, 0)
+	writeGPBR(conn, 3, 0)
 }
 
 /**
  * Print current BCSR/GPBR/Fuse configuration
  */
-function printConfig(port) {
-	print("BSCR      = " + bscrToText(readBSCR(port)))
-	print("GPBR[0]   = " + configToText(readGPBR(port, 0)))
-	print("GPBR[1]   = " + configToText(readGPBR(port, 1)))
-	print("GPBR[2]   = " + configToText(readGPBR(port, 2)))
-	print("GPBR[3]   = " + configToText(readGPBR(port, 3)))
-	print("Boot Fuse = " + configToText(readFuse(port)))
+function printConfig(conn) {
+	print("BSCR      = " + bscrToText(readBSCR(conn)))
+	print("GPBR[0]   = " + configToText(readGPBR(conn, 0)))
+	print("GPBR[1]   = " + configToText(readGPBR(conn, 1)))
+	print("GPBR[2]   = " + configToText(readGPBR(conn, 2)))
+	print("GPBR[3]   = " + configToText(readGPBR(conn, 3)))
+	print("Boot Fuse = " + configToText(readFuse(conn)))
 }
 
 /**

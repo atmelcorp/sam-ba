@@ -18,7 +18,7 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../sambacommon/release
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../sambacommon/debug/ -lsambacommon3
 else:unix: LIBS += -L$$OUT_PWD/../sambacommon/ -lsambacommon
 
-# set RPATH to $ORIGIN on Linux
+# set RPATH on Linux
 unix:!mac:{
     QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/lib\''
     QMAKE_RPATH =

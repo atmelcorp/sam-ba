@@ -1,43 +1,45 @@
 import QtQuick 2.3
 import SAMBA 1.0
-
-// import helper javascript functions in namespace "BootCfg"
-import "sama5d2-boot-config.js" as BootCfg
+import SAMBA.Connection.Serial 1.0
+import SAMBA.Device.SAMA5D2 1.0
 
 Item {
-	Component.onCompleted: {
-		print("Opening SAMBA connection")
-		var port = samba.connection('at91').ports[0]
-		port.baudRate = 57600
-		port.connect()
+	SerialConnection {
+		id: connection
 
-		// enable SFC
-		BootCfg.enableSFC(port)
+		//port: "ttyACM0"
+		//port: "COM85"
+		//port: "ttyUSB0"
+		baudRate: 57600
 
-		// read and display previous BSCR/GPBR/Fuse values
-		print("-- previous boot config --")
-		BootCfg.printConfig(port)
+		onConnectionOpened: {
+			// enable SFC
+			BootCfg.enableSFC(this)
 
-		// clear and disable GPBRx
-		BootCfg.resetConfig(port)
+			// read and display previous BSCR/GPBR/Fuse values
+			print("-- previous boot config --")
+			BootCfg.printConfig(this)
 
-		// write new Boot Configuration Word Fuse
-		// TODO: Set the correct value using constants from BootCfg
-		// and uncomment the writeFuse function call.
-		var bcw = BootCfg.BCW_EXT_MEM_BOOT_ENABLE | BootCfg.BCW_QSPI0_IOSET1 | BootCfg.BCW_JTAG_IOSET1
-		//BootCfg.writeFuse(port, bcw)
+			// clear and disable GPBRx
+			BootCfg.resetConfig(this)
 
-		// read and display new BSCR/GPBR/Fuse values
-		print("-- new boot config --")
-		BootCfg.printConfig(port)
+			// write new Boot Configuration Word Fuse
+			// TODO: Set the correct value using constants from BootCfg
+			// and uncomment the writeFuse function call.
+			var bcw = BootCfg.BCW_EXT_MEM_BOOT_ENABLE | BootCfg.BCW_QSPI0_IOSET1 | BootCfg.BCW_JTAG_IOSET1
+			//BootCfg.writeFuse(this, bcw)
 
-		// disable SFC
-		BootCfg.disableSFC(port)
+			// read and display new BSCR/GPBR/Fuse values
+			print("-- new boot config --")
+			BootCfg.printConfig(this)
 
-		// disconnect and exit
-		print("Closing SAMBA connection")
-		port.disconnect()
-		print("Exiting")
-		Qt.quit()
+			// disable SFC
+			BootCfg.disableSFC(this)
+		}
+
+		onConnectionFailed: print("Connection failed: " + message)
 	}
+
+	Component.onCompleted: connection.open()
+	Component.onDestruction: connection.close()
 }
