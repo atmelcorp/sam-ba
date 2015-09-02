@@ -14,6 +14,8 @@ Item {
 	property int bufferSize
 
 	property int initCommand
+	property var initArgs: []
+
 	property int readCommand
 	property int writeCommand
 	property int blockEraseCommand

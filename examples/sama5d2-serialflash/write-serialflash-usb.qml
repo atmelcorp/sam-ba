@@ -9,7 +9,16 @@ AppletLoader {
 		baudRate: 57600
 	}
 
-	device: SAMA5D2 { }
+	device: SAMA5D2 {
+		/*
+		config: SAMA5D2Config {
+			spiInstance: 1
+			spiIoset: 3
+			spiChipSelect: 0
+			spiFreq: 30
+		}
+		*/
+	}
 
 	onConnectionOpened: {
 		// initialize serial flash applet

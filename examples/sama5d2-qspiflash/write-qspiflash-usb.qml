@@ -9,7 +9,15 @@ AppletLoader {
 		baudRate: 57600
 	}
 
-	device: SAMA5D2 { }
+	device: SAMA5D2 {
+		/*
+		config: SAMA5D2Config {
+			qspiInstance: 0
+			qspiIoset: 3
+			qspiFreq: 50
+		}
+		*/
+	}
 
 	onConnectionOpened: {
 		// initialize QSPI applet

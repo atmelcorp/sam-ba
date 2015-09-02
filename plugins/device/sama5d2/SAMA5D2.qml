@@ -3,6 +3,8 @@ import SAMBA 1.0
 Device {
 	name: "SAMA5D2"
 
+	property SAMA5D2Config config: SAMA5D2Config {	}
+
 	applets: [
 		Applet {
 			kind: AppletKind.lowlevel
@@ -21,6 +23,12 @@ Device {
 			appletAddress: 0x220000
 			mailboxAddress: 0x220004
 			initCommand: 0
+			initArgs: [
+				config.spiInstance,
+				config.spiIoset,
+				config.spiChipSelect,
+				Math.floor(config.spiFreq * 1000000)
+			]
 			readCommand: 3
 			writeCommand: 2
 			blockEraseCommand: 8
@@ -33,6 +41,11 @@ Device {
 			appletAddress: 0x220000
 			mailboxAddress: 0x220004
 			initCommand: 0
+			initArgs: [
+				config.qspiInstance,
+				config.qspiIoset,
+				Math.floor(config.qspiFreq * 1000000)
+			]
 			readCommand: 3
 			writeCommand: 2
 			blockEraseCommand: 8

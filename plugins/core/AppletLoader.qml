@@ -53,7 +53,7 @@ Item {
 
 		if (!currentAppletInitialized) {
 			if (typeof currentApplet.initCommand !== undefined){
-				var status = appletExecute(currentApplet.initCommand)
+				var status = appletExecute(currentApplet.initCommand, currentApplet.initArgs)
 				if (status !== AppletStatus.success) {
 					print("Error: Applet " + currentApplet.description + " failed to initialize.")
 					return false
