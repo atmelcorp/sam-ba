@@ -6,7 +6,7 @@ Item {
 	property Connection connection
 
 	property bool autoconnect: true
-	property int retries: 10
+	property int retries: 20
 	property int appletTraceLevel: 4
 
 	property Applet currentApplet
@@ -107,10 +107,14 @@ Item {
 		connection.go(currentApplet.appletAddress)
 
 		// wait for completion
+		var delay = 100
 		for (var retry = 0; retry < retries; retry++)
 		{
-			//if (retry > 0)
-			//	Utils.usleep(500)
+			if (retry > 0)
+			{
+				Utils.usleep(delay)
+				delay *= 1.5
+			}
 
 			var ack = connection.readu32(currentApplet.mailboxAddress)
 			if (ack === (0xffffffff - cmd))
