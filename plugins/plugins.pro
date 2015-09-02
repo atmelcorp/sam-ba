@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 
-SUBDIRS = core
+SUBDIRS = core connection

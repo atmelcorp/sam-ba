@@ -16,15 +16,7 @@ SUBDIRS = \
 	plugins \
 	devices \
 	examples \
-	sambacmd \
-	sambaconnectionserial
-
-unix:contains(QT_ARCH, x86_64)|win32:{
-	SUBDIRS += sambaconnectionjlink
-}
-else:{
-	message("J-Link plugin disabled: unsupported build architecture ("$$QT_ARCH")")
-}
+	sambacmd
 
 # copy Qt libs
 unix:{
@@ -55,5 +47,3 @@ else:win32:{
 }
 
 sambacmd.depends = sambacommon
-sambaconnectionserial.depends = sambacommon
-sambaconnectionjlink.depends = sambacommon
