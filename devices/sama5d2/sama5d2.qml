@@ -11,7 +11,7 @@ Device {
 			kind: Applet.Lowlevel
 			tag: "lowlevel"
 			name: "Low-Level"
-			fileName: Qt.resolvedUrl("sama5d2/applet-lowlevel-sama5d2.bin")
+			fileName: Qt.resolvedUrl("applets/applet-lowlevel-sama5d2.bin")
 			appletAddress: 0x220000
 			mailboxAddress: 0x220004
 		},
@@ -20,7 +20,7 @@ Device {
 			kind: Applet.NVM
 			tag: "serialflash"
 			name: "AT25/AT26 Serial Flash"
-			fileName: Qt.resolvedUrl("sama5d2/applet-serialflash-sama5d2.bin")
+			fileName: Qt.resolvedUrl("applets/applet-serialflash-sama5d2.bin")
 			appletAddress: 0x220000
 			mailboxAddress: 0x220004
 		},
@@ -29,7 +29,7 @@ Device {
 			kind: Applet.NVM
 			tag: "qspiflash"
 			name: "QSPI Flash"
-			fileName: Qt.resolvedUrl("sama5d2/applet-qspiflash-sama5d2.bin")
+			fileName: Qt.resolvedUrl("applets/applet-qspiflash-sama5d2.bin")
 			appletAddress: 0x220000
 			mailboxAddress: 0x220004
 		}
