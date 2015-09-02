@@ -21,13 +21,13 @@ SUBDIRS = \
 unix:{
 	qtlibs.path = /
 	qtlibs.commands = \
-		cp -a $$[QT_INSTALL_LIBS]/libQt5Core.so.5* \$(INSTALL_ROOT) && \
-		cp -a $$[QT_INSTALL_LIBS]/libQt5Network.so.5* \$(INSTALL_ROOT) && \
-		cp -a $$[QT_INSTALL_LIBS]/libQt5Qml.so.5* \$(INSTALL_ROOT) && \
-		cp -a $$[QT_INSTALL_LIBS]/libQt5SerialPort.so.5* \$(INSTALL_ROOT) && \
-		cp -a $$[QT_INSTALL_LIBS]/libicudata.so.* \$(INSTALL_ROOT) && \
-		cp -a $$[QT_INSTALL_LIBS]/libicui18n.so.* \$(INSTALL_ROOT) && \
-		cp -a $$[QT_INSTALL_LIBS]/libicuuc.so.* \$(INSTALL_ROOT)
+		cp -a $$[QT_INSTALL_LIBS]/libQt5Core.so.5* \$(INSTALL_ROOT)/lib && \
+		cp -a $$[QT_INSTALL_LIBS]/libQt5Network.so.5* \$(INSTALL_ROOT)/lib && \
+		cp -a $$[QT_INSTALL_LIBS]/libQt5Qml.so.5* \$(INSTALL_ROOT)/lib && \
+		cp -a $$[QT_INSTALL_LIBS]/libQt5SerialPort.so.5* \$(INSTALL_ROOT)/lib && \
+		cp -a $$[QT_INSTALL_LIBS]/libicudata.so.* \$(INSTALL_ROOT)/lib && \
+		cp -a $$[QT_INSTALL_LIBS]/libicui18n.so.* \$(INSTALL_ROOT)/lib && \
+		cp -a $$[QT_INSTALL_LIBS]/libicuuc.so.* \$(INSTALL_ROOT)/lib
 	INSTALLS += qtlibs
 }
 else:win32:{

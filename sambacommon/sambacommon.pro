@@ -34,15 +34,14 @@ HEADERS += \
     sambadevice.h \
     sambalogger.h
 
-unix:!mac{
+unix:!mac:{
     QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\''
     QMAKE_RPATH =
+    target.path = /lib
+}
+else:win32:{
+    target.path = /
 }
 
 # install
-target.path = /
 INSTALLS += target
-
-unix:!mac{
-    QMAKE_RPATH=
-}

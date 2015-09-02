@@ -19,13 +19,10 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../sambacommon/debu
 else:unix: LIBS += -L$$OUT_PWD/../sambacommon/ -lsambacommon
 
 # set RPATH to $ORIGIN on Linux
-unix:!mac{
-    QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\''
+unix:!mac:{
+    QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/lib\''
     QMAKE_RPATH =
 }
-
-# Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH += $$PWD/../devices
 
 # install executable
 target.path = /

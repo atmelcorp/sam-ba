@@ -1,11 +1,11 @@
 TEMPLATE = lib
-
+CONFIG += plugin
 QT -= gui
 QT += core qml
 
-TARGET = sambaplugin_conn_jlink
+TARGET = $$qtLibraryTarget(sambaplugin_conn_jlink)
 
-CONFIG += plugin
+DESTPATH = /
 
 SOURCES += \
     sambaconnectionjlink.cpp \
@@ -29,22 +29,23 @@ unix:contains(QT_ARCH, x86_64):{
     INCLUDEPATH += $$JLINKDIR/Inc
     LIBS += -L$$JLINKDIR -ljlinkarm
 
-    jlinklibs.path = /
-    jlinklibs.commands = cp -a $$JLINKDIR/libjlinkarm.so.* \$(INSTALL_ROOT)/
+    jlinklibs.path = /lib
+    jlinklibs.commands = cp -a $$JLINKDIR/libjlinkarm.so.* \$(INSTALL_ROOT)/lib
     INSTALLS += jlinklibs
+
+    QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/lib\''
+    QMAKE_RPATH =
 }
 else:win32:{
     JLINKDIR = "C:/Program Files (x86)/SEGGER/JLink_SDK_V500b"
     INCLUDEPATH += $$JLINKDIR/Inc
     LIBS += -L$$JLINKDIR -lJLinkARM
-}
 
-# set RPATH to $ORIGIN on Linux
-unix:!mac{
-    QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\''
-    QMAKE_RPATH =
+    jlinklibs.path = /
+    jlinklibs.commands = copy /y $$JLINKDIR/JLinkARM.dll \$(INSTALL_ROOT)
+    INSTALLS += jlinklibs
 }
 
 # install
-target.path = /
+target.path = $$DESTPATH
 INSTALLS += target
