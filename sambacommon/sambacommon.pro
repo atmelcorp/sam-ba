@@ -14,6 +14,8 @@ DEFINES += SAMBACOMMON_LIBRARY
 SOURCES += \
     sambacommon.cpp \
     sambaengine.cpp \
+    sambabytearray.cpp \
+    sambautils.cpp \
     sambascript.cpp \
     sambaconnection.cpp \
     sambaconnectionport.cpp \
@@ -25,6 +27,8 @@ SOURCES += \
 HEADERS += \
     sambacommon.h\
     sambaengine.h \
+    sambabytearray.h \
+    sambautils.h \
     sambascript.h \
     sambaconnection.h \
     sambaconnectionport.h \

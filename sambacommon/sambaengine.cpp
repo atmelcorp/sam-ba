@@ -6,7 +6,6 @@
 #include "sambaplugin.h"
 #include "utils.h"
 #include <QFile>
-#include <QThread>
 
 SambaEngine::SambaEngine(QObject *parent) :	QObject(parent)
 {
@@ -166,19 +165,4 @@ QObject *SambaEngine::device(const QString &tag)
 			return device;
 	}
 	return NULL;
-}
-
-void SambaEngine::sleep(int secs)
-{
-	QThread::sleep(secs);
-}
-
-void SambaEngine::msleep(int msecs)
-{
-	QThread::msleep(msecs);
-}
-
-void SambaEngine::usleep(int usecs)
-{
-	QThread::usleep(usecs);
 }

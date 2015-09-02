@@ -35,12 +35,6 @@ public:
 	Q_INVOKABLE SambaConnection *connection(const QString &tag);
 	Q_INVOKABLE QObject *device(const QString &tag);
 
-	// script utils
-
-	Q_INVOKABLE void sleep(int secs);
-	Q_INVOKABLE void msleep(int msecs);
-	Q_INVOKABLE void usleep(int usecs);
-
 signals:
 	void connectionsChanged();
 	void devicesChanged();

@@ -15,11 +15,6 @@ public:
 	// called by core, will emit scriptStarted signal
 	void startScript();
 
-	// utils
-	Q_INVOKABLE void sleep(int secs);
-	Q_INVOKABLE void msleep(int msecs);
-	Q_INVOKABLE void usleep(int usecs);
-
 signals:
 	void scriptStarted();
 };

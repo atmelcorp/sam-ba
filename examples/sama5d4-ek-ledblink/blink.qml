@@ -11,7 +11,7 @@ Script {
 
 		var led = 0
 		for (var i = 0; i < 40; i++) {
-			msleep(250)
+			Utils.msleep(250)
 			Led.set(port, led, true)
 			led++
 			if (led >= 3)
