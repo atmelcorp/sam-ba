@@ -1,4 +1,4 @@
-#include "sambacore.h"
+#include "sambacoreplugin.h"
 #include "sambautils.h"
 #include "sambabytearray.h"
 

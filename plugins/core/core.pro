@@ -7,8 +7,8 @@ TARGET = $$qtLibraryTarget(samba_core)
 
 DESTPATH = /qml/SAMBA
 
-SOURCES += sambacore.cpp
-HEADERS += sambacore.h
+SOURCES += sambacoreplugin.cpp
+HEADERS += sambacoreplugin.h
 
 # include/link sambacommon library
 INCLUDEPATH += $$PWD/../../sambacommon

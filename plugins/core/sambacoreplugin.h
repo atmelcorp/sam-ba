@@ -1,5 +1,5 @@
-#ifndef SAMBA_CORE_H
-#define SAMBA_CORE_H
+#ifndef SAMBA_CORE_PLUGIN_H
+#define SAMBA_CORE_PLUGIN_H
 
 #include <QObject>
 #include <QtQml>
@@ -13,4 +13,4 @@ public:
 	void registerTypes(const char *uri);
 };
 
-#endif // SAMBA_CORE_H
+#endif // SAMBA_CORE_PLUGIN_H
