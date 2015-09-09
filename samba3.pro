@@ -21,15 +21,15 @@ SUBDIRS = \
 unix:{
 	qtlibs.path = /
 	qtlibs.commands = \
-		$(COPY) $$[QT_INSTALL_LIBS]/libQt5Core.so.5* \$(INSTALL_ROOT)/lib && \
-		$(COPY) $$[QT_INSTALL_LIBS]/libQt5Gui.so.5* \$(INSTALL_ROOT)/lib && \
-		$(COPY) $$[QT_INSTALL_LIBS]/libQt5Network.so.5* \$(INSTALL_ROOT)/lib && \
-		$(COPY) $$[QT_INSTALL_LIBS]/libQt5Qml.so.5* \$(INSTALL_ROOT)/lib && \
-		$(COPY) $$[QT_INSTALL_LIBS]/libQt5Quick.so.5* \$(INSTALL_ROOT)/lib && \
-		$(COPY) $$[QT_INSTALL_LIBS]/libQt5SerialPort.so.5* \$(INSTALL_ROOT)/lib && \
-		$(COPY) $$[QT_INSTALL_LIBS]/libicudata.so.* \$(INSTALL_ROOT)/lib && \
-		$(COPY) $$[QT_INSTALL_LIBS]/libicui18n.so.* \$(INSTALL_ROOT)/lib && \
-		$(COPY) $$[QT_INSTALL_LIBS]/libicuuc.so.* \$(INSTALL_ROOT)/lib && \
+		$(COPY) $$[QT_INSTALL_LIBS]/libQt5Core.so.5 \$(INSTALL_ROOT)/lib && \
+		$(COPY) $$[QT_INSTALL_LIBS]/libQt5Gui.so.5 \$(INSTALL_ROOT)/lib && \
+		$(COPY) $$[QT_INSTALL_LIBS]/libQt5Network.so.5 \$(INSTALL_ROOT)/lib && \
+		$(COPY) $$[QT_INSTALL_LIBS]/libQt5Qml.so.5 \$(INSTALL_ROOT)/lib && \
+		$(COPY) $$[QT_INSTALL_LIBS]/libQt5Quick.so.5 \$(INSTALL_ROOT)/lib && \
+		$(COPY) $$[QT_INSTALL_LIBS]/libQt5SerialPort.so.5 \$(INSTALL_ROOT)/lib && \
+		$(COPY) $$[QT_INSTALL_LIBS]/libicudata.so.54 \$(INSTALL_ROOT)/lib && \
+		$(COPY) $$[QT_INSTALL_LIBS]/libicui18n.so.54 \$(INSTALL_ROOT)/lib && \
+		$(COPY) $$[QT_INSTALL_LIBS]/libicuuc.so.54 \$(INSTALL_ROOT)/lib && \
 		$(COPY_DIR) $$[QT_INSTALL_LIBS]/../qml/QtQuick.2 \$(INSTALL_ROOT)/qml
 	INSTALLS += qtlibs
 }
