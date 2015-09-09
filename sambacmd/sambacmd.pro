@@ -1,7 +1,6 @@
 TEMPLATE = app
 
-QT -= gui
-QT += core qml
+QT += core qml quick
 
 TARGET = sambacmd
 
