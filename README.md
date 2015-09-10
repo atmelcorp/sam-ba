@@ -1,6 +1,6 @@
 # Atmel SAM-BA 3.0 early release
-Release verson: 3.0-pre3
-Release date: 2015-07
+Release verson: 3.0-pre4
+Release date: 2015-09
 
 ## Overview
 
