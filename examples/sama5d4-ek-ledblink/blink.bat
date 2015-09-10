@@ -1,1 +1,0 @@
-..\..\sambacmd -x blink.qml
