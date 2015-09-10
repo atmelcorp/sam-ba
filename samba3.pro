@@ -16,7 +16,7 @@ SUBDIRS = \
 	sambacommon \
 	plugins \
 	examples \
-	sambacmd
+        tools
 
 # copy Qt libs
 unix:{

@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Q_LOGGING_CATEGORY(sambaLogCmd, "samba.cmd")
+Q_LOGGING_CATEGORY(sambaLogTool, "samba.tool")
 
 int main(int argc, char *argv[])
 {
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 	qSetMessagePattern("%{message}");
 
 	QCoreApplication app(argc, argv);
-	QCoreApplication::setApplicationName("sambacmd");
+	QCoreApplication::setApplicationName("sam-ba");
 	QCoreApplication::setApplicationVersion("3.0-pre4");
 
 	QCommandLineParser parser;
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
 	SambaEngine engine(&app);
 
-	qCDebug(sambaLogCmd, "Loading script from %s", script.toLocal8Bit().constData());
+	qCDebug(sambaLogTool, "Loading script from %s", script.toLocal8Bit().constData());
 	engine.evaluateScript(QUrl::fromLocalFile(script));
 
 	//return app.exec();
