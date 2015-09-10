@@ -1,4 +1,4 @@
-# examples/sama5d2-serialflash
+# SAMA5D2 SerialFlash Example
 
 Sample scripts to flash a linux environment on SPI SerialFlash of the
 "SAMA5D2 XPLAINED ULTRA" board.
@@ -12,8 +12,11 @@ Sample scripts to flash a linux environment on SPI SerialFlash of the
 - Close "BOOT_DIS" jumper
 - Connect and power the board using the "A5-USB-A" USB connector
 - Open "BOOT_DIS" jumper
-- Run "write-serialflash-usb.sh" script (or "write-serialflash-usb.bat" for
-Windows)
+- Run qml script using sam-ba tool, for example:
+    On Windows:
+        ..\..\..\sam-ba -x write-qspiflash-usb.qml
+    On Linux:
+        ../../../sam-ba -x write-qspiflash-usb.qml
 
 ## Flashing using SEGGER J-Link adapter
 
@@ -21,6 +24,9 @@ Windows)
 - Connect J-Link to "A5-JTAG" connector
 - Connect and power the board using the "A5-USB-A" USB connector
 - Open "BOOT_DIS" jumper
-- Run "write-serialflash-jlink.sh" script (or "write-serialflash-jlink.bat" for
-Windows)
+- Run qml script using sam-ba tool, for example:
+    On Windows:
+        ..\..\..\sam-ba -x write-qspiflash-jlink.qml
+    On Linux:
+        ../../../sam-ba -x write-qspiflash-jlink.qml
 

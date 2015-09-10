@@ -1,4 +1,4 @@
-# examples/samv7-flash
+# SAMV7 Flash Example
 
 Sample script to flash a binary to a SAMV7 device
 
@@ -10,5 +10,8 @@ Sample script to flash a binary to a SAMV7 device
 
 - Boot the device in ROM mode (either by erasing flash or setting GPNVM1 to 0)
 - Connect and power the board using the "Target USB" connector
-- Run "write-flash-usb.sh" script (or "write-flash-usb.bat" for Windows)
-
+- Run qml script using sam-ba tool, for example:
+    On Windows:
+        ..\..\..\sam-ba -x write-flash-usb.qml
+    On Linux:
+        ../../../sam-ba -x write-flash-usb.qml
