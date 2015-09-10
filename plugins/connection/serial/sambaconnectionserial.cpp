@@ -18,8 +18,9 @@ static bool serial_is_at91(const QSerialPortInfo& info)
 			&& info.productIdentifier() == SAMBA_USB_PID;
 }
 
-SambaConnectionSerial::SambaConnectionSerial(QObject* parent)
-	: QObject(parent)
+SambaConnectionSerial::SambaConnectionSerial(QQuickItem* parent)
+	: SambaConnection(parent),
+	  m_baudRate(0)
 {
 }
 
@@ -41,41 +42,44 @@ QStringList SambaConnectionSerial::availablePorts()
 	return list_at91 + list_other;
 }
 
-bool SambaConnectionSerial::open(const QString& portName, qint32 baudRate)
+quint32 SambaConnectionSerial::type()
 {
-	QString port(portName);
+	return m_at91 ? USB : Serial;
+}
 
-	if (port.isEmpty())
+void SambaConnectionSerial::open()
+{
+	if (port().isEmpty())
 	{
 		QStringList ports = availablePorts();
 		if (ports.isEmpty())
 		{
 			emit connectionFailed("No serial ports found");
-			return false;
+			return;
 		}
 
-		port = ports.at(0);
+		setPort(ports.at(0));
 	}
 
-	QSerialPortInfo info(port);
+	QSerialPortInfo info(port());
 	if (!info.isValid())
 	{
-		emit connectionFailed(QString().sprintf("Cannot open invalid port '%s'", port.toLocal8Bit().constData()));
-		return false;
+		emit connectionFailed(QString().sprintf("Cannot open invalid port '%s'", port().toLocal8Bit().constData()));
+		return;
 	}
 
 	m_at91 = serial_is_at91(info);
 
 	m_serial.setPort(info);
-	if (baudRate <= 0)
-		baudRate = m_at91 ? 921600 : 115200;
-	m_serial.setBaudRate(baudRate);
+	if (m_baudRate <= 0)
+		setBaudRate(m_at91 ? 921600 : 115200);
+	m_serial.setBaudRate(m_baudRate);
 	m_serial.setDataBits(QSerialPort::Data8);
 	m_serial.setParity(QSerialPort::NoParity);
 	m_serial.setStopBits(QSerialPort::OneStop);
 	m_serial.setFlowControl(QSerialPort::NoFlowControl);
 
-	qCInfo(sambaLogConnSerial, "Opening serial port '%s'", port.toLocal8Bit().constData());
+	qCInfo(sambaLogConnSerial, "Opening serial port '%s'", port().toLocal8Bit().constData());
 
 	if (m_serial.open(QIODevice::ReadWrite))
 	{
@@ -90,28 +94,19 @@ bool SambaConnectionSerial::open(const QString& portName, qint32 baudRate)
 		if (resp.length() == 2 && resp[0] == '\n' && resp[1] == '\r')
 		{
 			emit connectionOpened();
-			return true;
 		}
 		else
 		{
 			emit connectionFailed(QString().sprintf("Could not switch monitor on port '%s' to binary mode",
-												port.toLocal8Bit().constData()));
-			return false;
+												port().toLocal8Bit().constData()));
 		}
 	}
 	else
 	{
 		emit connectionFailed(QString().sprintf("Could not open serial port '%s': %s",
-											port.toLocal8Bit().constData(),
+											port().toLocal8Bit().constData(),
 											m_serial.errorString().toLocal8Bit().constData()));
-		return false;
 	}
-}
-
-
-bool SambaConnectionSerial::isUSB()
-{
-	return m_at91;
 }
 
 void SambaConnectionSerial::writeSerial(const QString &str)
@@ -193,25 +188,7 @@ quint32 SambaConnectionSerial::readu32(quint32 address)
 			((quint8)resp[0]);
 }
 
-qint8 SambaConnectionSerial::reads8(quint32 address)
-{
-	quint8 data = readu8(address);
-	return *reinterpret_cast<qint8*>(&data);
-}
-
-qint16 SambaConnectionSerial::reads16(quint32 address)
-{
-	quint16 data = readu16(address);
-	return *reinterpret_cast<qint16*>(&data);
-}
-
-qint32 SambaConnectionSerial::reads32(quint32 address)
-{
-	quint32 data = readu32(address);
-	return *reinterpret_cast<qint32*>(&data);
-}
-
-SambaByteArray *SambaConnectionSerial::read(quint32 address, int length)
+SambaByteArray *SambaConnectionSerial::read(quint32 address, unsigned length)
 {
 	if (!m_serial.isOpen())
 		return new SambaByteArray();
@@ -245,21 +222,6 @@ bool SambaConnectionSerial::writeu32(quint32 address, quint32 data)
 
 	writeSerial(QString().sprintf("W%x,%08x#", address, data));
 	return true;
-}
-
-bool SambaConnectionSerial::writes8(quint32 address, qint8 data)
-{
-	return writeu8(address, *(reinterpret_cast<quint8*>(&data)));
-}
-
-bool SambaConnectionSerial::writes16(quint32 address, qint16 data)
-{
-	return writeu16(address, *(reinterpret_cast<quint16*>(&data)));
-}
-
-bool SambaConnectionSerial::writes32(quint32 address, qint32 data)
-{
-	return writeu32(address, *(reinterpret_cast<quint32*>(&data)));
 }
 
 bool SambaConnectionSerial::write(quint32 address, SambaByteArray *data)

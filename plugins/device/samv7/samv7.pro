@@ -8,6 +8,8 @@ DEVICE_FILES *= \
     applets/applet-lowlevelinit-samv7.bin \
     applets/applet-flash-samv7.bin
 
-DISTFILES += $$DEVICE_FILES
-
 include(../device.pri)
+
+OTHER_FILES += \
+    $$DEVICE_FILES \
+    module_samba_device_samv7.qdoc

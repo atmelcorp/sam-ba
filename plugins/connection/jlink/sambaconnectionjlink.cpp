@@ -48,8 +48,9 @@ static void jlink_debug_log(const char* sErr)
 	qCDebug(sambaLogConnJlink) << QString().sprintf("%s", sErr);
 }
 
-SambaConnectionJlink::SambaConnectionJlink(QObject* parent)
-	: QObject(parent),
+SambaConnectionJlink::SambaConnectionJlink(QQuickItem* parent)
+	: SambaConnection(parent),
+	  m_swd(false),
 	  m_devFamily(-1),
 	  m_device(-1)
 {
@@ -74,54 +75,57 @@ QStringList SambaConnectionJlink::availablePorts()
 	return list;
 }
 
-bool SambaConnectionJlink::open(const QString& portName, bool swd)
+quint32 SambaConnectionJlink::type()
 {
-	QString port(portName);
+	return JTAG;
+}
 
-	if (port.isEmpty())
+void SambaConnectionJlink::open()
+{
+	if (port().isEmpty())
 	{
 		QStringList ports = availablePorts();
 		if (ports.isEmpty())
 		{
 			emit connectionFailed("No J-Link devices found");
-			return false;
+			return;
 		}
 
-		port = ports.at(0);
+		setPort(ports.at(0));
 	}
 
-	qCInfo(sambaLogConnJlink, "Opening J-Link with S/N '%s'", port.toLocal8Bit().constData());
+	qCInfo(sambaLogConnJlink, "Opening J-Link with S/N '%s'", port().toLocal8Bit().constData());
 
 	bool ok = false;
-	U32 serial = port.toInt(&ok);
+	U32 serial = port().toInt(&ok);
 	if (!ok)
 	{
 		emit connectionFailed("Port property must contain a serial number");
-		return false;
+		return;
 	}
 
 	if (JLINKARM_EMU_SelectByUSBSN(serial))
 	{
 		emit connectionFailed(QString().sprintf("Could not select J-Link with serial '%u'", serial));
-		return false;
+		return;
 	}
 
 	if (JLINKARM_Open() != NULL)
 	{
 		emit connectionFailed(QString().sprintf("Could not open J-Link with serial '%u'", serial));
-		return false;
+		return;
 	}
 
 	// Set JLINK JTAG speed to 100 kHz
 	JLINKARM_SetSpeed(100);
 
-	if (swd)
+	if (m_swd)
 	{
 		// Select SWD interface
 		if (JLINKARM_TIF_Select(JLINKARM_TIF_SWD) != 0)
 		{
 			emit connectionFailed("Could not select SWD interface");
-			return false;
+			return;
 		}
 	}
 	else
@@ -130,7 +134,7 @@ bool SambaConnectionJlink::open(const QString& portName, bool swd)
 		if (JLINKARM_TIF_Select(JLINKARM_TIF_JTAG) != 0)
 		{
 			emit connectionFailed("Could not select JTAG interface");
-			return false;
+			return;
 		}
 	}
 
@@ -146,7 +150,7 @@ bool SambaConnectionJlink::open(const QString& portName, bool swd)
 		if (!JLINKARM_CP15_IsPresent())
 		{
 			emit connectionFailed("CP15 not present");
-			return false;
+			return;
 		}
 		else
 		{
@@ -201,12 +205,13 @@ bool SambaConnectionJlink::open(const QString& portName, bool swd)
 		}
 
 		emit connectionOpened();
-		return true;
 	}
 	else
 	{
-		close();
-		return false;
+		if (JLINKARM_IsOpen())
+			JLINKARM_Close();
+
+		emit connectionFailed("Unsupported device family");
 	}
 }
 
@@ -243,25 +248,7 @@ quint32 SambaConnectionJlink::readu32(quint32 address)
 	return value;
 }
 
-qint8 SambaConnectionJlink::reads8(quint32 address)
-{
-	quint8 data = readu8(address);
-	return *reinterpret_cast<qint8*>(&data);
-}
-
-qint16 SambaConnectionJlink::reads16(quint32 address)
-{
-	quint16 data = readu16(address);
-	return *reinterpret_cast<qint16*>(&data);
-}
-
-qint32 SambaConnectionJlink::reads32(quint32 address)
-{
-	quint32 data = readu32(address);
-	return *reinterpret_cast<qint32*>(&data);
-}
-
-SambaByteArray *SambaConnectionJlink::read(quint32 address, int length)
+SambaByteArray *SambaConnectionJlink::read(quint32 address, unsigned length)
 {
 	QByteArray data(length, 0);
 	JLINKARM_ReadMem(address, length, data.data());
@@ -284,21 +271,6 @@ bool SambaConnectionJlink::writeu32(quint32 address, quint32 data)
 {
 	JLINKARM_WriteU32(address, data);
 	return true;
-}
-
-bool SambaConnectionJlink::writes8(quint32 address, qint8 data)
-{
-	return writeu8(address, *(reinterpret_cast<quint8*>(&data)));
-}
-
-bool SambaConnectionJlink::writes16(quint32 address, qint16 data)
-{
-	return writeu16(address, *(reinterpret_cast<quint16*>(&data)));
-}
-
-bool SambaConnectionJlink::writes32(quint32 address, qint32 data)
-{
-	return writeu32(address, *(reinterpret_cast<quint32*>(&data)));
 }
 
 bool SambaConnectionJlink::write(quint32 address, SambaByteArray *data)

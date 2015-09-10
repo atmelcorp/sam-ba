@@ -24,12 +24,7 @@ unix:!mac:{
 }
 
 qml.files = qmldir \
-	Applet.qml \
-	AppletCommType.qml \
-	AppletKind.qml \
 	AppletLoader.qml \
-	AppletStatus.qml \
-	Connection.qml \
 	Device.qml
 
 # install
@@ -37,4 +32,6 @@ target.path = $$DESTPATH
 qml.path = $$DESTPATH
 INSTALLS += target qml
 
-OTHER_FILES += $$qml.files
+OTHER_FILES += \
+    $$qml.files \
+    module_samba.qdoc

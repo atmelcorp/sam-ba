@@ -1,0 +1,112 @@
+/*!
+\qmltype Applet
+\inqmlmodule SAMBA
+\brief Defines all required data for loading and running a given SAM-BA applet.
+
+SAM-BA uses small programs called "applets" that run on the programmed device.
+They are used for device initialization or for programming internal and
+external memories.
+
+Applets run from SRAM and use three memory areas:
+\table
+\header \li use \li start address \li size
+\row \li code \li Applet::codeAddr \li variable
+\row \li mailbox \li Applet::mailboxAddr \li 32 x 32-bit words
+\row \li buffer \li Applet::bufferAddr \li Applet::bufferSize
+\endtable
+
+The buffer area is a dynamic area used by memory applets as an exchange zone
+for data to be written or read to/from the device.  Its location and size is
+returned by the applet initialization command. Non-memory applets have no
+buffer area.
+
+The workflow when using applets is:
+\list
+\li the applet code is uploaded to the device
+\li a command number and the command arguments are written in the mailbox
+\li (optional) data is written in the buffer area
+\li a jump to the applet start is requested
+\li SAM-BA polls for applet completion
+\li (optional) return values from the command can be read in the mailbox area
+\li (optional) data is read from the buffer area
+\endlist
+
+*/
+
+/*!
+\qmlproperty string Applet::name
+\brief The applet name.
+*/
+
+/*!
+\qmlproperty string Applet::description
+\brief The applet description.
+*/
+
+/*!
+\qmlproperty string Applet::kind
+\brief The applet kind. Should use constants from AppletKind.
+*/
+
+/*!
+\qmlproperty string Applet::codeUrl
+\brief URL of the binary applet code to be uploaded on the device.
+*/
+
+/*!
+\qmlproperty int Applet::codeAddr
+\brief Loading address of the applet.
+*/
+
+/*!
+\qmlproperty int Applet::mailboxAddr
+\brief Address of the mailbox area used for communication with the applet.
+*/
+
+/*!
+\qmlproperty int Applet::memorySize
+\brief Memory size detected by the applet, if applicable.
+
+Value is only valid after applet initialization is done.
+*/
+
+/*!
+\qmlproperty int Applet::bufferAddr
+\brief Address of the buffer area used for communication with the applet, if
+applicable.
+
+Value is only valid after applet initialization is done.
+*/
+
+/*!
+\qmlproperty int Applet::bufferSize
+\brief Size of the buffer area used for communication with the applet, if
+applicable.
+
+Value is only valid after applet initialization is done.
+*/
+
+/*!
+\qmlproperty var Applet::commands
+\brief List of supported commands and their numeric values.
+*/
+
+/*!
+\qmlproperty var Applet::initArgs
+\brief Arguments to pass in the mailbox for the initialization command.
+
+Either an array of integers, or a single integer if there is only one argument. 
+*/
+
+/*!
+\qmlmethod bool Applet::hasCommand(string command)
+\brief Tests whether a given \a command is supported.
+
+Returns true if the \a command is supported, false otherwise.
+*/
+
+/*!
+\qmlmethod int Applet::command(string command)
+\brief Returns the numeric value of the given \a command, or 0xffffffff if
+unsupported.
+*/

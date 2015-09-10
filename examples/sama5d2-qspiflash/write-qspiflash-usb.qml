@@ -6,7 +6,7 @@ AppletLoader {
 	connection: SerialConnection {
 		//port: "ttyACM0"
 		//port: "COM85"
-		baudRate: 57600
+		//baudRate: 57600
 	}
 
 	device: SAMA5D2 {
@@ -21,8 +21,7 @@ AppletLoader {
 
 	onConnectionOpened: {
 		// initialize QSPI applet
-		if (!appletInitialize("qspiflash"))
-			return
+		appletInitialize("qspiflash")
 
 		// erase first 4MB
 		appletErase(0, 4 * 1024 * 1024)
@@ -35,7 +34,7 @@ AppletLoader {
 		appletWrite(0x6c000, "zImage")
 
 		// Use GPBR_0 as boot configuration word
-		BootCfg.writeBSCR(connection, BootCfg.BSC_CR_GPBR_VALID | BootCfg.BSC_CR_GPBR_0)
+		BootCfg.writeBSCR(connection, BootCfg.BSCR_GPBR_VALID | BootCfg.BSCR_GPBR_0)
 
 		// Enable external boot only on QSPI0 IOSET3
 		BootCfg.writeGPBR(connection, 0, BootCfg.BCW_EXT_MEM_BOOT_ENABLE |

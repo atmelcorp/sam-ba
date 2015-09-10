@@ -1,0 +1,42 @@
+/*!
+\qmltype SerialConnection
+\inherits Connection
+\inqmlmodule SAMBA.Connection.Serial
+\brief SerialConnection represents a serial connection to a programmable
+device, either via RS232 or USB.
+
+SerialConnection can be used to connect to the SAM-BA Monitor included in the
+ROM Code of most Atmel MPUs and MCUs.
+
+The device must be waiting for commands in SAM-BA Monitor mode. This is
+usually done by either erasing the device (for devices that have an internal
+flash and a dedicated ERASE pin), or by disabling the chip-select of the
+external memories. Please see the datasheets and manuals of the device and
+board for more details.
+
+This SAMBA::Connection implementation supports both direct USB connection to
+the SAM-BA Monitor and access through the console UART. The console UART is
+device-specific (for example DBGU for SAMA5D4) and may be configurable (on
+SAMA5D2, the console can be changed using the boot config word and/or fuses).
+Please see the datasheet of the device for more details.
+*/
+
+/*!
+\qmlproperty string SerialConnection::port
+\brief The port to use for the connection
+
+For Windows, port have the form "COMxx" where \e xx is the number
+assigned to the port, for example "COM2" or "COM84".
+
+For Linux, use the device name without its "/dev/" prefix, i.e. for
+"/dev/ttyACM0", use "ttyACM0".
+*/
+
+/*!
+\qmlproperty int SerialConnection::baudRate
+\brief The serial baud rate to use for the connection.
+
+If the requested baudrate is not supported, the closest supported one
+will be used. When connected directly to the AT91 CDC ACM USB port, the
+baudrate is ignored.
+*/

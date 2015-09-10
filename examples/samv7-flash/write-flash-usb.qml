@@ -9,19 +9,15 @@ AppletLoader {
 
 	onConnectionOpened: {
 		// load/init lowlevel applet
-		if (!appletInitialize("lowlevel"))
-			return
+		appletInitialize("lowlevel")
 
 		// load/init flash applet
-		if (!appletInitialize("flash"))
-			return
+		appletInitialize("flash")
 
 		// flash program
-		if (!appletWrite(0, "getting-started-flash.bin"))
-			return
+		appletWrite(0, "getting-started-flash.bin")
 
 		// set GPNVM1 (boot from flash)
-		if (!appletGpnvmSet(1))
-			return
+		appletGpnvmSet(1)
 	}
 }

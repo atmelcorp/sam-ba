@@ -1,0 +1,40 @@
+#include(compat.qdocconf)
+#include(qt-defines.qdocconf)
+
+project = SAM-BA
+description = Atmel SAM-BA
+version = 3.0-pre3
+
+headerdirs = ../sambacommon ../plugins/core ../plugins/connection/serial ../plugins/connection/jlink ../plugins/device/sama5d2 ../plugins/device/samv7
+sourcedirs = . ../sambacommon ../plugins/core ../plugins/connection/serial ../plugins/connection/jlink ../plugins/device/sama5d2 ../plugins/device/samv7
+exampledirs =
+
+sources.fileextensions = "*.cpp *.qdoc *.qml *.js"
+headers.fileextensions = "*.h"
+examples.fileextensions = "*.cpp *.h *.js *.qml"
+examples.imageextensions = "*.png *.jpeg *.jpg *.gif *.mng"
+
+outputdir = html
+outputformats = HTML
+
+Cpp.ignoretokens += SAMBACOMMONSHARED_EXPORT Q_INVOKABLE
+
+HTML.templatedir  = .
+
+HTML.stylesheets  = style/style.css
+
+HTML.headerstyles = "  <link rel=\"stylesheet\" type=\"text/css\" href=\"style/style.css\" />\n"
+
+HTML.endheader    = "</head>\n"
+
+HTML.postheader   = "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n" \
+                    "<tr>\n" \
+                    "<td class=\"postheader\" valign=\"center\">" \
+                    "<a href=\"index.html\">Home</a> &middot;" \
+                    "</td></tr></table>"
+
+HTML.footer       = "<p /><address><hr /><div align=\"center\">\n" \
+                    "<table width=\"100%\" cellspacing=\"0\" border=\"0\"><tr class=\"address\">\n" \
+                    "<td width=\"60%\" align=\"left\">Copyright &copy; 2015 Atmel Corporation</td>\n" \
+                    "<td width=\"40%\" align=\"right\"><div align=\"right\">SAM-BA QML API Documentation</div></td>\n" \
+                    "</tr></table></div></address>"

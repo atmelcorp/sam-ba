@@ -23,12 +23,14 @@ unix:!mac:{
     QMAKE_RPATH =
 }
 
-qml.files = qmldir \
-    SerialConnection.qml
+qml.files = qmldir
 
 # install
 target.path = $$DESTPATH
 qml.path = $$DESTPATH
 INSTALLS += target qml
 
-OTHER_FILES += $$qml.files
+OTHER_FILES += \
+    $$qml.files \
+    module_samba_connection_serial.qdoc \
+    type_serialconnection.qdoc

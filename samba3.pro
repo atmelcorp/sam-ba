@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-DISTFILES += TODO
+OTHER_FILES += TODO
 
 docs.path = /
 docs.files = README.md LICENSE.txt
@@ -10,6 +10,8 @@ INSTALLS += docs
 qtconf.path = /
 qtconf.files = qt.conf
 INSTALLS += qtconf
+
+include(doc/doc.pri)
 
 SUBDIRS = \
 	sambacommon \

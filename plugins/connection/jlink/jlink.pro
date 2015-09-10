@@ -23,7 +23,7 @@ unix:contains(QT_ARCH, x86_64):{
     LIBS += -L$$JLINKDIR -ljlinkarm
 
     jlinklibs.path = /lib
-    jlinklibs.commands = cp -a $$JLINKDIR/libjlinkarm.so.* \$(INSTALL_ROOT)/lib
+    jlinklibs.commands = $(COPY) $$JLINKDIR/libjlinkarm.so.5 \$(INSTALL_ROOT)/lib
     INSTALLS += jlinklibs
 
     QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../../../../lib\''
@@ -35,16 +35,18 @@ else:win32:{
     LIBS += -L$$JLINKDIR -lJLinkARM
 
     jlinklibs.path = /
-    jlinklibs.commands = copy /y $$JLINKDIR/JLinkARM.dll \$(INSTALL_ROOT)
+    jlinklibs.commands = $(COPY) $$JLINKDIR/JLinkARM.dll \$(INSTALL_ROOT)
     INSTALLS += jlinklibs
 }
 
-qml.files = qmldir \
-    JLinkConnection.qml
+qml.files = qmldir
 
 # install
 target.path = $$DESTPATH
 qml.path = $$DESTPATH
 INSTALLS += target qml
 
-OTHER_FILES += $$qml.files
+OTHER_FILES += \
+    $$qml.files \
+    module_samba_connection_jlink.qdoc \
+    type_jlinkconnection.qdoc

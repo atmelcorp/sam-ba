@@ -28,32 +28,31 @@ bool SambaByteArray::readUrl(const QString &fileUrl)
 	return readFile(QUrl(fileUrl).toLocalFile());
 }
 
-// TODO add more error checking ?
 bool SambaByteArray::readFile(const QString &fileName)
 {
 	QFile file(fileName);
 
 	if (!file.open(QIODevice::ReadOnly))
 	{
-		qCCritical(sambaLogCore, "Error: Could not open file '%s' for reading", fileName.toLocal8Bit().constData());
+		qCDebug(sambaLogCore, "Error: Could not open file '%s' for reading", fileName.toLocal8Bit().constData());
 		m_data.clear();
 		return false;
 	}
 
-	m_data = file.readAll();
+	// TODO add more error checking ?
+	setData(file.readAll());
 	file.close();
 
 	return true;
 }
 
-// TODO add more error checking ?
 bool SambaByteArray::writeFile(const QString& fileName) const
 {
 	QFile file(fileName);
 
 	if (!file.open(QIODevice::WriteOnly))
 	{
-		qCCritical(sambaLogCore, "Error: Could not open file '%s' for writing", fileName.toLocal8Bit().constData());
+		qCDebug(sambaLogCore, "Error: Could not open file '%s' for writing", fileName.toLocal8Bit().constData());
 		return false;
 	}
 

@@ -1,7 +1,6 @@
 TEMPLATE = lib
 
-QT -= gui
-QT += qml
+QT += qml quick
 
 TARGET = sambacommon
 
@@ -15,13 +14,17 @@ SOURCES += \
     sambacommon.cpp \
     sambaengine.cpp \
     sambabytearray.cpp \
-    sambautils.cpp
+    sambautils.cpp \
+    sambaconnection.cpp \
+    sambaapplet.cpp
 
 HEADERS += \
     sambacommon.h \
     sambaengine.h\
     sambabytearray.h \
-    sambautils.h
+    sambautils.h \
+    sambaconnection.h \
+    sambaapplet.h
 
 unix:!mac:{
     QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\''
@@ -34,3 +37,9 @@ else:win32:{
 
 # install
 INSTALLS += target
+
+OTHER_FILES += \
+	type_applet.qdoc \
+	type_bytearray.qdoc \
+	type_connection.qdoc \
+	type_utils.qdoc

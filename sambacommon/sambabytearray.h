@@ -7,32 +7,47 @@
 class SAMBACOMMONSHARED_EXPORT SambaByteArray : public QObject
 {
 	Q_OBJECT
+	Q_PROPERTY(unsigned length READ length NOTIFY lengthChanged)
 
 public:
 	explicit SambaByteArray();
 	explicit SambaByteArray(const QByteArray& data);
 	explicit SambaByteArray(const SambaByteArray& data);
 
-	Q_INVOKABLE int length() {
+	unsigned length() const {
 		return m_data.length();
 	}
 
-	Q_INVOKABLE SambaByteArray *mid(int index, int len) {
+	void setData(const QByteArray& data)
+	{
+		m_data = data;
+		emit lengthChanged();
+	}
+
+	const QByteArray &constData() const
+	{
+		return m_data;
+	}
+
+	Q_INVOKABLE SambaByteArray *mid(unsigned index, unsigned len) const {
 		return new SambaByteArray(m_data.mid(index, len));
 	}
 
 	Q_INVOKABLE void append(SambaByteArray* other) {
 		m_data.append(other->m_data);
+		emit lengthChanged();
+	}
+
+	Q_INVOKABLE quint8 at(unsigned index) const {
+		return m_data.at(index);
 	}
 
 	Q_INVOKABLE bool readUrl(const QString& fileUrl);
 	Q_INVOKABLE bool readFile(const QString& fileName);
 	Q_INVOKABLE bool writeFile(const QString& fileName) const;
 
-	inline const QByteArray &constData() const
-	{
-		return m_data;
-	}
+signals:
+	void lengthChanged();
 
 private:
 	QByteArray m_data;

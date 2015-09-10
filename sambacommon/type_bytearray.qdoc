@@ -1,0 +1,39 @@
+/*!
+	\qmltype ByteArray
+	\inqmlmodule SAMBA
+	\brief The ByteArray type represents a variable-length byte array.
+*/
+/*!
+	\qmlproperty int ByteArray::length
+	\brief the byte array length
+*/
+/*!
+	\qmlmethod ByteArray ByteArray::mid(int index, int len)
+	\brief Returns a byte array containing \a len bytes from index \a index.
+*/
+/*!
+	\qmlmethod void ByteArray::append(ByteArray other)
+	\brief Appends the content of byte array \a other to the current data.
+*/
+/*!
+	\qmlmethod int ByteArray::at(int idx)
+	\brief Returns the byte at index \a idx.
+*/
+/*!
+	\qmlmethod bool ByteArray::readUrl(string fileUrl)
+	\brief Read the contents pointed to by URL \a fileUrl into the byte array.
+
+	Returns true on success, false otherwise
+*/
+/*!
+	\qmlmethod bool ByteArray::readFile(string fileName)
+	\brief Read the contents of file named \a fileName into the byte array.
+
+	Returns true on success, false otherwise
+*/
+/*!
+	\qmlmethod bool ByteArray::writeFile(string fileName)
+	\brief Write the contents of the byte array into the file \a fileName.
+
+	Returns true on success, false otherwise
+*/

@@ -1,16 +1,59 @@
 import QtQuick 2.3
 
-/* Default config (SAMA5D2-XULT) */
+/*!
+	\qmltype SAMA5D2Config
+	\inqmlmodule SAMBA.Device.SAMA5D2
+	\brief Contains configuration values for a SAMA5D2 device.
+
+	The default values are for the SAMA5D2 Xplained Ultra board.
+
+	\section1 SPI Configuration
+
+	The following SPI configurations are supported:
+
+	\table
+	\header \li Instance \li Peripheral \li I/O Set \li Chip Selects
+	\row \li 0 \li SPI0 \li 1, 2 \li 0, 1, 2, 3
+	\row \li 1 \li SPI1 \li 1, 2 \li 0, 1, 2, 3
+	\row \li 1 \li SPI1 \li 3 \li 0, 1, 2
+	\row \li 2 \li FLEXCOM0 \li 1 \li 0, 1
+	\row \li 3 \li FLEXCOM1 \li 1 \li 0, 1
+	\row \li 4 \li FLEXCOM2 \li 1, 2 \li 0, 1
+	\row \li 5 \li FLEXCOM3 \li 1, 2, 3 \li 0, 1
+	\row \li 6 \li FLEXCOM4 \li 1, 2, 3 \li 0, 1
+	\endtable
+
+	\section1 QuadSPI Configuration
+
+	The following QuadSPI configurations are supported:
+
+	\table
+	\header \li Instance \li Peripheral \li I/O Set
+	\row \li 0 \li QSPI0 \li 1, 2, 3
+	\row \li 1 \li QSPI1 \li 1, 2, 3
+	\endtable
+
+*/
 Item {
-	/* SPI SerialFlash on SPI0, ioSet1, CS0 at 66Mhz */
+	/*! SPI peripheral instance (default: 0) */
 	property int spiInstance: 0
+
+	/*! SPI I/O set (default: 1) */
 	property int spiIoset: 1
+
+	/*! SPI Chip Select (default: 0) */
 	property int spiChipSelect: 0
+
+	/*! SPI frequency, in MHz (default: 66) */
 	property double spiFreq: 66
 
-	/* QSPI Flash on QSPI0, ioSet3 at 66Mhz */
+	/*! QuadSPI peripheral instance (default: 0) */
 	property int qspiInstance: 0
+
+	/*! QuadSPI I/O set (default: 3) */
 	property int qspiIoset: 3
+
+	/*! QuadSPI frequency, in MHz (default: 66) */
 	property double qspiFreq: 66
 }
 

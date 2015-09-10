@@ -1,0 +1,8 @@
+/*!
+\qmlmodule SAMBA.Connection.Serial 1.0
+\title SAMBA.Connection.Serial Module
+
+The SAMBA.Connection.Serial module contains an implementation of the
+SAMBA::Connection type using a RS232 or USB link to communicate with the
+device.
+*/

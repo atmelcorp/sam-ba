@@ -11,6 +11,8 @@ DEVICE_FILES *= \
     applets/applet-serialflash-sama5d2.bin \
     applets/applet-qspiflash-sama5d2.bin
 
-DISTFILES += $$DEVICE_FILES
-
 include(../device.pri)
+
+OTHER_FILES += \
+    $$DEVICE_FILES \
+    module_samba_device_sama5d2.qdoc
