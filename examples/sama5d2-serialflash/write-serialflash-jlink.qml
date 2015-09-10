@@ -13,8 +13,8 @@ AppletLoader {
 		// initialize serial flash applet
 		appletInitialize("serialflash")
 
-		// erase first 4MB
-		appletErase(0, 4 * 1024 * 1024)
+		// erase all memory
+		appletErase(0, connection.applet.memorySize)
 
 		// write files
 		appletWrite(0x00000, "at91bootstrap.bin")
