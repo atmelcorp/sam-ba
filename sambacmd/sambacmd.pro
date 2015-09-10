@@ -1,12 +1,9 @@
 TEMPLATE = app
-
+CONFIG += console
+CONFIG -= app_bundle
 QT += core qml quick
 
 TARGET = sambacmd
-
-CONFIG += console
-CONFIG -= app_bundle
-CONFIG(debug, debug|release):CONFIG += qml_debug
 
 SOURCES += main.cpp
 

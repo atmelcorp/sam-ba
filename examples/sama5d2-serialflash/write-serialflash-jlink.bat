@@ -1,1 +1,1 @@
-..\..\sambacmd.bat -x write-serialflash-jlink.qml
+..\..\sambacmd -x write-serialflash-jlink.qml

@@ -1,9 +1,8 @@
 TEMPLATE = lib
 CONFIG += plugin
-QT -= gui
-QT += core qml
+QT += core qml quick
 
-TARGET = $$qtLibraryTarget(samba_conn_jlink)
+TARGET = samba_conn_jlink
 
 DESTPATH = /qml/SAMBA/Connection/JLink
 
@@ -35,7 +34,7 @@ else:win32:{
     LIBS += -L$$JLINKDIR -lJLinkARM
 
     jlinklibs.path = /
-    jlinklibs.commands = $(COPY) $$JLINKDIR/JLinkARM.dll \$(INSTALL_ROOT)
+    jlinklibs.files = $$JLINKDIR/JLinkARM.dll
     INSTALLS += jlinklibs
 }
 

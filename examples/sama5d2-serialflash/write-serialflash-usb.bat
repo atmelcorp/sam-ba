@@ -1,1 +1,1 @@
-..\..\sambacmd.bat -x write-serialflash-usb.qml
+..\..\sambacmd -x write-serialflash-usb.qml

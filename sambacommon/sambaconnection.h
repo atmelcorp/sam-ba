@@ -1,13 +1,14 @@
 #ifndef SAMBA_CONNECTION_H
 #define SAMBA_CONNECTION_H
 
+#include <sambacommon.h>
 #include <sambabytearray.h>
 #include <sambaapplet.h>
 #include <QObject>
 #include <QtQml>
 #include <QtQuick/QQuickItem>
 
-class SambaConnection : public QQuickItem
+class SAMBACOMMONSHARED_EXPORT SambaConnection : public QQuickItem
 {
 	Q_OBJECT
 	Q_PROPERTY(QString port READ port WRITE setPort NOTIFY portChanged)

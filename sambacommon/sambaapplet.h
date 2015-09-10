@@ -1,11 +1,12 @@
 #ifndef SAMBA_APPLET_H
 #define SAMBA_APPLET_H
 
+#include <sambacommon.h>
 #include <QObject>
 #include <QtQml>
 #include <QtQuick/QQuickItem>
 
-class SambaApplet : public QQuickItem
+class SAMBACOMMONSHARED_EXPORT SambaApplet : public QQuickItem
 {
 	Q_OBJECT
 	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)

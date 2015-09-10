@@ -1,12 +1,10 @@
 TEMPLATE = lib
-
-QT += qml quick
+CONFIG += dll
+QT += core qml quick
 
 TARGET = sambacommon
 
 VERSION = 3.0.0
-
-CONFIG += dll
 
 DEFINES += SAMBACOMMON_LIBRARY
 

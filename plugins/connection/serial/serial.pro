@@ -1,9 +1,8 @@
 TEMPLATE = lib
 CONFIG += plugin
-QT -= gui
-QT += core serialport qml
+QT += core serialport qml quick
 
-TARGET = $$qtLibraryTarget(samba_conn_serial)
+TARGET = samba_conn_serial
 
 DESTPATH = /qml/SAMBA/Connection/Serial
 

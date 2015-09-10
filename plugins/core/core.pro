@@ -1,9 +1,8 @@
 TEMPLATE = lib
 CONFIG += plugin
-QT -= gui
-QT += core qml
+QT += core qml quick
 
-TARGET = $$qtLibraryTarget(samba_core)
+TARGET = samba_core
 
 DESTPATH = /qml/SAMBA
 

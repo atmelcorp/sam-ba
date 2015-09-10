@@ -2,18 +2,17 @@ TEMPLATE = subdirs
 
 OTHER_FILES += TODO
 
-docs.path = /
-docs.files = README.md LICENSE.txt
-unix:contains(QT_ARCH, arm):docs.files += README.armv7.md
-INSTALLS += docs
+rootdocs.path = /
+rootdocs.files = README.md LICENSE.txt
+unix:contains(QT_ARCH, arm):rootdocs.files += README.armv7.md
+INSTALLS += rootdocs
 
 qtconf.path = /
 qtconf.files = qt.conf
 INSTALLS += qtconf
 
-include(doc/doc.pri)
-
 SUBDIRS = \
+        doc \
 	sambacommon \
 	plugins \
 	examples \
@@ -36,19 +35,41 @@ unix:{
 	INSTALLS += qtlibs
 }
 else:win32:{
-	qtlibs.path = /
-	qtlibs.commands = \
-		$(COPY) $$[QT_INSTALL_LIBS]\\Qt5Core.dll \$(INSTALL_ROOT) && \
-		$(COPY) $$[QT_INSTALL_LIBS]\\Qt5Network.dll \$(INSTALL_ROOT) && \
-		$(COPY) $$[QT_INSTALL_LIBS]\\Qt5Qml.dll \$(INSTALL_ROOT) && \
-		$(COPY) $$[QT_INSTALL_LIBS]\\Qt5SerialPort.dll \$(INSTALL_ROOT) && \
-		$(COPY) $$[QT_INSTALL_LIBS]\\icudt53.dll \$(INSTALL_ROOT) && \
-		$(COPY) $$[QT_INSTALL_LIBS]\\icuin53.dll \$(INSTALL_ROOT) && \
-		$(COPY) $$[QT_INSTALL_LIBS]\\icuuc53.dll \$(INSTALL_ROOT) && \
-		$(COPY) $$[QT_INSTALL_LIBS]\\libstdc++-6.dll \$(INSTALL_ROOT) \
-		$(COPY) $$[QT_INSTALL_LIBS]\\libgcc_s_dw2-1.dll \$(INSTALL_ROOT) \
-		$(COPY_DIR) $$[QT_INSTALL_LIBS]\\..\\qml\\QtQuick.2 \$(INSTALL_ROOT)/qml
-	INSTALLS += qtlibs
+        qtlibs.path = /
+        CONFIG(debug, debug|release):{
+            qtlibs.files = \
+                    $$[QT_INSTALL_LIBS]/../bin/Qt5Cored.dll \
+                    $$[QT_INSTALL_LIBS]/../bin/Qt5Guid.dll \
+                    $$[QT_INSTALL_LIBS]/../bin/Qt5Networkd.dll \
+                    $$[QT_INSTALL_LIBS]/../bin/Qt5Qmld.dll \
+                    $$[QT_INSTALL_LIBS]/../bin/Qt5Quickd.dll \
+                    $$[QT_INSTALL_LIBS]/../bin/Qt5SerialPortd.dll
+        }
+        else:{
+            qtlibs.files = \
+                    $$[QT_INSTALL_LIBS]/../bin/Qt5Core.dll \
+                    $$[QT_INSTALL_LIBS]/../bin/Qt5Gui.dll \
+                    $$[QT_INSTALL_LIBS]/../bin/Qt5Network.dll \
+                    $$[QT_INSTALL_LIBS]/../bin/Qt5Qml.dll \
+                    $$[QT_INSTALL_LIBS]/../bin/Qt5Quick.dll \
+                    $$[QT_INSTALL_LIBS]/../bin/Qt5SerialPort.dll
+        }
+        INSTALLS += qtlibs
+
+        otherlibs.path = /
+        otherlibs.files = \
+                $$[QT_INSTALL_LIBS]/../bin/icudt54.dll \
+                $$[QT_INSTALL_LIBS]/../bin/icuin54.dll \
+                $$[QT_INSTALL_LIBS]/../bin/icuuc54.dll \
+                $$[QT_INSTALL_LIBS]/../bin/libwinpthread-1.dll \
+                $$[QT_INSTALL_LIBS]/../bin/libgcc_s_dw2-1.dll
+                ~#$$[QT_INSTALL_LIBS]/../bin/libstdc++-6.dll \
+        INSTALLS += otherlibs
+
+        qmlmodules.path = /qml
+        qmlmodules.files = $$[QT_INSTALL_LIBS]/../qml/QtQuick.2
+        INSTALLS += qmlmodules
 }
 
+plugins.depends = sambacommon
 sambacmd.depends = sambacommon
