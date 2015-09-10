@@ -62,8 +62,9 @@ else:win32:{
                 $$[QT_INSTALL_LIBS]/../bin/icuin54.dll \
                 $$[QT_INSTALL_LIBS]/../bin/icuuc54.dll \
                 $$[QT_INSTALL_LIBS]/../bin/libwinpthread-1.dll \
-                $$[QT_INSTALL_LIBS]/../bin/libgcc_s_dw2-1.dll
-                ~#$$[QT_INSTALL_LIBS]/../bin/libstdc++-6.dll \
+                $$[QT_INSTALL_LIBS]/../bin/libgcc_s_dw2-1.dll \
+                $$[QT_INSTALL_LIBS]/../bin/\"libstdc++-6.dll\"
+        otherlibs.CONFIG += no_check_exist
         INSTALLS += otherlibs
 
         qmlmodules.path = /qml
