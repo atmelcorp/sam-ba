@@ -20,7 +20,7 @@ SUBDIRS = \
 
 # copy Qt libs
 unix:{
-	qtlibs.path = /
+	qtlibs.path = /lib
 	qtlibs.files = \
 		$$[QT_INSTALL_LIBS]/libQt5Core.so.5 \
 		$$[QT_INSTALL_LIBS]/libQt5Gui.so.5 \
@@ -30,11 +30,11 @@ unix:{
 		$$[QT_INSTALL_LIBS]/libQt5SerialPort.so.5
 	INSTALLS += qtlibs
 
-	otherlibs.path = /
+	otherlibs.path = /lib
 	otherlibs.files = \
 		$$[QT_INSTALL_LIBS]/libicudata.so.54 \
 		$$[QT_INSTALL_LIBS]/libicui18n.so.54 \
-		$$[QT_INSTALL_LIBS]/libicuuc.so.54 \
+		$$[QT_INSTALL_LIBS]/libicuuc.so.54
 	INSTALLS += otherlibs
 
 	qmlmodules.path = /qml
