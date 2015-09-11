@@ -3,8 +3,8 @@ TEMPLATE = subdirs
 OTHER_FILES += TODO
 
 rootdocs.path = /
-rootdocs.files = README.md LICENSE.txt
-unix:contains(QT_ARCH, arm):rootdocs.files += README.armv7.md
+rootdocs.files = README.txt LICENSE.txt
+unix:contains(QT_ARCH, arm):rootdocs.files += README.armv7.txt
 INSTALLS += rootdocs
 
 qtconf.path = /
