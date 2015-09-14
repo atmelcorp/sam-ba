@@ -172,15 +172,18 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void AppletLoader::appletWrite(int offset, string fileName)
+		\qmlmethod void AppletLoader::appletWrite(int offset, string fileName, bool bootFile)
 		\brief Writes data from a file to the device.
 
 		Reads the contents of the file named \a fileName and writes it at offset
 		\a offset using the applet 'write' command.
 
+		If \a bootFile is \tt true, the file size will be written at offset 20 into the data before
+		writing. This is required when the code is to be loaded by the ROM code.
+
 		Throws an \a Error if the applet has no write command or if an error occured during writing
 	*/
-	function appletWrite(offset, fileName)
+	function appletWrite(offset, fileName, bootFile)
 	{
 		if (!connection.applet.hasCommand("write"))
 			throw new Error("Applet '" + connection.applet.name + "' does not support 'write' command")
@@ -196,6 +199,12 @@ Item {
 			throw new Error("Cannot write past end of memory, only " +
 				  remaining + " bytes remaining at offset 0x" +
 				  offset.toString(16) + " (file size is " + size + " bytes)")
+		}
+
+		if (!!bootFile)
+		{
+			// write size into 6th vector
+			data.writeu32(20, size);
 		}
 
 		var current = 0
@@ -219,15 +228,18 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void AppletLoader::appletVerify(int offset, string fileName)
+		\qmlmethod void AppletLoader::appletVerify(int offset, string fileName, bool bootFile)
 		\brief Compares data between a file and the device memory.
 
 		Reads the contents of the file named \a fileName and compares it with memory at offset
 		\a offset using the applet 'read' command.
 
+		If \a bootFile is \tt true, the file size will be written at offset 20 into the data before
+		writing. This is required when the code is to be loaded by the ROM code.
+
 		Throws an \a Error if the applet has no read command, if an error occured during reading or if the verification failed.
 	*/
-	function appletVerify(offset, fileName)
+	function appletVerify(offset, fileName, bootFile)
 	{
 		if (!connection.applet.hasCommand("read"))
 			throw new Error("Applet '" + connection.applet.name + "' does not support 'read' command")
@@ -243,6 +255,12 @@ Item {
 			throw new Error("Cannot verify past end of memory, only " +
 				  remaining + " bytes remaining at offset 0x" +
 				  offset.toString(16) + " (file size is " + size + " bytes)");
+		}
+
+		if (!!bootFile)
+		{
+			// write size into 6th vector
+			data.writeu32(20, size);
 		}
 
 		var current = 0
@@ -271,19 +289,22 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void AppletLoader::appletWriteVerify(int offset, string fileName)
+		\qmlmethod void AppletLoader::appletWriteVerify(int offset, string fileName, bool bootFile)
 		\brief Writes/Compares data from a file to the device memory.
 
 		Reads the contents of the file named \a fileName and writes it
 		at offset \a offset using the applet 'write' command. The data is then read
 		back using the applet 'read' command and compared it with the expected data.
 
+		If \a bootFile is \tt true, the file size will be written at offset 20 into the data before
+		writing. This is required when the code is to be loaded by the ROM code.
+
 		Throws an \a Error if the applet has no read and write commands or if an error occured during reading, writing or verifying.
 	*/
-	function appletWriteVerify(offset, fileName)
+	function appletWriteVerify(offset, fileName, bootFile)
 	{
-		appletWrite(offset, fileName)
-		appletVerify(offset, fileName)
+		appletWrite(offset, fileName, bootFile)
+		appletVerify(offset, fileName, bootFile)
 	}
 
 	/*!

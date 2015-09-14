@@ -17,7 +17,7 @@ AppletLoader {
 		appletErase(0, connection.applet.memorySize)
 
 		// write files
-		appletWrite(0x00000, "at91bootstrap.bin")
+		appletWrite(0x00000, "at91bootstrap.bin", true)
 		appletWrite(0x04000, "u-boot-env.bin")
 		appletWrite(0x08000, "u-boot.bin")
 		appletWrite(0x60000, "at91-sama5d2_xplained.dtb")
