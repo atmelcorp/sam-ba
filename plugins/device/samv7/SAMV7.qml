@@ -54,8 +54,8 @@ Device {
 	*/
 	function checkDeviceID(connection) {
 		// read ARCH field of CHIPID_CIDR register
-		var arch = (connection.readu32(0x400e0940) >> 20) & 15
+		var arch = (connection.readu32(0x400e0940) >> 20) & 0xff
 		if (arch < 0x10 || arch > 0x13)
-			print("No known SAMx7 chip detected!")
+			print("No known SAMx7 chip detected! (arch=" + arch.toString(16) + ")")
 	}
 }
