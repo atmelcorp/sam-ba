@@ -78,6 +78,7 @@ Item {
 	signal connectionClosed()
 
 	/*!
+		\qmlmethod void AppletLoader::appletInitialize(string appletName)
 		\brief Loads and initializes the \a appletName applet.
 
 		Throws an \a Error if the applet is not found or could not be loaded/initialized.
@@ -122,6 +123,7 @@ Item {
 	}
 
 	/*!
+		\qmlmethod void AppletLoader::appletRead(int offset, int size, string fileName)
 		\brief Read data from the device into a file.
 
 		Reads \a size bytes at offset \a offset using the applet 'read'
@@ -170,6 +172,7 @@ Item {
 	}
 
 	/*!
+		\qmlmethod void AppletLoader::appletWrite(int offset, string fileName)
 		\brief Writes data from a file to the device.
 
 		Reads the contents of the file named \a fileName and writes it at offset
@@ -216,6 +219,7 @@ Item {
 	}
 
 	/*!
+		\qmlmethod void AppletLoader::appletVerify(int offset, string fileName)
 		\brief Compares data between a file and the device memory.
 
 		Reads the contents of the file named \a fileName and compares it with memory at offset
@@ -267,6 +271,7 @@ Item {
 	}
 
 	/*!
+		\qmlmethod void AppletLoader::appletWriteVerify(int offset, string fileName)
 		\brief Writes/Compares data from a file to the device memory.
 
 		Reads the contents of the file named \a fileName and writes it
@@ -282,6 +287,7 @@ Item {
 	}
 
 	/*!
+		\qmlmethod void AppletLoader::appletErase(int offset, int size)
 		\brief Erases a block of memory.
 
 		Erases \a size bytes at offset \a offset using the applet 'block erase' command.
@@ -316,13 +322,14 @@ Item {
 	}
 
 	/*!
+		\qmlmethod void AppletLoader::appletFullErase()
 		\brief Fully Erase the Device
 
 		Completely erase the device using the applet 'full erase' command.
 
 		Throws an \a Error if the applet has no Full Erase command or if an error occured during erase
 	*/
-	function appletFullErase(index)
+	function appletFullErase()
 	{
 		if (!connection.applet.hasCommand("fullErase"))
 			throw new Error("Applet '" + connection.applet.name + "' does not support 'full erase' command")
@@ -332,6 +339,7 @@ Item {
 	}
 
 	/*!
+		\qmlmethod void AppletLoader::appletGpnvmSet(int index)
 		\brief Sets GPNVM.
 
 		Sets GPNVM at index \a index using the applet 'GPNVM' command.
@@ -348,6 +356,7 @@ Item {
 	}
 
 	/*!
+		\qmlmethod void AppletLoader::appletGpnvmClear(int index)
 		\brief Clears GPNVM.
 
 		Clears GPNVM at index \a index using the applet 'GPNVM' command.
