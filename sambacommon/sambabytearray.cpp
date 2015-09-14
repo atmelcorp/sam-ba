@@ -23,6 +23,55 @@ SambaByteArray::SambaByteArray(const SambaByteArray& data)
 
 }
 
+SambaByteArray *SambaByteArray::mid(unsigned index, unsigned len) const
+{
+	return new SambaByteArray(m_data.mid(index, len));
+}
+
+void SambaByteArray::append(SambaByteArray* other)
+{
+	m_data.append(other->m_data);
+	emit lengthChanged();
+}
+
+quint8 SambaByteArray::readu8(int offset) const
+{
+	return m_data[offset];
+}
+
+void SambaByteArray::writeu8(int offset, quint8 value)
+{
+	m_data[offset] = value;
+}
+
+quint16 SambaByteArray::readu16(int offset) const
+{
+	return m_data[offset]
+			+ (m_data[offset + 1] << 8);
+}
+
+void SambaByteArray::writeu16(int offset, quint16 value)
+{
+	m_data[offset] = value & 0xff;
+	m_data[offset + 1] = (value >> 8) & 0xff;
+}
+
+quint32 SambaByteArray::readu32(int offset) const
+{
+	return m_data[offset]
+			+ (m_data[offset + 1] << 8)
+			+ (m_data[offset + 2] << 16)
+			+ (m_data[offset + 3] << 24);
+}
+
+void SambaByteArray::writeu32(int offset, quint32 value)
+{
+	m_data[offset] = value & 0xff;
+	m_data[offset + 1] = (value >> 8) & 0xff;
+	m_data[offset + 2] = (value >> 16) & 0xff;
+	m_data[offset + 3] = (value >> 24) & 0xff;
+}
+
 bool SambaByteArray::readUrl(const QString &fileUrl)
 {
 	return readFile(QUrl(fileUrl).toLocalFile());
