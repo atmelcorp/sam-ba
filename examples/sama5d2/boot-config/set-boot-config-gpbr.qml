@@ -23,11 +23,16 @@ Item {
 			// clear and disable GPBRx
 			BootCfg.resetConfig(this)
 
-			// write new Boot Configuration Word Fuse
+			// write new Boot Configuration Word in GPBR
 			// TODO: Set the correct value using constants from BootCfg
-			// and uncomment the writeFuse function call.
-			var bcw = BootCfg.BCW_EXT_MEM_BOOT_ENABLE | BootCfg.BCW_QSPI0_IOSET1 | BootCfg.BCW_JTAG_IOSET1
-			//BootCfg.writeFuse(this, bcw)
+			// and uncomment the writeGPBR/writeBSCR function calls.
+			var bcw = BootCfg.BCW_EXT_MEM_BOOT_ENABLE |
+			          BootCfg.BCW_QSPI0_IOSET1 |
+			          BootCfg.BCW_JTAG_IOSET1
+			var bscr = BootCfg.BSCR_GPBR_VALID |
+			           BootCfg.BSCR_GPBR_0
+			//BootCfg.writeGPBR(this, 0, bcw)
+			//BootCfg.writeBSCR(this, bscr)
 
 			// read and display new BSCR/GPBR/Fuse values
 			print("-- new boot config --")
