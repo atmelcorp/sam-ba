@@ -224,7 +224,7 @@ var BCW_QSPI_XIP_MODE       = 1 << 21
 
 /*! \qmlproperty int BootCfg::BCW_DISABLE_BSCR
     \brief Boot Config Word bits for disabling read of BSCR register.
- 
+
     Only valid if boot configuration word is written in fuses, not for GPBR.
  */
 var BCW_DISABLE_BSCR        = 1 << 22
@@ -239,14 +239,14 @@ var BCW_SECURE_MODE         = 1 << 29
 
 /*! \qmlproperty int BootCfg::BCW_SEC_DEBUG_DIS
     \brief Boot Config Word bits for disabling JTAG when the CPU is in Secure Mode.
- 
+
     Only valid if boot configuration word is written in fuses, not for GPBR.
  */
 var BCW_SEC_DEBUG_DIS  = 1 << 30
 
 /*! \qmlproperty int BootCfg::BCW_JTAG_DIS
     \brief Boot Config Word bits for disabling JTAG.
- 
+
     Only valid if boot configuration word is written in fuses, not for GPBR.
  */
 var BCW_JTAG_DIS       = 1 << 31
@@ -397,10 +397,10 @@ function configToText(value) {
 		text.push("QSPI0_IOSET1")
 		break
 	case BCW_QSPI0_IOSET2:
-		text.push("QSPI0_IOSET2")
+		text.push("QSPI0_IOSET2*")
 		break
 	case BCW_QSPI0_IOSET3:
-		text.push("QSPI0_IOSET3")
+		text.push("QSPI0_IOSET3*")
 		break
 	}
 
@@ -409,10 +409,10 @@ function configToText(value) {
 		text.push("QSPI1_IOSET1")
 		break
 	case BCW_QSPI1_IOSET2:
-		text.push("QSPI1_IOSET2")
+		text.push("QSPI1_IOSET2*")
 		break
 	case BCW_QSPI1_IOSET3:
-		text.push("QSPI1_IOSET3")
+		text.push("QSPI1_IOSET3*")
 		break
 	}
 
@@ -421,7 +421,7 @@ function configToText(value) {
 		text.push("SPI0_IOSET1")
 		break
 	case BCW_SPI0_IOSET2:
-		text.push("SPI0_IOSET2")
+		text.push("SPI0_IOSET2*")
 		break
 	}
 
@@ -430,10 +430,10 @@ function configToText(value) {
 		text.push("SPI1_IOSET1")
 		break
 	case BCW_SPI1_IOSET2:
-		text.push("SPI1_IOSET2")
+		text.push("SPI1_IOSET2*")
 		break
 	case BCW_SPI1_IOSET3:
-		text.push("SPI1_IOSET3")
+		text.push("SPI1_IOSET3*")
 		break
 	}
 
@@ -442,7 +442,7 @@ function configToText(value) {
 		text.push("NFC_IOSET1")
 		break
 	case BCW_NFC_IOSET2:
-		text.push("NFC_IOSET2")
+		text.push("NFC_IOSET2*")
 		break
 	}
 
@@ -457,31 +457,31 @@ function configToText(value) {
 		text.push("CONSOLE1_IOSET1")
 		break
 	case BCW_CONSOLE0_IOSET1:
-		text.push("CONSOLE0_IOSET1")
+		text.push("CONSOLE0_IOSET1*")
 		break
 	case BCW_CONSOLE1_IOSET2:
-		text.push("CONSOLE1_IOSET2")
+		text.push("CONSOLE1_IOSET2*")
 		break
 	case BCW_CONSOLE2_IOSET1:
-		text.push("CONSOLE2_IOSET1")
+		text.push("CONSOLE2_IOSET1*")
 		break
 	case BCW_CONSOLE2_IOSET2:
-		text.push("CONSOLE2_IOSET2")
+		text.push("CONSOLE2_IOSET2*")
 		break
 	case BCW_CONSOLE2_IOSET3:
-		text.push("CONSOLE2_IOSET3")
+		text.push("CONSOLE2_IOSET3*")
 		break
 	case BCW_CONSOLE3_IOSET1:
-		text.push("CONSOLE3_IOSET1")
+		text.push("CONSOLE3_IOSET1*")
 		break
 	case BCW_CONSOLE3_IOSET2:
-		text.push("CONSOLE3_IOSET2")
+		text.push("CONSOLE3_IOSET2*")
 		break
 	case BCW_CONSOLE3_IOSET3:
-		text.push("CONSOLE3_IOSET3")
+		text.push("CONSOLE3_IOSET3*")
 		break
 	case BCW_CONSOLE4_IOSET1:
-		text.push("CONSOLE4_IOSET1")
+		text.push("CONSOLE4_IOSET1*")
 		break
 	}
 
@@ -490,36 +490,36 @@ function configToText(value) {
 		text.push("JTAG_IOSET1")
 		break
 	case BCW_JTAG_IOSET2:
-		text.push("JTAG_IOSET2")
+		text.push("JTAG_IOSET2*")
 		break
 	case BCW_JTAG_IOSET3:
-		text.push("JTAG_IOSET3")
+		text.push("JTAG_IOSET3*")
 		break
 	case BCW_JTAG_IOSET4:
-		text.push("JTAG_IOSET4")
+		text.push("JTAG_IOSET4*")
 		break
 	}
 
 	if (value & BCW_EXT_MEM_BOOT_ENABLE)
-		text.push("EXT_MEM_BOOT")
+		text.push("EXT_MEM_BOOT*")
 
 	if (value & BCW_QSPI_XIP_MODE)
-		text.push("QSPI_XIP_MODE")
+		text.push("QSPI_XIP_MODE*")
 
 	if (value & BCW_DISABLE_BSCR)
-		text.push("DISABLE_BSCR")
+		text.push("DISABLE_BSCR*")
 
 	if (value & BCW_DISABLE_MONITOR)
-		text.push("DISABLE_MONITOR")
+		text.push("DISABLE_MONITOR*")
 
 	if (value & BCW_SECURE_MODE)
-		text.push("SECURE_MODE")
+		text.push("SECURE_MODE*")
 
 	if (value & BCW_SEC_DEBUG_DIS)
-		text.push("SEC_DEBUG_DISABLED")
+		text.push("SEC_DEBUG_DISABLED*")
 
 	if (value & BCW_JTAG_DIS)
-		text.push("JTAG_DISABLED")
+		text.push("JTAG_DISABLED*")
 
 	return "0x" + value.toString(16) + " (" + text.join(", ") + ")"
 }
