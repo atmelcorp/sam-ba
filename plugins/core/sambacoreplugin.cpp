@@ -14,8 +14,8 @@ static QObject *sambautils_singletontype_provider(QQmlEngine *engine, QJSEngine 
 void SambaCorePlugin::registerTypes(const char *uri)
 {
 	Q_ASSERT(uri == QLatin1String("SAMBA"));
-	qmlRegisterSingletonType<SambaUtils>("SAMBA", 1, 0, "Utils", sambautils_singletontype_provider);
-	qmlRegisterType<SambaByteArray>("SAMBA", 1, 0, "ByteArray");
-	qmlRegisterType<SambaApplet>(uri, 1, 0, "Applet");
-	qmlRegisterType<SambaConnection>(uri, 1, 0, "Connection");
+	qmlRegisterSingletonType<SambaUtils>("SAMBA", 3, 0, "Utils", sambautils_singletontype_provider);
+	qmlRegisterType<SambaByteArray>("SAMBA", 3, 0, "ByteArray");
+	qmlRegisterType<SambaApplet>(uri, 3, 0, "Applet");
+	qmlRegisterType<SambaConnection>(uri, 3, 0, "Connection");
 }

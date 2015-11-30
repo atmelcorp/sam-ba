@@ -69,7 +69,7 @@ public:
 	void registerTypes(const char *uri)
 	{
 		Q_ASSERT(uri == QLatin1String("SAMBA.Connection.Serial"));
-		qmlRegisterType<SambaConnectionSerial>(uri, 1, 0, "SerialConnection");
+		qmlRegisterType<SambaConnectionSerial>(uri, 3, 0, "SerialConnection");
 	}
 };
 

@@ -1,6 +1,6 @@
-import SAMBA 1.0
-import SAMBA.Connection.Serial 1.0
-import SAMBA.Device.SAMV7 1.0
+import SAMBA 3.0
+import SAMBA.Connection.Serial 3.0
+import SAMBA.Device.SAMV7 3.0
 
 AppletLoader {
 	connection: SerialConnection { }

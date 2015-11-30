@@ -1,5 +1,5 @@
 module SAMBA
 plugin samba_core
 classname SambaCorePlugin
-AppletLoader 1.0 AppletLoader.qml
-Device 1.0 Device.qml
+AppletLoader 3.0 AppletLoader.qml
+Device 3.0 Device.qml

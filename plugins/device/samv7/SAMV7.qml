@@ -1,4 +1,4 @@
-import SAMBA 1.0
+import SAMBA 3.0
 
 /*!
 	\qmltype SAMV7

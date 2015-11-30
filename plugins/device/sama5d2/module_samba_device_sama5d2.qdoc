@@ -1,5 +1,5 @@
 /*!
-\qmlmodule SAMBA.Device.SAMA5D2 1.0
+\qmlmodule SAMBA.Device.SAMA5D2 3.0
 \title SAMBA.Device.SAMA5D2 Module
 
 The SAMBA.Device.SAMA5D2 module contains an implementation of the

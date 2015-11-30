@@ -1,4 +1,4 @@
 module SAMBA.Connection.JLink
-depends SAMBA 1.0
+depends SAMBA 3.0
 plugin samba_conn_jlink
 classname SambaConnectionJLinkPlugin

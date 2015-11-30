@@ -1,4 +1,4 @@
 module SAMBA.Device.SAMA5D2
-SAMA5D2 1.0 SAMA5D2.qml
-SAMA5D2Config 1.0 SAMA5D2Config.qml
-BootCfg 1.0 sama5d2-boot-cfg.js
+SAMA5D2 3.0 SAMA5D2.qml
+SAMA5D2Config 3.0 SAMA5D2Config.qml
+BootCfg 3.0 sama5d2-boot-cfg.js
