@@ -18,6 +18,8 @@ SUBDIRS = \
 	examples \
 	tools
 
+win32:SUBDIRS += driver
+
 # copy Qt libs
 unix:{
 	qtlibs.path = /lib
