@@ -153,9 +153,11 @@ Item {
 			if (status !== 0)
 				throw new Error("Failed to read block at address 0x" + offset.toString(16) + "(status: " + status + ")")
 
-			count = connection.appletMailboxRead(0)
-			if (count === 0)
+			var bytes_read = connection.appletMailboxRead(0)
+			if (bytes_read === 0)
 				throw new Error("Could not read block at address 0x" + offset.toString(16) + " (applet returned success but 0 bytes read)");
+			if (bytes_read < count)
+				count = bytes_read;
 
 			var block = connection.appletBufferRead(count)
 			if (block.length < count)
@@ -223,9 +225,11 @@ Item {
 			if (status !== 0)
 				throw new Error("Failed to write block at address 0x" + offset.toString(16) + "(status: " + status + ")")
 
-			count = connection.appletMailboxRead(0)
-			if (count === 0)
+			var bytes_written = connection.appletMailboxRead(0)
+			if (bytes_written === 0)
 				throw new Error("Could not write block at address 0x" + offset.toString(16) + " (applet returned success but 0 bytes written)");
+			if (bytes_written < count)
+				count = bytes_written
 
 			print("Wrote " + count + " bytes at address 0x" + offset.toString(16));
 
@@ -280,9 +284,11 @@ Item {
 			if (status !== 0)
 				throw new Error("Could not read block at address 0x" + offset.toString(16) + "(status: " + status + ")");
 
-			count = connection.appletMailboxRead(0)
-			if (count === 0)
+			var bytes_read = connection.appletMailboxRead(0)
+			if (bytes_read === 0)
 				throw new Error("Could not read block at address 0x" + offset.toString(16) + " (applet returned success but 0 bytes read)");
+			if (bytes_read < count)
+				count = bytes_read
 
 			var block = connection.appletBufferRead(count)
 			if (block.length < count)
