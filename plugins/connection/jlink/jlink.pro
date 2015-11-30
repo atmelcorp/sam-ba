@@ -17,7 +17,7 @@ else:win32:CONFIG(debug, debug|release):LIBS += -L$$OUT_PWD/../../../sambacommon
 else:unix:LIBS += -L$$OUT_PWD/../../../sambacommon/ -lsambacommon
 
 unix:contains(QT_ARCH, x86_64):{
-    JLINKDIR = /opt/SEGGER/JLinkSDK_Linux_V500b_x86_64
+    JLINKDIR = /opt/SEGGER/JLinkSDK_Linux_V502k_x86_64
     INCLUDEPATH += $$JLINKDIR/Inc
     LIBS += -L$$JLINKDIR -ljlinkarm
 
@@ -29,7 +29,7 @@ unix:contains(QT_ARCH, x86_64):{
     QMAKE_RPATH =
 }
 else:win32:{
-    JLINKDIR = "C:/Program Files (x86)/SEGGER/JLink_SDK_V500b"
+    JLINKDIR = "C:/Program Files (x86)/SEGGER/JLink_SDK_V502k"
     INCLUDEPATH += $$JLINKDIR/Inc
     LIBS += -L$$JLINKDIR -lJLinkARM
 
