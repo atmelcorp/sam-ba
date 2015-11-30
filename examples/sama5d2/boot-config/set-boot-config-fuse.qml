@@ -13,9 +13,6 @@ Item {
 		baudRate: 57600
 
 		onConnectionOpened: {
-			// enable SFC
-			BootCfg.enableSFC(this)
-
 			// read and display previous BSCR/GPBR/Fuse values
 			print("-- previous boot config --")
 			BootCfg.printConfig(this)
@@ -29,14 +26,13 @@ Item {
 			var bcw = BootCfg.BCW_EXT_MEM_BOOT_ENABLE |
 			          BootCfg.BCW_QSPI0_IOSET1 |
 			          BootCfg.BCW_JTAG_IOSET1
+			BootCfg.enableSFC(this)
 			//BootCfg.writeFuse(this, bcw)
+			BootCfg.disableSFC(this)
 
 			// read and display new BSCR/GPBR/Fuse values
 			print("-- new boot config --")
 			BootCfg.printConfig(this)
-
-			// disable SFC
-			BootCfg.disableSFC(this)
 		}
 
 		onConnectionFailed: print("Connection failed: " + message)

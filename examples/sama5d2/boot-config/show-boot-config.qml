@@ -13,15 +13,9 @@ Item {
 		baudRate: 57600
 
 		onConnectionOpened: {
-			// enable SFC
-			BootCfg.enableSFC(this)
-
 			// read and display current BSCR/GPBR/Fuse values
 			print("-- boot config --")
 			BootCfg.printConfig(this)
-
-			// disable SFC
-			BootCfg.disableSFC(this)
 		}
 
 		onConnectionFailed: print("Connection failed: " + message)
