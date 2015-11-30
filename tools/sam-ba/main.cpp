@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
 	QCoreApplication app(argc, argv);
 	QCoreApplication::setApplicationName("sam-ba");
-	QCoreApplication::setApplicationVersion("3.0-pre4");
+	QCoreApplication::setApplicationVersion("3.0");
 
 	QCommandLineParser parser;
 	parser.setApplicationDescription("SAM-BA Command Line Tool");
