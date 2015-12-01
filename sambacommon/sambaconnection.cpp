@@ -195,7 +195,7 @@ bool SambaConnection::appletUpload(SambaApplet* applet)
 
 quint32 SambaConnection::appletMailboxRead(quint32 index)
 {
-	if (!m_applet)
+	if (!m_applet || index > 32)
 		return 0;
 	return readu32(m_applet->mailboxAddr() + (index + 2) * 4);
 }
