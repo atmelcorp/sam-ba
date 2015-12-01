@@ -38,4 +38,4 @@ This release contains the following examples:
 - sama5d4/ledblink: Sample script to toggle some PIO on "SAMA5D4-EK" board
 - samv7/flash: Sample script to program the internal flash of SAMV7 MCUs.
 
-Please see README.md file in each example directory for more information.
+Please see README.txt file in each example directory for more information.
