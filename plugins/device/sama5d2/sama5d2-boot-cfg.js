@@ -37,9 +37,7 @@
 
 	Or to write the boot config word in OTP fuses:
 	\code
-	BootCfg.enableSFC(connection)
 	BootCfg.writeFuse(connection, bcw)
-	BootCfg.disableSFC(connection)
 	\endcode
 
 	Please see section "Standard Boot Strategies" of the SAMA5D2 Datasheet
@@ -284,29 +282,8 @@ function writeGPBR(conn, index, value) {
 }
 
 /*!
-	\qmlmethod void BootCfg::enableSFC(Connection conn)
-	Enables SFC (Secure Fuse Controller) peripheral clock using connection
-	\a conn.
-*/
-function enableSFC(conn) {
-	conn.writeu32(REG_PMC_PCR, PMC_PCR_CMD | PMC_PCR_EN | ID_SFC)
-}
-
-/*!
-	\qmlmethod void BootCfg::disableSFC(Connection conn)
-	Disables SFC (Secure Fuse Controller) peripheral clock using connection
-	\a conn.
- */
-function disableSFC(conn) {
-	conn.writeu32(REG_PMC_PCR, PMC_PCR_CMD | ID_SFC)
-}
-
-/*!
 	\qmlmethod int BootCfg::readFuse(Connection conn)
 	\brief Reads Boot Config Fuse (DR16) using connection \a conn.
-
-	Note that the Secure Fuse Controller peripheral clock must have been
-	enabled first using enableSFC.
  */
 function readFuse(conn) {
 	return conn.readu32(REG_SFC_DR16)
@@ -316,11 +293,11 @@ function readFuse(conn) {
 	\qmlmethod void BootCfg::writeFuse(Connection conn, int value)
 	\brief Writes \a value to Boot Config Fuse (DR16) using connection \a
 	conn.
-
-	Note that the Secure Fuse Controller peripheral clock must have been
-	enabled first using enableSFC.
 */
 function writeFuse(conn, value) {
+	// Enable SFC (Secure Fuse Controller) peripheral clock
+	conn.writeu32(REG_PMC_PCR, PMC_PCR_CMD | PMC_PCR_EN | ID_SFC)
+
 	// Write the key to SFC_KR register
 	conn.writeu32(REG_SFC_KR, SFC_KR_KEY)
 
@@ -329,6 +306,9 @@ function writeFuse(conn, value) {
 
 	// Wait for completion by polling SFC_SR register
 	while ((conn.readu32(REG_SFC_SR) & SFC_SR_PGMC) != SFC_SR_PGMC) {}
+
+	// Disable SFC peripheral clock
+	conn.writeu32(REG_PMC_PCR, PMC_PCR_CMD | ID_SFC)
 }
 
 /*!

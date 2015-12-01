@@ -26,9 +26,7 @@ Item {
 			var bcw = BootCfg.BCW_EXT_MEM_BOOT_ENABLE |
 			          BootCfg.BCW_QSPI0_IOSET1 |
 			          BootCfg.BCW_JTAG_IOSET1
-			BootCfg.enableSFC(this)
 			//BootCfg.writeFuse(this, bcw)
-			BootCfg.disableSFC(this)
 
 			// read and display new BSCR/GPBR/Fuse values
 			print("-- new boot config --")
