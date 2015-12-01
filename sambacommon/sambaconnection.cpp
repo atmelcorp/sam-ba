@@ -206,7 +206,7 @@ SambaByteArray* SambaConnection::appletBufferRead(unsigned length)
 		return NULL;
 	if (length > m_applet->bufferSize())
 		return NULL;
-	return read(m_applet->bufferAddr(), m_applet->bufferSize());
+	return read(m_applet->bufferAddr(), length);
 }
 
 bool SambaConnection::appletBufferWrite(SambaByteArray* data)
