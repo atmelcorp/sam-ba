@@ -9,7 +9,7 @@ This SAM-BA version comes as an early delivery and all presented APIs / command 
 ### Supported Platforms
 
 This release supports the following platforms:
-- Windows 32-bit
+- Windows 32-bit and 64-bit
 - Linux x86_64
 
 ## Contents
