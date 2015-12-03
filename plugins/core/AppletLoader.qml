@@ -295,7 +295,7 @@ Item {
 				throw new Error("Could not read from applet buffer");
 
 			for (var i = 0; i < block.length; i++)
-				if (block.readu8(i) !== data.readu8(offset + i))
+				if (block.readu8(i) !== data.readu8(current + i))
 					throw new Error("Failed verification. First error at address 0x" + (offset + i).toString(16));
 
 			print("Verified " + count + " bytes at address 0x" + offset.toString(16));
