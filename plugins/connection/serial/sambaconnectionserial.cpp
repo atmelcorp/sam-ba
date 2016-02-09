@@ -59,7 +59,9 @@ void SambaConnectionSerial::open()
 	QSerialPortInfo info(port());
 	if (!info.isValid())
 	{
-		emit connectionFailed(QString().sprintf("Cannot open invalid port '%s'", port().toLocal8Bit().constData()));
+		emit connectionFailed(
+				QString().sprintf("Cannot open invalid port '%s'",
+					port().toLocal8Bit().constData()));
 		return;
 	}
 
@@ -74,7 +76,8 @@ void SambaConnectionSerial::open()
 	m_serial.setStopBits(QSerialPort::OneStop);
 	m_serial.setFlowControl(QSerialPort::NoFlowControl);
 
-	qCInfo(sambaLogConnSerial, "Opening serial port '%s'", port().toLocal8Bit().constData());
+	qCInfo(sambaLogConnSerial, "Opening serial port '%s'",
+			port().toLocal8Bit().constData());
 
 	if (m_serial.open(QIODevice::ReadWrite))
 	{
@@ -92,15 +95,18 @@ void SambaConnectionSerial::open()
 		}
 		else
 		{
-			emit connectionFailed(QString().sprintf("Could not switch monitor on port '%s' to binary mode",
-												port().toLocal8Bit().constData()));
+			emit connectionFailed(
+					QString().sprintf(
+						"Could not switch monitor on port '%s' to binary mode",
+						port().toLocal8Bit().constData()));
 		}
 	}
 	else
 	{
-		emit connectionFailed(QString().sprintf("Could not open serial port '%s': %s",
-											port().toLocal8Bit().constData(),
-											m_serial.errorString().toLocal8Bit().constData()));
+		emit connectionFailed(
+				QString().sprintf("Could not open serial port '%s': %s",
+					port().toLocal8Bit().constData(),
+					m_serial.errorString().toLocal8Bit().constData()));
 	}
 }
 
