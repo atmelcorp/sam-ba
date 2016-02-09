@@ -3,7 +3,7 @@
 #include <QSerialPortInfo>
 #include <QStringList>
 
-#define MAX_BUF_SIZE (16*1024)
+#define MAX_BUF_SIZE (32*1024)
 
 #define ATMEL_USB_VID 0x03eb
 #define SAMBA_USB_PID 0x6124
@@ -185,11 +185,23 @@ quint32 SambaConnectionSerial::readu32(quint32 address)
 
 SambaByteArray *SambaConnectionSerial::read(quint32 address, unsigned length)
 {
-	if (!m_serial.isOpen())
+	if (!m_serial.isOpen() || length == 0)
 		return new SambaByteArray();
 
-	writeSerial(QString().sprintf("R%x,%x#", address, length));
-	return new SambaByteArray(readAllSerial());
+	QByteArray data;
+	int offset = 0;
+	while (length > 0)
+	{
+		int chunkSize = length > MAX_BUF_SIZE ? MAX_BUF_SIZE : length;
+		if ((chunkSize & 63) == 0)
+			chunkSize--;
+		writeSerial(QString().sprintf("R%x,%x#", address + offset, chunkSize));
+		data.append(readAllSerial());
+		offset += chunkSize;
+		length -= chunkSize;
+	}
+
+	return new SambaByteArray(data);
 }
 
 bool SambaConnectionSerial::writeu8(quint32 address, quint8 data)
