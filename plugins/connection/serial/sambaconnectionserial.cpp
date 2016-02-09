@@ -42,11 +42,6 @@ QStringList SambaConnectionSerial::availablePorts()
 	return list_at91 + list_other;
 }
 
-quint32 SambaConnectionSerial::type()
-{
-	return m_at91 ? USB : Serial;
-}
-
 void SambaConnectionSerial::open()
 {
 	if (port().isEmpty())
@@ -251,4 +246,9 @@ bool SambaConnectionSerial::go(quint32 address)
 	writeSerial(QString().sprintf("G%x#", address));
 
 	return true;
+}
+
+quint32 SambaConnectionSerial::appletConnectionType()
+{
+	return m_at91 ? USB : Serial;
 }

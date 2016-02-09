@@ -26,8 +26,6 @@ public:
 
 	Q_INVOKABLE QStringList availablePorts();
 
-	quint32 type();
-
 	Q_INVOKABLE void open();
 	Q_INVOKABLE void close();
 
@@ -42,6 +40,8 @@ public:
 	Q_INVOKABLE bool write(quint32 address, SambaByteArray *data);
 
 	Q_INVOKABLE bool go(quint32 address);
+
+	Q_INVOKABLE quint32 appletConnectionType();
 
 signals:
 	void baudRateChanged();

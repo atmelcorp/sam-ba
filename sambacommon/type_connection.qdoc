@@ -117,27 +117,6 @@ It is recommended to use the AppletLoader helper type when using applets. It con
 */
 
 /*!
-\qmlproperty int Connection::appletTraceLevel
-\brief The applet trace level that will be passed as argument during applet initialization.
-
-Default applet trace level is 4.
-*/
-
-/*!
-\qmlproperty int Connection::appletRetries
-\brief The number of retries when waiting for an applet command to execute.
-
-After an applet command is started, the Connection will poll for applet
-completion using an adaptative timeout between poll cycles.  First polling is
-done just after command execution, subsequent retries will wait before checking
-for completion.  The initial delay is 100 microseconds and is multiplied by 1.5
-at each iteration until the command is complete or the maximum number of
-retries is reached.
-
-Default number of retries is 20.
-*/
-
-/*!
 \qmlsignal Connection::connectionOpened()
 \brief This signal is triggered when the connection has been opened successfully.
 */
@@ -299,16 +278,22 @@ greater than the current applet buffer.
 */
 
 /*!
-\qmlmethod int Connection::appletExecute(string command, var arguments)
-\brief Execute applet \a command with \a arguments.
+\qmlmethod int Connection::appletExecute(string command, var arguments, int retries)
+\brief Execute applet \a command with \a arguments and try \a retries times to
+poll for completion.
 
 Arguments can be supplied a single integer if there is only one
 argument, or an array of integers if multiple arguments are needed.
 
-If the command is \tt init, the connection type and the applet trace level are
-prepended to the list of arguments.
+After an applet command is started, the Connection will poll for applet
+completion using an adaptative timeout between poll cycles.  First polling is
+done just after command execution, subsequent retries will wait before checking
+for completion.  The initial delay is 100 microseconds and is multiplied by 1.5
+at each iteration until the command is complete or the maximum number of
+retries is reached.  The default number of retries if not specified is 20.
 
 Returns the applet return code. Zero (0) is usually means success and anything
 else is an error.  The values of the error codes are applet-specific and -1 is
-returned for unsupported commands.
+returned for unsupported commands or when the maximum number of polling retries
+was reached.
 */

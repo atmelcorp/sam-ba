@@ -13,8 +13,6 @@ class SAMBACOMMONSHARED_EXPORT SambaConnection : public QQuickItem
 	Q_OBJECT
 	Q_PROPERTY(QString port READ port WRITE setPort NOTIFY portChanged)
 	Q_PROPERTY(SambaApplet* applet READ applet NOTIFY appletChanged)
-	Q_PROPERTY(quint32 appletTraceLevel READ appletTraceLevel WRITE setAppletTraceLevel NOTIFY appletTraceLevelChanged)
-	Q_PROPERTY(int appletRetries READ appletRetries WRITE setAppletRetries NOTIFY appletRetriesChanged)
 	Q_ENUMS(ConnectionType)
 
 public:
@@ -32,15 +30,7 @@ public:
 
 	SambaApplet* applet();
 
-	quint32 appletTraceLevel();
-	void setAppletTraceLevel(quint32 traceLevel);
-
-	int appletRetries();
-	void setAppletRetries(int retries);
-
 	Q_INVOKABLE virtual QStringList availablePorts();
-
-	virtual quint32 type();
 
 	Q_INVOKABLE virtual void open();
 	Q_INVOKABLE virtual void close();
@@ -63,17 +53,16 @@ public:
 
 	Q_INVOKABLE virtual bool go(quint32 address);
 
+	Q_INVOKABLE virtual quint32 appletConnectionType();
 	Q_INVOKABLE virtual bool appletUpload(SambaApplet* applet);
 	Q_INVOKABLE virtual quint32 appletMailboxRead(quint32 index);
 	Q_INVOKABLE virtual SambaByteArray* appletBufferRead(unsigned length);
 	Q_INVOKABLE virtual bool appletBufferWrite(SambaByteArray* data);
-	Q_INVOKABLE virtual qint32 appletExecute(const QString& cmd, QVariant args);
+	Q_INVOKABLE virtual qint32 appletExecute(const QString& cmd, QVariant args, quint32 retries = 20);
 
 signals:
 	void portChanged();
 	void appletChanged();
-	void appletTraceLevelChanged();
-	void appletRetriesChanged();
 	void connectionOpened();
 	void connectionFailed(const QString& message);
 	void connectionClosed();
@@ -81,8 +70,6 @@ signals:
 private:
 	QString m_port;
 	SambaApplet* m_applet;
-	quint32 m_appletTraceLevel;
-	int m_appletRetries;
 };
 
 #endif // SAMBA_CONNECTION_H

@@ -15,6 +15,8 @@ class SAMBACOMMONSHARED_EXPORT SambaApplet : public QQuickItem
 	Q_PROPERTY(QString codeUrl READ codeUrl WRITE setCodeUrl NOTIFY codeUrlChanged)
 	Q_PROPERTY(quint32 codeAddr READ codeAddr WRITE setCodeAddr NOTIFY codeAddrChanged)
 	Q_PROPERTY(quint32 mailboxAddr READ mailboxAddr WRITE setMailboxAddr NOTIFY mailboxAddrChanged)
+	Q_PROPERTY(quint32 traceLevel READ traceLevel WRITE setTraceLevel NOTIFY traceLevelChanged)
+	Q_PROPERTY(int retries READ retries WRITE setRetries NOTIFY retriesChanged)
 	Q_PROPERTY(quint32 memorySize READ memorySize WRITE setMemorySize NOTIFY memorySizeChanged)
 	Q_PROPERTY(quint32 bufferAddr READ bufferAddr WRITE setBufferAddr NOTIFY bufferAddrChanged)
 	Q_PROPERTY(quint32 bufferSize READ bufferSize WRITE setBufferSize NOTIFY bufferSizeChanged)
@@ -51,6 +53,12 @@ public:
 	quint32 mailboxAddr() const;
 	void setMailboxAddr(quint32 mailboxAddr);
 
+	quint32 traceLevel() const;
+	void setTraceLevel(quint32 traceLevel);
+
+	quint32 retries() const;
+	void setRetries(quint32 retries);
+
 	quint32 memorySize() const;
 	void setMemorySize(quint32 memorySize);
 
@@ -76,6 +84,8 @@ signals:
 	void codeUrlChanged();
 	void codeAddrChanged();
 	void mailboxAddrChanged();
+	void traceLevelChanged();
+	void retriesChanged();
 	void memorySizeChanged();
 	void bufferAddrChanged();
 	void bufferSizeChanged();
@@ -89,6 +99,8 @@ private:
 	QString m_codeUrl;
 	quint32 m_codeAddr;
 	quint32 m_mailboxAddr;
+	quint32 m_traceLevel;
+	quint32 m_retries;
 	quint32 m_memorySize;
 	quint32 m_bufferAddr;
 	quint32 m_bufferSize;

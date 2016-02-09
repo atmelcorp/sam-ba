@@ -63,6 +63,24 @@ The workflow when using applets is:
 \brief Address of the mailbox area used for communication with the applet.
 */
 
+
+/*!
+\qmlproperty int Applet::traceLevel
+\brief The applet trace level that will be passed as argument during applet initialization.
+
+Default applet trace level is 4.
+*/
+
+/*!
+\qmlproperty int Applet::retries
+\brief The number of retries when waiting for an applet command to execute.
+
+Please see Connection::appletExecute for more information on the adaptive delay
+algorithm that is used during the polling.
+
+Default number of retries is 20.
+*/
+
 /*!
 \qmlproperty int Applet::memorySize
 \brief Memory size detected by the applet, if applicable.

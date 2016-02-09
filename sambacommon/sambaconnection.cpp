@@ -4,9 +4,7 @@
 SambaConnection::SambaConnection(QQuickItem* parent)
 	: QQuickItem(parent),
 	  m_port(""),
-	  m_applet(0),
-	  m_appletTraceLevel(4),
-	  m_appletRetries(20)
+	  m_applet(0)
 {
 }
 
@@ -34,42 +32,9 @@ SambaApplet* SambaConnection::applet()
 	return m_applet;
 }
 
-quint32 SambaConnection::appletTraceLevel()
-{
-	return m_appletTraceLevel;
-}
-
-void SambaConnection::setAppletTraceLevel(quint32 traceLevel)
-{
-	if (m_appletTraceLevel != traceLevel)
-	{
-		m_appletTraceLevel = traceLevel;
-		emit appletTraceLevelChanged();
-	}
-}
-
-int SambaConnection::appletRetries()
-{
-	return m_appletRetries;
-}
-
-void SambaConnection::setAppletRetries(int retries)
-{
-	if (m_appletRetries != retries)
-	{
-		m_appletRetries = retries;
-		emit appletRetriesChanged();
-	}
-}
-
 QStringList SambaConnection::availablePorts()
 {
 	return QStringList();
-}
-
-quint32 SambaConnection::type()
-{
-	return Serial;
 }
 
 void SambaConnection::open()
@@ -174,6 +139,11 @@ bool SambaConnection::go(quint32 address)
 	return false;
 }
 
+quint32 SambaConnection::appletConnectionType()
+{
+	return Serial;
+}
+
 bool SambaConnection::appletUpload(SambaApplet* applet)
 {
 	m_applet = NULL;
@@ -218,7 +188,7 @@ bool SambaConnection::appletBufferWrite(SambaByteArray* data)
 	return write(m_applet->bufferAddr(), data);
 }
 
-qint32 SambaConnection::appletExecute(const QString& cmd, QVariant args)
+qint32 SambaConnection::appletExecute(const QString& cmd, QVariant args, quint32 retries)
 {
 	if (!m_applet)
 		return -1;
@@ -233,15 +203,6 @@ qint32 SambaConnection::appletExecute(const QString& cmd, QVariant args)
 	mbxOffset += 4;
 	writeu32(m_applet->mailboxAddr() + mbxOffset, 0xffffffff);
 	mbxOffset += 4;
-
-	// write comm type / trace level if command is "Initialize"
-	if (cmd == "init")
-	{
-		writeu32(m_applet->mailboxAddr() + mbxOffset, type());
-		mbxOffset += 4;
-		writeu32(m_applet->mailboxAddr() + mbxOffset, m_appletTraceLevel);
-		mbxOffset += 4;
-	}
 
 	// write applet arguments
 	if (args.canConvert(QVariant::UInt))
@@ -279,8 +240,8 @@ qint32 SambaConnection::appletExecute(const QString& cmd, QVariant args)
 
 	// wait for completion
 	float delay = 100;
-	int retry = 0;
-	for (retry = 0; retry < m_appletRetries; retry++)
+	unsigned retry = 0;
+	for (retry = 0; retry < retries; retry++)
 	{
 		if (retry > 0)
 		{
@@ -292,7 +253,7 @@ qint32 SambaConnection::appletExecute(const QString& cmd, QVariant args)
 		if (ack == (0xffffffff - cmdValue))
 			break;
 	}
-	if (retry == m_appletRetries)
+	if (retry == retries)
 		return -1;
 
 	// return applet status

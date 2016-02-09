@@ -75,11 +75,6 @@ QStringList SambaConnectionJlink::availablePorts()
 	return list;
 }
 
-quint32 SambaConnectionJlink::type()
-{
-	return JTAG;
-}
-
 void SambaConnectionJlink::open()
 {
 	if (port().isEmpty())
@@ -319,4 +314,9 @@ bool SambaConnectionJlink::go(quint32 address)
 	}
 
 	return false;
+}
+
+quint32 SambaConnectionJlink::appletConnectionType()
+{
+	return JTAG;
 }

@@ -94,7 +94,9 @@ Item {
 
 		if (connection.applet.hasCommand("init"))
 		{
-			var status = connection.appletExecute("init", connection.applet.initArgs)
+			var args = [ connection.appletConnectionType(), connection.applet.traceLevel ]
+			Array.prototype.push.apply(args, connection.applet.initArgs)
+			var status = connection.appletExecute("init", args, connection.applet.retries)
 			if (status !== 0)
 				throw new Error("Applet " + connection.applet.description + " failed to initialize (status=" + status + ")")
 
@@ -149,7 +151,7 @@ Item {
 		{
 			var count = Math.min(size, connection.applet.bufferSize)
 
-			var status = connection.appletExecute("read", [ connection.applet.bufferAddr, count, offset ])
+			var status = connection.appletExecute("read", [ connection.applet.bufferAddr, count, offset ], connection.applet.retries)
 			if (status !== 0)
 				throw new Error("Failed to read block at address 0x" + offset.toString(16) + "(status: " + status + ")")
 
@@ -221,7 +223,7 @@ Item {
 			if (!connection.appletBufferWrite(data.mid(current, count)))
 				throw new Error("Could not write to applet buffer")
 
-			var status = connection.appletExecute("write", [ connection.applet.bufferAddr, count, offset ])
+			var status = connection.appletExecute("write", [ connection.applet.bufferAddr, count, offset ], connection.applet.retries)
 			if (status !== 0)
 				throw new Error("Failed to write block at address 0x" + offset.toString(16) + "(status: " + status + ")")
 
@@ -280,7 +282,7 @@ Item {
 		{
 			var count = Math.min(size, connection.applet.bufferSize)
 
-			var status = connection.appletExecute("read", [ connection.applet.bufferAddr, count, offset ])
+			var status = connection.appletExecute("read", [ connection.applet.bufferAddr, count, offset ], connection.applet.retries)
 			if (status !== 0)
 				throw new Error("Could not read block at address 0x" + offset.toString(16) + "(status: " + status + ")");
 
@@ -347,7 +349,7 @@ Item {
 
 		var end = offset + size
 		while (offset < end) {
-			var status = connection.appletExecute("blockErase", offset)
+			var status = connection.appletExecute("blockErase", offset, connection.applet.retries)
 			if (status !== 0)
 				throw new Error("Could not erase block at address 0x" + offset.toString(16) + " (status: " + status + ")");
 
@@ -372,7 +374,7 @@ Item {
 	{
 		if (!connection.applet.hasCommand("fullErase"))
 			throw new Error("Applet '" + connection.applet.name + "' does not support 'full erase' command")
-		var status = connection.appletExecute("fullErase")
+		var status = connection.appletExecute("fullErase", [], connection.applet.retries)
 		if (status !== 0)
 			throw new Error("Full Erase command failed (status=" + status + ")")
 	}
@@ -389,7 +391,7 @@ Item {
 	{
 		if (!connection.applet.hasCommand("gpnvm"))
 			throw new Error("Applet '" + connection.applet.name + "' does not support 'GPNVM' command")
-		var status = connection.appletExecute("gpnvm", [ 1, index ])
+		var status = connection.appletExecute("gpnvm", [ 1, index ], connection.applet.retries)
 		if (status !== 0)
 			throw new Error("GPNVM Set command failed (status=" + status + ")")
 	}
@@ -406,7 +408,7 @@ Item {
 	{
 		if (!connection.applet.hasCommand("gpnvm"))
 			throw new Error("Applet '" + connection.applet.name + "' does not support 'GPNVM' command")
-		var status = connection.appletExecute("gpnvm", [ 0, index ])
+		var status = connection.appletExecute("gpnvm", [ 0, index ], connection.applet.retries)
 		if (status !== 0)
 			throw new Error("GPNVM Clear command failed (status=" + status + ")")
 	}

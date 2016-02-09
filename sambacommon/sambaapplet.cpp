@@ -8,6 +8,8 @@ SambaApplet::SambaApplet(QQuickItem* parent)
 	  m_codeUrl(""),
 	  m_codeAddr(0),
 	  m_mailboxAddr(0),
+	  m_traceLevel(4),
+	  m_retries(20),
 	  m_memorySize(0),
 	  m_bufferAddr(0),
 	  m_bufferSize(0),
@@ -80,6 +82,34 @@ void SambaApplet::setMailboxAddr(quint32 mailboxAddr)
 {
 	m_mailboxAddr = mailboxAddr;
 	emit mailboxAddrChanged();
+}
+
+quint32 SambaApplet::traceLevel() const
+{
+	return m_traceLevel;
+}
+
+void SambaApplet::setTraceLevel(quint32 traceLevel)
+{
+	if (m_traceLevel != traceLevel)
+	{
+		m_traceLevel = traceLevel;
+		emit traceLevelChanged();
+	}
+}
+
+quint32 SambaApplet::retries() const
+{
+	return m_retries;
+}
+
+void SambaApplet::setRetries(quint32 retries)
+{
+	if (m_retries != retries)
+	{
+		m_retries = retries;
+		emit retriesChanged();
+	}
 }
 
 quint32 SambaApplet::memorySize() const
