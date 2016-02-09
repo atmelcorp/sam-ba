@@ -11,6 +11,13 @@ SambaByteArray::SambaByteArray()
 
 }
 
+SambaByteArray::SambaByteArray(int length)
+	: QObject(0)
+{
+	m_data.resize(length);
+	m_data.fill(0xff);
+}
+
 SambaByteArray::SambaByteArray(const QByteArray& data)
 	: QObject(0), m_data(data)
 {
@@ -23,9 +30,21 @@ SambaByteArray::SambaByteArray(const SambaByteArray& data)
 
 }
 
+void SambaByteArray::pad(unsigned count, quint8 value)
+{
+	m_data.append(QByteArray(count, value));
+	emit lengthChanged();
+}
+
 SambaByteArray *SambaByteArray::mid(unsigned index, unsigned len) const
 {
 	return new SambaByteArray(m_data.mid(index, len));
+}
+
+void SambaByteArray::prepend(SambaByteArray* other)
+{
+	m_data.prepend(other->m_data);
+	emit lengthChanged();
 }
 
 void SambaByteArray::append(SambaByteArray* other)

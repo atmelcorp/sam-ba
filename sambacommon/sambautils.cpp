@@ -22,6 +22,11 @@ void SambaUtils::usleep(int usecs)
 	QThread::usleep(usecs);
 }
 
+SambaByteArray *SambaUtils::createByteArray(int length)
+{
+	return new SambaByteArray(length);
+}
+
 SambaByteArray *SambaUtils::readUrl(const QString& fileUrl)
 {
 	SambaByteArray *array = new SambaByteArray();

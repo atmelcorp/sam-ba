@@ -11,6 +11,7 @@ class SAMBACOMMONSHARED_EXPORT SambaByteArray : public QObject
 
 public:
 	explicit SambaByteArray();
+	explicit SambaByteArray(int length);
 	explicit SambaByteArray(const QByteArray& data);
 	explicit SambaByteArray(const SambaByteArray& data);
 
@@ -29,7 +30,9 @@ public:
 		return m_data;
 	}
 
+	Q_INVOKABLE void pad(unsigned count, quint8 value);
 	Q_INVOKABLE SambaByteArray *mid(unsigned index, unsigned len) const;
+	Q_INVOKABLE void prepend(SambaByteArray* other);
 	Q_INVOKABLE void append(SambaByteArray* other);
 
 	Q_INVOKABLE quint8 readu8(int offset) const;

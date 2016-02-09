@@ -8,8 +8,19 @@
 	\brief the byte array length
 */
 /*!
+	\qmlmethod void ByteArray::pad(int count, int value)
+	\brief Pad the current data up to \a count bytes.
+
+	Added bytes are initialized with \a value.
+	If the array was longer that \a count bytes, it will be truncated.
+*/
+/*!
 	\qmlmethod ByteArray ByteArray::mid(int index, int len)
 	\brief Returns a byte array containing \a len bytes from index \a index.
+*/
+/*!
+	\qmlmethod void ByteArray::prepend(ByteArray other)
+	\brief Prepend the content of byte array \a other in front of the current data.
 */
 /*!
 	\qmlmethod void ByteArray::append(ByteArray other)

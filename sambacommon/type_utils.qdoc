@@ -20,6 +20,13 @@
 */
 
 /*!
+\qmlmethod ByteArray Utils::createByteArray(int length)
+\brief Create a new empty ByteArray of size \a length bytes.
+
+Returns the newly created ByteArray.
+*/
+
+/*!
 \qmlmethod ByteArray Utils::readUrl(string fileUrl)
 \brief Read the contents of URL \a fileUrl into a new ByteArray.
 
