@@ -9,20 +9,20 @@ VERSION = 3.0.0
 DEFINES += SAMBACOMMON_LIBRARY
 
 SOURCES += \
-    sambacommon.cpp \
-    sambaengine.cpp \
+    sambaabstractapplet.cpp \
     sambabytearray.cpp \
-    sambautils.cpp \
+    sambacommon.cpp \
     sambaconnection.cpp \
-    sambaapplet.cpp
+    sambaengine.cpp \
+    sambautils.cpp
 
 HEADERS += \
-    sambacommon.h \
-    sambaengine.h\
+    sambaabstractapplet.h \
     sambabytearray.h \
-    sambautils.h \
+    sambacommon.h \
     sambaconnection.h \
-    sambaapplet.h
+    sambaengine.h\
+    sambautils.h
 
 unix:!mac:{
     QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\''
@@ -37,7 +37,7 @@ else:win32:{
 INSTALLS += target
 
 OTHER_FILES += \
-	type_applet.qdoc \
+	type_baseapplet.qdoc \
 	type_bytearray.qdoc \
 	type_connection.qdoc \
 	type_utils.qdoc

@@ -13,10 +13,11 @@ import SAMBA 3.0
 	several functions to call the most common applet commands:
 	\list
 	\li Initialize
-	\li Erase Block
-	\li Read Block
-	\li Write Block
+	\li Read
+	\li Write
+	\li Verify
 	\li Full Erase
+	\li Partial Erase
 	\li Set/Clear GPNVM
 	\endlist
 
@@ -36,7 +37,7 @@ import SAMBA 3.0
 		onConnectionOpened: {
 			appletInitialize("serialflash")
 			appletErase(0, 1024 * 1024)
-			appletWriteVerify(0, "program.bin")
+			appletWriteVerify(0, "program.bin", true)
 		}
 	}
 	\endqml
@@ -49,12 +50,13 @@ import SAMBA 3.0
 	\li Load and initialize the "serialflash" applet
 	\li Erase 1MB at offset 0
 	\li Write the contents of file "program.bin" at offset 0 and read it back to
-	verify that it was flashed correctly
+	verify that it was flashed correctly. The third argument ("true")
+	indicates that the file must be processed to be bootable.
 	\endlist
 
 	To ease the development of flashing scripts, all functions in AppletLoader
-	throw a JavaScript \tt Error on failure.  This will effectively stop the script
-	on error without having to handle error checking.
+	throw a JavaScript \tt Error on failure.  This will effectively stop
+	the script on error without having to handle error checking.
 */
 Item {
 	/*! Device whose applets will be used. */
@@ -81,46 +83,23 @@ Item {
 		\qmlmethod void AppletLoader::appletInitialize(string appletName)
 		\brief Loads and initializes the \a appletName applet.
 
-		Throws an \a Error if the applet is not found or could not be loaded/initialized.
+		Throws an \a Error if the applet is not found or could not be
+		loaded/initialized.
 	*/
 	function appletInitialize(appletName)
 	{
-		var applet = device.appletByName(appletName)
+		var applet = device.applet(appletName)
 		if (!applet)
 			throw new Error("Applet " + appletName + " not found")
 
 		if (!connection.appletUpload(applet))
 			throw new Error("Applet " + appletName + " could not be loaded")
 
-		if (connection.applet.hasCommand("init"))
-		{
-			var args = [ connection.appletConnectionType(), connection.applet.traceLevel ]
-			Array.prototype.push.apply(args, connection.applet.initArgs)
-			var status = connection.appletExecute("init", args, connection.applet.retries)
-			if (status !== 0)
-				throw new Error("Applet " + connection.applet.description + " failed to initialize (status=" + status + ")")
-
-			if (connection.applet.kind === Applet.KindNVM ||
-				connection.applet.kind === Applet.KindExtRAM)
-			{
-				connection.applet.memorySize = connection.appletMailboxRead(0)
-				connection.applet.bufferAddr = connection.appletMailboxRead(1)
-				connection.applet.bufferSize = connection.appletMailboxRead(2)
-			}
-			else
-			{
-				connection.applet.memorySize = 0
-				connection.applet.bufferAddr = 0
-				connection.applet.bufferSize = 0
-			}
-
-			print("Applet " + connection.applet.description + " loaded and initialized.")
-			if (connection.applet.memorySize > 0)
-				print("Memory size is " + connection.applet.memorySize + " bytes.")
-		}
-		else
-		{
-			print("Applet " + connection.applet.description + " loaded.")
+		if (connection.applet.canInitialize()) {
+			connection.applet.initialize(connection, device)
+			if (connection.applet.memorySize > 1)
+				print("Detected memory size is " +
+				      connection.applet.memorySize + " bytes.")
 		}
 	}
 
@@ -131,48 +110,61 @@ Item {
 		Reads \a size bytes at offset \a offset using the applet 'read'
 		command and writes the data to a file named \a fileName.
 
-		Throws an \a Error if the applet has no read command or if an error occured during reading
+		Throws an \a Error if the applet has no read command or if an
+		error occured during reading
 	*/
 	function appletRead(offset, size, fileName)
 	{
-		if (!connection.applet.hasCommand("read"))
-			throw new Error("Applet '" + applet.name + "' does not support 'read' command")
+		if (!connection.applet.canReadPages())
+			throw new Error("Applet '" + applet.name +
+			                "' does not support 'read pages' command")
 
-		if (offset + size > connection.applet.memorySize)
-		{
-			var remaining = connection.applet.memorySize - offset
-			throw new Error("Cannot read past end of memory, only " +
-				  remaining + " bytes remaining at offset 0x" +
-				  offset.toString(16) + " (requested " + size + " bytes)")
-		}
+		if (offset & (connection.applet.pageSize - 1) != 0)
+			throw new Error("Read offset is not page-aligned")
+		offset /= connection.applet.pageSize
 
-		var data
-		while (size > 0)
-		{
-			var count = Math.min(size, connection.applet.bufferSize)
+		// TODO handle non-page aligned sizes
+		if ((size & (connection.applet.pageSize - 1)) !== 0)
+			throw new Error("Read size is not page-aligned")
+		size /= connection.applet.pageSize
 
-			var status = connection.appletExecute("read", [ connection.applet.bufferAddr, count, offset ], connection.applet.retries)
-			if (status !== 0)
-				throw new Error("Failed to read block at address 0x" + offset.toString(16) + "(status: " + status + ")")
+		var data, percent
+		var badOffset, badCount = 0
+		var remaining = size
+		while (remaining > 0) {
+			var count = Math.min(remaining, connection.applet.bufferPages)
 
-			var bytes_read = connection.appletMailboxRead(0)
-			if (bytes_read === 0)
-				throw new Error("Could not read block at address 0x" + offset.toString(16) + " (applet returned success but 0 bytes read)");
-			if (bytes_read < count)
-				count = bytes_read;
+			var result = connection.applet.readPages(connection, device,
+			                                         offset, count)
+			if (result.length < count * connection.applet.pageSize)
+				count = result.length / connection.applet.pageSize
 
-			var block = connection.appletBufferRead(count)
-			if (block.length < count)
-				throw new Error("Could not read from applet buffer")
+			if (count === 0) {
+				if (badCount === 0)
+					badOffset = offset
+				badCount++
+				offset++
+				continue
+			} else if (badCount > 0) {
+				print("Skipped " + badCount + " bad page(s) at address 0x" +
+				      (badOffset * connection.applet.pageSize).toString(16))
+				badCount = 0
+			}
+
 			if (!data)
-				data = block
+				data = result
 			else
-				data.append(block)
+				data.append(result)
 
-			print("Read " + count + " bytes at address 0x" + offset.toString(16))
+			percent = 100 * (1 - ((remaining - count) / size))
+			print("Read " +
+			      (count * connection.applet.pageSize) +
+			      " bytes at address 0x" +
+			      (offset * connection.applet.pageSize).toString(16) +
+			      " (" + percent.toFixed(2) + "%)")
 
 			offset += count
-			size -= count
+			remaining -= count
 		}
 
 		if (!data.writeFile(fileName))
@@ -183,61 +175,77 @@ Item {
 		\qmlmethod void AppletLoader::appletWrite(int offset, string fileName, bool bootFile)
 		\brief Writes data from a file to the device.
 
-		Reads the contents of the file named \a fileName and writes it at offset
-		\a offset using the applet 'write' command.
+		Reads the contents of the file named \a fileName and writes it
+		at offset \a offset using the applet 'write' command.
 
-		If \a bootFile is \tt true, the file size will be written at offset 20 into the data before
-		writing. This is required when the code is to be loaded by the ROM code.
+		If \a bootFile is \tt true, the file size will be written at
+		offset 20 into the data before writing. This is required when
+		the code is to be loaded by the ROM code.
 
-		Throws an \a Error if the applet has no write command or if an error occured during writing
+		Throws an \a Error if the applet has no write command or if an
+		error occured during writing
 	*/
 	function appletWrite(offset, fileName, bootFile)
 	{
-		if (!connection.applet.hasCommand("write"))
-			throw new Error("Applet '" + connection.applet.name + "' does not support 'write' command")
+		if (!connection.applet.canWritePages())
+			throw new Error("Applet '" + connection.applet.name +
+			                "' does not support 'buffer write' command")
 
 		var data = Utils.readFile(fileName)
 		if (!data)
 			throw new Error("Could not read from file '" + fileName + "'")
-
-		var size = data.length
-		if (offset + size > connection.applet.memorySize)
-		{
-			var remaining = connection.applet.memorySize - offset
-			throw new Error("Cannot write past end of memory, only " +
-				  remaining + " bytes remaining at offset 0x" +
-				  offset.toString(16) + " (file size is " + size + " bytes)")
-		}
-
 		if (!!bootFile)
-		{
-			// write size into 6th vector
-			data.writeu32(20, size);
+			connection.applet.prepareBootFile(connection, device, data)
+
+		if (offset & (connection.applet.pageSize - 1) != 0)
+			throw new Error("Write offset is not page-aligned")
+		offset /= connection.applet.pageSize
+
+		// handle input data padding
+		if ((data.length & (connection.applet.pageSize - 1)) !== 0) {
+			var padding = connection.applet.pageSize -
+			              (data.length & (connection.applet.pageSize - 1))
+			data.pad(padding, connection.applet.padding)
+			print("Added " + padding + " bytes of padding to align to page size")
 		}
+		var size = data.length / connection.applet.pageSize
 
 		var current = 0
-		while (size > 0)
+		var percent
+		var badOffset, badCount = 0
+		var remaining = size
+		while (remaining > 0)
 		{
-			var count = Math.min(size, connection.applet.bufferSize)
+			var count = Math.min(remaining, connection.applet.bufferPages)
 
-			if (!connection.appletBufferWrite(data.mid(current, count)))
-				throw new Error("Could not write to applet buffer")
+			var pagesWritten = connection.applet.writePages(connection, device, offset,
+					data.mid(current * connection.applet.pageSize,
+					         count * connection.applet.pageSize))
+			if (pagesWritten < count)
+				count = pagesWritten
 
-			var status = connection.appletExecute("write", [ connection.applet.bufferAddr, count, offset ], connection.applet.retries)
-			if (status !== 0)
-				throw new Error("Failed to write block at address 0x" + offset.toString(16) + "(status: " + status + ")")
+			if (count === 0) {
+				if (badCount === 0)
+					badOffset = offset
+				badCount++
+				offset++
+				continue
+			} else if (badCount > 0) {
+				print("Skipped " + badCount + " bad page(s) at address 0x" +
+				      (badOffset * connection.applet.pageSize).toString(16))
+				badCount = 0
+			}
 
-			var bytes_written = connection.appletMailboxRead(0)
-			if (bytes_written === 0)
-				throw new Error("Could not write block at address 0x" + offset.toString(16) + " (applet returned success but 0 bytes written)");
-			if (bytes_written < count)
-				count = bytes_written
-
-			print("Wrote " + count + " bytes at address 0x" + offset.toString(16));
+			percent = 100 * (1 - ((remaining - count) / size))
+			print("Wrote " +
+			      (count * connection.applet.pageSize) +
+			      " bytes at address 0x" +
+			      (offset * connection.applet.pageSize).toString(16) +
+			      " (" + percent.toFixed(2) + "%)")
 
 			current += count
 			offset += count
-			size -= count
+			remaining -= count
 		}
 	}
 
@@ -245,66 +253,82 @@ Item {
 		\qmlmethod void AppletLoader::appletVerify(int offset, string fileName, bool bootFile)
 		\brief Compares data between a file and the device memory.
 
-		Reads the contents of the file named \a fileName and compares it with memory at offset
-		\a offset using the applet 'read' command.
+		Reads the contents of the file named \a fileName and compares
+		it with memory at offset \a offset using the applet 'read'
+		command.
 
-		If \a bootFile is \tt true, the file size will be written at offset 20 into the data before
-		writing. This is required when the code is to be loaded by the ROM code.
+		If \a bootFile is \tt true, the file size will be written at
+		offset 20 into the data before writing. This is required when
+		the code is to be loaded by the ROM code.
 
-		Throws an \a Error if the applet has no read command, if an error occured during reading or if the verification failed.
+		Throws an \a Error if the applet has no read command, if an
+		error occured during reading or if the verification failed.
 	*/
 	function appletVerify(offset, fileName, bootFile)
 	{
-		if (!connection.applet.hasCommand("read"))
-			throw new Error("Applet '" + connection.applet.name + "' does not support 'read' command")
+		if (!connection.applet.canReadPages())
+			throw new Error("Applet '" + connection.applet.name +
+			                "' does not support 'read buffer' command")
 
 		var data = Utils.readFile(fileName)
 		if (!data)
 			throw new Error("Could not read file '" + fileName + "'")
-
-		var size = data.length
-		if (offset + size > connection.applet.memorySize)
-		{
-			var remaining = connection.applet.memorySize - offset
-			throw new Error("Cannot verify past end of memory, only " +
-				  remaining + " bytes remaining at offset 0x" +
-				  offset.toString(16) + " (file size is " + size + " bytes)");
-		}
-
 		if (!!bootFile)
-		{
-			// write size into 6th vector
-			data.writeu32(20, size);
+			connection.applet.prepareBootFile(connection, device, data)
+
+		if (offset & (connection.applet.pageSize - 1) != 0) {
+			throw new Error("Verify offset is not page-aligned")
 		}
+		offset /= connection.applet.pageSize
+
+		// handle input data padding
+		if ((data.length & (connection.applet.pageSize - 1)) !== 0) {
+			var padding = connection.applet.pageSize -
+			              (data.length & (connection.applet.pageSize - 1))
+			data.pad(padding, connection.applet.padding)
+			print("Added " + padding + " bytes of padding to align to page size")
+		}
+		var size = data.length / connection.applet.pageSize
 
 		var current = 0
-		while (size > 0)
+		var percent
+		var badOffset, badCount = 0
+		var remaining = size
+		while (remaining > 0)
 		{
-			var count = Math.min(size, connection.applet.bufferSize)
+			var count = Math.min(remaining, connection.applet.bufferPages)
 
-			var status = connection.appletExecute("read", [ connection.applet.bufferAddr, count, offset ], connection.applet.retries)
-			if (status !== 0)
-				throw new Error("Could not read block at address 0x" + offset.toString(16) + "(status: " + status + ")");
+			var result = connection.applet.readPages(connection, device, offset, count)
+			if (result.length < count * connection.applet.pageSize)
+				count = result.length / connection.applet.pageSize
 
-			var bytes_read = connection.appletMailboxRead(0)
-			if (bytes_read === 0)
-				throw new Error("Could not read block at address 0x" + offset.toString(16) + " (applet returned success but 0 bytes read)");
-			if (bytes_read < count)
-				count = bytes_read
+			if (count === 0) {
+				if (badCount === 0)
+					badOffset = offset
+				badCount++
+				offset++
+				continue
+			} else if (badCount > 0) {
+				print("Skipped " + badCount + " bad page(s) at address 0x" +
+				      (badOffset * connection.applet.pageSize).toString(16))
+				badCount = 0
+			}
 
-			var block = connection.appletBufferRead(count)
-			if (block.length < count)
-				throw new Error("Could not read from applet buffer");
+			for (var i = 0; i < result.length; i++)
+				if (result.readu8(i) !== data.readu8(current * connection.applet.pageSize + i))
+					throw new Error("Failed verification. First error at address 0x" +
+					                (offset * connection.applet.pageSize + i).toString(16))
 
-			for (var i = 0; i < block.length; i++)
-				if (block.readu8(i) !== data.readu8(current + i))
-					throw new Error("Failed verification. First error at address 0x" + (offset + i).toString(16));
-
-			print("Verified " + count + " bytes at address 0x" + offset.toString(16));
+			percent = 100 * (1 - ((remaining - count) / size))
+			print("Verified " +
+			      (count * connection.applet.pageSize) +
+			      " bytes at address 0x" +
+			      (offset * connection.applet.pageSize).toString(16) +
+			      " (" + percent.toFixed(2) + "%)")
 
 			current += count
 			offset += count
-			size -= count
+			remaining -= count
 		}
 	}
 
@@ -313,13 +337,16 @@ Item {
 		\brief Writes/Compares data from a file to the device memory.
 
 		Reads the contents of the file named \a fileName and writes it
-		at offset \a offset using the applet 'write' command. The data is then read
-		back using the applet 'read' command and compared it with the expected data.
+		at offset \a offset using the applet 'write' command. The data
+		is then read back using the applet 'read' command and compared
+		it with the expected data.
 
-		If \a bootFile is \tt true, the file size will be written at offset 20 into the data before
-		writing. This is required when the code is to be loaded by the ROM code.
+		If \a bootFile is \tt true, the file size will be written at
+		offset 20 into the data before writing. This is required when
+		the code is to be loaded by the ROM code.
 
-		Throws an \a Error if the applet has no read and write commands or if an error occured during reading, writing or verifying.
+		Throws an \a Error if the applet has no read and write commands
+		or if an error occured during reading, writing or verifying.
 	*/
 	function appletWriteVerify(offset, fileName, bootFile)
 	{
@@ -331,34 +358,59 @@ Item {
 		\qmlmethod void AppletLoader::appletErase(int offset, int size)
 		\brief Erases a block of memory.
 
-		Erases \a size bytes at offset \a offset using the applet 'block erase' command.
+		Erases \a size bytes at offset \a offset using the applet
+		'block erase' command.
 
-		Throws an \a Error if the applet has no block erase command or if an error occured during erasing
+		Throws an \a Error if the applet has no block erase command or
+		if an error occured during erasing
 	*/
 	function appletErase(offset, size)
 	{
-		if (!connection.applet.hasCommand("blockErase"))
-			throw new Error("Applet '" + connection.applet.name + "' does not support 'block erase' command")
+		if (!connection.applet.canErasePages()) {
+			throw new Error("Applet '" + connection.applet.name +
+			                "' does not support 'erase pages' command")
+		}
 
-		if (offset > connection.applet.memorySize)
-			throw new Error("Offset is past end of memory");
+		// no offset supplied, start at 0
+		if (typeof offset === "undefined") {
+			offset = 0
+		} else {
+			if ((offset & (connection.applet.pageSize - 1)) !== 0)
+				throw new Error("Offset is not page-aligned")
+			offset /= connection.applet.pageSize
+		}
 
-		// at least one byte (=> 1 block)
-		if (size === undefined)
-			size = 1
+		// no size supplied, do a full erase
+		if (size === undefined) {
+			size = connection.applet.memoryPages - offset
+		} else {
+			if ((size & (connection.applet.pageSize - 1)) !== 0)
+				throw new Error("Size is not page-aligned")
+			size /= connection.applet.pageSize
+		}
+
+		if ((offset + size) > connection.applet.memoryPages)
+			throw new Error("Requested erase region overflows memory")
 
 		var end = offset + size
-		while (offset < end) {
-			var status = connection.appletExecute("blockErase", offset, connection.applet.retries)
-			if (status !== 0)
-				throw new Error("Could not erase block at address 0x" + offset.toString(16) + " (status: " + status + ")");
 
-			var count = connection.appletMailboxRead(0)
-			if (count === 0)
-				throw new Error("Could not erase block at address 0x" + offset.toString(16) + " (applet returned success but 0 bytes erased)");
+		var plan = computeErasePlan(offset, end, false)
+		if (plan === undefined)
+			throw new Error("Cannot erase requested region using supported erase block sizes without overflow")
 
-			print("Erased " + count + " bytes at address 0x" + offset.toString(16));
-			offset += count
+		for (var i in plan) {
+			offset = plan[i].start
+			for (var n = 0; n < plan[i].count; n++) {
+				var count = connection.applet.erasePages(connection, device,
+				                                         offset, plan[i].length)
+				var percent = 100 * (1 - ((end - offset - count) / size))
+				print("Erased " +
+				      (count * connection.applet.pageSize) +
+				      " bytes at address 0x" +
+				      (offset * connection.applet.pageSize).toString(16) +
+				      " (" + percent.toFixed(2) + "%)")
+				offset += count
+			}
 		}
 	}
 
@@ -366,17 +418,22 @@ Item {
 		\qmlmethod void AppletLoader::appletFullErase()
 		\brief Fully Erase the Device
 
-		Completely erase the device using the applet 'full erase' command.
+		Completely erase the device using the applet 'full erase'
+		command or several applet 'page erase' commands.
 
-		Throws an \a Error if the applet has no Full Erase command or if an error occured during erase
+		Throws an \a Error if the applet has no Full Erase command or
+		if an error occured during erase
 	*/
 	function appletFullErase()
 	{
-		if (!connection.applet.hasCommand("fullErase"))
-			throw new Error("Applet '" + connection.applet.name + "' does not support 'full erase' command")
-		var status = connection.appletExecute("fullErase", [], connection.applet.retries)
-		if (status !== 0)
-			throw new Error("Full Erase command failed (status=" + status + ")")
+		if (connection.applet.canEraseAll()) {
+			connection.applet.eraseAll(connection, device)
+		} else if (connection.applet.canErasePages()) {
+			appletErase()
+		} else {
+			throw new Error("Applet '" + connection.applet.name +
+		                        "' does not support any erase command")
+		}
 	}
 
 	/*!
@@ -385,15 +442,15 @@ Item {
 
 		Sets GPNVM at index \a index using the applet 'GPNVM' command.
 
-		Throws an \a Error if the applet has no GPNVM command or if an error occured during setting GPNVM
+		Throws an \a Error if the applet has no GPNVM command or if an
+		error occured during setting GPNVM
 	*/
 	function appletGpnvmSet(index)
 	{
-		if (!connection.applet.hasCommand("gpnvm"))
-			throw new Error("Applet '" + connection.applet.name + "' does not support 'GPNVM' command")
-		var status = connection.appletExecute("gpnvm", [ 1, index ], connection.applet.retries)
-		if (status !== 0)
-			throw new Error("GPNVM Set command failed (status=" + status + ")")
+		if (!connection.applet.canSetGpnvm())
+			throw new Error("Applet '" + connection.applet.name
+					+ "' does not support 'Set GPNVM' command")
+		connection.applet.setGpnvm(connection, device, index)
 	}
 
 	/*!
@@ -402,15 +459,77 @@ Item {
 
 		Clears GPNVM at index \a index using the applet 'GPNVM' command.
 
-		Throws an \a Error if the applet has no GPNVM command or if an error occured during clearing GPNVM
+		Throws an \a Error if the applet has no GPNVM command or if an
+		error occured during clearing GPNVM
 	*/
 	function appletGpnvmClear(index)
 	{
-		if (!connection.applet.hasCommand("gpnvm"))
-			throw new Error("Applet '" + connection.applet.name + "' does not support 'GPNVM' command")
-		var status = connection.appletExecute("gpnvm", [ 0, index ], connection.applet.retries)
-		if (status !== 0)
-			throw new Error("GPNVM Clear command failed (status=" + status + ")")
+		if (!connection.applet.canClearGpnvm())
+			throw new Error("Applet '" + connection.applet.name
+					+ "' does not support 'Clear GPNVM' command")
+		connection.applet.clearGpnvm(connection, device, index)
+	}
+
+	/*! \internal */
+	function computeErasePlan(start, end, overflow) {
+		var supported = []
+		var i, size
+
+		for (i = 32; i >= 0; i--) {
+			size = 1 << i
+			if ((connection.applet.eraseSupport & size) !== 0)
+				supported.push(size)
+		}
+
+		var plan = []
+		var currentStart = 0
+		var currentSize = 0
+		var currentCount = 0
+		while (start < end) {
+			var bestSize = 0
+			for (i in supported) {
+				size = supported[i]
+				// skip unaligned
+				if ((start & (size - 1)) !== 0)
+					continue
+				// skip too big
+				if (start + size > end)
+					continue
+				bestSize = size
+				break
+			}
+
+			if (!!overflow && bestSize === 0) {
+				bestSize = supported[supported.length - 1]
+				if (currentSize === 0) {
+					start &= ~(bestSize - 1)
+				}
+			}
+
+			if (bestSize === 0)
+				return
+
+			if (currentSize === bestSize) {
+				currentCount++
+			} else {
+				if (currentSize !== 0) {
+					plan.push({start:currentStart,
+					           length:currentSize,
+					           count:currentCount})
+				}
+				currentStart = start
+				currentSize = bestSize
+				currentCount = 1
+			}
+
+			start += bestSize
+		}
+		if (currentSize !== 0) {
+			plan.push({start:currentStart,
+			           length:currentSize,
+			           count:currentCount})
+		}
+		return plan
 	}
 
 	/*! \internal */

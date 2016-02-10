@@ -11,7 +11,7 @@ Item {
 	property string name
 
 	/*! List of device applets */
-	property list<Applet> applets
+	property list<AbstractApplet> applets
 
 	/*!
 		\qmlmethod void Device::initialize(Connection connection)
@@ -22,10 +22,10 @@ Item {
 	}
 
 	/*!
-		\qmlmethod Applet Device::appletByName(string name)
+		\qmlmethod Applet Device::applet(string name)
 		Returns the applet with name \a name or \tt undefined if not found.
 	*/
-	function appletByName(name) {
+	function applet(name) {
 		for (var i = 0; i < applets.length; i++) {
 			if (applets[i].name === name)
 				return applets[i]

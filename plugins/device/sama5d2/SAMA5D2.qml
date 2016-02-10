@@ -79,52 +79,62 @@ Device {
 		Applet {
 			name: "lowlevel"
 			description: "Low-Level"
-			kind: Applet.KindLowLevel
 			codeUrl: Qt.resolvedUrl("applets/applet-lowlevel-sama5d2.bin")
 			codeAddr: 0x220000
 			mailboxAddr: 0x220004
-			initArgs: [ 0, 0, 0 ]
 			commands: {
-				"init": 0
+				"initialize": 0
+			}
+
+			function buildInitArgs(connection, device) {
+				var args = defaultInitArgs(connection, device)
+				Array.prototype.push.apply(args, [0, 0, 0])
+				return args
 			}
 		},
 		Applet {
 			name: "serialflash"
 			description: "AT25/AT26 Serial Flash"
-			kind: Applet.KindNVM
 			codeUrl: Qt.resolvedUrl("applets/applet-serialflash-sama5d2.bin")
 			codeAddr: 0x220000
 			mailboxAddr: 0x220004
-			initArgs: [
-				config.spiInstance,
-				config.spiIoset,
-				config.spiChipSelect,
-				Math.floor(config.spiFreq * 1000000)
-			]
 			commands: {
-				"init": 0,
-				"read": 3,
-				"write": 2,
-				"blockErase": 8
+				"initialize": 0,
+				"erasePages": 0x31,
+				"readPages":  0x32,
+				"writePages": 0x33
+			}
+
+			function buildInitArgs(connection, device) {
+				var args = defaultInitArgs(connection, device)
+				var config = [device.config.spiInstance,
+				              device.config.spiIoset,
+				              device.config.spiChipSelect,
+				              Math.floor(device.config.spiFreq * 1000000)]
+				Array.prototype.push.apply(args, config)
+				return args
 			}
 		},
 		Applet {
 			name: "qspiflash"
 			description: "QSPI Flash"
-			kind: Applet.KindNVM
 			codeUrl: Qt.resolvedUrl("applets/applet-qspiflash-sama5d2.bin")
 			codeAddr: 0x220000
 			mailboxAddr: 0x220004
-			initArgs: [
-				config.qspiInstance,
-				config.qspiIoset,
-				Math.floor(config.qspiFreq * 1000000)
-			]
 			commands: {
-				"init": 0,
-				"read": 3,
-				"write": 2,
-				"blockErase": 8
+				"initialize": 0,
+				"erasePages": 0x31,
+				"readPages":  0x32,
+				"writePages": 0x33
+			}
+
+			function buildInitArgs(connection, device) {
+				var args = defaultInitArgs(connection, device)
+				var config = [device.config.qspiInstance,
+				              device.config.qspiIoset,
+				              Math.floor(device.config.qspiFreq * 1000000)]
+				Array.prototype.push.apply(args, config)
+				return args
 			}
 		}
 	]

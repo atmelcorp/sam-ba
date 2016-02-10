@@ -27,7 +27,7 @@ void SambaConnection::setPort(const QString& port)
 	}
 }
 
-SambaApplet* SambaConnection::applet()
+SambaAbstractApplet* SambaConnection::applet()
 {
 	return m_applet;
 }
@@ -144,7 +144,7 @@ quint32 SambaConnection::appletConnectionType()
 	return Serial;
 }
 
-bool SambaConnection::appletUpload(SambaApplet* applet)
+bool SambaConnection::appletUpload(SambaAbstractApplet* applet)
 {
 	m_applet = NULL;
 	emit appletChanged();

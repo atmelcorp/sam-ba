@@ -12,27 +12,27 @@ Device {
 		Applet {
 			name: "lowlevel"
 			description: "Low-Level"
-			kind: Applet.KindLowLevel
 			codeUrl: Qt.resolvedUrl("applets/applet-lowlevelinit-samv7.bin")
 			codeAddr: 0x20401000
 			mailboxAddr: 0x20401040
 			commands: {
-				"init": 0
+				"legacyInitialize": 0
 			}
 		},
 		Applet {
 			name: "flash"
 			description: "Internal Flash"
-			kind: Applet.KindNVM
 			codeUrl: Qt.resolvedUrl("applets/applet-flash-samv7.bin")
 			codeAddr: 0x20401000
 			mailboxAddr: 0x20401040
+			pageSize: 512
+			eraseSupport: 256 /* 256 pages: 128K */
 			commands: {
-				"init": 0,
-				"read": 3,
-				"write": 2,
-				"fullErase": 1,
-				"gpnvm": 6
+				"legacyInitialize":  0,
+				"legacyEraseAll":    1,
+				"legacyWriteBuffer": 2,
+				"legacyReadBuffer":  3,
+				"legacyGpnvm":       6
 			}
 		}
 	]

@@ -2,8 +2,8 @@
 #define SAMBA_CONNECTION_H
 
 #include <sambacommon.h>
+#include <sambaabstractapplet.h>
 #include <sambabytearray.h>
-#include <sambaapplet.h>
 #include <QObject>
 #include <QtQml>
 #include <QtQuick/QQuickItem>
@@ -12,7 +12,7 @@ class SAMBACOMMONSHARED_EXPORT SambaConnection : public QQuickItem
 {
 	Q_OBJECT
 	Q_PROPERTY(QString port READ port WRITE setPort NOTIFY portChanged)
-	Q_PROPERTY(SambaApplet* applet READ applet NOTIFY appletChanged)
+	Q_PROPERTY(SambaAbstractApplet* applet READ applet NOTIFY appletChanged)
 	Q_ENUMS(ConnectionType)
 
 public:
@@ -28,7 +28,7 @@ public:
 	QString port();
 	void setPort(const QString& port);
 
-	SambaApplet* applet();
+	SambaAbstractApplet* applet();
 
 	Q_INVOKABLE virtual QStringList availablePorts();
 
@@ -54,11 +54,11 @@ public:
 	Q_INVOKABLE virtual bool go(quint32 address);
 
 	Q_INVOKABLE virtual quint32 appletConnectionType();
-	Q_INVOKABLE virtual bool appletUpload(SambaApplet* applet);
+	Q_INVOKABLE virtual bool appletUpload(SambaAbstractApplet* applet);
 	Q_INVOKABLE virtual quint32 appletMailboxRead(quint32 index);
 	Q_INVOKABLE virtual SambaByteArray* appletBufferRead(unsigned length);
 	Q_INVOKABLE virtual bool appletBufferWrite(SambaByteArray* data);
-	Q_INVOKABLE virtual qint32 appletExecute(const QString& cmd, QVariant args, quint32 retries = 20);
+	Q_INVOKABLE virtual qint32 appletExecute(const QString &cmd, QVariant args, quint32 retries);
 
 signals:
 	void portChanged();
@@ -69,7 +69,7 @@ signals:
 
 private:
 	QString m_port;
-	SambaApplet* m_applet;
+	SambaAbstractApplet* m_applet;
 };
 
 #endif // SAMBA_CONNECTION_H

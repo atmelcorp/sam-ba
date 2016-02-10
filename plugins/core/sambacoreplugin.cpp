@@ -1,21 +1,21 @@
 #include "sambacoreplugin.h"
-#include "sambautils.h"
+#include "sambaabstractapplet.h"
 #include "sambabytearray.h"
-#include "sambaapplet.h"
 #include "sambaconnection.h"
+#include "sambautils.h"
 
-static QObject *sambautils_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
+static QObject *sambautils_singletontype_provider(QQmlEngine *qmlEngine, QJSEngine *jsEngine)
 {
-	Q_UNUSED(engine)
-	Q_UNUSED(scriptEngine)
+	Q_UNUSED(qmlEngine)
+	Q_UNUSED(jsEngine)
 	return new SambaUtils();
 }
 
 void SambaCorePlugin::registerTypes(const char *uri)
 {
 	Q_ASSERT(uri == QLatin1String("SAMBA"));
-	qmlRegisterSingletonType<SambaUtils>("SAMBA", 3, 0, "Utils", sambautils_singletontype_provider);
-	qmlRegisterType<SambaByteArray>("SAMBA", 3, 0, "ByteArray");
-	qmlRegisterType<SambaApplet>(uri, 3, 0, "Applet");
+	qmlRegisterType<SambaAbstractApplet>(uri, 3, 0, "AbstractApplet");
+	qmlRegisterType<SambaByteArray>(uri, 3, 0, "ByteArray");
 	qmlRegisterType<SambaConnection>(uri, 3, 0, "Connection");
+	qmlRegisterSingletonType<SambaUtils>(uri, 3, 0, "Utils", sambautils_singletontype_provider);
 }

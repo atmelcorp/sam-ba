@@ -1,5 +1,5 @@
 /*!
-\qmltype Applet
+\qmltype AbstractApplet
 \inqmlmodule SAMBA
 \brief Defines all required data for loading and running a given SAM-BA applet.
 

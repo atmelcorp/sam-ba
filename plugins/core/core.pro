@@ -23,6 +23,7 @@ unix:!mac:{
 }
 
 qml.files = qmldir \
+	Applet.qml \
 	AppletLoader.qml \
 	Device.qml
 
