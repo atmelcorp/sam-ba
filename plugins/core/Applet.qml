@@ -7,24 +7,58 @@ import SAMBA 3.0
 	\brief TODO
 */
 AbstractApplet {
+	/*!
+		\qmlmethod void Applet::defaultInitArgs(Connection connection, Device device)
+		\brief Returns the default input mailbox for applet initialization
+
+		The default mailbox contains the connection type followed by the trace level.
+		This method is called by the default buildInitArgs implementation.
+	*/
 	function defaultInitArgs(connection, device) {
 		return [connection.appletConnectionType(), traceLevel]
 	}
 
+	/*!
+		\qmlmethod void Applet::buildInitArgs(Connection connection, Device device)
+		\brief Returns the input mailbox for applet initialization
+
+		This default implementation just calls defaultInitArgs.
+		It is intended to be overridden by Applet
+		sub-classes/instances.
+	*/
 	function buildInitArgs(connection, device) {
 		return defaultInitArgs(connection, device)
 	}
 
+	/*!
+		\qmlmethod void Applet::patch6thVector(ByteArray data)
+		\brief Change the 6th vector of a boot file to contain its size
+	*/
 	function patch6thVector(data) {
 		// write size into 6th vector
 		data.writeu32(20, data.length)
 		print("Patched file length (" + data.length + ") at offset 20")
 	}
 
+	/*!
+		\qmlmethod void Applet::prepareBootFile(Connection connection, Device device, ByteArray data)
+		\brief Prepare a application file for use as a boot file
+
+		The default implementation calls patch6thVector.
+		It is intended to be overridden by Applet
+		sub-classes/instances.
+	*/
 	function prepareBootFile(connection, device, data) {
 		patch6thVector(data)
 	}
 
+	/*!
+		\qmlmethod void Applet::canInitialize()
+		\brief Check is the applet supports the 'initialize' command
+
+		Returns a boolean value indicating if the 'initialize' command
+		is supported.
+	*/
 	function canInitialize() {
 		return hasCommand("initialize") ||
 		       hasCommand("legacyInitialize")
@@ -72,10 +106,24 @@ AbstractApplet {
 		}
 	}
 
+	/*!
+		\qmlmethod void Applet::canEraseAll()
+		\brief Check is the applet supports the 'erase all' command
+
+		Returns a boolean value indicating if the 'erase all' command
+		is supported.
+	*/
 	function canEraseAll() {
 		return hasCommand("legacyEraseAll")
 	}
 
+	/*!
+		\qmlmethod void Applet::eraseAll(Connection connection, Device device)
+		\brief Fully erase the device
+
+		Throws an \a Error if the 'erase all' command is not supported
+		or if an error occurs during the erase operation.
+	*/
 	function eraseAll(connection, device) {
 		if (hasCommand("legacyEraseAll")) {
 			var status = connection.appletExecute("legacyEraseAll",
@@ -88,10 +136,30 @@ AbstractApplet {
 		}
 	}
 
+	/*!
+		\qmlmethod void Applet::canErasePages()
+		\brief Check is the applet supports the 'erase pages' command
+
+		Returns a boolean value indicating if the 'erase pages' command
+		is supported.
+	*/
 	function canErasePages() {
 		return hasCommand("erasePages")
 	}
 
+	/*!
+		\qmlmethod void Applet::erasePages(Connection connection, Device device, int pageOffset, int length)
+		\brief Erase \a length pages at \a pageOffset
+
+		The \a length parameter contains the number of pages to erase
+		and it must be one of the supported erase sizes of the
+		applet/device.
+
+		Returns the number of pages erased.
+
+		Throws an \a Error if the 'erase page' command is not supported
+		or if an error occurs during the erase operation.
+	*/
 	function erasePages(connection, device, pageOffset, length) {
 		if (hasCommand("erasePages")) {
 			var args = [pageOffset, length]
@@ -113,11 +181,29 @@ AbstractApplet {
 		}
 	}
 
+	/*!
+		\qmlmethod void Applet::canReadPages()
+		\brief Check is the applet supports a read command
+
+		Returns a boolean value indicating whether a read command is
+		supported.
+	*/
 	function canReadPages() {
 		return hasCommand("readPages") ||
 		       hasCommand("legacyReadBuffer")
 	}
 
+	/*!
+		\qmlmethod void Applet::readPages(Connection connection, Device device, int pageOffset, int length)
+		\brief Read \a length pages at \a pageOffset
+
+		The \a length parameter contains the number of pages to read.
+
+		Returns a \a ByteArray containing the pages read.
+
+		Throws an \a Error if no read command is supported or if an
+		error occurs during the read operation.
+	*/
 	function readPages(connection, device, pageOffset, length) {
 		if (hasCommand("readPages")) {
 			if (pageOffset + length > memoryPages) {
@@ -179,11 +265,29 @@ AbstractApplet {
 		}
 	}
 
+	/*!
+		\qmlmethod void Applet::canWritePages()
+		\brief Check is the applet supports a write command
+
+		Returns a boolean value indicating whether a write command is
+		supported.
+	*/
 	function canWritePages() {
 		return hasCommand("writePages") ||
 		       hasCommand("legacyWriteBuffer")
 	}
 
+	/*!
+		\qmlmethod void Applet::writePages(Connection connection, Device device, int pageOffset, ByteArray data)
+		\brief Write \a data at \a pageOffset
+
+		The \a data length must be a multiple of the applet page size.
+
+		Returns the number of pages written.
+
+		Throws an \a Error if no write command is supported or if an
+		error occurs during the write operation.
+	*/
 	function writePages(connection, device, pageOffset, data) {
 		if (hasCommand("writePages")) {
 			if ((data.length & (pageSize - 1)) != 0)
@@ -251,10 +355,23 @@ AbstractApplet {
 		}
 	}
 
+	/*!
+		\qmlmethod void Applet::canSetGPNVM()
+		\brief Check is the applet supports the 'set gpvnm' command
+
+		Returns a boolean value indicating if the 'set gpnvm' command
+		is supported.
+	*/
 	function canSetGpnvm() {
 		return hasCommand("legacyGpnvm")
 	}
 
+	/*!
+		\qmlmethod void Applet::setGPNVM(Connection connection, Device device, int index)
+		\brief Set the GPNVM at \a index
+
+		Throws an \a Error if the 'clear gpnvm' command is not supported.
+	*/
 	function setGpnvm(connection, device, index)
 	{
 		if (hasCommand("legacyGpnvm")) {
@@ -268,10 +385,23 @@ AbstractApplet {
 		}
 	}
 
+	/*!
+		\qmlmethod void Applet::canClearGPNVM()
+		\brief Check is the applet supports the 'clear gpvnm' command
+
+		Returns a boolean value indicating if the 'clear gpnvm' command
+		is supported.
+	*/
 	function canClearGpnvm() {
 		return hasCommand("legacyGpnvm")
 	}
 
+	/*!
+		\qmlmethod void Applet::clearGPNVM(Connection connection, Device device, int index)
+		\brief Clear the GPNVM at \a index
+
+		Throws an \a Error if the 'clear gpnvm' command is not supported.
+	*/
 	function clearGpnvm(connection, device, index)
 	{
 		if (hasCommand("legacyGpnvm")) {
