@@ -14,9 +14,9 @@ Sample scripts to flash a linux environment on the QSPI Flash of the
 - Open "BOOT_DIS" jumper
 - Run qml script using sam-ba tool, for example:
     On Windows:
-        ..\..\..\sam-ba -x write-qspiflash-usb.qml
+        ..\..\..\sam-ba -x qspiflash-usb.qml
     On Linux:
-        ../../../sam-ba -x write-qspiflash-usb.qml
+        ../../../sam-ba -x qspiflash-usb.qml
 
 ## Flashing using SEGGER J-Link adapter
 
@@ -26,7 +26,7 @@ Sample scripts to flash a linux environment on the QSPI Flash of the
 - Open "BOOT_DIS" jumper
 - Run qml script using sam-ba tool, for example:
     On Windows:
-        ..\..\..\sam-ba -x write-qspiflash-jlink.qml
+        ..\..\..\sam-ba -x qspiflash-jlink.qml
     On Linux:
-        ../../../sam-ba -x write-qspiflash-jlink.qml
+        ../../../sam-ba -x qspiflash-jlink.qml
 
