@@ -33,6 +33,14 @@ import QtQuick 2.3
 	\row \li 1 \li QSPI1 \li 1, 2, 3
 	\endtable
 
+	\section1 NAND Configuration
+
+	The following NAND configurations are supported:
+
+	\table
+	\header \li I/O Set \li Bus Width
+	\row \li 1, 2 \li 8-bit, 16-bit
+	\endtable
 */
 Item {
 	/*! SPI peripheral instance (default: 0) */
@@ -55,5 +63,14 @@ Item {
 
 	/*! QuadSPI frequency, in MHz (default: 66) */
 	property double qspiFreq: 66
+
+	/*! NAND I/O set (default: -1) */
+	property int nandIoset: -1
+
+	/*! NAND Bus Width (in bits, default: -1) */
+	property int nandBusWidth: -1
+
+	/*! NAND Header (default -1) */
+	property double nandHeader: -1
 }
 

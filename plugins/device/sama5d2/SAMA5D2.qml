@@ -136,6 +136,44 @@ Device {
 				Array.prototype.push.apply(args, config)
 				return args
 			}
+		},
+		Applet {
+			name: "nandflash"
+			description: "NAND Flash"
+			codeUrl: Qt.resolvedUrl("applets/applet-nandflash-sama5d2.bin")
+			codeAddr: 0x220000
+			mailboxAddr: 0x220004
+			commands: {
+				"initialize": 0,
+				"erasePages": 0x31,
+				"readPages":  0x32,
+				"writePages": 0x33
+			}
+
+			function buildInitArgs(connection, device) {
+				var args = defaultInitArgs(connection, device)
+				var config = [device.config.nandIoset,
+				              device.config.nandBusWidth,
+				              device.config.nandHeader]
+				Array.prototype.push.apply(args, config)
+				return args
+			}
+
+			function prependNandHeader(nandHeader, data) {
+				// prepare nand header
+				var header = Utils.createByteArray(52 * 4)
+				for (var i = 0; i < 52; i++)
+					header.writeu32(i * 4, nandHeader)
+				// prepend header to data
+				data.prepend(header)
+				print("Prepended NAND header prefix (0x" +
+				      nandHeader.toString(16) + ")")
+			}
+
+			function prepareBootFile(connection, device, data) {
+				patch6thVector(data)
+				prependNandHeader(device.config.nandHeader, data)
+			}
 		}
 	]
 

@@ -8,8 +8,9 @@ DEVICE_FILES *= \
     SAMA5D2Config.qml \
     sama5d2-boot-cfg.js \
     applets/applet-lowlevel-sama5d2.bin \
-    applets/applet-serialflash-sama5d2.bin \
-    applets/applet-qspiflash-sama5d2.bin
+    applets/applet-nandflash-sama5d2.bin \
+    applets/applet-qspiflash-sama5d2.bin \
+    applets/applet-serialflash-sama5d2.bin
 
 include(../device.pri)
 

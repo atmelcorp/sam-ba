@@ -2,5 +2,6 @@ TEMPLATE = subdirs
 
 SUBDIRS = \
 	boot-config \
-	serialflash \
-	qspiflash
+	nandflash \
+	qspiflash \
+	serialflash
