@@ -4,7 +4,7 @@
 #include "sambacommon.h"
 #include <QObject>
 
-class SAMBACOMMONSHARED_EXPORT SambaScriptContext : public QObject
+class SambaScriptContext : public QObject
 {
 	Q_OBJECT
 	Q_PROPERTY(QStringList arguments READ arguments NOTIFY argumentsChanged)
