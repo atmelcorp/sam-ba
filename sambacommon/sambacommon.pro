@@ -9,7 +9,7 @@ VERSION = 3.0.0
 DEFINES += SAMBACOMMON_LIBRARY
 
 SOURCES += \
-    sambaabstractapplet.cpp \
+    sambaapplet.cpp \
     sambabytearray.cpp \
     sambacommon.cpp \
     sambaconnection.cpp \
@@ -17,7 +17,7 @@ SOURCES += \
     sambautils.cpp
 
 HEADERS += \
-    sambaabstractapplet.h \
+    sambaapplet.h \
     sambabytearray.h \
     sambacommon.h \
     sambaconnection.h \
@@ -37,5 +37,4 @@ else:win32:{
 INSTALLS += target
 
 OTHER_FILES += \
-	type_baseapplet.qdoc \
 	type_bytearray.qdoc

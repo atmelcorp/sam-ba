@@ -1,6 +1,6 @@
-#include "sambaabstractapplet.h"
+#include "sambaapplet.h"
 
-SambaAbstractApplet::SambaAbstractApplet(QQuickItem* parent)
+SambaApplet::SambaApplet(QQuickItem* parent)
 	: QQuickItem(parent),
 	  m_name(""),
 	  m_description(""),
@@ -21,84 +21,84 @@ SambaAbstractApplet::SambaAbstractApplet(QQuickItem* parent)
 {
 }
 
-QString SambaAbstractApplet::name() const
+QString SambaApplet::name() const
 {
 	return m_name;
 }
 
-void SambaAbstractApplet::setName(const QString& name)
+void SambaApplet::setName(const QString& name)
 {
 	m_name = name;
 	emit nameChanged();
 }
 
-QString SambaAbstractApplet::description() const
+QString SambaApplet::description() const
 {
 	return m_description;
 }
 
-void SambaAbstractApplet::setDescription(const QString& description)
+void SambaApplet::setDescription(const QString& description)
 {
 	m_description = description;
 	emit descriptionChanged();
 }
 
-QString SambaAbstractApplet::codeUrl() const
+QString SambaApplet::codeUrl() const
 {
 	return m_codeUrl;
 }
 
-void SambaAbstractApplet::setCodeUrl(const QString& codeUrl)
+void SambaApplet::setCodeUrl(const QString& codeUrl)
 {
 	m_codeUrl = codeUrl;
 	emit codeUrlChanged();
 }
 
-quint32 SambaAbstractApplet::codeAddr() const
+quint32 SambaApplet::codeAddr() const
 {
 	return m_codeAddr;
 }
 
-void SambaAbstractApplet::setCodeAddr(quint32 codeAddr)
+void SambaApplet::setCodeAddr(quint32 codeAddr)
 {
 	m_codeAddr = codeAddr;
 	emit codeAddrChanged();
 }
 
-quint32 SambaAbstractApplet::mailboxAddr() const
+quint32 SambaApplet::mailboxAddr() const
 {
 	return m_mailboxAddr;
 }
 
-void SambaAbstractApplet::setMailboxAddr(quint32 mailboxAddr)
+void SambaApplet::setMailboxAddr(quint32 mailboxAddr)
 {
 	m_mailboxAddr = mailboxAddr;
 	emit mailboxAddrChanged();
 }
 
-quint32 SambaAbstractApplet::retries() const
+quint32 SambaApplet::retries() const
 {
 	return m_retries;
 }
 
-void SambaAbstractApplet::setRetries(quint32 retries)
+void SambaApplet::setRetries(quint32 retries)
 {
 	m_retries = retries;
 	emit retriesChanged();
 }
 
-QVariant SambaAbstractApplet::commands() const
+QVariant SambaApplet::commands() const
 {
 	return m_commands;
 }
 
-void SambaAbstractApplet::setCommands(const QVariant& commands)
+void SambaApplet::setCommands(const QVariant& commands)
 {
 	m_commands = commands;
 	emit commandsChanged();
 }
 
-bool SambaAbstractApplet::hasCommand(const QString& name) const
+bool SambaApplet::hasCommand(const QString& name) const
 {
 	QJSValue commands = m_commands.value<QJSValue>();
 	if (!commands.hasProperty(name))
@@ -111,7 +111,7 @@ bool SambaAbstractApplet::hasCommand(const QString& name) const
 	return true;
 }
 
-quint32 SambaAbstractApplet::command(const QString& name) const
+quint32 SambaApplet::command(const QString& name) const
 {
 	QJSValue commands = m_commands.value<QJSValue>();
 	if (!commands.hasProperty(name))
@@ -124,34 +124,34 @@ quint32 SambaAbstractApplet::command(const QString& name) const
 	return command.toUInt();
 }
 
-quint32 SambaAbstractApplet::traceLevel() const
+quint32 SambaApplet::traceLevel() const
 {
 	return m_traceLevel;
 }
 
-void SambaAbstractApplet::setTraceLevel(quint32 traceLevel)
+void SambaApplet::setTraceLevel(quint32 traceLevel)
 {
 	m_traceLevel = traceLevel;
 	emit traceLevelChanged();
 }
 
-quint32 SambaAbstractApplet::bufferAddr() const
+quint32 SambaApplet::bufferAddr() const
 {
 	return m_bufferAddr;
 }
 
-void SambaAbstractApplet::setBufferAddr(quint32 bufferAddr)
+void SambaApplet::setBufferAddr(quint32 bufferAddr)
 {
 	m_bufferAddr = bufferAddr;
 	emit bufferAddrChanged();
 }
 
-quint32 SambaAbstractApplet::bufferSize() const
+quint32 SambaApplet::bufferSize() const
 {
 	return m_bufferSize;
 }
 
-void SambaAbstractApplet::setBufferSize(quint32 bufferSize)
+void SambaApplet::setBufferSize(quint32 bufferSize)
 {
 	m_bufferSize = bufferSize;
 	emit bufferSizeChanged();
@@ -162,12 +162,12 @@ void SambaAbstractApplet::setBufferSize(quint32 bufferSize)
 	}
 }
 
-quint32 SambaAbstractApplet::bufferPages() const
+quint32 SambaApplet::bufferPages() const
 {
 	return m_bufferPages;
 }
 
-void SambaAbstractApplet::setBufferPages(quint32 bufferPages)
+void SambaApplet::setBufferPages(quint32 bufferPages)
 {
 	m_bufferPages = bufferPages;
 	emit bufferPagesChanged();
@@ -178,12 +178,12 @@ void SambaAbstractApplet::setBufferPages(quint32 bufferPages)
 	}
 }
 
-quint32 SambaAbstractApplet::pageSize() const
+quint32 SambaApplet::pageSize() const
 {
 	return m_pageSize;
 }
 
-void SambaAbstractApplet::setPageSize(quint32 pageSize)
+void SambaApplet::setPageSize(quint32 pageSize)
 {
 	m_pageSize = pageSize;
 	emit pageSizeChanged();
@@ -209,12 +209,12 @@ void SambaAbstractApplet::setPageSize(quint32 pageSize)
 	}
 }
 
-quint32 SambaAbstractApplet::memorySize() const
+quint32 SambaApplet::memorySize() const
 {
 	return m_memorySize;
 }
 
-void SambaAbstractApplet::setMemorySize(quint32 memorySize)
+void SambaApplet::setMemorySize(quint32 memorySize)
 {
 	m_memorySize = memorySize;
 	emit memorySizeChanged();
@@ -225,12 +225,12 @@ void SambaAbstractApplet::setMemorySize(quint32 memorySize)
 	}
 }
 
-quint32 SambaAbstractApplet::memoryPages() const
+quint32 SambaApplet::memoryPages() const
 {
 	return m_memoryPages;
 }
 
-void SambaAbstractApplet::setMemoryPages(quint32 memoryPages)
+void SambaApplet::setMemoryPages(quint32 memoryPages)
 {
 	m_memoryPages = memoryPages;
 	emit memoryPagesChanged();
@@ -241,23 +241,23 @@ void SambaAbstractApplet::setMemoryPages(quint32 memoryPages)
 	}
 }
 
-quint32 SambaAbstractApplet::eraseSupport() const
+quint32 SambaApplet::eraseSupport() const
 {
 	return m_eraseSupport;
 }
 
-void SambaAbstractApplet::setEraseSupport(quint32 eraseSupport)
+void SambaApplet::setEraseSupport(quint32 eraseSupport)
 {
 	m_eraseSupport = eraseSupport;
 	emit eraseSupportChanged();
 }
 
-quint8 SambaAbstractApplet::paddingByte() const
+quint8 SambaApplet::paddingByte() const
 {
 	return m_paddingByte;
 }
 
-void SambaAbstractApplet::setPaddingByte(quint8 paddingByte)
+void SambaApplet::setPaddingByte(quint8 paddingByte)
 {
 	m_paddingByte = paddingByte;
 	emit paddingByteChanged();

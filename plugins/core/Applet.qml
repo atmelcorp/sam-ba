@@ -6,7 +6,7 @@ import SAMBA 3.0
 	\inqmlmodule SAMBA
 	\brief TODO
 */
-AbstractApplet {
+AppletBase {
 	/*!
 		\qmlmethod void Applet::defaultInitArgs(Connection connection, Device device)
 		\brief Returns the default input mailbox for applet initialization

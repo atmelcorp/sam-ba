@@ -1,12 +1,12 @@
-#ifndef SAMBA_BASE_APPLET_H
-#define SAMBA_BASE_APPLET_H
+#ifndef SAMBA_APPLET_H
+#define SAMBA_APPLET_H
 
 #include <sambacommon.h>
 #include <QObject>
 #include <QtQml>
 #include <QtQuick/QQuickItem>
 
-class SAMBACOMMONSHARED_EXPORT SambaAbstractApplet : public QQuickItem
+class SAMBACOMMONSHARED_EXPORT SambaApplet : public QQuickItem
 {
 	Q_OBJECT
 	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
@@ -27,7 +27,7 @@ class SAMBACOMMONSHARED_EXPORT SambaAbstractApplet : public QQuickItem
 	Q_PROPERTY(quint32 paddingByte READ paddingByte WRITE setPaddingByte NOTIFY paddingByteChanged)
 
 public:
-	explicit SambaAbstractApplet(QQuickItem *parent = 0);
+	explicit SambaApplet(QQuickItem *parent = 0);
 
 	QString name() const;
 	void setName(const QString& name);
@@ -116,4 +116,4 @@ private:
 	quint8 m_paddingByte;
 };
 
-#endif // SAMBA_BASE_APPLET_H
+#endif // SAMBA_APPLET_H
