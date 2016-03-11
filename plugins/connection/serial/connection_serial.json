@@ -1,5 +1,5 @@
 {
 	"module": "SAMBA.Connection.Serial",
-	"module_version": "3.0",
+	"module_version": "3.1",
 	"classname": "SerialConnection"
 }

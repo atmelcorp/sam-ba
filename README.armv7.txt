@@ -1,4 +1,4 @@
-# SAM-BA 3.0 ARMv7 specific information
+# SAM-BA ARMv7 specific information
 
 ## Toolchain / Distribution
 

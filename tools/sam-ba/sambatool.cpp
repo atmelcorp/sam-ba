@@ -36,7 +36,7 @@ SambaTool::SambaTool(int& argc, char** argv)
       m_applet(0)
 {
 	setApplicationName("sam-ba");
-	setApplicationVersion("3.0");
+	setApplicationVersion("3.1");
 
 	loadAllMetadata();
 	m_status = parseArguments(arguments());
@@ -441,10 +441,10 @@ void SambaTool::run()
 
 		QString script;
 		if (m_status & RunMonitor) {
-			script = "import SAMBA.Tool 3.0; MonitorCommandHandler {}";
+			script = "import SAMBA.Tool 3.1; MonitorCommandHandler {}";
 		}
 		else {
-			script = "import SAMBA.Tool 3.0; AppletCommandHandler {}";
+			script = "import SAMBA.Tool 3.1; AppletCommandHandler {}";
 		}
 		QObject* obj = m_engine.createComponentInstance(script, &context);
 		if (obj) {

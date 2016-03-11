@@ -1,11 +1,11 @@
 /*!
 \page scripting.html
-\title SAM-BA 3.0 Scripting Documentation
-\brief This document contains information on writing SAM-BA 3.0 scripts.
+\title SAM-BA Scripting Documentation
+\brief This document contains information on writing SAM-BA scripts.
 
-\section1 Scripting SAM-BA 3.0
+\section1 Scripting SAM-BA
 
-SAM-BA 3.0 uses Qt5 QML language for scripting.
+SAM-BA uses Qt5 QML language for scripting.
 
 \section2 Running a SAM-BA script
 
@@ -41,8 +41,8 @@ device and make it execute code.
 In this example, a SerialConnection is used:
 \qml
 import QtQuick 2.3
-import SAMBA 3.0
-import SAMBA.Connection.Serial 3.0
+import SAMBA 3.1
+import SAMBA.Connection.Serial 3.1
 
 Item {
 	SerialConnection {
@@ -83,7 +83,7 @@ documentation.
 
 \section2 More QML examples
 
-The \tt examples directory in the SAM-BA 3.0 distribution contains more
+The \tt examples directory in the SAM-BA distribution contains more
 advanced examples.
 
 It is recommended to start by reading and modifying the provided examples, then

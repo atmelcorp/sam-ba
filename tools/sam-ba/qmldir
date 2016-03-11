@@ -1,3 +1,3 @@
 module SAMBA.Tool
-AppletCommandHandler 3.0 AppletCommandHandler.qml
-MonitorCommandHandler 3.0 MonitorCommandHandler.qml
+AppletCommandHandler 3.1 AppletCommandHandler.qml
+MonitorCommandHandler 3.1 MonitorCommandHandler.qml

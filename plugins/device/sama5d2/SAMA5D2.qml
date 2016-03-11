@@ -1,6 +1,6 @@
 import QtQuick 2.3
-import SAMBA 3.0
-import SAMBA.Device.SAMA5D2 3.0
+import SAMBA 3.1
+import SAMBA.Device.SAMA5D2 3.1
 
 /*!
 	\qmltype SAMA5D2

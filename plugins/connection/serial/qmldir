@@ -1,5 +1,5 @@
 module SAMBA.Connection.Serial
-depends SAMBA 3.0
+depends SAMBA 3.1
 plugin samba_conn_serial
 classname SambaConnectionSerialPlugin
-SerialConnection 3.0 SerialConnection.qml
+SerialConnection 3.1 SerialConnection.qml
