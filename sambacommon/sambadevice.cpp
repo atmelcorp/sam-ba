@@ -17,6 +17,28 @@ void SambaDevice::setName(const QString& name)
 	emit nameChanged();
 }
 
+QStringList SambaDevice::boards() const
+{
+	return m_boards;
+}
+
+void SambaDevice::setBoards(const QStringList& boards)
+{
+	m_boards = boards;
+	emit boardsChanged();
+}
+
+QVariant SambaDevice::board() const
+{
+	return QVariant(m_board);
+}
+
+void SambaDevice::setBoard(const QVariant& board)
+{
+	m_board = board;
+	emit boardChanged();
+}
+
 QQmlListProperty<SambaApplet> SambaDevice::applets()
 {
 	return QQmlListProperty<SambaApplet>(this, m_applets);

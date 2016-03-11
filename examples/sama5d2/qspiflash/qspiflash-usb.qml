@@ -10,13 +10,14 @@ AppletLoader {
 	}
 
 	device: SAMA5D2 {
-		/*
-		config: SAMA5D2Config {
-			qspiInstance: 0
-			qspiIoset: 3
-			qspiFreq: 50
-		}
-		*/
+		board: "sama5d2-xplained"
+		// to use a custom config, remove the board property and uncomment
+		// the following lines:
+		//config {
+		//	qspiInstance: 0
+		//	qspiIoset: 3
+		//	qspiFreq: 66
+		//}
 	}
 
 	onConnectionOpened: {

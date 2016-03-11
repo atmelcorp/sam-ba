@@ -7,7 +7,16 @@ AppletLoader {
 		//port: "99999999"
 	}
 
-	device: SAMA5D2 { }
+	device: SAMA5D2 {
+		board: "sama5d2-xplained"
+		// to use a custom config, remove the board property and uncomment
+		// the following lines:
+		//config {
+		//	qspiInstance: 0
+		//	qspiIoset: 3
+		//	qspiFreq: 66
+		//}
+	}
 
 	onConnectionOpened: {
 		// initialize QSPI applet

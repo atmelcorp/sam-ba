@@ -10,11 +10,11 @@ AppletLoader {
 	}
 
 	device: SAMA5D2 {
-		config: SAMA5D2Config {
+		config {
 			nandIoset: 2
 			nandBusWidth: 8
 			nandHeader: 0xc0098da5
-                }
+		}
 	}
 
 	onConnectionOpened: {

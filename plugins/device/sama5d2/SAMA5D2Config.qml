@@ -5,7 +5,7 @@ import QtQuick 2.3
 	\inqmlmodule SAMBA.Device.SAMA5D2
 	\brief Contains configuration values for a SAMA5D2 device.
 
-	The default values are for the SAMA5D2 Xplained Ultra board.
+	By default, no configuration values are set.
 
 	\section1 SPI Configuration
 
@@ -43,34 +43,34 @@ import QtQuick 2.3
 	\endtable
 */
 Item {
-	/*! SPI peripheral instance (default: 0) */
-	property int spiInstance: 0
+	/*! SPI peripheral instance */
+	property var spiInstance
 
-	/*! SPI I/O set (default: 1) */
-	property int spiIoset: 1
+	/*! SPI I/O set */
+	property var spiIoset
 
-	/*! SPI Chip Select (default: 0) */
-	property int spiChipSelect: 0
+	/*! SPI Chip Select */
+	property var spiChipSelect
 
-	/*! SPI frequency, in MHz (default: 66) */
-	property double spiFreq: 66
+	/*! SPI frequency, in MHz */
+	property var spiFreq
 
-	/*! QuadSPI peripheral instance (default: 0) */
-	property int qspiInstance: 0
+	/*! QuadSPI peripheral instance */
+	property var qspiInstance
 
-	/*! QuadSPI I/O set (default: 3) */
-	property int qspiIoset: 3
+	/*! QuadSPI I/O set */
+	property var qspiIoset
 
-	/*! QuadSPI frequency, in MHz (default: 66) */
-	property double qspiFreq: 66
+	/*! QuadSPI frequency, in MHz */
+	property var qspiFreq
 
-	/*! NAND I/O set (default: -1) */
-	property int nandIoset: -1
+	/*! NAND I/O set */
+	property var nandIoset
 
-	/*! NAND Bus Width (in bits, default: -1) */
-	property int nandBusWidth: -1
+	/*! NAND Bus Width, in bits (8/16) */
+	property var nandBusWidth
 
-	/*! NAND Header (default -1) */
-	property double nandHeader: -1
+	/*! NAND Header */
+	property var nandHeader
 }
 

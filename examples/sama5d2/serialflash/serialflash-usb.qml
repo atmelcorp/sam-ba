@@ -10,14 +10,15 @@ AppletLoader {
 	}
 
 	device: SAMA5D2 {
-		/*
-		config: SAMA5D2Config {
-			spiInstance: 0
-			spiIoset: 1
-			spiChipSelect: 0
-			spiFreq: 66
-		}
-		*/
+		board: "sama5d2-xplained"
+		// to use a custom config, remove the board property and uncomment
+		// the following lines:
+		//config {
+		//	spiInstance: 0
+		//	spiIoset: 1
+		//	spiChipSelect: 0
+		//	spiFreq: 66
+		//}
 	}
 
 	onConnectionOpened: {

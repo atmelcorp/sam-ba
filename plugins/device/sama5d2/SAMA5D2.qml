@@ -43,18 +43,34 @@ import SAMBA 3.0
 	\section1 Configuration
 
 	When creating an instance of the SAMA5D2 type, some configuration can
-	be supplied. This is optional, if no specific configuration is provided,
-	settings adapted to the SAMA5D2 Xplained Ultra board will be used.
+	be supplied. The configuration parameters are then used during applet
+	initialization where relevant.
 
-	The configuration parameters are then used during applet initialization
-	where relevant.
+	The configuration can be set either by selecting a preset board, or by
+	setting custom values. If both board and custom values are set, the board
+	settings are used.
 
-	For example, the following QML snipplet configures a device using SPI1
-	on I/O set 2 and Chip Select 3 at 33Mhz:
+	\section2 Board selection
+
+	A set of pre-configured values can be selected by changing the 'board'
+	property. For example, the following QML snipplet selects the SAMA5D2
+	Xplained Ultra board:
 
 	\qml
 	SAMA5D2 {
-		config: SAMA5D2Config {
+		board: "sama5d2-xplained"
+	}
+	\endqml
+
+	\section2 Custom configuration
+
+	Each configuration value can be set individually. For example, the
+	following QML snipplet configures a device using SPI1 on I/O set 2 and
+	Chip Select 3 at 33Mhz:
+
+	\qml
+	SAMA5D2 {
+		config {
 			spiInstance: 1
 			spiIoset: 2
 			spiChipSelect: 3
@@ -72,8 +88,10 @@ import SAMBA 3.0
 Device {
 	name: "SAMA5D2"
 
+	boards: [ "sama5d2-xplained" ]
+
 	/*! The device configuration used by applets (peripherals, I/O sets, etc.) */
-	property SAMA5D2Config config: SAMA5D2Config { }
+	property alias config: config
 
 	applets: [
 		Applet {
@@ -200,7 +218,46 @@ Device {
 	function checkDeviceID(connection) {
 		// read CHIPID_CIDR register
 		var cidr = connection.readu32(0xfc069000)
-		if (cidr !== 0x8a5c08c0)
-			print("No known SAMA5D2 chip detected!")
+		// Compare cidr using mask to skip revision field.
+		// The right part of the expression is masked in order to be converted
+		// to a signed integer like the left part (thanks javascript...)
+		if ((cidr & 0xffffffe0) !== (0x8a5c08c0 & 0xffffffe0))
+			print("Warning: Invalid CIDR, no known SAMA5D2 chip detected!")
+	}
+
+	onBoardChanged: {
+		if (board === "" || typeof board === "undefined") {
+			config.spiInstance = undefined
+			config.spiIoset = undefined
+			config.spiChipSelect = undefined
+			config.spiFreq = undefined
+			config.qspiInstance = undefined
+			config.qspiIoset = undefined
+			config.qspiFreq = undefined
+			config.nandIoset = undefined
+			config.nandBusWidth = undefined
+			config.nandHeader = undefined
+		}
+		else if (board === "sama5d2-xplained") {
+			config.spiInstance = 0
+			config.spiIoset = 1
+			config.spiChipSelect = 0
+			config.spiFreq = 66
+			config.qspiInstance = 0
+			config.qspiIoset = 3
+			config.qspiFreq = 66
+			config.nandIoset = undefined
+			config.nandBusWidth = undefined
+			config.nandHeader = undefined
+		}
+		else {
+			var invalidBoard = board
+			board = undefined
+			throw new Error("Unknown SAMA5D2 board '" + invalidBoard + "'")
+		}
+	}
+
+	SAMA5D2Config {
+		id: config
 	}
 }
