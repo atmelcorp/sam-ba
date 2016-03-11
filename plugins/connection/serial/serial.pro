@@ -6,8 +6,8 @@ TARGET = samba_conn_serial
 
 DESTPATH = /qml/SAMBA/Connection/Serial
 
-SOURCES += sambaconnectionserial.cpp
-HEADERS += sambaconnectionserial.h
+SOURCES += sambaconnectionserialhelper.cpp
+HEADERS += sambaconnectionserialhelper.h
 
 # include/link sambacommon library
 INCLUDEPATH += $$PWD/../../../sambacommon
@@ -22,14 +22,19 @@ unix:!mac:{
     QMAKE_RPATH =
 }
 
-qml.files = qmldir
+qml.files = \
+	qmldir \
+	SerialConnection.qml
+
+metadata.files = \
+	connection_serial.json
 
 # install
 target.path = $$DESTPATH
 qml.path = $$DESTPATH
-INSTALLS += target qml
+metadata.path = /metadata
+INSTALLS += target qml metadata
 
 OTHER_FILES += \
     $$qml.files \
-    module_samba_connection_serial.qdoc \
-    type_serialconnection.qdoc
+    module_samba_connection_serial.qdoc

@@ -15,7 +15,7 @@ AbstractApplet {
 		This method is called by the default buildInitArgs implementation.
 	*/
 	function defaultInitArgs(connection, device) {
-		return [connection.appletConnectionType(), traceLevel]
+		return [connection.appletConnectionType, traceLevel]
 	}
 
 	/*!

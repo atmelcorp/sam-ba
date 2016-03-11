@@ -2,7 +2,6 @@
 #define SAMBA_CONNECTION_H
 
 #include <sambacommon.h>
-#include <sambaabstractapplet.h>
 #include <sambabytearray.h>
 #include <QObject>
 #include <QtQml>
@@ -11,8 +10,10 @@
 class SAMBACOMMONSHARED_EXPORT SambaConnection : public QQuickItem
 {
 	Q_OBJECT
-	Q_PROPERTY(QString port READ port WRITE setPort NOTIFY portChanged)
-	Q_PROPERTY(SambaAbstractApplet* applet READ applet NOTIFY appletChanged)
+	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+	Q_PROPERTY(QStringList aliases READ aliases WRITE setAliases NOTIFY aliasesChanged)
+	Q_PROPERTY(quint32 appletConnectionType READ appletConnectionType WRITE setAppletConnectionType NOTIFY appletConnectionTypeChanged)
+	Q_PROPERTY(QVariant applet READ applet WRITE setApplet NOTIFY appletChanged)
 	Q_ENUMS(ConnectionType)
 
 public:
@@ -23,53 +24,31 @@ public:
 	};
 
 	SambaConnection(QQuickItem *parent = 0);
-	~SambaConnection();
+	virtual ~SambaConnection();
 
-	QString port();
-	void setPort(const QString& port);
+	QString name() const;
+	void setName(const QString& name);
 
-	SambaAbstractApplet* applet();
+	QStringList aliases() const;
+	void setAliases(const QStringList& aliases);
 
-	Q_INVOKABLE virtual QStringList availablePorts();
+	quint32 appletConnectionType() const;
+	void setAppletConnectionType(quint32 appletConnectionType);
 
-	Q_INVOKABLE virtual void open();
-	Q_INVOKABLE virtual void close();
-
-	Q_INVOKABLE virtual quint8 readu8(quint32 address);
-	Q_INVOKABLE virtual quint16 readu16(quint32 address);
-	Q_INVOKABLE virtual quint32 readu32(quint32 address);
-	Q_INVOKABLE virtual qint8 reads8(quint32 address);
-	Q_INVOKABLE virtual qint16 reads16(quint32 address);
-	Q_INVOKABLE virtual qint32 reads32(quint32 address);
-	Q_INVOKABLE virtual SambaByteArray* read(quint32 address, unsigned length);
-
-	Q_INVOKABLE virtual bool writeu8(quint32 address, quint8 data);
-	Q_INVOKABLE virtual bool writeu16(quint32 address, quint16 data);
-	Q_INVOKABLE virtual bool writeu32(quint32 address, quint32 data);
-	Q_INVOKABLE virtual bool writes8(quint32 address, qint8 data);
-	Q_INVOKABLE virtual bool writes16(quint32 address, qint16 data);
-	Q_INVOKABLE virtual bool writes32(quint32 address, qint32 data);
-	Q_INVOKABLE virtual bool write(quint32 address, SambaByteArray *data);
-
-	Q_INVOKABLE virtual bool go(quint32 address);
-
-	Q_INVOKABLE virtual quint32 appletConnectionType();
-	Q_INVOKABLE virtual bool appletUpload(SambaAbstractApplet* applet);
-	Q_INVOKABLE virtual quint32 appletMailboxRead(quint32 index);
-	Q_INVOKABLE virtual SambaByteArray* appletBufferRead(unsigned length);
-	Q_INVOKABLE virtual bool appletBufferWrite(SambaByteArray* data);
-	Q_INVOKABLE virtual qint32 appletExecute(const QString &cmd, QVariant args, quint32 retries);
+	QVariant applet() const;
+	void setApplet(QVariant applet);
 
 signals:
-	void portChanged();
+	void nameChanged();
+	void aliasesChanged();
+	void appletConnectionTypeChanged();
 	void appletChanged();
-	void connectionOpened();
-	void connectionFailed(const QString& message);
-	void connectionClosed();
 
 private:
-	QString m_port;
-	SambaAbstractApplet* m_applet;
+	QString m_name;
+	QStringList m_aliases;
+	quint32 m_appletConnectionType;
+	QVariant m_applet;
 };
 
 #endif // SAMBA_CONNECTION_H

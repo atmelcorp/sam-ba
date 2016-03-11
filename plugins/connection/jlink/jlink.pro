@@ -6,8 +6,8 @@ TARGET = samba_conn_jlink
 
 DESTPATH = /qml/SAMBA/Connection/JLink
 
-SOURCES += sambaconnectionjlink.cpp
-HEADERS += sambaconnectionjlink.h
+SOURCES += sambaconnectionjlinkhelper.cpp
+HEADERS += sambaconnectionjlinkhelper.h
 
 # include/link sambacommon library
 INCLUDEPATH += $$PWD/../../../sambacommon
@@ -38,14 +38,19 @@ else:win32:{
     INSTALLS += jlinklibs
 }
 
-qml.files = qmldir
+qml.files = \
+	qmldir \
+	JLinkConnection.qml
+
+metadata.files = \
+	connection_jlink.json
 
 # install
 target.path = $$DESTPATH
 qml.path = $$DESTPATH
-INSTALLS += target qml
+metadata.path = /metadata
+INSTALLS += target qml metadata
 
 OTHER_FILES += \
     $$qml.files \
-    module_samba_connection_jlink.qdoc \
-    type_jlinkconnection.qdoc
+    module_samba_connection_jlink.qdoc

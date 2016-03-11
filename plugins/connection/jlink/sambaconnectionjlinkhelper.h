@@ -6,31 +6,30 @@
 
 Q_DECLARE_LOGGING_CATEGORY(sambaLogConnJlink)
 
-class Q_DECL_EXPORT SambaConnectionJlink : public SambaConnection
+class Q_DECL_EXPORT SambaConnectionJlinkHelper : public QQuickItem
 {
 	Q_OBJECT
-	Q_PROPERTY(bool swd READ swd WRITE setSWD NOTIFY swdChanged)
+	Q_PROPERTY(QString serialNumber READ serialNumber WRITE setSerialNumber NOTIFY serialNumberChanged)
+	Q_PROPERTY(bool swd READ swd WRITE setSwd NOTIFY swdChanged)
 
 public:
-	SambaConnectionJlink(QQuickItem *parent = 0);
-	~SambaConnectionJlink();
+	SambaConnectionJlinkHelper(QQuickItem *parent = 0);
+	~SambaConnectionJlinkHelper();
 
-	bool swd() {
-		return m_swd;
-	}
-	void setSWD(bool swd) {
-		m_swd = swd;
-		emit swdChanged();
-	}
+	QString serialNumber() const;
+	void setSerialNumber(const QString& serialNumber);
 
-	Q_INVOKABLE QStringList availablePorts();
+	bool swd() const;
+	void setSwd(bool swd);
+
+	Q_INVOKABLE QStringList availableSerialNumbers();
 
 	Q_INVOKABLE void open();
 	Q_INVOKABLE void close();
 
-	Q_INVOKABLE quint8 readu8(quint32 address);
-	Q_INVOKABLE quint16 readu16(quint32 address);
-	Q_INVOKABLE quint32 readu32(quint32 address);
+	Q_INVOKABLE QVariant readu8(quint32 address);
+	Q_INVOKABLE QVariant readu16(quint32 address);
+	Q_INVOKABLE QVariant readu32(quint32 address);
 	Q_INVOKABLE SambaByteArray *read(quint32 address, unsigned length);
 
 	Q_INVOKABLE bool writeu8(quint32 address, quint8 data);
@@ -40,15 +39,15 @@ public:
 
 	Q_INVOKABLE bool go(quint32 address);
 
-	Q_INVOKABLE quint32 appletConnectionType();
-
 signals:
+	void serialNumberChanged();
 	void swdChanged();
 	void connectionOpened();
 	void connectionFailed(const QString& message);
 	void connectionClosed();
 
 private:
+	QString m_serialNumber;
 	bool m_swd;
 	int m_devFamily, m_device;
 };
@@ -63,7 +62,7 @@ public:
 	void registerTypes(const char *uri)
 	{
 		Q_ASSERT(uri == QLatin1String("SAMBA.Connection.JLink"));
-		qmlRegisterType<SambaConnectionJlink>(uri, 3, 0, "JLinkConnection");
+		qmlRegisterType<SambaConnectionJlinkHelper>(uri, 3, 0, "JLinkConnectionHelper");
 	}
 };
 

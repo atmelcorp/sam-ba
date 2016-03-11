@@ -1,4 +1,4 @@
-#include "sambaconnectionjlink.h"
+#include "sambaconnectionjlinkhelper.h"
 #include <QThread>
 #include <QElapsedTimer>
 #include <JLinkARMDLL.h>
@@ -48,8 +48,8 @@ static void jlink_debug_log(const char* sErr)
 	qCDebug(sambaLogConnJlink) << QString().sprintf("%s", sErr);
 }
 
-SambaConnectionJlink::SambaConnectionJlink(QQuickItem* parent)
-	: SambaConnection(parent),
+SambaConnectionJlinkHelper::SambaConnectionJlinkHelper(QQuickItem* parent)
+	: QQuickItem(parent),
 	  m_swd(false),
 	  m_devFamily(-1),
 	  m_device(-1)
@@ -58,12 +58,40 @@ SambaConnectionJlink::SambaConnectionJlink(QQuickItem* parent)
 	JLINKARM_EnableLogCom(jlink_debug_log);
 }
 
-SambaConnectionJlink::~SambaConnectionJlink()
+SambaConnectionJlinkHelper::~SambaConnectionJlinkHelper()
 {
 	close();
 }
 
-QStringList SambaConnectionJlink::availablePorts()
+QString SambaConnectionJlinkHelper::serialNumber() const
+{
+	return m_serialNumber;
+}
+
+void SambaConnectionJlinkHelper::setSerialNumber(const QString& serialNumber)
+{
+	if (m_serialNumber != serialNumber)
+	{
+		m_serialNumber = serialNumber;
+		emit serialNumberChanged();
+	}
+}
+
+bool SambaConnectionJlinkHelper::swd() const
+{
+	return m_swd;
+}
+
+void SambaConnectionJlinkHelper::setSwd(bool swd)
+{
+	if (m_swd != swd)
+	{
+		m_swd = swd;
+		emit swdChanged();
+	}
+}
+
+QStringList SambaConnectionJlinkHelper::availableSerialNumbers()
 {
 	QStringList list;
 	JLINKARM_EMU_CONNECT_INFO connectInfo[8];
@@ -75,27 +103,27 @@ QStringList SambaConnectionJlink::availablePorts()
 	return list;
 }
 
-void SambaConnectionJlink::open()
+void SambaConnectionJlinkHelper::open()
 {
-	if (port().isEmpty())
+	if (serialNumber().isEmpty())
 	{
-		QStringList ports = availablePorts();
-		if (ports.isEmpty())
+		QStringList serialNumbers = availableSerialNumbers();
+		if (serialNumbers.isEmpty())
 		{
 			emit connectionFailed("No J-Link devices found");
 			return;
 		}
 
-		setPort(ports.at(0));
+		setSerialNumber(serialNumbers.at(0));
 	}
 
-	qCInfo(sambaLogConnJlink, "Opening J-Link with S/N '%s'", port().toLocal8Bit().constData());
+	qCInfo(sambaLogConnJlink, "Opening J-Link with S/N '%s'", serialNumber().toLocal8Bit().constData());
 
 	bool ok = false;
-	U32 serial = port().toInt(&ok);
+	U32 serial = serialNumber().toInt(&ok);
 	if (!ok)
 	{
-		emit connectionFailed("Port property must contain a serial number");
+		emit connectionFailed("Could not parse serial number");
 		return;
 	}
 
@@ -210,7 +238,7 @@ void SambaConnectionJlink::open()
 	}
 }
 
-void SambaConnectionJlink::close()
+void SambaConnectionJlinkHelper::close()
 {
 	if (JLINKARM_IsOpen())
 	{
@@ -219,62 +247,62 @@ void SambaConnectionJlink::close()
 	}
 }
 
-quint8 SambaConnectionJlink::readu8(quint32 address)
+QVariant SambaConnectionJlinkHelper::readu8(quint32 address)
 {
 	quint8 value;
 	quint8 status;
 	JLINKARM_ReadMemU8(address, 1, &value, &status);
-	return value;
+	return QVariant(value);
 }
 
-quint16 SambaConnectionJlink::readu16(quint32 address)
+QVariant SambaConnectionJlinkHelper::readu16(quint32 address)
 {
 	quint16 value;
 	quint8 status;
 	JLINKARM_ReadMemU16(address, 1, &value, &status);
-	return value;
+	return QVariant(value);
 }
 
-quint32 SambaConnectionJlink::readu32(quint32 address)
+QVariant SambaConnectionJlinkHelper::readu32(quint32 address)
 {
 	quint32 value;
 	quint8 status;
 	JLINKARM_ReadMemU32(address, 1, &value, &status);
-	return value;
+	return QVariant(value);
 }
 
-SambaByteArray *SambaConnectionJlink::read(quint32 address, unsigned length)
+SambaByteArray *SambaConnectionJlinkHelper::read(quint32 address, unsigned length)
 {
 	QByteArray data(length, 0);
 	JLINKARM_ReadMem(address, length, data.data());
 	return new SambaByteArray(data);
 }
 
-bool SambaConnectionJlink::writeu8(quint32 address, quint8 data)
+bool SambaConnectionJlinkHelper::writeu8(quint32 address, quint8 data)
 {
 	JLINKARM_WriteU8(address, data);
 	return true;
 }
 
-bool SambaConnectionJlink::writeu16(quint32 address, quint16 data)
+bool SambaConnectionJlinkHelper::writeu16(quint32 address, quint16 data)
 {
 	JLINKARM_WriteU16(address, data);
 	return true;
 }
 
-bool SambaConnectionJlink::writeu32(quint32 address, quint32 data)
+bool SambaConnectionJlinkHelper::writeu32(quint32 address, quint32 data)
 {
 	JLINKARM_WriteU32(address, data);
 	return true;
 }
 
-bool SambaConnectionJlink::write(quint32 address, SambaByteArray *data)
+bool SambaConnectionJlinkHelper::write(quint32 address, SambaByteArray *data)
 {
 	JLINKARM_WriteMem(address, data->constData().length(), data->constData().constData());
 	return true;
 }
 
-bool SambaConnectionJlink::go(quint32 address)
+bool SambaConnectionJlinkHelper::go(quint32 address)
 {
 	QElapsedTimer timer;
 	bool timeout;
@@ -314,9 +342,4 @@ bool SambaConnectionJlink::go(quint32 address)
 	}
 
 	return false;
-}
-
-quint32 SambaConnectionJlink::appletConnectionType()
-{
-	return JTAG;
 }

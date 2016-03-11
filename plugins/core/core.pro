@@ -23,9 +23,10 @@ unix:!mac:{
 }
 
 qml.files = qmldir \
-	Applet.qml \
-	AppletLoader.qml \
-	Device.qml
+    Applet.qml \
+    AppletLoader.qml \
+    Connection.qml \
+    Device.qml
 
 # install
 target.path = $$DESTPATH

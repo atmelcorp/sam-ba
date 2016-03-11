@@ -1,4 +1,4 @@
-#include "sambaconnectionserial.h"
+#include "sambaconnectionserialhelper.h"
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QStringList>
@@ -18,18 +18,47 @@ static bool serial_is_at91(const QSerialPortInfo& info)
 			&& info.productIdentifier() == SAMBA_USB_PID;
 }
 
-SambaConnectionSerial::SambaConnectionSerial(QQuickItem* parent)
-	: SambaConnection(parent),
+SambaConnectionSerialHelper::SambaConnectionSerialHelper(QQuickItem* parent)
+	: QQuickItem(parent),
+      m_port(""),
 	  m_baudRate(0)
 {
 }
 
-SambaConnectionSerial::~SambaConnectionSerial()
+SambaConnectionSerialHelper::~SambaConnectionSerialHelper()
 {
 	close();
 }
 
-QStringList SambaConnectionSerial::availablePorts()
+QString SambaConnectionSerialHelper::port() const
+{
+	return m_port;
+}
+
+void SambaConnectionSerialHelper::setPort(const QString& port)
+{
+	if (m_port != port)
+	{
+		m_port = port;
+		emit portChanged();
+	}
+}
+
+quint32 SambaConnectionSerialHelper::baudRate() const
+{
+	return m_baudRate;
+}
+
+void SambaConnectionSerialHelper::setBaudRate(quint32 baudRate)
+{
+	if (m_baudRate != baudRate)
+	{
+		m_baudRate = baudRate;
+		emit baudRateChanged();
+	}
+}
+
+QStringList SambaConnectionSerialHelper::availablePorts()
 {
 	QStringList list_at91, list_other;
 	QSerialPortInfo info;
@@ -42,7 +71,7 @@ QStringList SambaConnectionSerial::availablePorts()
 	return list_at91 + list_other;
 }
 
-void SambaConnectionSerial::open()
+void SambaConnectionSerialHelper::open()
 {
 	if (port().isEmpty())
 	{
@@ -69,7 +98,7 @@ void SambaConnectionSerial::open()
 
 	m_serial.setPort(info);
 	if (m_baudRate <= 0)
-		setBaudRate(m_at91 ? 921600 : 115200);
+		m_baudRate = m_at91 ? 921600 : 115200;
 	m_serial.setBaudRate(m_baudRate);
 	m_serial.setDataBits(QSerialPort::Data8);
 	m_serial.setParity(QSerialPort::NoParity);
@@ -91,7 +120,7 @@ void SambaConnectionSerial::open()
 		QByteArray resp = readAllSerial();
 		if (resp.length() == 2 && resp[0] == '\n' && resp[1] == '\r')
 		{
-			emit connectionOpened();
+			emit connectionOpened(m_at91);
 		}
 		else
 		{
@@ -110,7 +139,7 @@ void SambaConnectionSerial::open()
 	}
 }
 
-void SambaConnectionSerial::writeSerial(const QString &str)
+void SambaConnectionSerialHelper::writeSerial(const QString &str)
 {
 	qCDebug(sambaLogConnSerial).noquote().nospace() << "SERIAL<<" << str;
 
@@ -119,7 +148,7 @@ void SambaConnectionSerial::writeSerial(const QString &str)
 	m_serial.waitForBytesWritten(10);
 }
 
-void SambaConnectionSerial::writeSerial(const QByteArray &data)
+void SambaConnectionSerialHelper::writeSerial(const QByteArray &data)
 {
 	qCDebug(sambaLogConnSerial).noquote().nospace() << "SERIAL<<" << data.toHex();
 
@@ -127,7 +156,7 @@ void SambaConnectionSerial::writeSerial(const QByteArray &data)
 	m_serial.waitForBytesWritten(10);
 }
 
-QByteArray SambaConnectionSerial::readAllSerial()
+QByteArray SambaConnectionSerialHelper::readAllSerial()
 {
 	QByteArray resp;
 	while (true)
@@ -143,7 +172,7 @@ QByteArray SambaConnectionSerial::readAllSerial()
 	return resp;
 }
 
-void SambaConnectionSerial::close()
+void SambaConnectionSerialHelper::close()
 {
 	if (m_serial.isOpen())
 	{
@@ -152,30 +181,31 @@ void SambaConnectionSerial::close()
 	}
 }
 
-quint8 SambaConnectionSerial::readu8(quint32 address)
+QVariant SambaConnectionSerialHelper::readu8(quint32 address)
 {
 	if (!m_serial.isOpen())
-		return false;
+		return QVariant();
 
 	writeSerial(QString().sprintf("o%x,#", address));
 
 	QByteArray resp = readAllSerial();
-	return (quint8)resp[0];
+	quint8 value = (quint8)resp[0];
+	return QVariant(value);
 }
 
-quint16 SambaConnectionSerial::readu16(quint32 address)
+QVariant SambaConnectionSerialHelper::readu16(quint32 address)
 {
 	if (!m_serial.isOpen())
-		return false;
+		return QVariant();
 
 	writeSerial(QString().sprintf("h%x,#", address));
 
 	QByteArray resp = readAllSerial();
-	return (((quint8)resp[1]) << 8) +
-			((quint8)resp[0]);
+	quint16 value = (((quint8)resp[1]) << 8) + ((quint8)resp[0]);
+	return QVariant(value);
 }
 
-quint32 SambaConnectionSerial::readu32(quint32 address)
+QVariant SambaConnectionSerialHelper::readu32(quint32 address)
 {
 	if (!m_serial.isOpen())
 		return false;
@@ -183,13 +213,12 @@ quint32 SambaConnectionSerial::readu32(quint32 address)
 	writeSerial(QString().sprintf("w%x,#", address));
 
 	QByteArray resp = readAllSerial();
-	return (((quint8)resp[3]) << 24) +
-			(((quint8)resp[2]) << 16) +
-			(((quint8)resp[1]) << 8) +
-			((quint8)resp[0]);
+	quint32 value = (((quint8)resp[3]) << 24) + (((quint8)resp[2]) << 16) +
+			(((quint8)resp[1]) << 8) + ((quint8)resp[0]);
+	return QVariant(value);
 }
 
-SambaByteArray *SambaConnectionSerial::read(quint32 address, unsigned length)
+SambaByteArray *SambaConnectionSerialHelper::read(quint32 address, unsigned length)
 {
 	if (!m_serial.isOpen() || length == 0)
 		return new SambaByteArray();
@@ -210,7 +239,7 @@ SambaByteArray *SambaConnectionSerial::read(quint32 address, unsigned length)
 	return new SambaByteArray(data);
 }
 
-bool SambaConnectionSerial::writeu8(quint32 address, quint8 data)
+bool SambaConnectionSerialHelper::writeu8(quint32 address, quint8 data)
 {
 	if (!m_serial.isOpen())
 		return false;
@@ -219,7 +248,7 @@ bool SambaConnectionSerial::writeu8(quint32 address, quint8 data)
 	return true;
 }
 
-bool SambaConnectionSerial::writeu16(quint32 address, quint16 data)
+bool SambaConnectionSerialHelper::writeu16(quint32 address, quint16 data)
 {
 	if (!m_serial.isOpen())
 		return false;
@@ -228,7 +257,7 @@ bool SambaConnectionSerial::writeu16(quint32 address, quint16 data)
 	return true;
 }
 
-bool SambaConnectionSerial::writeu32(quint32 address, quint32 data)
+bool SambaConnectionSerialHelper::writeu32(quint32 address, quint32 data)
 {
 	if (!m_serial.isOpen())
 		return false;
@@ -237,7 +266,7 @@ bool SambaConnectionSerial::writeu32(quint32 address, quint32 data)
 	return true;
 }
 
-bool SambaConnectionSerial::write(quint32 address, SambaByteArray *data)
+bool SambaConnectionSerialHelper::write(quint32 address, SambaByteArray *data)
 {
 	if (!m_serial.isOpen())
 		return false;
@@ -256,7 +285,7 @@ bool SambaConnectionSerial::write(quint32 address, SambaByteArray *data)
 	return true;
 }
 
-bool SambaConnectionSerial::go(quint32 address)
+bool SambaConnectionSerialHelper::go(quint32 address)
 {
 	if (!m_serial.isOpen())
 		return false;
@@ -264,9 +293,4 @@ bool SambaConnectionSerial::go(quint32 address)
 	writeSerial(QString().sprintf("G%x#", address));
 
 	return true;
-}
-
-quint32 SambaConnectionSerial::appletConnectionType()
-{
-	return m_at91 ? USB : Serial;
 }
