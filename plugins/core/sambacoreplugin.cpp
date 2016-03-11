@@ -2,6 +2,7 @@
 #include "sambaapplet.h"
 #include "sambabytearray.h"
 #include "sambaconnection.h"
+#include "sambadevice.h"
 #include "sambautils.h"
 
 void SambaCorePlugin::registerTypes(const char *uri)
@@ -10,5 +11,6 @@ void SambaCorePlugin::registerTypes(const char *uri)
 	qmlRegisterType<SambaApplet>(uri, 3, 0, "AppletBase");
 	qmlRegisterType<SambaByteArray>(uri, 3, 0, "ByteArray");
 	qmlRegisterType<SambaConnection>(uri, 3, 0, "ConnectionBase");
+	qmlRegisterType<SambaDevice>(uri, 3, 0, "DeviceBase");
 	qmlRegisterType<SambaUtils>(uri, 3, 0, "UtilsBase");
 }

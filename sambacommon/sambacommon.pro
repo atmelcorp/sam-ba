@@ -13,6 +13,7 @@ SOURCES += \
     sambabytearray.cpp \
     sambacommon.cpp \
     sambaconnection.cpp \
+    sambadevice.cpp \
     sambaengine.cpp \
     sambautils.cpp
 
@@ -21,7 +22,8 @@ HEADERS += \
     sambabytearray.h \
     sambacommon.h \
     sambaconnection.h \
-    sambaengine.h\
+    sambadevice.h \
+    sambaengine.h \
     sambautils.h
 
 unix:!mac:{

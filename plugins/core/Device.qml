@@ -6,12 +6,21 @@ import SAMBA 3.0
 	\inqmlmodule SAMBA
 	\brief Defines all required data for a given Device
 */
-Item {
-	/*! Device Name */
-	property string name
+DeviceBase {
+	/*!
+		\qmlproperty string Device::name
+		\brief The device name
+	*/
 
-	/*! List of device applets */
-	property list<AbstractApplet> applets
+	/*!
+		\qmlproperty string Device::applets
+		\brief A list of all supported applets for the device
+	*/
+
+	/*!
+		\qmlmethod Applet Device::applet(string name)
+		Returns the applet with name \a name or \tt undefined if not found.
+	*/
 
 	/*!
 		\qmlmethod void Device::initialize(Connection connection)
@@ -19,17 +28,5 @@ Item {
 	*/
 	function initialize(connection) {
 		// do nothing
-	}
-
-	/*!
-		\qmlmethod Applet Device::applet(string name)
-		Returns the applet with name \a name or \tt undefined if not found.
-	*/
-	function applet(name) {
-		for (var i = 0; i < applets.length; i++) {
-			if (applets[i].name === name)
-				return applets[i]
-		}
-		return undefined
 	}
 }
