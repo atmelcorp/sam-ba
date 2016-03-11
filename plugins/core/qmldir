@@ -5,3 +5,4 @@ Applet 3.0 Applet.qml
 AppletLoader 3.0 AppletLoader.qml
 Connection 3.0 Connection.qml
 Device 3.0 Device.qml
+singleton Utils 3.0 Utils.qml

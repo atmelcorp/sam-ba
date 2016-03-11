@@ -38,5 +38,4 @@ INSTALLS += target
 
 OTHER_FILES += \
 	type_baseapplet.qdoc \
-	type_bytearray.qdoc \
-	type_utils.qdoc
+	type_bytearray.qdoc
