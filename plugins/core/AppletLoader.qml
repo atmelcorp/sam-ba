@@ -92,15 +92,7 @@ Item {
 		if (!applet)
 			throw new Error("Applet " + appletName + " not found")
 
-		if (!connection.appletUpload(applet))
-			throw new Error("Applet " + appletName + " could not be loaded")
-
-		if (connection.applet.canInitialize()) {
-			connection.applet.initialize(connection, device)
-			if (connection.applet.memorySize > 1)
-				print("Detected memory size is " +
-				      connection.applet.memorySize + " bytes.")
-		}
+		applet.initialize(connection, device)
 	}
 
 	/*!
@@ -115,60 +107,7 @@ Item {
 	*/
 	function appletRead(offset, size, fileName)
 	{
-		if (!connection.applet.canReadPages())
-			throw new Error("Applet '" + applet.name +
-			                "' does not support 'read pages' command")
-
-		if (offset & (connection.applet.pageSize - 1) != 0)
-			throw new Error("Read offset is not page-aligned")
-		offset /= connection.applet.pageSize
-
-		// TODO handle non-page aligned sizes
-		if ((size & (connection.applet.pageSize - 1)) !== 0)
-			throw new Error("Read size is not page-aligned")
-		size /= connection.applet.pageSize
-
-		var data, percent
-		var badOffset, badCount = 0
-		var remaining = size
-		while (remaining > 0) {
-			var count = Math.min(remaining, connection.applet.bufferPages)
-
-			var result = connection.applet.readPages(connection, device,
-			                                         offset, count)
-			if (result.length < count * connection.applet.pageSize)
-				count = result.length / connection.applet.pageSize
-
-			if (count === 0) {
-				if (badCount === 0)
-					badOffset = offset
-				badCount++
-				offset++
-				continue
-			} else if (badCount > 0) {
-				print("Skipped " + badCount + " bad page(s) at address 0x" +
-				      (badOffset * connection.applet.pageSize).toString(16))
-				badCount = 0
-			}
-
-			if (!data)
-				data = result
-			else
-				data.append(result)
-
-			percent = 100 * (1 - ((remaining - count) / size))
-			print("Read " +
-			      (count * connection.applet.pageSize) +
-			      " bytes at address 0x" +
-			      (offset * connection.applet.pageSize).toString(16) +
-			      " (" + percent.toFixed(2) + "%)")
-
-			offset += count
-			remaining -= count
-		}
-
-		if (!data.writeFile(fileName))
-			throw new Error("Could not write to file '" + fileName + "'")
+		connection.applet.read(connection, device, offset, size, fileName)
 	}
 
 	/*!
@@ -187,66 +126,7 @@ Item {
 	*/
 	function appletWrite(offset, fileName, bootFile)
 	{
-		if (!connection.applet.canWritePages())
-			throw new Error("Applet '" + connection.applet.name +
-			                "' does not support 'buffer write' command")
-
-		var data = Utils.readFile(fileName)
-		if (!data)
-			throw new Error("Could not read from file '" + fileName + "'")
-		if (!!bootFile)
-			connection.applet.prepareBootFile(connection, device, data)
-
-		if (offset & (connection.applet.pageSize - 1) != 0)
-			throw new Error("Write offset is not page-aligned")
-		offset /= connection.applet.pageSize
-
-		// handle input data padding
-		if ((data.length & (connection.applet.pageSize - 1)) !== 0) {
-			var padding = connection.applet.pageSize -
-			              (data.length & (connection.applet.pageSize - 1))
-			data.pad(padding, connection.applet.padding)
-			print("Added " + padding + " bytes of padding to align to page size")
-		}
-		var size = data.length / connection.applet.pageSize
-
-		var current = 0
-		var percent
-		var badOffset, badCount = 0
-		var remaining = size
-		while (remaining > 0)
-		{
-			var count = Math.min(remaining, connection.applet.bufferPages)
-
-			var pagesWritten = connection.applet.writePages(connection, device, offset,
-					data.mid(current * connection.applet.pageSize,
-					         count * connection.applet.pageSize))
-			if (pagesWritten < count)
-				count = pagesWritten
-
-			if (count === 0) {
-				if (badCount === 0)
-					badOffset = offset
-				badCount++
-				offset++
-				continue
-			} else if (badCount > 0) {
-				print("Skipped " + badCount + " bad page(s) at address 0x" +
-				      (badOffset * connection.applet.pageSize).toString(16))
-				badCount = 0
-			}
-
-			percent = 100 * (1 - ((remaining - count) / size))
-			print("Wrote " +
-			      (count * connection.applet.pageSize) +
-			      " bytes at address 0x" +
-			      (offset * connection.applet.pageSize).toString(16) +
-			      " (" + percent.toFixed(2) + "%)")
-
-			current += count
-			offset += count
-			remaining -= count
-		}
+		connection.applet.write(connection, device, offset, fileName, bootFile)
 	}
 
 	/*!
@@ -266,70 +146,7 @@ Item {
 	*/
 	function appletVerify(offset, fileName, bootFile)
 	{
-		if (!connection.applet.canReadPages())
-			throw new Error("Applet '" + connection.applet.name +
-			                "' does not support 'read buffer' command")
-
-		var data = Utils.readFile(fileName)
-		if (!data)
-			throw new Error("Could not read file '" + fileName + "'")
-		if (!!bootFile)
-			connection.applet.prepareBootFile(connection, device, data)
-
-		if (offset & (connection.applet.pageSize - 1) != 0) {
-			throw new Error("Verify offset is not page-aligned")
-		}
-		offset /= connection.applet.pageSize
-
-		// handle input data padding
-		if ((data.length & (connection.applet.pageSize - 1)) !== 0) {
-			var padding = connection.applet.pageSize -
-			              (data.length & (connection.applet.pageSize - 1))
-			data.pad(padding, connection.applet.padding)
-			print("Added " + padding + " bytes of padding to align to page size")
-		}
-		var size = data.length / connection.applet.pageSize
-
-		var current = 0
-		var percent
-		var badOffset, badCount = 0
-		var remaining = size
-		while (remaining > 0)
-		{
-			var count = Math.min(remaining, connection.applet.bufferPages)
-
-			var result = connection.applet.readPages(connection, device, offset, count)
-			if (result.length < count * connection.applet.pageSize)
-				count = result.length / connection.applet.pageSize
-
-			if (count === 0) {
-				if (badCount === 0)
-					badOffset = offset
-				badCount++
-				offset++
-				continue
-			} else if (badCount > 0) {
-				print("Skipped " + badCount + " bad page(s) at address 0x" +
-				      (badOffset * connection.applet.pageSize).toString(16))
-				badCount = 0
-			}
-
-			for (var i = 0; i < result.length; i++)
-				if (result.readu8(i) !== data.readu8(current * connection.applet.pageSize + i))
-					throw new Error("Failed verification. First error at address 0x" +
-					                (offset * connection.applet.pageSize + i).toString(16))
-
-			percent = 100 * (1 - ((remaining - count) / size))
-			print("Verified " +
-			      (count * connection.applet.pageSize) +
-			      " bytes at address 0x" +
-			      (offset * connection.applet.pageSize).toString(16) +
-			      " (" + percent.toFixed(2) + "%)")
-
-			current += count
-			offset += count
-			remaining -= count
-		}
+		connection.applet.verify(connection, device, offset, fileName, bootFile)
 	}
 
 	/*!
@@ -350,8 +167,7 @@ Item {
 	*/
 	function appletWriteVerify(offset, fileName, bootFile)
 	{
-		appletWrite(offset, fileName, bootFile)
-		appletVerify(offset, fileName, bootFile)
+		connection.applet.writeVerify(connection, device, offset, fileName, bootFile)
 	}
 
 	/*!
@@ -366,52 +182,7 @@ Item {
 	*/
 	function appletErase(offset, size)
 	{
-		if (!connection.applet.canErasePages()) {
-			throw new Error("Applet '" + connection.applet.name +
-			                "' does not support 'erase pages' command")
-		}
-
-		// no offset supplied, start at 0
-		if (typeof offset === "undefined") {
-			offset = 0
-		} else {
-			if ((offset & (connection.applet.pageSize - 1)) !== 0)
-				throw new Error("Offset is not page-aligned")
-			offset /= connection.applet.pageSize
-		}
-
-		// no size supplied, do a full erase
-		if (size === undefined) {
-			size = connection.applet.memoryPages - offset
-		} else {
-			if ((size & (connection.applet.pageSize - 1)) !== 0)
-				throw new Error("Size is not page-aligned")
-			size /= connection.applet.pageSize
-		}
-
-		if ((offset + size) > connection.applet.memoryPages)
-			throw new Error("Requested erase region overflows memory")
-
-		var end = offset + size
-
-		var plan = computeErasePlan(offset, end, false)
-		if (plan === undefined)
-			throw new Error("Cannot erase requested region using supported erase block sizes without overflow")
-
-		for (var i in plan) {
-			offset = plan[i].start
-			for (var n = 0; n < plan[i].count; n++) {
-				var count = connection.applet.erasePages(connection, device,
-				                                         offset, plan[i].length)
-				var percent = 100 * (1 - ((end - offset - count) / size))
-				print("Erased " +
-				      (count * connection.applet.pageSize) +
-				      " bytes at address 0x" +
-				      (offset * connection.applet.pageSize).toString(16) +
-				      " (" + percent.toFixed(2) + "%)")
-				offset += count
-			}
-		}
+		connection.applet.erase(connection, device, offset, size)
 	}
 
 	/*!
@@ -426,18 +197,11 @@ Item {
 	*/
 	function appletFullErase()
 	{
-		if (connection.applet.canEraseAll()) {
-			connection.applet.eraseAll(connection, device)
-		} else if (connection.applet.canErasePages()) {
-			appletErase()
-		} else {
-			throw new Error("Applet '" + connection.applet.name +
-		                        "' does not support any erase command")
-		}
+		connection.applet.eraseAll(connection, device)
 	}
 
 	/*!
-		\qmlmethod void AppletLoader::appletGpnvmSet(int index)
+		\qmlmethod void AppletLoader::appletSetGpnvm(int index)
 		\brief Sets GPNVM.
 
 		Sets GPNVM at index \a index using the applet 'GPNVM' command.
@@ -445,16 +209,13 @@ Item {
 		Throws an \a Error if the applet has no GPNVM command or if an
 		error occured during setting GPNVM
 	*/
-	function appletGpnvmSet(index)
+	function appletSetGpnvm(index)
 	{
-		if (!connection.applet.canSetGpnvm())
-			throw new Error("Applet '" + connection.applet.name
-					+ "' does not support 'Set GPNVM' command")
 		connection.applet.setGpnvm(connection, device, index)
 	}
 
 	/*!
-		\qmlmethod void AppletLoader::appletGpnvmClear(int index)
+		\qmlmethod void AppletLoader::appletClearGpnvm(int index)
 		\brief Clears GPNVM.
 
 		Clears GPNVM at index \a index using the applet 'GPNVM' command.
@@ -462,74 +223,39 @@ Item {
 		Throws an \a Error if the applet has no GPNVM command or if an
 		error occured during clearing GPNVM
 	*/
-	function appletGpnvmClear(index)
+	function appletClearGpnvm(index)
 	{
-		if (!connection.applet.canClearGpnvm())
-			throw new Error("Applet '" + connection.applet.name
-					+ "' does not support 'Clear GPNVM' command")
 		connection.applet.clearGpnvm(connection, device, index)
 	}
 
-	/*! \internal */
-	function computeErasePlan(start, end, overflow) {
-		var supported = []
-		var i, size
+	/*!
+		\qmlmethod int AppletLoader::appletReadBootCfg(int index)
+		\brief Read the boot configuration
 
-		for (i = 32; i >= 0; i--) {
-			size = 1 << i
-			if ((connection.applet.eraseSupport & size) !== 0)
-				supported.push(size)
-		}
+		Read and returns the boot configuration at index \a index using the applet
+		'Read Boot Config' command.
 
-		var plan = []
-		var currentStart = 0
-		var currentSize = 0
-		var currentCount = 0
-		while (start < end) {
-			var bestSize = 0
-			for (i in supported) {
-				size = supported[i]
-				// skip unaligned
-				if ((start & (size - 1)) !== 0)
-					continue
-				// skip too big
-				if (start + size > end)
-					continue
-				bestSize = size
-				break
-			}
+		Throws an \a Error if the applet has no 'Read Boot Config' command or
+		if an error occured during calling the applet command
+	*/
+	function appletReadBootCfg(index)
+	{
+		return connection.applet.readBootCfg(connection, device, index)
+	}
 
-			if (!!overflow && bestSize === 0) {
-				bestSize = supported[supported.length - 1]
-				if (currentSize === 0) {
-					start &= ~(bestSize - 1)
-				}
-			}
+	/*!
+		\qmlmethod void AppletLoader::appletWriteBootCfg(int index, int value)
+		\brief Write the boot configuration
 
-			if (bestSize === 0)
-				return
+		Write the boot configuration \a value at index \a index using the
+		applet 'Write Boot Config' command.
 
-			if (currentSize === bestSize) {
-				currentCount++
-			} else {
-				if (currentSize !== 0) {
-					plan.push({start:currentStart,
-					           length:currentSize,
-					           count:currentCount})
-				}
-				currentStart = start
-				currentSize = bestSize
-				currentCount = 1
-			}
-
-			start += bestSize
-		}
-		if (currentSize !== 0) {
-			plan.push({start:currentStart,
-			           length:currentSize,
-			           count:currentCount})
-		}
-		return plan
+		Throws an \a Error if the applet has no 'Write Boot Config' command or
+		if an error occured during calling the applet command
+	*/
+	function appletWriteBootCfg(index, value)
+	{
+		connection.applet.writeBootCfg(connection, device, index, value)
 	}
 
 	/*! \internal */
@@ -555,14 +281,18 @@ Item {
 	}
 
 	Component.onCompleted: {
-		connection.connectionOpened.connect(handle_connectionOpened)
-		connection.connectionFailed.connect(handle_connectionFailed)
-		connection.connectionClosed.connect(handle_connectionClosed)
-		if (autoconnect)
-			connection.open()
+		if (!!connection) {
+			connection.connectionOpened.connect(handle_connectionOpened)
+			connection.connectionFailed.connect(handle_connectionFailed)
+			connection.connectionClosed.connect(handle_connectionClosed)
+			if (autoconnect)
+				connection.open()
+		}
 	}
 
 	Component.onDestruction: {
-		connection.close()
+		if (!!connection) {
+			connection.close()
+		}
 	}
 }

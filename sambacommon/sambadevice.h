@@ -11,6 +11,8 @@ class SAMBACOMMONSHARED_EXPORT SambaDevice : public QQuickItem
 {
 	Q_OBJECT
 	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+	Q_PROPERTY(QStringList aliases READ aliases WRITE setAliases NOTIFY aliasesChanged)
+	Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY descriptionChanged)
 	Q_PROPERTY(QStringList boards READ boards WRITE setBoards NOTIFY boardsChanged)
 	Q_PROPERTY(QVariant board READ board WRITE setBoard NOTIFY boardChanged)
 	Q_PROPERTY(QQmlListProperty<SambaApplet> applets READ applets)
@@ -20,6 +22,12 @@ public:
 
 	QString name() const;
 	void setName(const QString& name);
+
+	QStringList aliases() const;
+	void setAliases(const QStringList& aliases);
+
+	QString description() const;
+	void setDescription(const QString& description);
 
 	QStringList boards() const;
 	void setBoards(const QStringList& boards);
@@ -35,11 +43,15 @@ public:
 
 signals:
 	void nameChanged();
+	void aliasesChanged();
+	void descriptionChanged();
 	void boardsChanged();
 	void boardChanged();
 
 private:
 	QString m_name;
+	QStringList m_aliases;
+	QString m_description;
 	QStringList m_boards;
 	QVariant m_board;
 	QList<SambaApplet*> m_applets;

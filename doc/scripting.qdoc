@@ -1,0 +1,116 @@
+/*!
+\page scripting.html
+\title SAM-BA 3.0 Scripting Documentation
+\brief This document contains information on writing SAM-BA 3.0 scripts.
+
+\section1 Scripting SAM-BA 3.0
+
+SAM-BA 3.0 uses Qt5 QML language for scripting.
+
+\section2 Running a SAM-BA script
+
+SAM-BA scripts are QML scripts and can be loaded using the \tt sambacmd command-line tool.
+
+For example, to run 'my-script.qml', the following command line is used:
+\tt{sambacmd -x my-script.qml}
+
+\section2 Initial QML script
+
+This minimal QML script shows how to react to script loading and unloading.
+This mechanism is used by all the SAM-BA scripts:
+
+\qml
+import QtQuick 2.3
+
+Item {
+	Component.onCompleted: print("Script started")
+	Component.onDestruction: print("Script completed")
+}
+\endqml
+
+This example uses QML signals to react to events: when the script is loaded,
+the message "Script started" is displayed. When the script is unloaded, the
+message "Script completed" is displayed.
+
+\section2 Connecting to a device
+
+To connect to a device, an instance of \l{SAMBA::}{Connection} must be used.
+The \l{SAMBA::}{Connection} type contains methods to read/write memory on the
+device and make it execute code.
+
+In this example, a SerialConnection is used:
+\qml
+import QtQuick 2.3
+import SAMBA 3.0
+import SAMBA.Connection.Serial 3.0
+
+Item {
+	SerialConnection {
+		id: connection
+
+		onConnectionOpened: print("Connection opened")
+		onConnectionFailed: print("Connection failed: " + message)
+		onConnectionClosed: print("Connection closed")
+	}
+
+	Component.onCompleted: connection.open()
+	Component.onDestruction: connection.close()
+}
+\endqml
+
+This script builds upon the previous one by adding an instance of
+SerialConnection which is given the identifier "connection". This identifier
+can then be used to call methods on the connection object.
+
+The \tt open method of the \tt connection will called on script startup.  This
+will trigger one of the \tt onConnectionOpened or \tt onConnectionFailed
+signals and in turn display a message.
+
+When the script completes, the \tt close method of the \tt connection will be
+called. This will trigger the \tt onConnectionClosed signal and display a final
+message.
+
+\section2 Using SAM-BA Applets
+
+The AppletLoader QML type is provided to facilitate the use of
+\l{SAMBA::Applet}{SAM-BA Applets}.
+
+It combines a \l{SAMBA::}{Connection} and a \l{SAMBA::}{Device} and provides
+several functions to call the most common applet commands.
+
+More information including example use can be found in \l{SAMBA::}{AppletLoader}
+documentation.
+
+\section2 More QML examples
+
+The \tt examples directory in the SAM-BA 3.0 distribution contains more
+advanced examples.
+
+It is recommended to start by reading and modifying the provided examples, then
+to refer to the \l{SAM-BA API Reference} and
+\l{http://doc.qt.io/qt-5/qmlreference.html}{QML Reference}.
+
+\section1 SAM-BA API Reference
+
+\table
+\header
+\li Module
+\li Description
+\row
+\li \l{SAMBA Module}
+\li Contains common SAM-BA types and utilities
+\row
+\li \l{SAMBA.Connection.JLink Module}
+\li Contains support for connecting to devices using JTAG
+\row
+\li \l{SAMBA.Connection.Serial Module}
+\li Contains support for connection to devices using USB/Serial
+\row
+\li \l{SAMBA.Device.SAMA5D2 Module}
+\li Contains support for SAMA5D2 device
+\row
+\li \l{SAMBA.Device.SAMV7 Module}
+\li Contains support for SAMV7 device
+\endtable
+
+*/

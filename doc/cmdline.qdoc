@@ -1,0 +1,288 @@
+/*!
+\page cmdline.html
+\title SAM-BA 3.0 Command Line Documentation
+\brief This document contains information on using SAM-BA command line.
+
+\section1 Introduction
+
+Starting with version 3.1, SAM-BA includes command line interface that provides
+support for the most common actions:
+\list
+\li reading / writing to arbitrary memory addresses and/or peripherals
+\li uploading applets and using them to erase/read/write external memories
+\endlist
+
+The command line interface is designed to be self-documenting.
+
+The main commands can be listed using the "\e{sam-ba --help}" command:
+\code
+Usage: ./sam-ba [options]
+SAM-BA Command Line Tool
+
+Options:
+  -v, --version                          Displays version information.
+  -h, --help                             Displays this help.
+  -x, --execute <script.qml>             Execute script <script-file>.
+  -p, --port <port[:options:...]>        Communicate with device using <port>.
+  -d, --device <device>                  Connected device is <device>.
+  -b, --board <board>                    Connected board is <board>.
+  -m, --monitor <command[:options:...]>  Run monitor command <command>.
+  -a, --applet <applet[:options:...]>    Load and initialize applet <applet>.
+  -c, --command <command[:args:...]>     Run command <command>.
+\endcode
+
+Additional help can be obtained for most commands by supplying a "help"
+parameter that will display their usage.
+
+For example "\e{sam-ba --port help}" will display:
+\code
+Known ports: j-link, serial
+\endcode
+
+Command that take an argument with options (port, monitor, applet) will display
+even more documentation when called with "help" as option valu
+
+For example "\e{sam-ba --port serial:help}" will display:
+\code
+Syntax: serial:[<port>]:[<baudrate>]
+Examples: serial -> serial port (will use first AT91 USB if found otherwise first serial port)
+          serial:COM80 -> serial port on COM80
+          serial:ttyUSB0:57600 -> serial port on /dev/ttyUSB0, baudrate 57600
+\endcode
+
+\section1 Running User Scripts
+
+To run user scripts, a single "\e{-x}" must be provided on the command line.
+
+For example: "\e{sam-ba -x myscript.qml}".
+
+If the script executes without error, the SAM-BA program will return an error
+code of 0. Otherwise, if a javascript/QML exception occurs, the tool will
+return 255.
+
+User script that execute successfully can also override the return code by
+setting the requested code in "\e{Script.returnCode}". For example, this simple
+user script will just return with code 42:
+\qml
+import QtQuick 2.3
+Item {
+	Component.onCompleted: {
+		Script.returnCode = 42
+	}
+}
+\endqml
+
+\section1 Monitor Commands
+
+We call monitor commands the commands that allow reading and writing from the
+device address space.
+
+In this mode, a valid port option ("\e{-p}" or "\e{--port}") must be present on
+the command line. Several monitor commands can be run sequentially in the same
+command line invokation.
+
+For example, the following command line will display the CHIPID_CIDR register
+on a SAMA5D2 device and then read and write into SRAM at address 0x200000:
+\code
+sam-ba -p serial -m read32:0xfc069000 -m write32:0x200000:0x12345678 -m -m read16:0x200000 -m read16:0x200002
+\endcode
+Running this command line with a SAMA5D2 connected will display:
+\code
+read32(0xfc069000)=0x8a5c08c0
+write32(0x00200000,0x12345678)
+read16(0x200000)=0x5678
+read16(0x200002)=0x1234
+\endcode
+
+The monitor commands supported may depend on the connection type selected, but
+usually include:
+\table
+\header
+\li Command \li 1st argument \li 2nd argument \li Description
+\row \li read8 \li address \li \e{none} \li Read a byte from \e{address}
+\row \li read16 \li address \li \e{none} \li Read a half-word (16-bit) from address \e{address}
+\row \li read32 \li address \li \e{none} \li Read a word (32-bit) from address \e{address}
+\row \li write8\li address \li value \li Write byte \e{value} to \e{address}
+\row \li write16 \li address \li value \li Write half-word \e{value} to address \e{address}
+\row \li write32 \li address \li value \li Write word \e{value} to address \e{address}
+\endtable
+
+\section1 Applet Commands
+
+External memories can be programmed by uploading small programs to the device
+that are called \e{applets} and communicating with them using a shared memory
+region.
+
+Running applet commands requires several parameters on the command line:
+\list
+\li a \e{port} to connect to the device (option "\e{-p}" or "\e{--port}")
+\li either a \e{device} option (option "\e{-d}" or "\e{--device}") or a
+\e{board} option (option "\e{-b}" or "\e{--board}")
+\li an \e{applet} to use (option "\e{-a}" or "\e{--applet}")
+\li zero or more applet commands to run (option "\e{-c}" or "\e{--command}")
+\endlist
+
+\section2 Devices and Boards
+
+The list of supported devices can be displayed by using "\e{sam-ba -b help}".
+Running this command with SAM-BA 3.1 will display:
+\code
+Known devices: sama5d2, samv7
+\endcode
+For ease of use, several aliases are accepted by the tool: for example using
+"sama5d2" is equivalent to "sama5d27".
+
+Boards also select a device, but also a set of settings that are available to
+the applets. For example, selecting board "\e{sama5d2-xplained}" will
+pre-configure the system for:
+\list
+\li SPI0 IOSET1 NPCS0 66Mhz
+\li QSPI0 IOSET3 66Mhz
+\endlist
+
+It is always possible to override/provide applet initialization settings
+regardless of the configuration set or not by the device/board options.
+
+\section2 Applets
+
+The list of applets available depends on the device selected. It is possible to
+get a list of the supported applets for the device by running
+"\e{sam-ba -d <device> -a help}":
+\code
+sam-ba -d sama5d2 -a help
+\endcode
+\code
+Known applets: bootconfig, lowlevel, serialflash, qspiflash, nandflash
+\endcode
+
+Each applet may provide different commands, but most external memory applets
+will support the commands in section \l{Common Memory Applet Commands}.
+
+Documentation on the supported commands can be obtained by running
+"\e{sam-ba -d <device> -a <applet> -c help}".
+
+For example the QSPI Flash applet for the SAMA5D2 supports commands: erase,
+read, write, writeboot, verify, verifyboot.
+
+The Boot Config applet for the SAMA5D2 is not an external memory applet and
+only supports these commands: readcfg, writecfg.
+
+Applets can have some parameters that may be provided either by the board
+preset or explicitely. Help on the parameters can be obtained by using an
+"help" argument. For example:
+\code
+sam-ba -d sama5d2 -a qspiflash:help
+\endcode
+\code
+Syntax: qspiflash:[<instance>]:[<ioset>]:[<frequency>]
+Examples: qspiflash -> QSPI flash applet using default board settings
+          qspiflash:0:3:66 -> QSPI flash applet using fully custom settings (QSPI0, IOSET3, 66Mhz)
+          qspiflash:::20 -> QSPI flash applet using default board settings but frequency set to 20Mhz
+\endcode
+
+\section2 Common Memory Applet Commands
+
+The following common commands are often provided by external memory applets.
+
+\table
+\header
+\li Command \li 1st argument \li 2nd argument \li 3rd argument \li Description
+\row \li erase      \li address* \li length*  \li \e{none} \li Erase \e{length} bytes starting at \e{address}
+\row \li read       \li filename \li address* \li length*  \li Read \e{length} bytes starting at \e{address} into file \e{filename}
+\row \li write      \li filename \li address* \li \e{none} \li Write content of file \e{filename} to memory starting at \e{address}
+\row \li writeboot  \li filename \li \e{none} \li \e{none} \li Prepare content of file \e{filename} for booting and write it to memory starting at \e{address}
+\row \li verify     \li filename \li address* \li \e{none} \li Compare content of file \e{filename} with memory starting at \e{address}
+\row \li verifyboot \li filename \li \e{none} \li \e{none} \li Prepare content of file \e{filename} for booting and compare it to memory starting at \e{address}
+\endtable
+
+Argument noted with a star (*) in the previous table are not required and may
+be ommited. A suitable default will be used in this case: 0 for the address and
+the remaining size between \e{address} and the end of the memory for the
+\e{length}. For example, for a 4MB memory, the following commands are
+equivalent:
+\list
+\li erase:0:4194304
+\li erase::4194304
+\li erase:0
+\li erase
+\endlist
+
+Depending on the applet, some commands my not be supported, or there may be
+some additional ones. The syntax of the commands may also change between
+applets. Please use "\e{-c help}" to get the list of supported commands and
+their usage.
+
+\section2 SAMA5D2 Applet Commands and Examples
+
+The SAMA5D2 external memory applets are: serialflash, qspiflash and nandflash.
+
+Except for initialization parameters, usage of these applets is the same.
+For example, to erase the first 64KB, write and verify a 30448 bytes boot
+program on the serialflash of a SAMA5D2-Xplained:
+\code
+sam-ba -p serial -b sama5d2-xplained -a serialflash -c erase -c writeboot:program.bin -c verifyboot:program.bin
+\endcode
+\code
+Opening serial port 'ttyACM0'
+Connection opened.
+Detected memory size is 4194304 bytes.
+Executing command 'erase:0:65536'
+Erased 65536 bytes at address 0x00000000 (100.00%)
+Executing command 'writeboot:program.bin'
+Patched file length (30448) at offset 20
+Added 16 bytes of padding to align to page size
+Wrote 30464 bytes at address 0x00000000 (100.00%)
+Executing command 'verifyboot:program.bin'
+Patched file length (30448) at offset 20
+Added 16 bytes of padding to align to page size
+Verified 30464 bytes at address 0x00000000 (100.00%)
+Connection closed.
+\endcode
+
+The SAMA5D2 boot configuration can also be set using the command line via the
+boot config applet. The \e{readcfg} and \e{writecfg} commands can be used to
+get/set the Boot Sequence Register (BSCR) and the Boot Config Word either in
+BUREG registers or in FUSE. Please refer to SAMA5D2 Datasheet section
+"15.4 Boot configuration" for more details on the SAMA5D2 boot sequence.
+
+To configure the boot to use BSCR/BUREG1 and boot on SPI0 IOSET2 or SDMMC0 and
+keep the default UART and JTAG settings, the following command can be used
+(line broken for easier reading):
+\code
+sam-ba -p serial -d sama5d2 -a bootconfig -c writecfg:bscr:valid,bureg1
+	-c writecfg:bureg1:QSPI0_DISABLED,QSPI1_DISABLED,SPI0_IOSET2,SPI1_DISABLED,NFC_DISABLED,SDMMC0,SDMMC1_DISABLED,EXT_MEM_BOOT
+\endcode
+\code
+Opening serial port 'ttyACM0'
+Connection opened.
+Executing command 'writecfg:bscr:valid,bureg0'
+Setting BSCR to 0x00000005
+Executing command 'writecfg:bureg1:QSPI0_DISABLED,QSPI1_DISABLED,SPI0_IOSET2,SPI1_DISABLED,NFC_DISABLED,SDMMC0,SDMMC1_DISABLED,EXT_MEM_BOOT'
+Setting BUREG1 to 0x00040bdf
+Connection closed.
+\endcode
+
+The current boot configuration can be displayed using this command:
+\code
+sam-ba -p serial -d sama5d2 -a bootconfig -c readcfg:bscr -c readcfg:bureg0
+	-c readcfg:bureg1 -c readcfg:bureg2 -c readcfg:bureg3 -c readcfg:fuse
+\endcode
+\code
+Opening serial port 'ttyACM0'
+Connection opened.
+Executing command 'readcfg:bscr'
+BSCR=0x00000005 / BUREG1,VALID
+Executing command 'readcfg:bureg0'
+BUREG0=0x00040bdf / QSPI0_DISABLED,QSPI1_DISABLED,SPI0_IOSET2,SPI1_DISABLED,NFC_DISABLED,SDMMC0,SDMMC1_DISABLED,UART1_IOSET1,JTAG_IOSET1,EXT_MEM_BOOT
+Executing command 'readcfg:bureg1'
+BUREG1=0x00040bdf / QSPI0_DISABLED,QSPI1_DISABLED,SPI0_IOSET2,SPI1_DISABLED,NFC_DISABLED,SDMMC0,SDMMC1_DISABLED,UART1_IOSET1,JTAG_IOSET1,EXT_MEM_BOOT
+Executing command 'readcfg:bureg2'
+BUREG2=0x00000000 / QSPI0_IOSET1,QSPI1_IOSET1,SPI0_IOSET1,SPI1_IOSET1,NFC_IOSET1,SDMMC0,SDMMC1,UART1_IOSET1,JTAG_IOSET1
+Executing command 'readcfg:bureg3'
+BUREG3=0x00000000 / QSPI0_IOSET1,QSPI1_IOSET1,SPI0_IOSET1,SPI1_IOSET1,NFC_IOSET1,SDMMC0,SDMMC1,UART1_IOSET1,JTAG_IOSET1
+Executing command 'readcfg:fuse'
+FUSE=0x00040000 / QSPI0_IOSET1,QSPI1_IOSET1,SPI0_IOSET1,SPI1_IOSET1,NFC_IOSET1,SDMMC0,SDMMC1,UART1_IOSET1,JTAG_IOSET1,EXT_MEM_BOOT
+Connection closed.
+\endcode
+
+*/

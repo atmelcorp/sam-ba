@@ -33,7 +33,7 @@ metadata.files = \
 target.path = $$DESTPATH
 qml.path = $$DESTPATH
 metadata.path = /metadata
-INSTALLS += target qml metadata
+INSTALLS *= target qml metadata
 
 OTHER_FILES += \
     $$qml.files \

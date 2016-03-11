@@ -1,4 +1,6 @@
+import QtQuick 2.3
 import SAMBA 3.0
+import SAMBA.Device.SAMA5D2 3.0
 
 /*!
 	\qmltype SAMA5D2
@@ -79,120 +81,29 @@ import SAMBA 3.0
 	}
 	\endqml
 
-	\section1 Boot Stragegy Configuration
-
-	A specific helper type is provided to configure the Boot Strategy of
-	the SAMA5D2. Please refer to documentation of the BootCfg type.
-
 */
 Device {
-	name: "SAMA5D2"
+	name: "sama5d2"
+
+	aliases: [ "sama5d21", "sama5d22", "sama5d23", "sama5d24",
+	           "sama5d26", "sama5d27", "sama5d28" ]
+
+	description: "SAM5D2x series"
 
 	boards: [ "sama5d2-xplained" ]
 
-	/*! The device configuration used by applets (peripherals, I/O sets, etc.) */
+	/*!
+		\brief The device configuration used by applets (peripherals, I/O sets, etc.)
+		\sa SAMA5D2Config
+	*/
 	property alias config: config
 
 	applets: [
-		Applet {
-			name: "lowlevel"
-			description: "Low-Level"
-			codeUrl: Qt.resolvedUrl("applets/applet-lowlevel-sama5d2.bin")
-			codeAddr: 0x220000
-			mailboxAddr: 0x220004
-			commands: {
-				"initialize": 0
-			}
-
-			function buildInitArgs(connection, device) {
-				var args = defaultInitArgs(connection, device)
-				Array.prototype.push.apply(args, [0, 0, 0])
-				return args
-			}
-		},
-		Applet {
-			name: "serialflash"
-			description: "AT25/AT26 Serial Flash"
-			codeUrl: Qt.resolvedUrl("applets/applet-serialflash-sama5d2.bin")
-			codeAddr: 0x220000
-			mailboxAddr: 0x220004
-			commands: {
-				"initialize": 0,
-				"erasePages": 0x31,
-				"readPages":  0x32,
-				"writePages": 0x33
-			}
-
-			function buildInitArgs(connection, device) {
-				var args = defaultInitArgs(connection, device)
-				var config = [device.config.spiInstance,
-				              device.config.spiIoset,
-				              device.config.spiChipSelect,
-				              Math.floor(device.config.spiFreq * 1000000)]
-				Array.prototype.push.apply(args, config)
-				return args
-			}
-		},
-		Applet {
-			name: "qspiflash"
-			description: "QSPI Flash"
-			codeUrl: Qt.resolvedUrl("applets/applet-qspiflash-sama5d2.bin")
-			codeAddr: 0x220000
-			mailboxAddr: 0x220004
-			commands: {
-				"initialize": 0,
-				"erasePages": 0x31,
-				"readPages":  0x32,
-				"writePages": 0x33
-			}
-
-			function buildInitArgs(connection, device) {
-				var args = defaultInitArgs(connection, device)
-				var config = [device.config.qspiInstance,
-				              device.config.qspiIoset,
-				              Math.floor(device.config.qspiFreq * 1000000)]
-				Array.prototype.push.apply(args, config)
-				return args
-			}
-		},
-		Applet {
-			name: "nandflash"
-			description: "NAND Flash"
-			codeUrl: Qt.resolvedUrl("applets/applet-nandflash-sama5d2.bin")
-			codeAddr: 0x220000
-			mailboxAddr: 0x220004
-			commands: {
-				"initialize": 0,
-				"erasePages": 0x31,
-				"readPages":  0x32,
-				"writePages": 0x33
-			}
-
-			function buildInitArgs(connection, device) {
-				var args = defaultInitArgs(connection, device)
-				var config = [device.config.nandIoset,
-				              device.config.nandBusWidth,
-				              device.config.nandHeader]
-				Array.prototype.push.apply(args, config)
-				return args
-			}
-
-			function prependNandHeader(nandHeader, data) {
-				// prepare nand header
-				var header = Utils.createByteArray(52 * 4)
-				for (var i = 0; i < 52; i++)
-					header.writeu32(i * 4, nandHeader)
-				// prepend header to data
-				data.prepend(header)
-				print("Prepended NAND header prefix (0x" +
-				      nandHeader.toString(16) + ")")
-			}
-
-			function prepareBootFile(connection, device, data) {
-				patch6thVector(data)
-				prependNandHeader(device.config.nandHeader, data)
-			}
-		}
+		SAMA5D2BootConfigApplet { },
+		SAMA5D2LowlevelApplet { },
+		SAMA5D2SerialFlashApplet { },
+		SAMA5D2QSPIFlashApplet { },
+		SAMA5D2NANDFlashApplet { }
 	]
 
 	/*!

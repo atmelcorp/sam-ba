@@ -2,7 +2,8 @@
 
 SambaDevice::SambaDevice(QQuickItem* parent)
 	: QQuickItem(parent),
-	  m_name("")
+	  m_name(""),
+	  m_description("")
 {
 }
 
@@ -15,6 +16,28 @@ void SambaDevice::setName(const QString& name)
 {
 	m_name = name;
 	emit nameChanged();
+}
+
+QStringList SambaDevice::aliases() const
+{
+	return m_aliases;
+}
+
+void SambaDevice::setAliases(const QStringList& aliases)
+{
+	m_aliases = aliases;
+	emit aliasesChanged();
+}
+
+QString SambaDevice::description() const
+{
+	return m_description;
+}
+
+void SambaDevice::setDescription(const QString& description)
+{
+	m_description = description;
+	emit descriptionChanged();
 }
 
 QStringList SambaDevice::boards() const

@@ -9,5 +9,7 @@ INSTALLS += docs
 
 OTHER_FILES += \
     $$PWD/samba3.qdocconf \
-    $$PWD/index.qdoc
+    $$PWD/cmdline.qdoc \
+    $$PWD/index.qdoc \
+    $$PWD/scripting.qdoc
 

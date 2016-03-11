@@ -3,24 +3,38 @@ import SAMBA 3.0
 import SAMBA.Connection.Serial 3.0
 import SAMBA.Device.SAMA5D2 3.0
 
-Item {
-	SerialConnection {
-		id: connection
-
+AppletLoader {
+	connection: SerialConnection {
 		//port: "ttyACM0"
 		//port: "COM85"
-		//port: "ttyUSB0"
-		baudRate: 57600
-
-		onConnectionOpened: {
-			// read and display current BSCR/GPBR/Fuse values
-			print("-- boot config --")
-			BootCfg.printConfig(this)
-		}
-
-		onConnectionFailed: print("Connection failed: " + message)
+		//baudRate: 57600
 	}
 
-	Component.onCompleted: connection.open()
-	Component.onDestruction: connection.close()
+	device: SAMA5D2 {
+	}
+
+	onConnectionOpened: {
+		// initialize boot config applet
+		appletInitialize("bootconfig")
+
+		// read and display current BSCR/BUREG/FUSE values
+		print("-- boot config --")
+		printBootConfig()
+	}
+
+	// read and display current BSCR/BUREG/FUSE values
+	function printBootConfig() {
+		var bscr = appletReadBootCfg(BootCfg.BSCR)
+		print("BSCR=" + Utils.hex(bscr, 8) + " / " + BSCR.toText(bscr))
+		var bureg0 = appletReadBootCfg(BootCfg.BUREG0)
+		print("BUREG0=" + Utils.hex(bureg0, 8) + " / " + BCW.toText(bureg0))
+		var bureg1 = appletReadBootCfg(BootCfg.BUREG1)
+		print("BUREG1=" + Utils.hex(bureg1, 8) + " / " + BCW.toText(bureg1))
+		var bureg2 = appletReadBootCfg(BootCfg.BUREG2)
+		print("BUREG2=" + Utils.hex(bureg2, 8) + " / " + BCW.toText(bureg2))
+		var bureg3 = appletReadBootCfg(BootCfg.BUREG3)
+		print("BUREG3=" + Utils.hex(bureg3, 8) + " / " + BCW.toText(bureg3))
+		var fuse = appletReadBootCfg(BootCfg.FUSE)
+		print("FUSE=" + Utils.hex(fuse, 8) + " / " + BCW.toText(fuse))
+	}
 }

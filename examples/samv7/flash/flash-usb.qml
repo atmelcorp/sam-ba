@@ -14,10 +14,13 @@ AppletLoader {
 		// load/init flash applet
 		appletInitialize("flash")
 
+		// erase all flash
+		appletFullErase()
+
 		// flash program
 		appletWrite(0, "getting-started-flash.bin")
 
 		// set GPNVM1 (boot from flash)
-		appletGpnvmSet(1)
+		appletSetGpnvm(1)
 	}
 }

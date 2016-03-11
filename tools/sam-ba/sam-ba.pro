@@ -5,7 +5,14 @@ QT += core qml quick
 
 TARGET = sam-ba
 
-SOURCES += main.cpp
+SOURCES += \
+    main.cpp \
+    sambatool.cpp
+
+HEADERS += \
+    sambatool.h \
+    sambatoolcontext.h \
+    sambascriptcontext.h
 
 # include/link sambacommon library
 INCLUDEPATH += $$PWD/../../sambacommon
@@ -20,6 +27,12 @@ unix:!mac:{
     QMAKE_RPATH =
 }
 
+qml.files = \
+	qmldir \
+	AppletCommandHandler.qml \
+	MonitorCommandHandler.qml
+qml.path = /qml/SAMBA/Tool
+
 # install executable
 target.path = /
-INSTALLS += target
+INSTALLS += target qml

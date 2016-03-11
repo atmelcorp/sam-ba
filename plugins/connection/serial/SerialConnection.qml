@@ -50,46 +50,79 @@ Connection {
 	*/
 	property alias baudRate: helper.baudRate
 
+	/*!
+	\sa Connection::open()
+	*/
 	function open() {
 		helper.open()
 	}
 
+	/*!
+	\sa Connection::close()
+	*/
 	function close() {
 		helper.close()
 	}
 
+	/*!
+	\sa Connection::readu8()
+	*/
 	function readu8(address) {
 		return helper.readu8(address)
 	}
 
+	/*!
+	\sa Connection::readu16()
+	*/
 	function readu16(address) {
 		return helper.readu16(address)
 	}
 
+	/*!
+	\sa Connection::readu32()
+	*/
 	function readu32(address) {
 		return helper.readu32(address)
 	}
 
+	/*!
+	\sa Connection::read()
+	*/
 	function read(address, length) {
 		return helper.read(address, length)
 	}
 
+	/*!
+	\sa Connection::writeu8()
+	*/
 	function writeu8(address, data) {
 		return helper.writeu8(address, data)
 	}
 
+	/*!
+	\sa Connection::writeu16()
+	*/
 	function writeu16(address, data) {
 		return helper.writeu16(address, data)
 	}
 
+	/*!
+	\sa Connection::writeu32()
+	*/
 	function writeu32(address, data) {
 		return helper.writeu32(address, data)
 	}
 
+	/*!
+	\sa Connection::write()
+	*/
 	function write(address, data) {
 		return helper.write(address, data)
 	}
 
+	/*!
+	\sa Connection::go()
+	*/
 	function go(address) {
 		return helper.go(address)
 	}

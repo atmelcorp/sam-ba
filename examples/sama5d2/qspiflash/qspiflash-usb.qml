@@ -34,19 +34,17 @@ AppletLoader {
 		appletWrite(0x60000, "at91-sama5d2_xplained.dtb")
 		appletWrite(0x6c000, "zImage")
 
-		// Use GPBR_0 as boot configuration word
-		BootCfg.writeBSCR(connection, BootCfg.BSCR_GPBR_VALID | BootCfg.BSCR_GPBR_0)
+		// initialize boot config applet
+		appletInitialize("bootconfig")
+
+		// Use BUREG0 as boot configuration word
+		appletWriteBootCfg(BootCfg.BSCR, BSCR.fromText("VALID,BUREG0"))
 
 		// Enable external boot only on QSPI0 IOSET3
-		BootCfg.writeGPBR(connection, 0, BootCfg.BCW_EXT_MEM_BOOT_ENABLE |
-						  BootCfg.BCW_CONSOLE1_IOSET1 |
-						  BootCfg.BCW_JTAG_IOSET1 |
-						  BootCfg.BCW_SDMMC1_DISABLE |
-						  BootCfg.BCW_SDMMC0_DISABLE |
-						  BootCfg.BCW_NFC_DISABLE |
-						  BootCfg.BCW_SPI1_DISABLE |
-						  BootCfg.BCW_SPI0_DISABLE |
-						  BootCfg.BCW_QSPI1_DISABLE |
-						  BootCfg.BCW_QSPI0_IOSET3)
+		appletWriteBootCfg(BootCfg.BUREG0,
+			BCW.fromText("EXT_MEM_BOOT,CONSOLE1_IOSET1,JTAG_IOSET1," +
+			             "SDMMC1_DISABLED,SDMMC0_DISABLED,NFC_DISABLED," +
+			             "SPI1_DISABLED,SPI0_DISABLED," +
+			             "QSPI1_DISABLED,QSPI0_IOSET3"))
 	}
 }

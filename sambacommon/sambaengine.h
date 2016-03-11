@@ -14,16 +14,18 @@ public:
 	explicit SambaEngine(QObject *parent = 0);
 	~SambaEngine();
 
-	QQmlEngine *scriptEngine();
-	void evaluateScript(const QString &program);
-	bool evaluateScript(const QUrl &url);
+	QQmlEngine* qmlEngine();
+	QObject* createComponentInstance(QQmlComponent* component, QQmlContext* context);
+	QObject* createComponentInstance(const QString& script, QQmlContext* context);
+	QObject* createComponentInstance(const QUrl &url, QQmlContext* context);
 
 private slots:
 	void engineQuit();
 	void engineWarnings(const QList<QQmlError> &warnings);
 
 private:
-	QQmlEngine m_scriptEngine;
+	QQmlEngine m_qmlEngine;
+	bool m_hasWarnings;
 };
 
 #endif // SAMBA_ENGINE_H

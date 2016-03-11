@@ -1,0 +1,3 @@
+module SAMBA.Tool
+AppletCommandHandler 3.0 AppletCommandHandler.qml
+MonitorCommandHandler 3.0 MonitorCommandHandler.qml

@@ -6,7 +6,11 @@ import SAMBA 3.0
 	\brief Contains chip-specific information about SAMV7 devices.
 */
 Device {
-	name: "SAMV7"
+	name: "samv7"
+
+	aliases: ["samv70", "samv71", "same70", "sams70" ]
+
+	description: "SAMV70, SAMV71, SAME70, SAMS70"
 
 	applets: [
 		Applet {

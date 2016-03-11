@@ -384,4 +384,154 @@ ConnectionBase {
 		// return applet status
 		return readu32(applet.mailboxAddr + 4)
 	}
+
+	/* -------- Command Line Handling -------- */
+
+	/*! \internal */
+	function commandLineCommands() {
+		return ["read8", "read16", "read32",
+				"write8", "write16", "write32"]
+	}
+
+	/*! \internal */
+	function commandLineCommandHelp(command) {
+		if (command === "read8") {
+			return ["* read8 - read a byte",
+			        "    syntax: read8:<addr>",
+			        "    example: read8:0x200000"]
+		}
+		else if (command === "read16") {
+			return ["* read16 - read a half-word (16-bit)",
+			        "    syntax: read16:<addr>",
+			        "    example: read16:0x200000"]
+		}
+		else if (command === "read32") {
+			return ["* read32 - read a word (32-bit)",
+			        "    syntax: read32:<addr>",
+			        "    example: read32:0x200000"]
+		}
+		else if (command === "write8") {
+			return ["* write8 - write a byte",
+			        "    syntax: write8:<addr>:<value>",
+			        "    example: write8:0x200000:0x12"]
+		}
+		else if (command === "write16") {
+			return ["* write16 - write a half-word (16-bit)",
+			        "    syntax: write16:<addr>:<value>",
+			        "    example: write16:0x200000:0x1234"]
+		}
+		else if (command === "write32") {
+			return ["* write32 - write a word (32-bit)",
+			        "    syntax: write32:<addr>:<value>",
+			        "    example: write32:0x200000:0x12345678"]
+		}
+	}
+
+	/*! \internal */
+	function commandLineCommandRead8(args) {
+		if (args.length !== 1)
+			return "Invalid number of arguments (expected 1)."
+		var addr = Number(args[0])
+		if (isNaN(addr))
+			return "Invalid address parameter (not a number)."
+		var value = readu8(addr)
+		if (typeof value !== "number")
+			return "Failed to run command."
+		print("read8(" + Utils.hex(addr, 2) + ")" + "=" +
+		             Utils.hex(value, 2))
+	}
+
+	/*! \internal */
+	function commandLineCommandRead16(args) {
+		if (args.length !== 1)
+			return "Invalid number of arguments (expected 1)."
+		var addr = Number(args[0])
+		if (isNaN(addr))
+			return "Invalid address parameter (not a number)."
+		var value = readu16(addr)
+		if (typeof value !== "number")
+			return "Failed to run command."
+		print("read16(" + Utils.hex(addr, 4) + ")" + "=" +
+		             Utils.hex(value, 4))
+	}
+
+	/*! \internal */
+	function commandLineCommandRead32(args) {
+		if (args.length !== 1)
+			return "Invalid number of arguments (expected 1)."
+		var addr = Number(args[0])
+		if (isNaN(addr))
+			return "Invalid address parameter (not a number)."
+		var value = readu32(addr)
+		if (typeof value !== "number")
+			return "Failed to run command."
+		print("read32(" + Utils.hex(addr, 8) + ")" + "=" +
+		             Utils.hex(value, 8))
+	}
+
+	/*! \internal */
+	function commandLineCommandWrite8(args) {
+		if (args.length !== 2)
+			return "Invalid number of arguments (expected 2)."
+		var addr = Number(args[0])
+		if (isNaN(addr))
+			return "Invalid address parameter (not a number)."
+		var value = Number(args[1])
+		if (isNaN(value))
+			return "Invalid value parameter (not a number)."
+		if (!writeu8(addr, value & 0xff))
+			return "Failed to run command."
+		print("write16(" + Utils.hex(addr, 8) + "," +
+		             Utils.hex(value, 2) + ")")
+	}
+
+	/*! \internal */
+	function commandLineCommandWrite16(args) {
+		if (args.length !== 2)
+			return "Invalid number of arguments (expected 2)."
+		var addr = Number(args[0])
+		if (isNaN(addr))
+			return "Invalid address parameter (not a number)."
+		var value = Number(args[1])
+		if (isNaN(value))
+			return "Invalid value parameter (not a number)."
+		if (!writeu16(addr, value & 0xffff))
+			return "Failed to run command."
+		print("write16(" + Utils.hex(addr, 8) + "," +
+		             Utils.hex(value, 4) + ")")
+	}
+
+	/*! \internal */
+	function commandLineCommandWrite32(args) {
+		if (args.length !== 2)
+			return "Invalid number of arguments (expected 2)."
+		var addr = Number(args[0])
+		if (isNaN(addr))
+			return "Invalid address parameter (not a number)."
+		var value = Number(args[1])
+		if (isNaN(value))
+			return "Invalid value parameter (not a number)."
+		if (!writeu32(addr, value))
+			return "Failed to run command."
+		print("write32(" + Utils.hex(addr, 8) + "," +
+		             Utils.hex(value, 8) + ")")
+	}
+
+	/*! \internal */
+	function commandLineCommand(command, args) {
+		if (command === "read8")
+			return commandLineCommandRead8(args)
+		else if (command === "read16")
+			return commandLineCommandRead16(args)
+		else if (command === "read32")
+			return commandLineCommandRead32(args)
+		else if (command === "write8")
+			return commandLineCommandWrite8(args)
+		else if (command === "write16")
+			return commandLineCommandWrite16(args)
+		else if (command === "write32")
+			return commandLineCommandWrite32(args)
+		else
+			return "Unknown command."
+	}
 }

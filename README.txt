@@ -17,10 +17,11 @@ This release supports the following platforms:
 ### Directory Architecture
 
 - doc:
-  Documentation for SAM-BA QML API
+  Documentation for SAM-BA (command-line and QML API)
+  Please open doc/index.html
 
 - lib:
-  Executable files and libraries
+  Executable files and libraries (Linux only)
 
 - qml/
   QML Plugins (devices, communication, etc.)

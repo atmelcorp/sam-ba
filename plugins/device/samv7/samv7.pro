@@ -10,6 +10,10 @@ DEVICE_FILES *= \
 
 include(../device.pri)
 
+metadata.files = device_samv7.json
+metadata.path = /metadata
+INSTALLS *= metadata
+
 OTHER_FILES += \
     $$DEVICE_FILES \
     module_samba_device_samv7.qdoc

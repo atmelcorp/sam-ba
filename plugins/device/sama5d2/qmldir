@@ -1,4 +1,11 @@
 module SAMBA.Device.SAMA5D2
+BCW 3.0 sama5d2-bcw.js
+BSCR 3.0 sama5d2-bscr.js
+BootCfg 3.0 sama5d2-bootcfg.js
 SAMA5D2 3.0 SAMA5D2.qml
 SAMA5D2Config 3.0 SAMA5D2Config.qml
-BootCfg 3.0 sama5d2-boot-cfg.js
+SAMA5D2BootConfigApplet 3.0 SAMA5D2BootConfigApplet.qml
+SAMA5D2LowlevelApplet 3.0 SAMA5D2LowlevelApplet.qml
+SAMA5D2NANDFlashApplet 3.0 SAMA5D2NANDFlashApplet.qml
+SAMA5D2QSPIFlashApplet 3.0 SAMA5D2QSPIFlashApplet.qml
+SAMA5D2SerialFlashApplet 3.0 SAMA5D2SerialFlashApplet.qml

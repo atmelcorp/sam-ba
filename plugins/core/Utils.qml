@@ -15,6 +15,8 @@ UtilsBase {
 		Returns the hexadecimal string
 	*/
 	function hex(value, digits) {
+		if (typeof value === "undefined")
+			return
 		var str = value.toString(16)
 		while (str.length < digits) {
 			str = "0" + str
