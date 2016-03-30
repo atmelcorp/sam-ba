@@ -1045,19 +1045,19 @@ AppletBase {
 		}
 		else if (command === "write" && canWritePages()) {
 			return commandLineCommandWriteVerify(connection, device,
-												 args, true)
+			                                     args, true)
 		}
 		else if (command === "writeboot" && canWritePages()) {
 			return commandLineCommandWriteVerifyBoot(connection, device,
-													 args, true)
+			                                         args, true)
 		}
 		else if (command === "verify" && canReadPages()) {
 			return commandLineCommandWriteVerify(connection, device,
-												 args, false)
+			                                     args, false)
 		}
 		else if (command === "verifyboot" && canReadPages()) {
 			return commandLineCommandWriteVerifyBoot(connection, device,
-													 args, false)
+			                                         args, false)
 		}
 		else {
 			return "Unknown command."
@@ -1067,6 +1067,6 @@ AppletBase {
 	/*! \internal */
 	function commandLineCommand(connection, device, command, args) {
 		return defaultCommandLineCommand(connection, device,
-										 command, args)
+		                                 command, args)
 	}
 }
