@@ -39,7 +39,7 @@ AppletLoader {
 
 		// Enable external boot only on NFC IOSET2
 		appletWriteBootCfg(BootCfg.BUREG0,
-			BCW.fromText("EXT_MEM_BOOT,CONSOLE1_IOSET1,JTAG_IOSET1," +
+			BCW.fromText("EXT_MEM_BOOT,UART1_IOSET1,JTAG_IOSET1," +
 			             "SDMMC1_DISABLED,SDMMC0_DISABLED,NFC_IOSET2," +
 			             "SPI1_DISABLED,SPI0_DISABLED," +
 			             "QSPI1_DISABLED,QSPI0_DISABLED"))
