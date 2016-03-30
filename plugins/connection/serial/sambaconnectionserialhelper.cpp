@@ -117,17 +117,26 @@ void SambaConnectionSerialHelper::open()
 
 		// switch to binary mode
 		writeSerial(QString("N#"));
-		QByteArray resp = readAllSerial();
-		if (resp.length() == 2 && resp[0] == '\n' && resp[1] == '\r')
+		QString resp(QString::fromLatin1(readAllSerial()));
+		if (resp == "\n\r")
 		{
 			emit connectionOpened(m_at91);
 		}
 		else
 		{
-			emit connectionFailed(
-					QString().sprintf(
-						"Could not switch monitor on port '%s' to binary mode",
-						port().toLocal8Bit().constData()));
+			if (resp == "CACK,ffffffff,00000000#")
+			{
+				emit connectionFailed(
+						QString().sprintf(
+							"Cannot communicate with monitor on port '%s' because chip is in secure mode",
+							port().toLocal8Bit().constData()));
+			}
+			else {
+				emit connectionFailed(
+						QString().sprintf(
+							"Could not switch monitor on port '%s' to binary mode",
+							port().toLocal8Bit().constData()));
+			}
 		}
 	}
 	else
