@@ -35,7 +35,6 @@ AppletLoader {
 	}
 
 	onConnectionFailed: {
-		Tool.error("Error: " + message)
 		Tool.returnCode = -1
 	}
 }

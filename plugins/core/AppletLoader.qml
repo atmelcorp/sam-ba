@@ -269,7 +269,7 @@ Item {
 	/*! \internal */
 	function handle_connectionFailed(message)
 	{
-		print(message)
+		print("Error: " + message)
 		connectionFailed(message)
 	}
 
