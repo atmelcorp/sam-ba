@@ -97,6 +97,12 @@ bool SambaTool::loadMetadata(QString fileName)
 	return false;
 }
 
+void SambaTool::displayVersion()
+{
+	cerr_msg(QString("SAM-BA Command Line Tool v%1").arg(applicationVersion()));
+	cerr_msg("Copyright 2015-2016 ATMEL Corporation");
+}
+
 void SambaTool::displayPortHelp()
 {
 	QString values;
@@ -319,7 +325,8 @@ void SambaTool::displayAppletHelp()
 		SambaApplet *applet = m_device->applet(i);
 		applets << applet->name();
 	}
-	cerr_msg(QString("Known applets: %1").arg(applets.join(", ")));}
+	cerr_msg(QString("Known applets: %1").arg(applets.join(", ")));
+}
 
 bool SambaTool::parseAppletOption(const QString& value)
 {
@@ -479,10 +486,14 @@ void SambaTool::onToolError(const QString& message)
 quint32 SambaTool::parseArguments(const QStringList& arguments)
 {
 	QCommandLineParser parser;
-	parser.setApplicationDescription("SAM-BA Command Line Tool");
-	parser.addVersionOption();
 
-	QCommandLineOption helpOption = parser.addHelpOption();
+	QCommandLineOption versionOption(QStringList() << "v" << "version",
+	                                 "Displays version information.");
+	parser.addOption(versionOption);
+
+	QCommandLineOption helpOption(QStringList() << "h" << "help",
+	                                 "Displays this help.");
+	parser.addOption(helpOption);
 
 	QCommandLineOption executeOption(QStringList() << "x" << "execute",
 	                                 "Execute script <script-file>.",
@@ -521,6 +532,8 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 
 	// check if command line is empty
 	if (arguments.length() < 2) {
+		displayVersion();
+		cerr_msg(QString());
 		cerr_msg(parser.helpText());
 		return Exit;
 	}
@@ -529,6 +542,12 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 	if (!parser.parse(arguments)) {
 		cerr_msg(QString("Error: %1").arg(parser.errorText()));
 		return Failed;
+	}
+
+	// check for version option
+	if (parser.isSet(versionOption)) {
+		displayVersion();
+		return Exit;
 	}
 
 	// ignore positional arguments
@@ -540,6 +559,8 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 
 	// check for help option
 	if (parser.isSet(helpOption)) {
+		displayVersion();
+		cerr_msg(QString());
 		cerr_msg(parser.helpText());
 		return Exit;
 	}

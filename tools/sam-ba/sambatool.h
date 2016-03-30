@@ -46,6 +46,8 @@ private:
 
 	quint32 parseArguments(const QStringList& arguments);
 
+	void displayVersion();
+
 	void displayPortHelp();
 	bool parsePortOption(const QString& value);
 
