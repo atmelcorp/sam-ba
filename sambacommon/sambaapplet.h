@@ -2,6 +2,7 @@
 #define SAMBA_APPLET_H
 
 #include <sambacommon.h>
+#include <sambaappletcommand.h>
 #include <QObject>
 #include <QtQml>
 #include <QtQuick/QQuickItem>
@@ -15,8 +16,7 @@ class SAMBACOMMONSHARED_EXPORT SambaApplet : public QQuickItem
 	Q_PROPERTY(quint32 codeAddr READ codeAddr WRITE setCodeAddr NOTIFY codeAddrChanged)
 	Q_PROPERTY(quint32 mailboxAddr READ mailboxAddr WRITE setMailboxAddr NOTIFY mailboxAddrChanged)
 	Q_PROPERTY(quint32 traceLevel READ traceLevel WRITE setTraceLevel NOTIFY traceLevelChanged)
-	Q_PROPERTY(int retries READ retries WRITE setRetries NOTIFY retriesChanged)
-	Q_PROPERTY(QVariant commands READ commands WRITE setCommands NOTIFY commandsChanged)
+	Q_PROPERTY(QQmlListProperty<SambaAppletCommand> commands READ commands)
 	Q_PROPERTY(quint32 bufferAddr READ bufferAddr WRITE setBufferAddr NOTIFY bufferAddrChanged)
 	Q_PROPERTY(quint32 bufferSize READ bufferSize WRITE setBufferSize NOTIFY bufferSizeChanged)
 	Q_PROPERTY(quint32 bufferPages READ bufferPages WRITE setBufferPages NOTIFY bufferPagesChanged)
@@ -47,13 +47,9 @@ public:
 	quint32 traceLevel() const;
 	void setTraceLevel(quint32 traceLevel);
 
-	quint32 retries() const;
-	void setRetries(quint32 retries);
-
-	QVariant commands() const;
-	void setCommands(const QVariant& commands);
+	QQmlListProperty<SambaAppletCommand> commands();
 	Q_INVOKABLE bool hasCommand(const QString& name) const;
-	Q_INVOKABLE quint32 command(const QString& name) const;
+	Q_INVOKABLE SambaAppletCommand* command(const QString& name) const;
 
 	quint32 bufferAddr() const;
 	void setBufferAddr(quint32 bufferAddr);
@@ -105,7 +101,7 @@ private:
 	quint32 m_mailboxAddr;
 	quint32 m_traceLevel;
 	quint32 m_retries;
-	QVariant m_commands;
+	QList<SambaAppletCommand*> m_commands;
 	quint32 m_bufferAddr;
 	quint32 m_bufferSize;
 	quint32 m_bufferPages;

@@ -19,9 +19,9 @@ Device {
 			codeUrl: Qt.resolvedUrl("applets/applet-lowlevelinit-samv7.bin")
 			codeAddr: 0x20401000
 			mailboxAddr: 0x20401040
-			commands: {
-				"legacyInitialize": 0
-			}
+			commands: [
+				AppletCommand { name:"legacyInitialize"; code:0 }
+			]
 		},
 		Applet {
 			name: "flash"
@@ -31,13 +31,13 @@ Device {
 			mailboxAddr: 0x20401040
 			pageSize: 512
 			eraseSupport: 256 /* 256 pages: 128K */
-			commands: {
-				"legacyInitialize":  0,
-				"legacyEraseAll":    1,
-				"legacyWriteBuffer": 2,
-				"legacyReadBuffer":  3,
-				"legacyGpnvm":       6
-			}
+			commands: [
+				AppletCommand { name:"legacyInitialize"; code:0 },
+				AppletCommand { name:"legacyEraseAll"; code:1; timeout:25000 },
+				AppletCommand { name:"legacyWriteBuffer"; code:2; timeout:1000 },
+				AppletCommand { name:"legacyReadBuffer"; code:3 },
+				AppletCommand { name:"legacyGpnvm"; code:6 }
+			]
 		}
 	]
 

@@ -88,11 +88,11 @@ Item {
 	*/
 	function appletInitialize(appletName)
 	{
-		var applet = device.applet(appletName)
-		if (!applet)
+		var newapplet = device.applet(appletName)
+		if (!newapplet)
 			throw new Error("Applet " + appletName + " not found")
 
-		applet.initialize(connection, device)
+		newapplet.initialize(connection, device)
 	}
 
 	/*!

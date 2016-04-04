@@ -23,6 +23,7 @@ unix:!mac:{
 }
 
 qml.files = qmldir \
+    AppletCommand.qml \
     Applet.qml \
     AppletLoader.qml \
     Connection.qml \

@@ -38,8 +38,8 @@ static const struct atmel_a5_regs atmel_a5_regs[] = {
 #define CP15_C1_ICACHE          (1 << 12)
 #define CP15_C1_VECTORS         (1 << 13)
 
-/* Maximum applet run time in milliseconds */
-#define MAX_APPLET_RUN_TIME 5000
+/* Maximum time to wait for initial target halting (in milliseconds) */
+#define INITIAL_HALT_TIMEOUT 1000
 
 Q_LOGGING_CATEGORY(sambaLogConnJlink, "samba.connjlink")
 
@@ -215,16 +215,23 @@ void SambaConnectionJlinkHelper::open()
 				// Reconfigure L2-Cache as SRAM
 				JLINKARM_WriteU32(atmel_a5_regs[m_device].sfr_l2cc_hramc, 0);
 			}
-
-			// Set JTAG speed
-			JLINKARM_SetSpeed(3000);
 		}
 		else
 		{
 			qCInfo(sambaLogConnJlink, "Found Unknown Cortex-A5 device");
+		}
 
-			// Set JTAG speed
-			JLINKARM_SetSpeed(JLINKARM_SPEED_AUTO);
+		JLINKARM_SetSpeed(JLINKARM_SPEED_AUTO);
+
+		QElapsedTimer timer;
+		timer.start();
+		JLINKARM_Halt();
+		while (!JLINKARM_IsHalted()) {
+			if (timer.hasExpired(INITIAL_HALT_TIMEOUT)) {
+				emit connectionFailed("Timeout while waiting for device to be halted");
+				return;
+			}
+			QThread::msleep(5);
 		}
 
 		emit connectionOpened();
@@ -249,68 +256,97 @@ void SambaConnectionJlinkHelper::close()
 
 QVariant SambaConnectionJlinkHelper::readu8(quint32 address)
 {
-	quint8 value;
-	quint8 status;
-	JLINKARM_ReadMemU8(address, 1, &value, &status);
-	return QVariant(value);
+	if (JLINKARM_IsHalted()) {
+		quint8 value;
+		quint8 status;
+		JLINKARM_ReadMemU8(address, 1, &value, &status);
+		return QVariant(value);
+	} else {
+		return QVariant();
+	}
 }
 
 QVariant SambaConnectionJlinkHelper::readu16(quint32 address)
 {
-	quint16 value;
-	quint8 status;
-	JLINKARM_ReadMemU16(address, 1, &value, &status);
-	return QVariant(value);
+	if (JLINKARM_IsHalted()) {
+		quint16 value;
+		quint8 status;
+		JLINKARM_ReadMemU16(address, 1, &value, &status);
+		return QVariant(value);
+	} else {
+		return QVariant();
+	}
 }
 
 QVariant SambaConnectionJlinkHelper::readu32(quint32 address)
 {
-	quint32 value;
-	quint8 status;
-	JLINKARM_ReadMemU32(address, 1, &value, &status);
-	return QVariant(value);
+	if (JLINKARM_IsHalted()) {
+		quint32 value;
+		quint8 status;
+		JLINKARM_ReadMemU32(address, 1, &value, &status);
+		return QVariant(value);
+	} else {
+		return QVariant();
+	}
 }
 
 SambaByteArray *SambaConnectionJlinkHelper::read(quint32 address, unsigned length)
 {
-	QByteArray data(length, 0);
-	JLINKARM_ReadMem(address, length, data.data());
-	return new SambaByteArray(data);
+	if (JLINKARM_IsHalted()) {
+		QByteArray data(length, 0);
+		JLINKARM_ReadMem(address, length, data.data());
+		return new SambaByteArray(data);
+	} else {
+		return 0;
+	}
 }
 
 bool SambaConnectionJlinkHelper::writeu8(quint32 address, quint8 data)
 {
-	JLINKARM_WriteU8(address, data);
-	return true;
+	if (JLINKARM_IsHalted()) {
+		JLINKARM_WriteU8(address, data);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool SambaConnectionJlinkHelper::writeu16(quint32 address, quint16 data)
 {
-	JLINKARM_WriteU16(address, data);
-	return true;
+	if (JLINKARM_IsHalted()) {
+		JLINKARM_WriteU16(address, data);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool SambaConnectionJlinkHelper::writeu32(quint32 address, quint32 data)
 {
-	JLINKARM_WriteU32(address, data);
-	return true;
+	if (JLINKARM_IsHalted()) {
+		JLINKARM_WriteU32(address, data);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool SambaConnectionJlinkHelper::write(quint32 address, SambaByteArray *data)
 {
-	JLINKARM_WriteMem(address, data->constData().length(), data->constData().constData());
-	return true;
+	if (JLINKARM_IsHalted()) {
+		JLINKARM_WriteMem(address, data->constData().length(), data->constData().constData());
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool SambaConnectionJlinkHelper::go(quint32 address)
 {
-	QElapsedTimer timer;
-	bool timeout;
-
 	if (m_devFamily == JLINKARM_DEV_FAMILY_CORTEX_A5)
 	{
-		JLINKARM_Halt();
-		while (!JLINKARM_IsHalted()) {}
+		if (!JLINKARM_IsHalted())
+			return false;
 
 		// set beginning address
 		JLINKARM_WriteReg(ARM_REG_R14_SVC, 0);
@@ -320,24 +356,6 @@ bool SambaConnectionJlinkHelper::go(quint32 address)
 
 		// run
 		JLINKARM_Go();
-
-		// wait for completion
-		timeout = false;
-		timer.start();
-		while (!JLINKARM_IsHalted())
-		{
-			if (timer.hasExpired(MAX_APPLET_RUN_TIME))
-			{
-				timeout = true;
-				break;
-			}
-
-			QThread::msleep(5);
-		};
-
-		if (timeout)
-			return false;
-
 		return true;
 	}
 

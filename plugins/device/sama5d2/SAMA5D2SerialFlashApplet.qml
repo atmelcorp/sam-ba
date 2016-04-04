@@ -8,28 +8,32 @@ Applet {
 	codeUrl: Qt.resolvedUrl("applets/applet-serialflash-sama5d2.bin")
 	codeAddr: 0x220000
 	mailboxAddr: 0x220004
-	commands: {
-		"initialize": 0,
-		"erasePages": 0x31,
-		"readPages":  0x32,
-		"writePages": 0x33
-	}
+	commands: [
+		AppletCommand { name:"initialize"; code:0 },
+		AppletCommand { name:"erasePages"; code:0x31; timeout:1000 },
+		AppletCommand { name:"readPages"; code:0x32 },
+		AppletCommand { name:"writePages"; code:0x33 }
+	]
 
 	/*! \internal */
 	function buildInitArgs(connection, device) {
 		if (typeof device.config.spiInstance === "undefined")
 			throw new Error("Incomplete configuration, missing value for spiInstance")
+
 		if (typeof device.config.spiIoset === "undefined")
 			throw new Error("Incomplete configuration, missing value for spiIoset")
+
 		if (typeof device.config.spiChipSelect === "undefined")
 			throw new Error("Incomplete configuration, missing value for spiChipSelect")
+
 		if (typeof device.config.spiFreq === "undefined")
 			throw new Error("Incomplete configuration, missing value for spiFreq")
+
 		var args = defaultInitArgs(connection, device)
-		var config = [device.config.spiInstance,
-			      device.config.spiIoset,
-			      device.config.spiChipSelect,
-			      Math.floor(device.config.spiFreq * 1000000)]
+		var config = [ device.config.spiInstance,
+		               device.config.spiIoset,
+		               device.config.spiChipSelect,
+		               Math.floor(device.config.spiFreq * 1000000) ]
 		Array.prototype.push.apply(args, config)
 		return args
 	}

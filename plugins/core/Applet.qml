@@ -15,7 +15,7 @@ AppletBase {
 		This method is called by the default buildInitArgs implementation.
 	*/
 	function defaultInitArgs(connection, device) {
-		return [connection.appletConnectionType, traceLevel]
+		return [ connection.appletConnectionType, traceLevel ]
 	}
 
 	/*!
@@ -60,10 +60,12 @@ AppletBase {
 
 	/*! \internal */
 	function callInitialize(connection, device) {
-		var args = buildInitArgs(connection, device)
-		if (hasCommand("initialize")) {
-			var status = connection.appletExecute("initialize",
-			                                      args, retries)
+		var args, status, cmd
+
+		cmd = command("initialize")
+		if (cmd) {
+			args = buildInitArgs(connection, device)
+			status = connection.appletExecute(cmd, args)
 			if (status === 0) {
 				bufferAddr = connection.appletMailboxRead(0)
 				bufferSize = connection.appletMailboxRead(1)
@@ -79,25 +81,27 @@ AppletBase {
 				throw new Error("Could not initialize applet" +
 						" (status: " + status + ")");
 			}
-		} else if (hasCommand("legacyInitialize")) {
-			if (name === "lowlevel")
-				args.push(0, 0, 0)
-			var status = connection.appletExecute("legacyInitialize",
-			                                      args, retries)
-			if (status === 0) {
-				memorySize = connection.appletMailboxRead(0)
-				bufferAddr = connection.appletMailboxRead(1)
-				bufferSize = connection.appletMailboxRead(2)
-			} else {
-				memorySize = 0
-				bufferAddr = 0
-				bufferSize = 0
-				throw new Error("Could not initialize applet " +
-						name + " (status: " + status + ")")
-			}
-			return
 		} else {
-			throw new Error("Applet does not support 'Initialize' command")
+			cmd = command("legacyInitialize")
+			if (cmd) {
+				args = buildInitArgs(connection, device)
+				if (name === "lowlevel")
+					args.push(0, 0, 0)
+				status = connection.appletExecute(cmd, args)
+				if (status === 0) {
+					memorySize = connection.appletMailboxRead(0)
+					bufferAddr = connection.appletMailboxRead(1)
+					bufferSize = connection.appletMailboxRead(2)
+				} else {
+					memorySize = 0
+					bufferAddr = 0
+					bufferSize = 0
+					throw new Error("Could not initialize applet " +
+							name + " (status: " + status + ")")
+				}
+			} else {
+				throw new Error("Applet does not support 'Initialize' command")
+			}
 		}
 	}
 
@@ -128,9 +132,11 @@ AppletBase {
 
 	/*! \internal */
 	function callEraseAll(connection, device) {
-		if (hasCommand("legacyEraseAll")) {
-			var status = connection.appletExecute("legacyEraseAll",
-			                                      [], retries * 2)
+		var status, cmd
+
+		cmd = command("legacyEraseAll")
+		if (cmd) {
+			status = connection.appletExecute(cmd, [])
 			if (status !== 0)
 				throw new Error("Failed to fully erase device " +
 						"(status: " + status + ")")
@@ -168,10 +174,16 @@ AppletBase {
 
 	/*! \internal */
 	function callErasePages(connection, device, pageOffset, length) {
-		if (hasCommand("erasePages")) {
-			var args = [pageOffset, length]
-			var status = connection.appletExecute("erasePages",
-			                                      args, retries)
+		var args, status
+
+		if (!canErasePages()) {
+			throw new Error("Applet does not support 'Erase Pages' command")
+		}
+
+		var cmd = command("erasePages")
+		if (cmd) {
+			args = [ pageOffset, length ]
+			status = connection.appletExecute(cmd, args)
 			if (status === 0) {
 				return connection.appletMailboxRead(0)
 			} else if (status === 9) {
@@ -183,8 +195,6 @@ AppletBase {
 						Utils.hex(pageOffset * pageSize, 8) +
 						" (status: " + status + ")");
 			}
-		} else {
-			throw new Error("Applet does not support 'Erase Pages' command")
 		}
 	}
 
@@ -256,9 +266,12 @@ AppletBase {
 
 	/*! \internal */
 	function callReadPages(connection, device, pageOffset, length) {
-		if (hasCommand("readPages")) {
+		var remaining, args, status, pagesRead, data, cmd
+
+		cmd = command("readPages")
+		if (cmd) {
 			if (pageOffset + length > memoryPages) {
-				var remaining = memoryPages - pageOffset
+				remaining = memoryPages - pageOffset
 				throw new Error("Cannot read past end of memory, only " +
 						(remaining * pageSize) +
 						" bytes remaining at offset " +
@@ -266,26 +279,29 @@ AppletBase {
 						" (requested " + (length * pageSize) +
 						" bytes)")
 			}
-			var args = [pageOffset, length]
-			var status = connection.appletExecute("readPages", args, retries)
+			args = [ pageOffset, length ]
+			status = connection.appletExecute(cmd, args)
 			if (status !== 0 && status !== 9)
 				throw new Error("Failed to read pages at address " +
 						Utils.hex(pageOffset * pageSize, 8) +
 						" (status: " + status + ")")
-			var pagesRead = connection.appletMailboxRead(0)
+			pagesRead = connection.appletMailboxRead(0)
 			if (status !== 9 && pagesRead !== length)
 				throw new Error("Could not read pages at address "
 						+ Utils.hex(pageOffset * pageSize, 8)
 						+ " (applet returned success but did not return enough data)");
-			var data = connection.appletBufferRead(pagesRead * pageSize)
+			data = connection.appletBufferRead(pagesRead * pageSize)
 			if (data.length < pagesRead * pageSize)
 				throw new Error("Could not read pages at address "
 						+ Utils.hex(pageOffset * pageSize, 8)
 						+ " (read from applet buffer failed)")
 			return data
-		} else if (hasCommand("legacyReadBuffer")) {
+		}
+
+		cmd = command("legacyReadBuffer")
+		if (cmd) {
 			if (pageOffset + length > memoryPages) {
-				var remaining = memoryPages - pageOffset
+				remaining = memoryPages - pageOffset
 				throw new Error("Cannot read past end of memory, only " +
 						(remaining * pageSize) +
 						" bytes remaining at offset " +
@@ -293,27 +309,26 @@ AppletBase {
 						" (requested " + (length * pageSize) +
 						" bytes)")
 			}
-			var args = [bufferAddr, length * pageSize, pageOffset * pageSize]
-			var status = connection.appletExecute("legacyReadBuffer",
-			                                      args, retries)
+			args = [ bufferAddr, length * pageSize, pageOffset * pageSize ]
+			status = connection.appletExecute(cmd, args)
 			if (status !== 0 && status !== 9)
 				throw new Error("Failed to read pages at address " +
 						Utils.hex(pageOffset * pageSize, 8) +
 						" (status: " + status + ")")
-			var pagesRead = connection.appletMailboxRead(0) / pageSize
-			if (status !== 9 && pagesRead != length)
+			pagesRead = connection.appletMailboxRead(0) / pageSize
+			if (status !== 9 && pagesRead !== length)
 				throw new Error("Could not read pages at address "
 						+ Utils.hex(pageOffset * pageSize, 8)
 						+ " (applet returned success but did not return enough data)")
-			var data = connection.appletBufferRead(pagesRead * pageSize)
+			data = connection.appletBufferRead(pagesRead * pageSize)
 			if (data.length < pagesRead * pageSize)
 				throw new Error("Could not read pages at address "
 						+ Utils.hex(pageOffset * pageSize, 8)
 						+ " (read from applet buffer failed)")
 			return data
-		} else {
-			throw new Error("Applet supports neither 'Read Pages' nor 'Read Buffer' commands")
 		}
+
+		throw new Error("Applet supports neither 'Read Pages' nor 'Read Buffer' commands")
 	}
 
 	/*!
@@ -470,13 +485,16 @@ AppletBase {
 
 	/*! \internal */
 	function callWritePages(connection, device, pageOffset, data) {
-		if (hasCommand("writePages")) {
+		var length, remaining, args, status, pagesWritten, cmd
+
+		cmd = command("writePages")
+		if (cmd) {
 			if ((data.length & (pageSize - 1)) != 0)
 				throw new Error("Invalid write data buffer length " +
 						"(must be a multiple of page size)");
-			var length = data.length / pageSize
+			length = data.length / pageSize
 			if (pageOffset + length > memoryPages) {
-				var remaining = memoryPages - pageOffset
+				remaining = memoryPages - pageOffset
 				throw new Error("Cannot write past end of memory, only " +
 						(remaining * pageSize) +
 						" bytes remaining at offset " +
@@ -488,51 +506,53 @@ AppletBase {
 				throw new Error("Could not write pages at address "
 						+ Utils.hex(pageOffset * pageSize, 8)
 						+ " (write to applet buffer failed)");
-			var args = [pageOffset, length]
-			var status = connection.appletExecute("writePages", args, retries)
+			args = [ pageOffset, length ]
+			status = connection.appletExecute(cmd, args)
 			if (status !== 0 && status !== 9)
 				throw new Error("Failed to write pages at address " +
 						Utils.hex(pageOffset * pageSize, 8) +
 						" (status: " + status + ")")
-			var pagesWritten = connection.appletMailboxRead(0)
+			pagesWritten = connection.appletMailboxRead(0)
 			if (status !== 9 && pagesWritten !== length)
 				throw new Error("Could not write pages at address " +
 						Utils.hex(pageOffset * pageSize, 8) +
 						" (applet returned success but did not write enough data)");
 			return pagesWritten
-		} else if (hasCommand("legacyWriteBuffer")) {
-			if ((data.length & (pageSize - 1)) != 0)
-				throw new Error("Invalid write data buffer length " +
-						"(must be a multiple of page size)")
-			var length = data.length / pageSize
-			if (pageOffset + length > memoryPages) {
-				var remaining = memoryPages - pageOffset
-				throw new Error("Cannot write past end of memory, only " +
-						(remaining * pageSize) +
-						" bytes remaining at offset " +
-						Utils.hex(pageOffset * pageSize, 8) +
-						" (requested " + (length * pageSize) +
-						" bytes)")
-			}
-			if (!connection.appletBufferWrite(data))
-				throw new Error("Could not write pages at address "
-						+ Utils.hex(pageOffset * pageSize, 8)
-						+ " (write to applet buffer failed)")
-			var args = [bufferAddr, length * pageSize, pageOffset * pageSize]
-			var status = connection.appletExecute("legacyWriteBuffer",
-			                                      args, retries)
-			if (status !== 0 && status !== 9)
-				throw new Error("Failed to write pages at address " +
-						Utils.hex(pageOffset * pageSize, 8) +
-						" (status: " + status + ")")
-			var pagesWritten = connection.appletMailboxRead(0) / pageSize
-			if (status !== 9 && pagesWritten !== length)
-				throw new Error("Could not write pages at address " +
-						Utils.hex(pageOffset * pageSize, 8) +
-						" (applet returned success but did not write enough data)")
-			return pagesWritten
 		} else {
-			throw new Error("Applet supports neither 'Write Pages' nor 'Write Buffer' commands")
+			cmd = command("legacyWriteBuffer")
+			if (cmd) {
+				if ((data.length & (pageSize - 1)) != 0)
+					throw new Error("Invalid write data buffer length " +
+							"(must be a multiple of page size)")
+				length = data.length / pageSize
+				if (pageOffset + length > memoryPages) {
+					remaining = memoryPages - pageOffset
+					throw new Error("Cannot write past end of memory, only " +
+							(remaining * pageSize) +
+							" bytes remaining at offset " +
+							Utils.hex(pageOffset * pageSize, 8) +
+							" (requested " + (length * pageSize) +
+							" bytes)")
+				}
+				if (!connection.appletBufferWrite(data))
+					throw new Error("Could not write pages at address "
+							+ Utils.hex(pageOffset * pageSize, 8)
+							+ " (write to applet buffer failed)")
+				args = [ bufferAddr, length * pageSize, pageOffset * pageSize ]
+				status = connection.appletExecute(cmd, args)
+				if (status !== 0 && status !== 9)
+					throw new Error("Failed to write pages at address " +
+							Utils.hex(pageOffset * pageSize, 8) +
+							" (status: " + status + ")")
+				pagesWritten = connection.appletMailboxRead(0) / pageSize
+				if (status !== 9 && pagesWritten !== length)
+					throw new Error("Could not write pages at address " +
+							Utils.hex(pageOffset * pageSize, 8) +
+							" (applet returned success but did not write enough data)")
+				return pagesWritten
+			} else {
+				throw new Error("Applet supports neither 'Write Pages' nor 'Write Buffer' commands")
+			}
 		}
 	}
 
@@ -640,9 +660,11 @@ AppletBase {
 	/*! \internal */
 	function callSetGpnvm(connection, device, index)
 	{
-		if (hasCommand("legacyGpnvm")) {
-			var status = connection.appletExecute("legacyGpnvm",
-			                                      [ 1, index ], retries)
+		var status, cmd
+
+		cmd = command("legacyGpnvm")
+		if (cmd) {
+			status = connection.appletExecute(cmd, [ 1, index ])
 			if (status !== 0)
 				throw new Error("GPNVM Set command failed (status=" +
 						status + ")")
@@ -676,9 +698,11 @@ AppletBase {
 	/*! \internal */
 	function callClearGpnvm(connection, device, index)
 	{
-		if (hasCommand("legacyGpnvm")) {
-			var status = connection.appletExecute("legacyGpnvm",
-			                                      [ 0, index ], retries)
+		var status, cmd
+
+		cmd = command("legacyGpnvm")
+		if (cmd) {
+			status = connection.appletExecute(cmd, [ 0, index ])
 			if (status !== 0)
 				throw new Error("GPNVM Clear command failed (status=" +
 						status + ")")
@@ -707,9 +731,11 @@ AppletBase {
 	/*! \internal */
 	function callReadBootCfg(connection, device, index)
 	{
-		if (hasCommand("readBootCfg")) {
-			var status = connection.appletExecute("readBootCfg",
-			                                      [index], retries)
+		var status, cmd
+
+		cmd = command("readBootCfg")
+		if (cmd) {
+			status = connection.appletExecute(cmd, [index])
 			if (status !== 0)
 				throw new Error("Read Boot Config command failed (status=" +
 						status + ")")
@@ -737,9 +763,11 @@ AppletBase {
 	/*! \internal */
 	function callWriteBootCfg(connection, device, index, value)
 	{
-		if (hasCommand("writeBootCfg")) {
-			var status = connection.appletExecute("writeBootCfg",
-			                                      [index, value], retries)
+		var status, cmd
+
+		cmd = command("writeBootCfg")
+		if (cmd) {
+			status = connection.appletExecute(cmd, [index, value])
 			if (status !== 0)
 				throw new Error("Write Boot Config command failed (status=" +
 						status + ")")

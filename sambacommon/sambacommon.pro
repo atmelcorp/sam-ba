@@ -9,6 +9,7 @@ VERSION = 3.1.0
 DEFINES += SAMBACOMMON_LIBRARY
 
 SOURCES += \
+    sambaappletcommand.cpp \
     sambaapplet.cpp \
     sambabytearray.cpp \
     sambacommon.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
     sambautils.cpp
 
 HEADERS += \
+    sambaappletcommand.h \
     sambaapplet.h \
     sambabytearray.h \
     sambacommon.h \

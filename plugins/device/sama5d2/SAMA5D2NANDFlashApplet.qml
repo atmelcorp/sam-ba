@@ -8,25 +8,28 @@ Applet {
 	codeUrl: Qt.resolvedUrl("applets/applet-nandflash-sama5d2.bin")
 	codeAddr: 0x220000
 	mailboxAddr: 0x220004
-	commands: {
-		"initialize": 0,
-		"erasePages": 0x31,
-		"readPages":  0x32,
-		"writePages": 0x33
-	}
+	commands: [
+		AppletCommand { name:"initialize"; code:0 },
+		AppletCommand { name:"erasePages"; code:0x31; timeout:1000 },
+		AppletCommand { name:"readPages"; code:0x32 },
+		AppletCommand { name:"writePages"; code:0x33 }
+	]
 
 	/*! \internal */
 	function buildInitArgs(connection, device) {
 		if (typeof device.config.nandIoset === "undefined")
 			throw new Error("Incomplete configuration, missing value for nandIoset")
+
 		if (typeof device.config.nandBusWidth === "undefined")
 			throw new Error("Incomplete configuration, missing value for nandBusWidth")
+
 		if (typeof device.config.nandHeader === "undefined")
 			throw new Error("Incomplete configuration, missing value for nandHeader")
+
 		var args = defaultInitArgs(connection, device)
-		var config = [device.config.nandIoset,
-			      device.config.nandBusWidth,
-			      device.config.nandHeader]
+		var config = [ device.config.nandIoset,
+		               device.config.nandBusWidth,
+		               device.config.nandHeader ]
 		Array.prototype.push.apply(args, config)
 		return args
 	}

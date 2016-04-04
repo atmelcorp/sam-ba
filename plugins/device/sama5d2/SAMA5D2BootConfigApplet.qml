@@ -9,11 +9,11 @@ Applet {
 	codeUrl: Qt.resolvedUrl("applets/applet-bootconfig-sama5d2.bin")
 	codeAddr: 0x220000
 	mailboxAddr: 0x220004
-	commands: {
-		"initialize": 0,
-		"readBootCfg":  0x34,
-		"writeBootCfg": 0x35
-	}
+	commands: [
+		AppletCommand { name:"initialize"; code:0 },
+		AppletCommand { name:"readBootCfg"; code:0x34 },
+		AppletCommand { name:"writeBootCfg"; code:0x35 }
+	]
 
 	/* -------- Command Line Handling -------- */
 

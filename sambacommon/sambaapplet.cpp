@@ -9,7 +9,6 @@ SambaApplet::SambaApplet(QQuickItem* parent)
 	  m_mailboxAddr(0),
 	  m_traceLevel(5),
 	  m_retries(20),
-	  m_commands(QVariant()),
 	  m_bufferAddr(0),
 	  m_bufferSize(0),
 	  m_bufferPages(0),
@@ -76,52 +75,23 @@ void SambaApplet::setMailboxAddr(quint32 mailboxAddr)
 	emit mailboxAddrChanged();
 }
 
-quint32 SambaApplet::retries() const
+QQmlListProperty<SambaAppletCommand> SambaApplet::commands()
 {
-	return m_retries;
-}
-
-void SambaApplet::setRetries(quint32 retries)
-{
-	m_retries = retries;
-	emit retriesChanged();
-}
-
-QVariant SambaApplet::commands() const
-{
-	return m_commands;
-}
-
-void SambaApplet::setCommands(const QVariant& commands)
-{
-	m_commands = commands;
-	emit commandsChanged();
+	return QQmlListProperty<SambaAppletCommand>(this, m_commands);
 }
 
 bool SambaApplet::hasCommand(const QString& name) const
 {
-	QJSValue commands = m_commands.value<QJSValue>();
-	if (!commands.hasProperty(name))
-		return false;
-
-	QJSValue command = commands.property(name);
-	if (!command.isNumber())
-		return false;
-
-	return true;
+	return command(name) != 0;
 }
 
-quint32 SambaApplet::command(const QString& name) const
+SambaAppletCommand* SambaApplet::command(const QString& name) const
 {
-	QJSValue commands = m_commands.value<QJSValue>();
-	if (!commands.hasProperty(name))
-		return 0xffffffff;
-
-	QJSValue command = commands.property(name);
-	if (!command.isNumber())
-		return 0xffffffff;
-
-	return command.toUInt();
+	foreach(SambaAppletCommand* command, m_commands) {
+		if (command->name() == name)
+			return command;
+	}
+	return 0;
 }
 
 quint32 SambaApplet::traceLevel() const

@@ -8,9 +8,9 @@ Applet {
 	codeUrl: Qt.resolvedUrl("applets/applet-lowlevel-sama5d2.bin")
 	codeAddr: 0x220000
 	mailboxAddr: 0x220004
-	commands: {
-		"initialize": 0
-	}
+	commands: [
+		AppletCommand { name:"initialize"; code:0 }
+	]
 
 	/*! \internal */
 	function buildInitArgs(connection, device) {

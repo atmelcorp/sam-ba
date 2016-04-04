@@ -309,37 +309,31 @@ ConnectionBase {
 	}
 
 	/*!
-	\qmlmethod int Connection::appletExecute(string command, var arguments, int retries)
-	\brief Execute applet \a command with \a arguments and try \a retries times to
-	poll for completion.
+	\qmlmethod int Connection::appletExecute(AppletCommand command, var arguments)
+	\brief Execute applet \a command with \a arguments and poll for completion
+	until the command has completed or its timeout is expired.
 
 	Arguments can be supplied a single integer if there is only one
 	argument, or an array of integers if multiple arguments are needed.
 
 	After an applet command is started, the Connection will poll for applet
-	completion using an adaptative timeout between poll cycles.  First polling is
-	done just after command execution, subsequent retries will wait before checking
-	for completion.  The initial delay is 100 microseconds and is multiplied by 1.5
-	at each iteration until the command is complete or the maximum number of
-	retries is reached.  The default number of retries if not specified is 20.
+	completion until the requested timeout is expired.
 
-	Returns the applet return code. Zero (0) is usually means success and anything
-	else is an error.  The values of the error codes are applet-specific and -1 is
-	returned for unsupported commands or when the maximum number of polling retries
-	was reached.
+	Returns the applet return code. Zero (0) is usually means success and
+	anything else is an error.  The values of the error codes are applet-specific.
+	No value is returned if no applet is loaded, if the arguments types are
+	invalid or if the applet command has not completed before the timeout was
+	reached.
 	*/
-	function appletExecute(cmd, args, retries)
+	function appletExecute(cmd, args)
 	{
 		if (!applet)
 			return
-		if (!applet.hasCommand(cmd))
-			return
 
-		var cmdValue = applet.command(cmd)
 		var mbxOffset = 0
 
 		// write applet command / status
-		writeu32(applet.mailboxAddr + mbxOffset, cmdValue)
+		writeu32(applet.mailboxAddr + mbxOffset, cmd.code)
 		mbxOffset += 4
 		writeu32(applet.mailboxAddr + mbxOffset, 0xffffffff)
 		mbxOffset += 4
@@ -364,25 +358,18 @@ ConnectionBase {
 		go(applet.codeAddr)
 
 		// wait for completion
-		var delay = 100
-		var retry = 0
-		for (retry = 0; retry < retries; retry++)
-		{
-			if (retry > 0)
-			{
-				Utils.usleep(delay)
-				delay *= 1.5
+		var startTime = new Date().getTime()
+		var currentTime = startTime
+		while ((currentTime - startTime) < cmd.timeout) {
+			var ack = readu32(applet.mailboxAddr);
+			if (ack === (0xffffffff - cmd.code)) {
+				// return applet status
+				return readu32(applet.mailboxAddr + 4)
 			}
 
-			var ack = readu32(applet.mailboxAddr);
-			if (ack === (0xffffffff - cmdValue))
-				break
+			Utils.msleep(5)
+			currentTime = new Date().getTime()
 		}
-		if (retry === retries)
-			return
-
-		// return applet status
-		return readu32(applet.mailboxAddr + 4)
 	}
 
 	/* -------- Command Line Handling -------- */
