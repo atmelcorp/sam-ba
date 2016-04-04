@@ -103,7 +103,8 @@ Device {
 		SAMA5D2LowlevelApplet { },
 		SAMA5D2SerialFlashApplet { },
 		SAMA5D2QSPIFlashApplet { },
-		SAMA5D2NANDFlashApplet { }
+		SAMA5D2NANDFlashApplet { },
+		SAMA5D2SDMMCApplet { }
 	]
 
 	/*!
@@ -148,6 +149,10 @@ Device {
 			config.nandIoset = undefined
 			config.nandBusWidth = undefined
 			config.nandHeader = undefined
+			config.sdmmcInstance = undefined
+			config.sdmmcPartition = undefined
+			config.sdmmcBusWidth = undefined
+			config.sdmmcVoltages = undefined
 		}
 		else if (board === "sama5d2-xplained") {
 			config.spiInstance = 0
@@ -160,6 +165,10 @@ Device {
 			config.nandIoset = undefined
 			config.nandBusWidth = undefined
 			config.nandHeader = undefined
+			config.sdmmcInstance = undefined
+			config.sdmmcPartition = undefined
+			config.sdmmcBusWidth = 0
+			config.sdmmcVoltages = 1 + 4 /* 1.8V + 3.3V */
 		}
 		else {
 			var invalidBoard = board

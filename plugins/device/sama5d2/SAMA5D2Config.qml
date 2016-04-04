@@ -41,6 +41,16 @@ import QtQuick 2.3
 	\header \li I/O Set \li Bus Width
 	\row \li 1, 2 \li 8-bit, 16-bit
 	\endtable
+
+	\section1 SDMMC Configuration
+
+	The following SDMMC configurations are supported:
+
+	\table
+	\header \li Instance \li Peripheral \li Bus Width
+	\row \li 0 \li SDMMC0 \li 1-bit, 4-bit, 8-bit
+	\row \li 1 \li SDMMC1 \li 1-bit, 4-bit
+	\endtable
 */
 Item {
 	/*! SPI peripheral instance */
@@ -72,5 +82,16 @@ Item {
 
 	/*! NAND Header */
 	property var nandHeader
-}
 
+	/*! SD/MMC peripheral instance */
+	property var sdmmcInstance
+
+	/*! SD/MMC partition (0=default, x>0=boot partition x) */
+	property var sdmmcPartition
+
+	/*! SD/MMC bus width (0=automatic, 1=1-bit, 4=4-bit, 8=8-bit) */
+	property var sdmmcBusWidth
+
+	/*! SD/MMC voltage support (bitfield: 1=1.8V, 2=3.0V, 3=3.3V) */
+	property var sdmmcVoltages
+}

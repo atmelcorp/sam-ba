@@ -10,6 +10,7 @@ DEVICE_FILES *= \
     SAMA5D2LowlevelApplet.qml \
     SAMA5D2NANDFlashApplet.qml \
     SAMA5D2QSPIFlashApplet.qml \
+    SAMA5D2SDMMCApplet.qml \
     SAMA5D2SerialFlashApplet.qml \
     sama5d2-bcw.js \
     sama5d2-bootcfg.js \
@@ -18,6 +19,7 @@ DEVICE_FILES *= \
     applets/applet-lowlevel_sama5d2-generic_sram.bin \
     applets/applet-nandflash_sama5d2-generic_sram.bin \
     applets/applet-qspiflash_sama5d2-generic_sram.bin \
+    applets/applet-sdmmc_sama5d2-generic_sram.bin \
     applets/applet-serialflash_sama5d2-generic_sram.bin
 
 include(../device.pri)
