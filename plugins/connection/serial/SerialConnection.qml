@@ -158,7 +158,7 @@ Connection {
 		case 2:
 			if (args[1].length > 0) {
 				baudRate = parseInt(args[1]);
-				if (isNaN(props.baudRate))
+				if (isNaN(baudRate))
 					return "Invalid serial baudrate (not a number)"
 			}
 			// fall-through
