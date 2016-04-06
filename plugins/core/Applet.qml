@@ -446,10 +446,10 @@ AppletBase {
 				badCount = 0
 			}
 
-			for (var i = 0; i < result.length; i++)
-				if (result.readu8(i) !== data.readu8(current * pageSize + i))
-					throw new Error("Failed verification. First error at address " +
-					                Utils.hex(offset * pageSize + i, 8))
+			var comp = result.compare(data.mid(offset * pageSize, result.length));
+			if (comp !== undefined)
+				throw new Error("Failed verification. First error at address " +
+				                Utils.hex(offset * pageSize + comp, 8))
 
 			percent = 100 * (1 - ((remaining - count) / size))
 			print("Verified " + (count * pageSize) + " bytes at address " +
