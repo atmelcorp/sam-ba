@@ -34,6 +34,7 @@ public:
 	Q_INVOKABLE SambaByteArray *mid(unsigned index, unsigned len) const;
 	Q_INVOKABLE void prepend(SambaByteArray* other);
 	Q_INVOKABLE void append(SambaByteArray* other);
+	Q_INVOKABLE QVariant compare(SambaByteArray* other);
 
 	Q_INVOKABLE quint8 readu8(int offset) const;
 	Q_INVOKABLE void writeu8(int offset, quint8 value);

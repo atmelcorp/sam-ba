@@ -53,6 +53,21 @@ void SambaByteArray::append(SambaByteArray* other)
 	emit lengthChanged();
 }
 
+QVariant SambaByteArray::compare(SambaByteArray* other)
+{
+	unsigned i;
+
+	for (i = 0; i < qMin(length(), other->length()); i++) {
+		if (m_data[i] != other->m_data[i])
+			return QVariant(i);
+	}
+
+	if (length() != other->length())
+		return QVariant(i);
+
+	return QVariant();
+}
+
 quint8 SambaByteArray::readu8(int offset) const
 {
 	return m_data[offset];

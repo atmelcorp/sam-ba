@@ -27,6 +27,13 @@
 	\brief Appends the content of byte array \a other to the current data.
 */
 /*!
+	\qmlmethod var ByteArray::compare(ByteArray other)
+	\brief Compare the content of byte array \a other to the current data.
+
+	Returns the offset of the first difference, or no value (undefined) if no
+	difference was found.
+*/
+/*!
 	\qmlmethod int ByteArray::at(int idx)
 	\brief Returns the byte at index \a idx.
 */
