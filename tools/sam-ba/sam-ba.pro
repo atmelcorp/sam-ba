@@ -5,6 +5,9 @@ QT += core qml quick
 
 TARGET = sam-ba
 
+VERSION = 3.1.1
+DEFINES += SAMBA_VERSION=\\\"$$VERSION\\\"
+
 SOURCES += \
     main.cpp \
     sambatool.cpp

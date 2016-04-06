@@ -3,7 +3,7 @@
 
 project = SAM-BA
 description = Atmel SAM-BA
-version = 3.1
+version = 3.1.1
 
 headerdirs = ../sambacommon ../plugins/core ../plugins/connection/serial ../plugins/connection/jlink ../plugins/device/sama5d2 ../plugins/device/samv7
 sourcedirs = . ../sambacommon ../plugins/core ../plugins/connection/serial ../plugins/connection/jlink ../plugins/device/sama5d2 ../plugins/device/samv7
@@ -35,6 +35,6 @@ HTML.postheader   = "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" wid
 
 HTML.footer       = "<p /><address><hr /><div align=\"center\">\n" \
                     "<table width=\"100%\" cellspacing=\"0\" border=\"0\"><tr class=\"address\">\n" \
-                    "<td width=\"60%\" align=\"left\">Copyright &copy; 2015 Atmel Corporation</td>\n" \
+                    "<td width=\"60%\" align=\"left\">Copyright &copy; 2015-2016 Atmel Corporation</td>\n" \
                     "<td width=\"40%\" align=\"right\"><div align=\"right\">SAM-BA QML API Documentation</div></td>\n" \
                     "</tr></table></div></address>"

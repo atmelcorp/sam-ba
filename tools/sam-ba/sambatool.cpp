@@ -36,7 +36,7 @@ SambaTool::SambaTool(int& argc, char** argv)
       m_applet(0)
 {
 	setApplicationName("sam-ba");
-	setApplicationVersion("3.1");
+	setApplicationVersion(SAMBA_VERSION);
 
 	loadAllMetadata();
 	m_status = parseArguments(arguments());
