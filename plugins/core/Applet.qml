@@ -332,7 +332,7 @@ AppletBase {
 			throw new Error("Applet '" + name +
 			                "' does not support 'read pages' command")
 
-		if (offset & (pageSize - 1) != 0)
+		if ((offset & (pageSize - 1)) !== 0)
 			throw new Error("Read offset is not page-aligned")
 		offset /= pageSize
 
@@ -409,7 +409,7 @@ AppletBase {
 		if (!!bootFile)
 			prepareBootFile(connection, device, data)
 
-		if (offset & (pageSize - 1) != 0) {
+		if ((offset & (pageSize - 1)) !== 0) {
 			throw new Error("Verify offset is not page-aligned")
 		}
 		offset /= pageSize
@@ -562,7 +562,7 @@ AppletBase {
 		if (!!bootFile)
 			prepareBootFile(connection, device, data)
 
-		if (offset & (pageSize - 1) != 0)
+		if ((offset & (pageSize - 1)) !== 0)
 			throw new Error("Write offset is not page-aligned")
 		offset /= pageSize
 
