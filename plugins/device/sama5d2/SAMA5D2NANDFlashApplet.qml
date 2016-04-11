@@ -5,7 +5,7 @@ import SAMBA 3.1
 Applet {
 	name: "nandflash"
 	description: "NAND Flash"
-	codeUrl: Qt.resolvedUrl("applets/applet-nandflash-sama5d2.bin")
+	codeUrl: Qt.resolvedUrl("applets/applet-nandflash_sama5d2-generic_sram.bin")
 	codeAddr: 0x220000
 	mailboxAddr: 0x220004
 	commands: [

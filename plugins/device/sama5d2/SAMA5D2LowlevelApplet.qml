@@ -5,7 +5,7 @@ import SAMBA 3.1
 Applet {
 	name: "lowlevel"
 	description: "Low-Level"
-	codeUrl: Qt.resolvedUrl("applets/applet-lowlevel-sama5d2.bin")
+	codeUrl: Qt.resolvedUrl("applets/applet-lowlevel_sama5d2-generic_sram.bin")
 	codeAddr: 0x220000
 	mailboxAddr: 0x220004
 	commands: [

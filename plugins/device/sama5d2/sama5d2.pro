@@ -14,11 +14,11 @@ DEVICE_FILES *= \
     sama5d2-bcw.js \
     sama5d2-bootcfg.js \
     sama5d2-bscr.js \
-    applets/applet-bootconfig-sama5d2.bin \
-    applets/applet-lowlevel-sama5d2.bin \
-    applets/applet-nandflash-sama5d2.bin \
-    applets/applet-qspiflash-sama5d2.bin \
-    applets/applet-serialflash-sama5d2.bin
+    applets/applet-bootconfig_sama5d2-generic_sram.bin \
+    applets/applet-lowlevel_sama5d2-generic_sram.bin \
+    applets/applet-nandflash_sama5d2-generic_sram.bin \
+    applets/applet-qspiflash_sama5d2-generic_sram.bin \
+    applets/applet-serialflash_sama5d2-generic_sram.bin
 
 include(../device.pri)
 
