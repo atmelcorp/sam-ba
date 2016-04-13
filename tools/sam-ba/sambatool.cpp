@@ -551,13 +551,6 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 		return Exit;
 	}
 
-	// ignore positional arguments
-	if (!parser.positionalArguments().isEmpty()) {
-		cerr_msg(QString("Error: Unknown arguments: %1")
-		         .arg(parser.positionalArguments().join(' ')));
-		return Failed;
-	}
-
 	// check for help option
 	if (parser.isSet(helpOption)) {
 		displayVersion();
@@ -597,6 +590,15 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 			return Failed;
 		}
 	}
+	else {
+		// no positional arguments allowed
+		if (!parser.positionalArguments().isEmpty()) {
+			cerr_msg(QString("Error: Unknown arguments: %1")
+					 .arg(parser.positionalArguments().join(' ')));
+			return Failed;
+		}
+	}
+
 	if (parser.isSet(deviceOption) && parser.isSet(boardOption)) {
 		cerr_msg("Error: Options -d/--device and -b/--board are exclusive.");
 		return Failed;
