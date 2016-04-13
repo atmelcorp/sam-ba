@@ -26,41 +26,44 @@ Applet {
 	function commandLineCommandHelp(command) {
 		if (command === "readcfg") {
 			return ["* readcfg - read boot configuration",
-					"    syntax: readcfg:(fuse|bureg0|bureg1|bureg2|bureg3|bscr)",
-					"    examples: readcfg:fuse -> read boot configuration word in fuses",
-					"              readcfg:bureg0 -> read boot configuration word in BUREG0",
-					"              readcfg:bscr -> read boot sequence register (BSCR)"]
+			        "Syntax:",
+			        "    readcfg:(fuse|bureg0|bureg1|bureg2|bureg3|bscr)",
+			        "Examples:",
+			        "    readcfg:fuse    read boot configuration word in fuses",
+			        "    readcfg:bureg0  read boot configuration word in BUREG0",
+			        "    readcfg:bscr    read boot sequence register (BSCR)"]
 		}
 		else if (command === "writecfg") {
 			return ["* writecfg - write boot configuration",
-					"    syntax: writecfg:(fuse|bureg0|bureg1|bureg2|bureg3|bscr):<configuration>",
-					"    examples: writecfg:fuse:0x440000 -> write boot configuration word 0x440000 in fuses",
-					"              writecfg:bureg0:0x40fcf -> write boot configuration word 0x40fcf in BUREG0",
-					"              writecfg:bureg2:QSPI0_IOSET2,EXT_MEM_BOOT -> write boot configuration word 0x40001 in BUREG2",
-					"              writecfg:bscr:4 -> write boot sequence register (BUREG0, VALID)",
-					"              writecfg:bscr:bureg0,valid -> write boot sequence register (BUREG0, VALID)",
-					"    Configuration value can be either a number or a sequence of tokens separated by commas.",
-					"    BSCR tokens:",
-					"        BUREG0*, BUREG1, BUREG2, BUREG3 -> to select which BUREG to use",
-					"        VALID -> to validate the BSCR and use the selected BUREG",
-					"    BUREG/Fuse tokens:",
-					"        UART1_IOSET1*, UART0_IOSET1, UART1_IOSET2, UART2_IOSET1, UART2_IOSET2, UART2_IOSET3, UART3_IOSET1, UART3_IOSET2, UART3_IOSET3, UART4_IOSET1, UART_DISABLED,",
-					"        JTAG_IOSET1*, JTAG_IOSET2, JTAG_IOSET3, JTAG_IOSET4,",
-					"        QSPI0_IOSET1*, QSPI0_IOSET2, QSPI0_IOSET3, QSPI0_DISABLED,",
-					"        QSPI1_IOSET1*, QSPI1_IOSET2, QSPI1_IOSET, QSPI1_DISABLED,",
-					"        SPI0_IOSET1*, SPI0_IOSET2, SPI0_DISABLED,",
-					"        SPI1_IOSET1*, SPI1_IOSET2, SPI1_IOSET3, SPI1_DISABLED,",
-					"        NFC_IOSET1*, NFC_IOSET2, NFC_DISABLED,",
-					"        SDMMC0*, SDMMC0_DISABLED,",
-					"        SDMMC1*, SDMMC1_DISABLED,",
-					"        EXT_MEM_BOOT,",
-					"        QSPI_XIP_MODE,",
-					"        DISABLE_BSCR,",
-					"        DISABLE_MONITOR,",
-					"        SECURE_MODE,",
-					"    Tokens with a star (*) are selected by default if no token from the same line is provided (field value is 0).",
-					"    Please refer to SAMA5D2 Datasheet section \"15.4 Boot configuration\" for information on boot settings.",
-					]
+			        "Syntax:",
+			        "    writecfg:(fuse|bureg0|bureg1|bureg2|bureg3|bscr):<configuration>",
+			        "Examples:",
+			        "    writecfg:fuse:0x440000                     write boot configuration word 0x440000 in fuses",
+			        "    writecfg:bureg0:0x40fcf                    write boot configuration word 0x40fcf in BUREG0",
+			        "    writecfg:bureg2:QSPI0_IOSET2,EXT_MEM_BOOT  write boot configuration word 0x40001 in BUREG2",
+			        "    writecfg:bscr:4                            write boot sequence register (BUREG0, VALID)",
+			        "    writecfg:bscr:bureg0,valid                 write boot sequence register (BUREG0, VALID)",
+			        "Configuration value can be either a number or a sequence of tokens separated by commas.",
+			        "    BSCR tokens:",
+			        "        BUREG0*, BUREG1, BUREG2, BUREG3 -> to select which BUREG to use",
+			        "        VALID -> to validate the BSCR and use the selected BUREG",
+			        "    BUREG/Fuse tokens:",
+			        "        UART1_IOSET1*, UART0_IOSET1, UART1_IOSET2, UART2_IOSET1, UART2_IOSET2, UART2_IOSET3, UART3_IOSET1, UART3_IOSET2, UART3_IOSET3, UART4_IOSET1, UART_DISABLED,",
+			        "        JTAG_IOSET1*, JTAG_IOSET2, JTAG_IOSET3, JTAG_IOSET4,",
+			        "        QSPI0_IOSET1*, QSPI0_IOSET2, QSPI0_IOSET3, QSPI0_DISABLED,",
+			        "        QSPI1_IOSET1*, QSPI1_IOSET2, QSPI1_IOSET, QSPI1_DISABLED,",
+			        "        SPI0_IOSET1*, SPI0_IOSET2, SPI0_DISABLED,",
+			        "        SPI1_IOSET1*, SPI1_IOSET2, SPI1_IOSET3, SPI1_DISABLED,",
+			        "        NFC_IOSET1*, NFC_IOSET2, NFC_DISABLED,",
+			        "        SDMMC0*, SDMMC0_DISABLED,",
+			        "        SDMMC1*, SDMMC1_DISABLED,",
+			        "        EXT_MEM_BOOT,",
+			        "        QSPI_XIP_MODE,",
+			        "        DISABLE_BSCR,",
+			        "        DISABLE_MONITOR,",
+			        "        SECURE_MODE,",
+			        "    Tokens with a star (*) are selected by default if no token from the same line is provided (field value is 0).",
+			        "    Please refer to SAMA5D2 Datasheet section \"15.4 Boot configuration\" for information on boot settings."]
 		}
 	}
 
@@ -130,8 +133,7 @@ Applet {
 			return commandLineCommandWriteBootConfig(connection, device, args);
 		}
 		else {
-			return defaultCommandLineCommandHandler(connection, device,
-													command, args)
+			return defaultCommandLineCommandHandler(connection, device, command, args)
 		}
 	}
 }

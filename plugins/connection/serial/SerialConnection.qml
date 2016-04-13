@@ -176,9 +176,11 @@ Connection {
 
 	/*! \internal */
 	function commandLineHelp() {
-		return ["Syntax: serial:[<port>]:[<baudrate>]",
-				"Examples: serial -> serial port (will use first AT91 USB if found otherwise first serial port)",
-				"          serial:COM80 -> serial port on COM80",
-				"          serial:ttyUSB0:57600 -> serial port on /dev/ttyUSB0, baudrate 57600"]
+		return ["Syntax:",
+		        "    serial:[<port>]:[<baudrate>]",
+		        "Examples:",
+		        "    serial                serial port (will use first AT91 USB if found otherwise first serial port)",
+		        "    serial:COM80          serial port on COM80",
+		        "    serial:ttyUSB0:57600  serial port on /dev/ttyUSB0, baudrate 57600"]
 	}
 }

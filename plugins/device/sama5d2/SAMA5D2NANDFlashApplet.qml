@@ -88,10 +88,15 @@ Applet {
 
 	/*! \internal */
 	function commandLineHelp() {
-		return ["Syntax: nandflash:[<ioset>]:[8|16]:[<header>]",
-				"Examples: nandflash -> NAND flash applet using default board settings",
-				"          nandflash:2:8:0xc0098da5 -> NAND flash applet using fully custom settings (IOSET2, 8-bit bus, header is 0xc0098da5)",
-				"          nandflash:::0xc0098da5 -> NAND flash applet using default board settings but set header to 0xc0098da5",
-				"For information on NAND header values, please refer to SAMA5D2 datasheet section \"15.4.6 Detailed Memory Boot Procedures\"."]
+		return ["Syntax: nandflash:[<ioset>]:[<bus_width>]:[<header>]",
+		        "Parameters:",
+		        "    ioset      I/O set",
+		        "    bus_width  NAND bus width (8/16)",
+		        "    header     NAND header value",
+		        "Examples:",
+		        "    nandflash                 use default board settings",
+		        "    nandflash:2:8:0xc0098da5  use fully custom settings (IOSET2, 8-bit bus, header is 0xc0098da5)",
+		        "    nandflash:::0xc0098da5    use default board settings but force header to 0xc0098da5",
+		        "For information on NAND header values, please refer to SAMA5D2 datasheet section \"15.4.6 Detailed Memory Boot Procedures\"."]
 	}
 }

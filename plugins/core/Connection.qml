@@ -384,33 +384,45 @@ ConnectionBase {
 	function commandLineCommandHelp(command) {
 		if (command === "read8") {
 			return ["* read8 - read a byte",
-			        "    syntax: read8:<addr>",
-			        "    example: read8:0x200000"]
+			        "Syntax:",
+			        "    read8:<addr>",
+			        "Example:",
+			        "    read8:0x200000  read a byte at address 0x200000"]
 		}
 		else if (command === "read16") {
 			return ["* read16 - read a half-word (16-bit)",
-			        "    syntax: read16:<addr>",
-			        "    example: read16:0x200000"]
+			        "Syntax:",
+			        "    read16:<addr>",
+			        "Example:",
+			        "    read16:0x200000  read a half-word at address 0x200000"]
 		}
 		else if (command === "read32") {
 			return ["* read32 - read a word (32-bit)",
-			        "    syntax: read32:<addr>",
-			        "    example: read32:0x200000"]
+			        "Syntax:",
+			        "    read32:<addr>",
+			        "Example:",
+			        "    read32:0x200000  read a word at address 0x200000"]
 		}
 		else if (command === "write8") {
 			return ["* write8 - write a byte",
-			        "    syntax: write8:<addr>:<value>",
-			        "    example: write8:0x200000:0x12"]
+			        "Syntax:",
+			        "    write8:<addr>:<value>",
+			        "Example:",
+			        "    write8:0x200000:0x12  write byte 0x12 at address 0x200000"]
 		}
 		else if (command === "write16") {
 			return ["* write16 - write a half-word (16-bit)",
-			        "    syntax: write16:<addr>:<value>",
-			        "    example: write16:0x200000:0x1234"]
+			        "Syntax:",
+			        "    write16:<addr>:<value>",
+			        "Example:",
+			        "    write16:0x200000:0x1234  write half-word 0x1234 at address 0x200000"]
 		}
 		else if (command === "write32") {
 			return ["* write32 - write a word (32-bit)",
-			        "    syntax: write32:<addr>:<value>",
-			        "    example: write32:0x200000:0x12345678"]
+			        "Syntax:",
+			        "    write32:<addr>:<value>",
+			        "Example:",
+			        "    write32:0x200000:0x12345678  write word 0x12345678 at address 0x200000"]
 		}
 	}
 

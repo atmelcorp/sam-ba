@@ -164,12 +164,13 @@ Connection {
 
 	/*! \internal */
 	function commandLineHelp() {
-		return ["Syntax: j-link:[<S/N>]:[swd|jtag]",
-				"Examples: j-link -> use first J-Link device found",
-				"          j-link:123456 -> use J-Link with serial number 123456",
-				"          j-link:123456:swd -> use J-Link with serial number 123456, in SWD mode",
-				"          j-link::swd -> use first J-Link device found, in SWD mode",
-				"          j-link::jtag -> use first J-Link device found, in JTAG mode (JTAG mode is the default)"
-				]
+		return ["Syntax:",
+		        "    j-link:[<S/N>]:[swd|jtag]",
+		        "Examples:",
+		        "    j-link             use first J-Link device found",
+		        "    j-link:123456      use J-Link with serial number 123456",
+		        "    j-link:123456:swd  use J-Link with serial number 123456, in SWD mode",
+		        "    j-link::swd        use first J-Link device found, in SWD mode",
+		        "    j-link::jtag       use first J-Link device found, in JTAG mode (JTAG mode is the default)"]
 	}
 }

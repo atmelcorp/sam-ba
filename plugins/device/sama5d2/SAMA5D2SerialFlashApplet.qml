@@ -82,8 +82,14 @@ Applet {
 	/*! \internal */
 	function commandLineHelp() {
 		return ["Syntax: serialflash:[<instance>]:[<ioset>]:[<npcs>]:[<frequency>]",
-				"Examples: serialflash -> SPI serialflash applet using default board settings",
-				"          serialflash:0:1:0:66 -> SPI serialflash applet using fully custom settings (SPI0, IOSET1, NPCS0, 66Mhz)",
-				"          serialflash::::20 -> SPI serialflash applet using default board settings but frequency set to 20Mhz"]
+		        "Parameters:",
+		        "    instance   SPI controller instance",
+		        "    ioset      I/O set",
+		        "    npcs       SPI chip select number",
+		        "    frequency  SPI clock frequency in MHz",
+		        "Examples: ",
+		        "    serialflash           use default board settings",
+		        "    serialflash:0:1:0:66  use fully custom settings (SPI0, IOSET1, NPCS0, 66Mhz)",
+		        "    serialflash::::20     use default board settings but force frequency to 20Mhz"]
 	}
 }

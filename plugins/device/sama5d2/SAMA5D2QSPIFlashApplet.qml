@@ -70,8 +70,13 @@ Applet {
 	/*! \internal */
 	function commandLineHelp() {
 		return ["Syntax: qspiflash:[<instance>]:[<ioset>]:[<frequency>]",
-				"Examples: qspiflash -> QSPI flash applet using default board settings",
-				"          qspiflash:0:3:66 -> QSPI flash applet using fully custom settings (QSPI0, IOSET3, 66Mhz)",
-				"          qspiflash:::20 -> QSPI flash applet using default board settings but frequency set to 20Mhz"]
+		        "Parameters:",
+		        "    instance   QSPI controller instance",
+		        "    ioset      I/O set",
+		        "    frequency  QSPI clock frequency in MHz",
+		        "Examples:",
+		        "    qspiflash         use default board settings",
+		        "    qspiflash:0:3:66  use fully custom settings (QSPI0, IOSET3, 66Mhz)",
+		        "    qspiflash:::20    use default board settings but force frequency to 20Mhz"]
 	}
 }

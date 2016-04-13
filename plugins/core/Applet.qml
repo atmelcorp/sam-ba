@@ -881,41 +881,53 @@ AppletBase {
 	function defaultCommandLineCommandHelp(command) {
 		if (command === "erase") {
 			return ["* erase - erase all or part of the memory",
-					"    syntax: erase:[<addr>]:[<length>]",
-					"    examples: erase -> erase all",
-					"              erase:4096 -> erase from 4096 to end",
-					"              erase:0x1000:0x10000 -> erase from 0x1000 to 0x11000",
-					"              erase::0x1000 -> erase from 0 to 0x1000"]
+			        "Syntax:",
+			        "    erase:[<addr>]:[<length>]",
+			        "Examples:",
+			        "    erase                 erase all",
+			        "    erase:4096            erase from 4096 to end",
+			        "    erase:0x1000:0x10000  erase from 0x1000 to 0x11000",
+			        "    erase::0x1000         erase from 0 to 0x1000"]
 		}
 		else if (command === "read") {
 			return ["* read - read from memory to a file",
-					"    syntax: read:<filename>:[<addr>]:[<length>]",
-					"    examples: read:firmware.bin -> read all to firmware.bin",
-					"              read:firmware.bin:0x1000 -> read from 0x1000 to end into firmware.bin",
-					"              read:firmware.bin:0x1000:1024 -> read 1024 bytes from 0x1000 into firmware.bin",
-					"              read:firmware.bin::1024 -> read 1024 bytes from start of memory into firmware.bin"]
+			        "Syntax:",
+			        "    read:<filename>:[<addr>]:[<length>]",
+			        "Examples:",
+			        "    read:firmware.bin              read all to firmware.bin",
+			        "    read:firmware.bin:0x1000       read from 0x1000 to end into firmware.bin",
+			        "    read:firmware.bin:0x1000:1024  read 1024 bytes from 0x1000 into firmware.bin",
+			        "    read:firmware.bin::1024        read 1024 bytes from start of memory into firmware.bin"]
 		}
 		else if (command === "write") {
 			return ["* write - write to memory from a file",
-					"    syntax: write:<filename>:[<addr>]",
-					"    examples: write:firmware.bin -> write firmware.bin to start of memory",
-					"              write:firmware.bin:0x1000 -> write firmware.bin at offset 0x1000"]
+			        "Syntax:",
+			        "    write:<filename>:[<addr>]",
+			        "Examples:",
+			        "    write:firmware.bin         write firmware.bin to start of memory",
+			        "    write:firmware.bin:0x1000  write firmware.bin at offset 0x1000"]
 		}
 		else if (command === "writeboot") {
 			return ["* writeboot - write boot program to memory from a file",
-					"    syntax: writeboot:<filename>",
-					"    example: writeboot:firmware.bin -> write firmware.bin as boot program at start of memory"]
+			        "Syntax:",
+			        "    writeboot:<filename>",
+			        "Example:",
+			        "    writeboot:firmware.bin  write firmware.bin as boot program at start of memory"]
 		}
 		else if (command === "verify") {
 			return ["* verify - verify memory from a file",
-					"    syntax: verify:<filename>:[<addr>]",
-					"    examples: verify:firmware.bin -> verify that start of memory matches firmware.bin",
-					"              verify:firmware.bin:0x1000 -> verify that memory at offset 0x1000 matches firmware.bin"]
+			        "Syntax:",
+			        "    verify:<filename>:[<addr>]",
+			        "Examples:",
+			        "    verify:firmware.bin         verify that start of memory matches firmware.bin",
+			        "    verify:firmware.bin:0x1000  verify that memory at offset 0x1000 matches firmware.bin"]
 		}
 		else if (command === "verifyboot") {
 			return ["* verifyboot - verify boot program from a file",
-					"    syntax: verifyboot:<filename>",
-					"    example: verify:firmware.bin -> verify that start of memory matches boot program firmware.bin"]
+			        "Syntax:",
+			        "    verifyboot:<filename>",
+			        "Example:",
+			        "    verify:firmware.bin  verify that start of memory matches boot program firmware.bin"]
 		}
 	}
 
