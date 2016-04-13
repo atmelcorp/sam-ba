@@ -180,6 +180,7 @@ void SambaTool::displayJsCommandLineCommandsHelp(QObject* obj)
 				foreach (QString help, helpList)
 					cerr_msg(help);
 			}
+			cerr_msg(QString());
 		}
 	}
 }
