@@ -1,5 +1,14 @@
 TEMPLATE = subdirs
 
+# map Qt version to ICU versions
+equals(QT_MAJOR_VERSION, 5) {
+	equals(QT_MINOR_VERSION, 5): ICU_VERSION = 54
+	equals(QT_MINOR_VERSION, 6): ICU_VERSION = 56
+}
+isEmpty(ICU_VERSION) {
+	error(Unknown QT version, please update samba3.pro)
+}
+
 OTHER_FILES += TODO
 
 rootdocs.path = /
@@ -34,9 +43,9 @@ unix:{
 
 	otherlibs.path = /lib
 	otherlibs.files = \
-		$$[QT_INSTALL_LIBS]/libicudata.so.54 \
-		$$[QT_INSTALL_LIBS]/libicui18n.so.54 \
-		$$[QT_INSTALL_LIBS]/libicuuc.so.54
+		$$[QT_INSTALL_LIBS]/libicudata.so.$$ICU_VERSION \
+		$$[QT_INSTALL_LIBS]/libicui18n.so.$$ICU_VERSION \
+		$$[QT_INSTALL_LIBS]/libicuuc.so.$$ICU_VERSION
 	INSTALLS += otherlibs
 
 	qmlmodules.path = /qml
@@ -67,9 +76,9 @@ else:win32:{
 
 	otherlibs.path = /
 	otherlibs.files = \
-		$$[QT_INSTALL_LIBS]/../bin/icudt54.dll \
-		$$[QT_INSTALL_LIBS]/../bin/icuin54.dll \
-		$$[QT_INSTALL_LIBS]/../bin/icuuc54.dll \
+		$$[QT_INSTALL_LIBS]/../bin/icudt$$ICU_VERSION.dll \
+		$$[QT_INSTALL_LIBS]/../bin/icuin$$ICU_VERSION.dll \
+		$$[QT_INSTALL_LIBS]/../bin/icuuc$$ICU_VERSION.dll \
 		$$[QT_INSTALL_LIBS]/../bin/libwinpthread-1.dll \
 		$$[QT_INSTALL_LIBS]/../bin/libgcc_s_dw2-1.dll \
 		$$[QT_INSTALL_LIBS]/../bin/\"libstdc++-6.dll\"
