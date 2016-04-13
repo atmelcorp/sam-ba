@@ -15,6 +15,7 @@ DEVICE_FILES *= \
     sama5d2-bcw.js \
     sama5d2-bootcfg.js \
     sama5d2-bscr.js \
+    applets/README.txt \
     applets/applet-bootconfig_sama5d2-generic_sram.bin \
     applets/applet-lowlevel_sama5d2-generic_sram.bin \
     applets/applet-nandflash_sama5d2-generic_sram.bin \
