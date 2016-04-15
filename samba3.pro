@@ -76,9 +76,9 @@ else:win32:{
 
 	otherlibs.path = /
 	otherlibs.files = \
-		$$[QT_INSTALL_LIBS]/../bin/icudt$$ICU_VERSION.dll \
-		$$[QT_INSTALL_LIBS]/../bin/icuin$$ICU_VERSION.dll \
-		$$[QT_INSTALL_LIBS]/../bin/icuuc$$ICU_VERSION.dll \
+                $$[QT_INSTALL_LIBS]/../bin/$$join(ICU_VERSION,,icudt,.dll) \
+                $$[QT_INSTALL_LIBS]/../bin/$$join(ICU_VERSION,,icuin,.dll) \
+                $$[QT_INSTALL_LIBS]/../bin/$$join(ICU_VERSION,,icuuc,.dll) \
 		$$[QT_INSTALL_LIBS]/../bin/libwinpthread-1.dll \
 		$$[QT_INSTALL_LIBS]/../bin/libgcc_s_dw2-1.dll \
 		$$[QT_INSTALL_LIBS]/../bin/\"libstdc++-6.dll\"
