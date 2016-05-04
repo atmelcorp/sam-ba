@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 
 SUBDIRS = serial
 
-unix:contains(QT_ARCH, x86_64)|win32:{
+unix:contains(QT_ARCH, x86_64)|unix:contains(QT_ARCH, i386)|win32:{
 	SUBDIRS += jlink
 }
 else:{

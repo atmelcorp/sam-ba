@@ -28,6 +28,18 @@ unix:contains(QT_ARCH, x86_64):{
     QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../../../../lib\''
     QMAKE_RPATH =
 }
+else:unix:contains(QT_ARCH, i386):{
+    JLINKDIR = /opt/SEGGER/JLinkSDK_Linux_V502k_i386
+    INCLUDEPATH += $$JLINKDIR/Inc
+    LIBS += -L$$JLINKDIR -ljlinkarm
+
+    jlinklibs.path = /lib
+    jlinklibs.commands = $(COPY) $$JLINKDIR/libjlinkarm.so.5 \$(INSTALL_ROOT)/lib
+    INSTALLS += jlinklibs
+
+    QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../../../../lib\''
+    QMAKE_RPATH =
+}
 else:win32:{
     JLINKDIR = "C:/Program Files (x86)/SEGGER/JLink_SDK_V502k"
     INCLUDEPATH += $$JLINKDIR/Inc
