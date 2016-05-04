@@ -28,7 +28,7 @@ The build uses 3 directories:
 - release directory
 
 We will refer to these directories in the rest of this documentation as
-{SRCDIR}, {BUILDDIR} and {RELEASEDIR}.
+{SRCDIR}, {BUILDDIR} and {RELEASEDIR}.  {RELEASEDIR} must be an absolute path.
 
 The Qt installation directory will be referred to as {QTDIR}.
 
@@ -43,14 +43,14 @@ SAM-BA can be built either using command-line commands or using Qt Creator.
 2. Create directory {BUILDDIR}
 
 3. (optional) Change path of J-Link SDK in
-```plugins/connection/jlink/jlink.pro```
+``plugins/connection/jlink/jlink.pro``
 
 4. Go in directory {BUILDDIR} and run
-```{QTDIR}/5.5/gcc_64/bin/qmake -r {SRCDIR}/samba3.pro```.  This will generate
+``{QTDIR}/5.5/gcc_64/bin/qmake -r {SRCDIR}/sam-ba.pro``.  This will generate
 the makefiles in {BUILDDIR} from the qmake templates in the source tree.
 
 5. Go in directory {BUILDDIR} and run
-```make INSTALL_ROOT={RELEASEDIR} install```
+``make INSTALL_ROOT={RELEASEDIR} install``
 
 6. The release material should now be present in {RELEASEDIR} directory.
 
@@ -61,18 +61,18 @@ the makefiles in {BUILDDIR} from the qmake templates in the source tree.
 2. Create directory {BUILDDIR}
 
 3. (optional) Change path of J-Link SDK in
-```plugins\connection\jlink\jlink.pro```
+``plugins\connection\jlink\jlink.pro``
 
 4. Go in directory {BUILDDIR} and run:
-```{QTDIR}\5.5\mingw492_32\bin\qmake -r {SRCDIR}\samba3.pro```.  This will
+``{QTDIR}\5.5\mingw492_32\bin\qmake -r {SRCDIR}\sam-ba.pro``.  This will
 generate the makefiles in {BUILDDIR} from the qmake templates in the source
 tree.
 
 5. Add MingW32 directory to path:
-```set path=%path%;{QTDIR}\Tools\mingw492_32\bin```
+``set path=%path%;{QTDIR}\Tools\mingw492_32\bin``
 
 6. Go in directory {BUILDDIR} and run:
-```mingw32-make INSTALL_ROOT={RELEASEDIR} install```
+``mingw32-make INSTALL_ROOT={RELEASEDIR} install``
 
 7. The release material should now be present in {RELEASEDIR} directory.
 
@@ -83,15 +83,15 @@ tree.
 
 1. Start Qt Creator
 
-2. Load ```samba3.pro``` from {SRCDIR}
+2. Load ``sam-ba.pro`` from {SRCDIR}
 
 3. Select kit "Desktop Qt 5.5.1 GCC 64bit" and click "Configure Project"
 
 4. (optional) Change path of J-Link SDK in
-```plugins/connection/jlink/jlink.pro```.
+``plugins/connection/jlink/jlink.pro``.
 
-5. (optional) In the bottom of the left toolbar, click on the "samba3 Release"
-or " samba3 Debug" icon to select the desired build configuration.
+5. (optional) In the bottom of the left toolbar, click on the "sam-ba Release"
+or " sam-ba Debug" icon to select the desired build configuration.
 
 4. Click on the "Projects" icon in the left toolbar
 
@@ -104,7 +104,7 @@ or " samba3 Debug" icon to select the desired build configuration.
 6. In "Deployment", click "Add Deploy Step" and select "Make"
 
 7. In "Make arguments:" fields, type:
-```INSTALL_ROOT={RELEASEDIR} install```
+``INSTALL_ROOT={RELEASEDIR} install``
   
 8. In the "Build" menu, click "Build All"
 
@@ -119,15 +119,15 @@ progress
 
 1. Start Qt Creator
 
-2. Load ```samba3.pro``` from {SRCDIR}
+2. Load ``sam-ba.pro`` from {SRCDIR}
 
 3. Select kit "Desktop Qt 5.5.1 MingW 32 bit" and click "Configure Project"
 
 4. (optional) Change path of J-Link SDK in
-```plugins\connection\jlink\jlink.pro```.
+``plugins\connection\jlink\jlink.pro``.
 
-5. (optional) In the bottom of the left toolbar, click on the "samba3 Release"
-or " samba3 Debug" icon to select the desired build configuration.
+5. (optional) In the bottom of the left toolbar, click on the "sam-ba Release"
+or " sam-ba Debug" icon to select the desired build configuration.
 
 4. Click on the "Projects" icon in the left toolbar
 
@@ -140,7 +140,7 @@ or " samba3 Debug" icon to select the desired build configuration.
 6. In "Deployment", click "Add Deploy Step" and select "Make"
 
 7. In "Make arguments:" fields, type:
-```INSTALL_ROOT={RELEASEDIR} install```
+``INSTALL_ROOT={RELEASEDIR} install``
 
 8. In the "Build" menu, click "Build All"
 

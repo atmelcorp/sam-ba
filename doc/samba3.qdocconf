@@ -5,8 +5,20 @@ project = SAM-BA
 description = Atmel SAM-BA
 version = 3.1.1
 
-headerdirs = ../sambacommon ../plugins/core ../plugins/connection/serial ../plugins/connection/jlink ../plugins/device/sama5d2 ../plugins/device/samv7
-sourcedirs = . ../sambacommon ../plugins/core ../plugins/connection/serial ../plugins/connection/jlink ../plugins/device/sama5d2 ../plugins/device/samv7
+headerdirs = \
+	../src/sambacommon \
+	../src/plugins/core \
+	../src/plugins/connection/serial \
+	../src/plugins/connection/jlink \
+	../src/plugins/device/sama5d2 \
+	../src/plugins/device/samv7
+sourcedirs = . \
+	../src/sambacommon \
+	../src/plugins/core \
+	../src/plugins/connection/serial \
+	../src/plugins/connection/jlink \
+	../src/plugins/device/sama5d2 \
+	../src/plugins/device/samv7
 exampledirs =
 
 sources.fileextensions = "*.cpp *.qdoc *.qml *.js"

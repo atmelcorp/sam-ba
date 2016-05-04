@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) 2015-2016, Atmel Corporation.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms and conditions of the GNU General Public License,
+ * version 2, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ */
+
+import QtQuick 2.3
+import SAMBA 3.1
+
+AppletLoader {
+	device: Tool.device
+
+	connection: Tool.port
+
+	onConnectionOpened: {
+		appletInitialize(Tool.applet.name)
+		var applet = connection.applet
+
+		for (var i = 0; i < Tool.commands.length; i++) {
+			var args = Tool.commands[i]
+			var command = args.shift()
+			print("Executing command '" + Tool.commands[i].join(":") + "'")
+			var errMsg
+			if (args.length === 1 && args[0] === "help")
+				errMsg = applet.commandLineCommandHelp(command)
+			else
+				errMsg = applet.commandLineCommand(Tool.port, Tool.device,
+				                                   command, args)
+			if (Array.isArray(errMsg)) {
+				for (var j = 0; j < errMsg.length; j++)
+					Tool.error(errMsg[j])
+				break;
+			}
+			else if (typeof errMsg === "string") {
+				Tool.error("Error: Command '" + Tool.commands[i].join(":") +
+				           "': " + errMsg)
+				Tool.returnCode = -1
+				break
+			}
+		}
+	}
+
+	onConnectionFailed: {
+		Tool.returnCode = -1
+	}
+}
