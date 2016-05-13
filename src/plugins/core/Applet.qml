@@ -474,10 +474,10 @@ AppletBase {
 				badCount = 0
 			}
 
-			var comp = result.compare(data.mid(offset * pageSize, result.length));
+			var comp = result.compare(data.mid(current * pageSize, result.length));
 			if (comp !== undefined)
-				throw new Error("Failed verification. First error at address " +
-				                Utils.hex(offset * pageSize + comp, 8))
+				throw new Error("Failed verification. First error at file offset " +
+				                Utils.hex(current * pageSize + comp, 8))
 
 			percent = 100 * (1 - ((remaining - count) / size))
 			print("Verified " + (count * pageSize) + " bytes at address " +
