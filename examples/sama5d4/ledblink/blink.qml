@@ -11,14 +11,13 @@ Item {
 			// Setup GPIO
 			Led.setup(this)
 
-			// Blink LEDs a few times
-			var led = 0
+			// Blink LED a few times
 			for (var i = 0; i < 40; i++) {
-				Utils.msleep(250)
-				Led.set(this, led, true)
-				led++
-				if (led >= 3)
-					led = 0
+				Utils.msleep(100)
+				if ((i & 1) === 0)
+					Led.on(this)
+				else
+					Led.off(this)
 			}
 		}
 

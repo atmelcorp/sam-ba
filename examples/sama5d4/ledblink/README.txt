@@ -1,6 +1,6 @@
-# SAMA5D4-EK LED Blink Example
+# SAMA5D4 LED Blink Example
 
-Sample script to blink the LEDs on the SAMA5D4-EK
+Sample script to blink the Blue LED on a "SAMA5D4 XPLAINED ULTRA" board
 
 Run qml script using sam-ba tool, for example:
     On Windows:

@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 
-SUBDIRS = ledblink
+SUBDIRS = ledblink nandflash serialflash

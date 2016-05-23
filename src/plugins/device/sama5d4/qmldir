@@ -1,0 +1,6 @@
+module SAMBA.Device.SAMA5D4
+SAMA5D4 3.1 SAMA5D4.qml
+SAMA5D4Config 3.1 SAMA5D4Config.qml
+SAMA5D4LowlevelApplet 3.1 SAMA5D4LowlevelApplet.qml
+SAMA5D4NANDFlashApplet 3.1 SAMA5D4NANDFlashApplet.qml
+SAMA5D4SerialFlashApplet 3.1 SAMA5D4SerialFlashApplet.qml
