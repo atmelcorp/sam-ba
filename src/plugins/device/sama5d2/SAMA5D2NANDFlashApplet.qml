@@ -27,6 +27,7 @@ Applet {
 		AppletCommand { name:"readPages"; code:0x32 },
 		AppletCommand { name:"writePages"; code:0x33 }
 	]
+	trimPadding: true
 
 	/*! \internal */
 	function buildInitArgs(connection, device) {

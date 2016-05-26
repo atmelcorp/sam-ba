@@ -29,7 +29,8 @@ SambaApplet::SambaApplet(QQuickItem* parent)
 	  m_memorySize(0),
 	  m_memoryPages(0),
 	  m_eraseSupport(0),
-	  m_paddingByte(0xff)
+	  m_paddingByte(0xff),
+	  m_trimPadding(false)
 {
 }
 
@@ -244,4 +245,15 @@ void SambaApplet::setPaddingByte(quint8 paddingByte)
 {
 	m_paddingByte = paddingByte;
 	emit paddingByteChanged();
+}
+
+bool SambaApplet::trimPadding() const
+{
+	return m_trimPadding;
+}
+
+void SambaApplet::setTrimPadding(bool trimPadding)
+{
+	m_trimPadding = trimPadding;
+	emit trimPaddingChanged();
 }

@@ -38,6 +38,7 @@ class SAMBACOMMONSHARED_EXPORT SambaApplet : public QQuickItem
 	Q_PROPERTY(quint32 memoryPages READ memoryPages WRITE setMemoryPages NOTIFY memoryPagesChanged)
 	Q_PROPERTY(quint32 eraseSupport READ eraseSupport WRITE setEraseSupport NOTIFY eraseSupportChanged)
 	Q_PROPERTY(quint32 paddingByte READ paddingByte WRITE setPaddingByte NOTIFY paddingByteChanged)
+	Q_PROPERTY(bool trimPadding READ trimPadding WRITE setTrimPadding NOTIFY trimPaddingChanged)
 
 public:
 	explicit SambaApplet(QQuickItem *parent = 0);
@@ -88,6 +89,9 @@ public:
 	quint8 paddingByte() const;
 	void setPaddingByte(quint8 paddingByte);
 
+	bool trimPadding() const;
+	void setTrimPadding(bool trimPadding);
+
 signals:
 	void nameChanged();
 	void descriptionChanged();
@@ -105,6 +109,7 @@ signals:
 	void memoryPagesChanged();
 	void eraseSupportChanged();
 	void paddingByteChanged();
+	void trimPaddingChanged();
 
 private:
 	QString m_name;
@@ -123,6 +128,7 @@ private:
 	quint32 m_memoryPages;
 	quint32 m_eraseSupport;
 	quint8 m_paddingByte;
+	bool m_trimPadding;
 };
 
 #endif // SAMBA_APPLET_H

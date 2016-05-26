@@ -611,35 +611,55 @@ AppletBase {
 		var percent
 		var badOffset, badCount = 0
 		var remaining = size
-		while (remaining > 0)
-		{
-			var count = Math.min(remaining, bufferPages)
+		while (remaining > 0) {
+			var pagesToEndOfBlock = Math.min(remaining, eraseSupport - (offset & (eraseSupport - 1)))
 
-			var pagesWritten = callWritePages(connection, device, offset,
-					data.mid(current * pageSize, count * pageSize))
-			if (pagesWritten < count)
-				count = pagesWritten
+			var pagesToSkip = 0;
+			// only skip empty pages for full blocks
+			if (trimPadding && pagesToEndOfBlock == eraseSupport)
+				pagesToSkip = data.getTrimCount(current * pageSize, pagesToEndOfBlock, pageSize, paddingByte)
+			var pagesToWrite = pagesToEndOfBlock - pagesToSkip
 
-			if (count === 0) {
-				if (badCount === 0)
-					badOffset = offset
-				badCount++
-				offset++
-				continue
-			} else if (badCount > 0) {
-				print("Skipped " + badCount + " bad page(s) at address " +
-				      Utils.hex(badOffset * pageSize, 8))
-				badCount = 0
+			// write non-empty pages at start of block
+			while (pagesToWrite > 0) {
+				var count = Math.min(pagesToWrite, bufferPages)
+
+				var pagesWritten = callWritePages(connection, device, offset,
+						data.mid(current * pageSize, count * pageSize))
+				if (pagesWritten < count)
+					count = pagesWritten
+
+				if (count === 0) {
+					if (badCount === 0)
+						badOffset = offset
+					badCount++
+					offset++
+					continue
+				} else if (badCount > 0) {
+					print("Skipped " + badCount + " bad page(s) at address " +
+					      Utils.hex(badOffset * pageSize, 8))
+					badCount = 0
+				}
+
+				percent = 100 * (1 - ((remaining - count) / size))
+				print("Wrote " + (count * pageSize) + " bytes at address " +
+				      Utils.hex(offset * pageSize, 8) +
+				      " (" + percent.toFixed(2) + "%)")
+
+				current += count
+				offset += count
+				remaining -= count
+				pagesToWrite -= count
 			}
 
-			percent = 100 * (1 - ((remaining - count) / size))
-			print("Wrote " + (count * pageSize) + " bytes at address " +
-			      Utils.hex(offset * pageSize, 8) +
-			      " (" + percent.toFixed(2) + "%)")
-
-			current += count
-			offset += count
-			remaining -= count
+			// skip empty pages at end of block
+			if (pagesToSkip > 0) {
+				print("Skipped " + pagesToSkip + " empty page(s) at address " +
+				      Utils.hex(offset * pageSize, 8))
+				current += pagesToSkip
+				offset += pagesToSkip
+				remaining -= pagesToSkip
+			}
 		}
 	}
 

@@ -81,6 +81,28 @@ QVariant SambaByteArray::compare(SambaByteArray* other)
 	return QVariant();
 }
 
+int SambaByteArray::getTrimCount(unsigned offset, unsigned pages, unsigned pageSize, quint8 paddingByte) const
+{
+	unsigned page;
+
+	if (offset + pages * pageSize > length())
+		return 0;
+
+	for (page = pages; page > 0; page--) {
+		bool empty = true;
+		for (unsigned i = 0; i < pageSize; i++) {
+			if (readu8(offset + (page - 1) * pageSize + i) != paddingByte) {
+				empty = false;
+				break;
+			}
+		}
+		if (!empty)
+			break;
+	}
+
+	return pages - page;
+}
+
 quint8 SambaByteArray::readu8(unsigned offset) const
 {
 	return m_data[offset];

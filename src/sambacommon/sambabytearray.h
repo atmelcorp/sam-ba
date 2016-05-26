@@ -48,6 +48,7 @@ public:
 	Q_INVOKABLE void prepend(SambaByteArray* other);
 	Q_INVOKABLE void append(SambaByteArray* other);
 	Q_INVOKABLE QVariant compare(SambaByteArray* other);
+	Q_INVOKABLE int getTrimCount(unsigned offset, unsigned pages, unsigned pageSize, quint8 paddingByte) const;
 
 	Q_INVOKABLE quint8 readu8(unsigned offset) const;
 	Q_INVOKABLE void writeu8(unsigned offset, quint8 value);
