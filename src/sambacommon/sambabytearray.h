@@ -24,7 +24,7 @@ class SAMBACOMMONSHARED_EXPORT SambaByteArray : public QObject
 
 public:
 	explicit SambaByteArray();
-	explicit SambaByteArray(int length);
+	explicit SambaByteArray(unsigned length);
 	explicit SambaByteArray(const QByteArray& data);
 	explicit SambaByteArray(const SambaByteArray& data);
 
@@ -49,12 +49,12 @@ public:
 	Q_INVOKABLE void append(SambaByteArray* other);
 	Q_INVOKABLE QVariant compare(SambaByteArray* other);
 
-	Q_INVOKABLE quint8 readu8(int offset) const;
-	Q_INVOKABLE void writeu8(int offset, quint8 value);
-	Q_INVOKABLE quint16 readu16(int offset) const;
-	Q_INVOKABLE void writeu16(int offset, quint16 value);
-	Q_INVOKABLE quint32 readu32(int offset) const;
-	Q_INVOKABLE void writeu32(int offset, quint32 value);
+	Q_INVOKABLE quint8 readu8(unsigned offset) const;
+	Q_INVOKABLE void writeu8(unsigned offset, quint8 value);
+	Q_INVOKABLE quint16 readu16(unsigned offset) const;
+	Q_INVOKABLE void writeu16(unsigned offset, quint16 value);
+	Q_INVOKABLE quint32 readu32(unsigned offset) const;
+	Q_INVOKABLE void writeu32(unsigned offset, quint32 value);
 
 	Q_INVOKABLE bool readUrl(const QString& fileUrl);
 	Q_INVOKABLE bool readFile(const QString& fileName);
