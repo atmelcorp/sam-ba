@@ -14,7 +14,7 @@ win32:SUBDIRS += driver
 
 # copy documents at root of package
 rootdocs.path = /
-rootdocs.files = README.txt LICENSE.txt
+rootdocs.files = README.txt LICENSE.txt CHANGELOG.txt
 unix:contains(QT_ARCH, arm):rootdocs.files += README.armv7.txt
 INSTALLS += rootdocs
 

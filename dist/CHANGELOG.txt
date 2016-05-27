@@ -1,0 +1,32 @@
+# Atmel SAM-BA - SAM Boot Assistant
+
+## Version 3.1.2
+
+### Enhancements
+
+- Support for SAMA5D4 (NAND Flash and SPI Flash)
+
+### API Changes
+
+- No changes were made to the QML API
+
+
+
+## Version 3.1.1
+
+### Enhancements
+
+- NAND Flash support for the SAMA5D2
+- SD/MMC support for the SAMA5D2
+- Enhanced command line support (see doc/cmdline.html for documentation)
+
+### API Changes
+
+Several small changes where made to the QML API, please see the provided examples.
+Notable changes:
+- SAM-BA QML API modules version is 3.1
+- configuration declaration for SAMA5D2 is less verbose. Default for the
+  SAMA5D2 device is to be unconfigured, but the "sama5d2-xplained" board
+  property can be set to get the same configuration as previous version.
+- boot configuration on the SAMA5D2 now uses an applet and a different syntax.
+
