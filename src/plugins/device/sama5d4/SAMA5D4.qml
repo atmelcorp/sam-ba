@@ -82,7 +82,7 @@ Device {
 
 	aliases: [ "sama5d41", "sama5d42", "sama5d43", "sama5d44" ]
 
-	description: "SAM5D4x series"
+	description: "SAMA5D4x series"
 
 	boards: [ "sama5d4-xplained" ]
 
