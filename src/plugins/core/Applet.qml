@@ -612,15 +612,19 @@ AppletBase {
 		var badOffset, badCount = 0
 		var remaining = size
 		while (remaining > 0) {
-			var pagesToEndOfBlock = Math.min(remaining, eraseSupport - (offset & (eraseSupport - 1)))
+			var pagesToSkip = 0
+			var pagesToWrite = remaining
 
-			var pagesToSkip = 0;
-			// only skip empty pages for full blocks
-			if (trimPadding && pagesToEndOfBlock == eraseSupport)
-				pagesToSkip = data.getTrimCount(current * pageSize, pagesToEndOfBlock, pageSize, paddingByte)
-			var pagesToWrite = pagesToEndOfBlock - pagesToSkip
+			if (trimPadding) {
+				var pagesToEndOfBlock = Math.min(remaining, eraseSupport - (offset & (eraseSupport - 1)))
 
-			// write non-empty pages at start of block
+				// only skip empty pages for full blocks
+				if (pagesToEndOfBlock == eraseSupport)
+					pagesToSkip = data.getTrimCount(current * pageSize, pagesToEndOfBlock, pageSize, paddingByte)
+				pagesToWrite = pagesToEndOfBlock - pagesToSkip
+			}
+
+			// write non-empty pages
 			while (pagesToWrite > 0) {
 				var count = Math.min(pagesToWrite, bufferPages)
 
@@ -652,7 +656,7 @@ AppletBase {
 				pagesToWrite -= count
 			}
 
-			// skip empty pages at end of block
+			// skip empty pages
 			if (pagesToSkip > 0) {
 				print("Skipped " + pagesToSkip + " empty page(s) at address " +
 				      Utils.hex(offset * pageSize, 8))
