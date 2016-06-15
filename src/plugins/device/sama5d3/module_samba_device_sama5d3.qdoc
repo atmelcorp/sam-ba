@@ -1,0 +1,8 @@
+/*!
+\qmlmodule SAMBA.Device.SAMA5D3 3.1
+\title SAMBA.Device.SAMA5D3 Module
+
+The SAMBA.Device.SAMA5D3 module contains an implementation of the
+SAMBA::Device type for the SAMA5D3.
+device.
+*/
