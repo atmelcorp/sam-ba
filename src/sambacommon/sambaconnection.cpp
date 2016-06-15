@@ -45,6 +45,17 @@ void SambaConnection::setAliases(const QStringList& aliases)
 	emit aliasesChanged();
 }
 
+quint32 SambaConnection::priority() const
+{
+	return m_priority;
+}
+
+void SambaConnection::setPriority(quint32 priority)
+{
+	m_priority = priority;
+	emit priorityChanged();
+}
+
 quint32 SambaConnection::appletConnectionType() const
 {
 	return m_appletConnectionType;

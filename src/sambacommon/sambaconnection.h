@@ -25,6 +25,7 @@ class SAMBACOMMONSHARED_EXPORT SambaConnection : public QQuickItem
 	Q_OBJECT
 	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 	Q_PROPERTY(QStringList aliases READ aliases WRITE setAliases NOTIFY aliasesChanged)
+	Q_PROPERTY(quint32 priority READ priority WRITE setPriority NOTIFY priorityChanged)
 	Q_PROPERTY(quint32 appletConnectionType READ appletConnectionType WRITE setAppletConnectionType NOTIFY appletConnectionTypeChanged)
 	Q_PROPERTY(QVariant applet READ applet WRITE setApplet NOTIFY appletChanged)
 	Q_ENUMS(ConnectionType)
@@ -45,6 +46,9 @@ public:
 	QStringList aliases() const;
 	void setAliases(const QStringList& aliases);
 
+	quint32 priority() const;
+	void setPriority(quint32 priority);
+
 	quint32 appletConnectionType() const;
 	void setAppletConnectionType(quint32 appletConnectionType);
 
@@ -54,12 +58,14 @@ public:
 signals:
 	void nameChanged();
 	void aliasesChanged();
+	void priorityChanged();
 	void appletConnectionTypeChanged();
 	void appletChanged();
 
 private:
 	QString m_name;
 	QStringList m_aliases;
+	quint32 m_priority;
 	quint32 m_appletConnectionType;
 	QVariant m_applet;
 };
