@@ -31,6 +31,7 @@ port. Please see the datasheet/manual of the device for more information.
 Connection {
 	name: "j-link"
 	aliases: [ "jlink", "samice", "sam-ice" ]
+	priority: 2
 
 	/*!
 	\qmlproperty string JLinkConnection::serialNumber

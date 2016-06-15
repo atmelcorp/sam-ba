@@ -40,6 +40,7 @@ Please see the datasheet of the device for more details.
 Connection {
 	name: "serial"
 	aliases: [ "usb", "at91" ]
+	priority: 1
 
 	/*!
 	\qmlproperty string SerialConnection::port
