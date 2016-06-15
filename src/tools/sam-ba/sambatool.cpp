@@ -64,6 +64,11 @@ SambaTool::~SambaTool()
 	m_devices.clear();
 }
 
+static bool portCompare(const SambaConnection* p1, const SambaConnection* p2)
+{
+    return p1->priority() < p2->priority();
+}
+
 bool SambaTool::loadAllMetadata()
 {
 	QDir metadataDir(applicationDirPath() + "/metadata");
@@ -72,6 +77,7 @@ bool SambaTool::loadAllMetadata()
 	{
 		loadMetadata(metadataDir.absoluteFilePath(fileName));
 	}
+	std::sort(m_ports.begin(), m_ports.end(), portCompare);
 	return true;
 }
 
@@ -650,6 +656,11 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 				if (!parsePortOption(port))
 					return Failed;
 			}
+		} else {
+			QString port(m_ports.first()->name());
+			cerr_msg(QString("No port option on command-line, using '%1'.").arg(port));
+			if (!parsePortOption(port))
+				return Failed;
 		}
 
 		// parse device
