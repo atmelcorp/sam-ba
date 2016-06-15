@@ -7,7 +7,7 @@ This repository contains the sources of the Atmel SAM-BA tool.
 
 This tool is built using Qt5 and is command-line only for now.
 
-The sources are hosted on [GitHub](https://github.com/linux4sam/sam-ba).
+The sources are hosted on [GitHub](https://github.com/atmelcorp/sam-ba).
 
 ## License
 
