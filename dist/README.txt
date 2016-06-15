@@ -1,6 +1,6 @@
 # Atmel SAM-BA - SAM Boot Assistant
-Release version: 3.1.2
-Release date: 2016-05
+Release version: 3.1.3
+Release date: 2016-06
 
 ## Overview
 
@@ -9,11 +9,19 @@ The SAM-BA tool is a programming tool for the Atmel MPUs/MCUs.
 Please note that all presented APIs / command line options are subject to
 change from one version to another.
 
+## License
+
+SAM-BA is provided under the GNU General Public License version 2 only. A copy
+of the license can be found in the LICENSE.txt file.
+
+The sources are available on GitHub:
+https://github.com/atmelcorp/sam-ba
+
 ## Supported Platforms
 
 This release supports the following platforms:
 - Windows 32-bit and 64-bit
-- Linux x86_64
+- Linux x86 and x86_64
 
 ## Contents
 
@@ -37,7 +45,8 @@ This release supports the following platforms:
 This release contains several examples:
 
 - examples/sama5d2: examples for SAMA5D2 (boot configuration, SPI/QSPI Flash, SD/MMC, NAND)
-- examples/sama5d4: examples for SAMA5D4 (only a script toggling a PIO for now)
+- examples/sama5d3: examples for SAMA5D3 (SPI Flash, NAND)
+- examples/sama5d4: examples for SAMA5D4 (SPI Flash, NAND, PIO)
 - examples/samv7: examples for SAMx7 MCU series (SAMV70, SAMV71, SAME70)
 - examples/scripting: examples relating to the QML scripting environment
 

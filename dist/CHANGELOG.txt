@@ -1,5 +1,19 @@
 # Atmel SAM-BA - SAM Boot Assistant
 
+## Version 3.1.3
+
+### Enhancements
+
+- Support for SAMA5D3 (NAND Flash and SPI Flash)
+- Port command-line option is now optional. When not supplied, the connection
+  will default to serial/usb.
+
+### API Changes
+
+- No changes were made to the QML API
+
+
+
 ## Version 3.1.2
 
 ### Enhancements

@@ -5,7 +5,7 @@ QT += core qml quick
 
 TARGET = sam-ba
 
-VERSION = 3.1.2
+VERSION = 3.1.3
 DEFINES += SAMBA_VERSION=\\\"$$VERSION\\\"
 
 SOURCES += \
