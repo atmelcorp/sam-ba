@@ -84,7 +84,7 @@ command line invokation.
 For example, the following command line will display the CHIPID_CIDR register
 on a SAMA5D2 device and then read and write into SRAM at address 0x200000:
 \code
-sam-ba -p serial -m read32:0xfc069000 -m write32:0x200000:0x12345678 -m -m read16:0x200000 -m read16:0x200002
+sam-ba -p serial -m read32:0xfc069000 -m write32:0x200000:0x12345678 -m read16:0x200000 -m read16:0x200002
 \endcode
 Running this command line with a SAMA5D2 connected will display:
 \code
@@ -124,7 +124,7 @@ Running applet commands requires several parameters on the command line:
 
 \section2 Devices and Boards
 
-The list of supported devices can be displayed by using "\e{sam-ba -b help}".
+The list of supported devices can be displayed by using "\e{sam-ba -d help}".
 Running this command with SAM-BA 3.1 will display:
 \code
 Known devices: sama5d2, samv7
