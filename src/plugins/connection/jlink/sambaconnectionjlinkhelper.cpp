@@ -18,21 +18,62 @@
 
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(*(x)))
 
-struct atmel_a5_regs {
+struct mpu_device {
 	const char *name;
-	unsigned int cidr;
-	unsigned int cidr_mask;
-	unsigned int cidr_expected;
-	unsigned int wdt_mr;
-	unsigned int sfr_l2cc_hramc;
+	unsigned int exid;
 };
 
-/* Register definitions for Atmel Cortex-A5 devices */
+struct mpu_regs {
+	const char *name;
+	unsigned int cidr_reg;
+	unsigned int cidr_mask;
+	unsigned int cidr;
+	unsigned int exid_reg;
+	unsigned int wdt_mr_reg;
+	unsigned int sfr_l2cc_hramc_reg;
+	const struct mpu_device* devices;
+};
+
+static const struct mpu_device sama5d2_devices[] = {
+	{ "SAMA5D21-CU", 0x0000005a },
+	{ "SAMA5D22-CN", 0x00000069 },
+	{ "SAMA5D22-CU", 0x00000059 },
+	{ "SAMA5D23-CN", 0x00000068 },
+	{ "SAMA5D23-CU", 0x00000058 },
+	{ "SAMA5D24-CU", 0x00000014 },
+	{ "SAMA5D26-CN", 0x00000022 },
+	{ "SAMA5D26-CU", 0x00000012 },
+	{ "SAMA5D27-CN", 0x00000021 },
+	{ "SAMA5D27-CU", 0x00000011 },
+	{ "SAMA5D28-CN", 0x00000020 },
+	{ "SAMA5D28-CU", 0x00000010 },
+	{ NULL, 0 },
+};
+
+static const struct mpu_device sama5d3_devices[] = {
+	{ "SAMA5D31", 0x00444300 },
+	{ "SAMA5D33", 0x00414300 },
+	{ "SAMA5D34", 0x00414301 },
+	{ "SAMA5D35", 0x00584300 },
+	{ "SAMA5D36", 0x00004301 },
+	{ NULL, 0 },
+};
+
+static const struct mpu_device sama5d4_devices[] = {
+	{ "SAMA5D41", 0x00000001 },
+	{ "SAMA5D42", 0x00000002 },
+	{ "SAMA5D43", 0x00000003 },
+	{ "SAMA5D44", 0x00000004 },
+	{ NULL, 0 },
+};
+
+/* Register definitions for SAMA5 devices */
 /* Order is important: probing stops on first matching device */
-static const struct atmel_a5_regs atmel_a5_regs[] = {
-	{ "SAMA5D2x", 0xfc069000, 0xffffffe0, 0x8a5c08c0, 0xf8048044, 0xf8030058 },
-	{ "SAMA5D4x", 0xfc069040, 0xffffffe0, 0x8a5c07c0, 0xfc068644, 0 },
-	{ "SAMA5D3x", 0xffffee40, 0xffffffe0, 0x8a5c07c0, 0xfffffe44, 0 }
+static const struct mpu_regs mpu_regs[] = {
+	{ "SAMA5D2x", 0xfc069000, 0xffffffe0, 0x8a5c08c0, 0xfc069004, 0xf8048044, 0xf8030058, sama5d2_devices },
+	{ "SAMA5D4x", 0xfc069040, 0xfffffff0, 0x8a5c07c0, 0xfc069044, 0xfc068644, 0, sama5d4_devices },
+	{ "SAMA5D3x", 0xffffee40, 0xffffffff, 0x8a5c07c2, 0xffffee44, 0xfffffe44, 0, sama5d3_devices },
+	{ NULL, 0, 0, 0, 0, 0, 0, NULL },
 };
 
 /* WDT_MR Fields */
@@ -64,8 +105,7 @@ static void jlink_debug_log(const char* sErr)
 SambaConnectionJlinkHelper::SambaConnectionJlinkHelper(QQuickItem* parent)
 	: QQuickItem(parent),
 	  m_swd(false),
-	  m_devFamily(-1),
-	  m_device(-1)
+	  m_devFamily(-1)
 {
 	JLINKARM_EnableLog(jlink_debug_log);
 	JLINKARM_EnableLogCom(jlink_debug_log);
@@ -160,6 +200,7 @@ void SambaConnectionJlinkHelper::open()
 		// Select SWD interface
 		if (JLINKARM_TIF_Select(JLINKARM_TIF_SWD) != 0)
 		{
+			JLINKARM_Close();
 			emit connectionFailed("Could not select SWD interface");
 			return;
 		}
@@ -169,6 +210,7 @@ void SambaConnectionJlinkHelper::open()
 		// Select JTAG interface
 		if (JLINKARM_TIF_Select(JLINKARM_TIF_JTAG) != 0)
 		{
+			JLINKARM_Close();
 			emit connectionFailed("Could not select JTAG interface");
 			return;
 		}
@@ -205,33 +247,49 @@ void SambaConnectionJlinkHelper::open()
 		}
 
 		// Read Devices Chip ID register
-		m_device = -1;
-		for (unsigned i = 0; i < ARRAY_SIZE(atmel_a5_regs); i++)
+		int serie = -1;
+		int device = -1;
+		for (unsigned i = 0; mpu_regs[i].cidr_reg; i++)
 		{
-			U32 udata = 0;
-			JLINKARM_ReadMemU32(atmel_a5_regs[i].cidr, 1, &udata, NULL);
-			if ((udata & atmel_a5_regs[i].cidr_mask) == atmel_a5_regs[i].cidr_expected)
-			{
-				m_device = i;
+			U32 cidr = 0;
+			JLINKARM_ReadMemU32(mpu_regs[i].cidr_reg, 1, &cidr, NULL);
+
+			if ((cidr & mpu_regs[i].cidr_mask) == mpu_regs[i].cidr) {
+				serie = i;
+
+				U32 exid = 0;
+				JLINKARM_ReadMemU32(mpu_regs[i].exid_reg, 1, &exid, NULL);
+				for (unsigned j = 0; mpu_regs[i].devices[j].name; j++) {
+					if (exid == mpu_regs[i].devices[j].exid) {
+						device = j;
+						break;
+					}
+				}
+
 				break;
 			}
 		}
-		if (m_device >= 0)
+		if (serie >= 0)
 		{
-			qCInfo(sambaLogConnJlink, "Found Atmel %s device, disabling watchdog", atmel_a5_regs[m_device].name);
+			if (device >= 0)
+				qCInfo(sambaLogConnJlink, "Found Atmel %s device", mpu_regs[serie].devices[device].name);
+			else
+				qCInfo(sambaLogConnJlink, "Found Unknown Atmel %s device", mpu_regs[serie].name);
 
 			// Disable Watchdog
-			JLINKARM_WriteU32(atmel_a5_regs[m_device].wdt_mr, WDT_MR_WDDIS);
+			qCInfo(sambaLogConnJlink, "Disabling watchdog");
+			JLINKARM_WriteU32(mpu_regs[serie].wdt_mr_reg, WDT_MR_WDDIS);
 
-			if (atmel_a5_regs[m_device].sfr_l2cc_hramc)
+			if (mpu_regs[serie].sfr_l2cc_hramc_reg)
 			{
 				// Reconfigure L2-Cache as SRAM
-				JLINKARM_WriteU32(atmel_a5_regs[m_device].sfr_l2cc_hramc, 0);
+				JLINKARM_WriteU32(mpu_regs[serie].sfr_l2cc_hramc_reg, 0);
 			}
 		}
 		else
 		{
-			qCInfo(sambaLogConnJlink, "Found Unknown Cortex-A5 device");
+			JLINKARM_Close();
+			emit connectionFailed("Could not identify device");
 		}
 
 		JLINKARM_SetSpeed(JLINKARM_SPEED_AUTO);
@@ -241,6 +299,7 @@ void SambaConnectionJlinkHelper::open()
 		JLINKARM_Halt();
 		while (!JLINKARM_IsHalted()) {
 			if (timer.hasExpired(INITIAL_HALT_TIMEOUT)) {
+				JLINKARM_Close();
 				emit connectionFailed("Timeout while waiting for device to be halted");
 				return;
 			}
@@ -251,9 +310,7 @@ void SambaConnectionJlinkHelper::open()
 	}
 	else
 	{
-		if (JLINKARM_IsOpen())
-			JLINKARM_Close();
-
+		JLINKARM_Close();
 		emit connectionFailed("Unsupported device family");
 	}
 }
