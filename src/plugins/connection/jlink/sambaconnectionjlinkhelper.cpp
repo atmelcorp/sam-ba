@@ -34,6 +34,15 @@ struct mpu_regs {
 	const struct mpu_device* devices;
 };
 
+static const struct mpu_device sam9xx5_devices[] = {
+	{ "SAM9G15", 0x00000000 },
+	{ "SAM9G35", 0x00000001 },
+	{ "SAM9X35", 0x00000002 },
+	{ "SAM9G25", 0x00000003 },
+	{ "SAM9X25", 0x00000004 },
+	{ NULL, 0},
+};
+
 static const struct mpu_device sama5d2_devices[] = {
 	{ "SAMA5D21-CU", 0x0000005a },
 	{ "SAMA5D22-CN", 0x00000069 },
@@ -67,12 +76,13 @@ static const struct mpu_device sama5d4_devices[] = {
 	{ NULL, 0 },
 };
 
-/* Register definitions for SAMA5 devices */
+/* Register definitions for SAM9 & SAMA5 devices */
 /* Order is important: probing stops on first matching device */
 static const struct mpu_regs mpu_regs[] = {
 	{ "SAMA5D2x", 0xfc069000, 0xffffffe0, 0x8a5c08c0, 0xfc069004, 0xf8048044, 0xf8030058, sama5d2_devices },
 	{ "SAMA5D4x", 0xfc069040, 0xfffffff0, 0x8a5c07c0, 0xfc069044, 0xfc068644, 0, sama5d4_devices },
 	{ "SAMA5D3x", 0xffffee40, 0xffffffff, 0x8a5c07c2, 0xffffee44, 0xfffffe44, 0, sama5d3_devices },
+	{ "SAM9xx5",  0xfffff240, 0xffffffff, 0x819a05a1, 0xfffff244, 0xfffffe44, 0, sam9xx5_devices },
 	{ NULL, 0, 0, 0, 0, 0, 0, NULL },
 };
 
@@ -220,7 +230,8 @@ void SambaConnectionJlinkHelper::open()
 	while (!JLINKARM_IsHalted()) {}
 
 	m_devFamily = JLINKARM_GetDeviceFamily();
-	if (m_devFamily == JLINKARM_DEV_FAMILY_CORTEX_A5)
+	if ((m_devFamily == JLINKARM_DEV_FAMILY_CORTEX_A5) ||
+	    (m_devFamily == JLINKARM_DEV_FAMILY_ARM9))
 	{
 		// Configure SVC Mode without IRQ & FIQ
 		JLINKARM_WriteReg(ARM_REG_CPSR, F_BIT | I_BIT | ARM_MODE_SVC);
@@ -413,7 +424,8 @@ bool SambaConnectionJlinkHelper::write(quint32 address, SambaByteArray *data)
 
 bool SambaConnectionJlinkHelper::go(quint32 address)
 {
-	if (m_devFamily == JLINKARM_DEV_FAMILY_CORTEX_A5)
+	if ((m_devFamily == JLINKARM_DEV_FAMILY_CORTEX_A5) ||
+	    (m_devFamily == JLINKARM_DEV_FAMILY_ARM9))
 	{
 		if (!JLINKARM_IsHalted())
 			return false;
