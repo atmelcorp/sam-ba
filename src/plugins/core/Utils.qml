@@ -38,6 +38,27 @@ UtilsBase {
 	}
 
 	/*!
+		\qmlmethod string Utils::parseInteger(string text)
+		\brief Convert \a decimal or hexadecimal string to a number.
+
+		Returns the parsed number, or Number.NaN if the string could
+		not be parsed.
+	*/
+	function parseInteger(obj) {
+		var text = obj.toString().trim()
+
+		var hexPattern = /^0x[0-9a-f]+$/i
+		if (hexPattern.test(text))
+			return parseInt(text, 16)
+
+		var decPattern = /^[0-9]+$/
+		if (decPattern.test(text))
+			return parseInt(text, 10)
+
+		return Number.NaN
+	}
+
+	/*!
 	\qmlmethod void Utils::sleep(int secs)
 	\brief Pause the current thread for \a secs seconds.
 	*/
