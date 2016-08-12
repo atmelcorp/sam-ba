@@ -17,7 +17,7 @@ import SAMBA 3.1
 /*!
 	\qmltype Applet
 	\inqmlmodule SAMBA
-	\brief TODO
+	\brief Contains a description of a SAM-BA Applet and its runtime variables
 */
 AppletBase {
 	/*!

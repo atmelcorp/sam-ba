@@ -1,0 +1,14 @@
+/*!
+	\qmlproperty string Device::name
+	\brief The device name
+*/
+
+/*!
+	\qmlproperty string Device::applets
+	\brief A list of all supported applets for the device
+*/
+
+/*!
+	\qmlmethod Applet Device::applet(string name)
+	Returns the applet with name \a name or \a undefined if not found.
+*/

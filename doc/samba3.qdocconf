@@ -11,6 +11,8 @@ headerdirs = \
 	../src/plugins/connection/serial \
 	../src/plugins/connection/jlink \
 	../src/plugins/device/sama5d2 \
+	../src/plugins/device/sama5d3 \
+	../src/plugins/device/sama5d4 \
 	../src/plugins/device/samv7
 sourcedirs = . \
 	../src/sambacommon \
@@ -18,6 +20,8 @@ sourcedirs = . \
 	../src/plugins/connection/serial \
 	../src/plugins/connection/jlink \
 	../src/plugins/device/sama5d2 \
+	../src/plugins/device/sama5d3 \
+	../src/plugins/device/sama5d4 \
 	../src/plugins/device/samv7
 exampledirs =
 

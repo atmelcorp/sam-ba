@@ -9,10 +9,10 @@ SAM-BA uses Qt5 QML language for scripting.
 
 \section2 Running a SAM-BA script
 
-SAM-BA scripts are QML scripts and can be loaded using the \tt sambacmd command-line tool.
+SAM-BA scripts are QML scripts and can be loaded using the \tt sam-ba command-line tool.
 
 For example, to run 'my-script.qml', the following command line is used:
-\tt{sambacmd -x my-script.qml}
+\tt{sam-ba -x my-script.qml}
 
 \section2 Initial QML script
 

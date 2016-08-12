@@ -17,7 +17,7 @@ import SAMBA 3.1
 /*!
 	\qmltype AppletCommand
 	\inqmlmodule SAMBA
-	\brief TODO
+	\brief Defines a single Applet command
 */
 AppletCommandBase {
 	timeout: 500

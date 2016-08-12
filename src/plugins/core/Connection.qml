@@ -123,11 +123,6 @@ It is recommended to use the AppletLoader helper type when using applets. It con
 */
 ConnectionBase {
 	/*!
-	\qmlproperty Applet Connection::applet
-	\brief The current applet, or \tt undefined if no applet is loaded.
-	*/
-
-	/*!
 	\qmlsignal Connection::connectionOpened()
 	\brief This signal is triggered when the connection has been opened successfully.
 	*/

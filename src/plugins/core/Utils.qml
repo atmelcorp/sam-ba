@@ -57,47 +57,4 @@ UtilsBase {
 
 		return Number.NaN
 	}
-
-	/*!
-	\qmlmethod void Utils::sleep(int secs)
-	\brief Pause the current thread for \a secs seconds.
-	*/
-
-	/*!
-	\qmlmethod void Utils::msleep(int msecs)
-	\brief Pause the current thread for \a msecs milliseconds.
-	*/
-
-	/*!
-	\qmlmethod void Utils::usleep(int usecs)
-	\brief Pause the current thread for \a usecs microseconds.
-	*/
-
-	/*!
-	\qmlmethod ByteArray Utils::createByteArray(int length)
-	\brief Create a new empty ByteArray of size \a length bytes.
-
-	Returns the newly created ByteArray.
-	*/
-
-	/*!
-	\qmlmethod ByteArray Utils::readUrl(string fileUrl)
-	\brief Read the contents of URL \a fileUrl into a new ByteArray.
-
-	Returns the newly created ByteArray, or \tt undefined if an error occurred.
-	*/
-
-	/*!
-	\qmlmethod ByteArray Utils::readFile(string fileName)
-	\brief Read the contents of file \a fileName into a new ByteArray.
-
-	Returns the newly created ByteArray, or \tt undefined if an error occurred.
-	*/
-
-	/*!
-	\qmlmethod bool Utils::writeFile(string fileName, ByteArray data)
-	\brief Write the byte array \a data into file \a fileName.
-
-	Returns true on success, false otherwise.
-	*/
 }
