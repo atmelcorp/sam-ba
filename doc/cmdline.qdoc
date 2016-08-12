@@ -98,14 +98,19 @@ The monitor commands supported may depend on the connection type selected, but
 usually include:
 \table
 \header
-\li Command \li 1st argument \li 2nd argument \li Description
-\row \li read8 \li address \li \e{none} \li Read a byte from \e{address}
-\row \li read16 \li address \li \e{none} \li Read a half-word (16-bit) from address \e{address}
-\row \li read32 \li address \li \e{none} \li Read a word (32-bit) from address \e{address}
-\row \li write8\li address \li value \li Write byte \e{value} to \e{address}
-\row \li write16 \li address \li value \li Write half-word \e{value} to address \e{address}
-\row \li write32 \li address \li value \li Write word \e{value} to address \e{address}
+\li Command \li 1st argument \li 2nd argument \li 3rd argument \li Description
+\row \li read8   \li address  \li \e{none} \li \e{none} \li Read a byte from \e{address}
+\row \li read16  \li address  \li \e{none} \li \e{none} \li Read a half-word (16-bit) from address \e{address}
+\row \li read32  \li address  \li \e{none} \li \e{none} \li Read a word (32-bit) from address \e{address}
+\row \li read    \li filename \li address  \li length   \li Read \e{length} bytes from address \e{address} and write them to file \e{filename}
+\row \li write8  \li address  \li value    \li \e{none} \li Write byte \e{value} to \e{address}
+\row \li write16 \li address  \li value    \li \e{none} \li Write half-word \e{value} to address \e{address}
+\row \li write32 \li address  \li value    \li \e{none} \li Write word \e{value} to address \e{address}
+\row \li write   \li filename \li address  \li \e{none} \li Read contents of file \e{filename} and write it at address \e{address}
+\row \li execute \li address  \li \e{none} \li \e{none} \li Execute code at address \e{address}
 \endtable
+
+Address, length and value arguments can be provided in hexadecimal (prefixed with "0x") or in decimal.
 
 \section1 Applet Commands
 
@@ -207,7 +212,7 @@ equivalent:
 \li erase
 \endlist
 
-Depending on the applet, some commands my not be supported, or there may be
+Depending on the applet, some commands may not be supported, or there may be
 some additional ones. The syntax of the commands may also change between
 applets. Please use "\e{-c help}" to get the list of supported commands and
 their usage.

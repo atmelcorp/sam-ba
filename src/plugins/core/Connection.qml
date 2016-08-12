@@ -398,8 +398,9 @@ ConnectionBase {
 
 	/*! \internal */
 	function commandLineCommands() {
-		return ["read8", "read16", "read32",
-				"write8", "write16", "write32"]
+		return ["read8", "read16", "read32", "read",
+		        "write8", "write16", "write32", "write",
+		        "execute"]
 	}
 
 	/*! \internal */
@@ -425,6 +426,13 @@ ConnectionBase {
 			        "Example:",
 			        "    read32:0x200000  read a word at address 0x200000"]
 		}
+		else if (command === "read") {
+			return ["* read - read data into a file",
+			        "Syntax:",
+			        "    read:<filename>:<addr>:<length>",
+			        "Example:",
+			        "    read:test.bin:0x200000:512  read 512 bytes from address 0x200000 into file test.bin"]
+		}
 		else if (command === "write8") {
 			return ["* write8 - write a byte",
 			        "Syntax:",
@@ -445,6 +453,20 @@ ConnectionBase {
 			        "    write32:<addr>:<value>",
 			        "Example:",
 			        "    write32:0x200000:0x12345678  write word 0x12345678 at address 0x200000"]
+		}
+		else if (command === "write") {
+			return ["* write - write data from a file",
+			        "Syntax:",
+			        "    write:<filename>:<addr>",
+			        "Example:",
+			        "    write:test.bin:0x200000  write data from file test.bin to address 0x200000"]
+		}
+		else if (command === "execute") {
+			return ["* execute - execute code",
+			        "Syntax:",
+			        "    execute:<addr>",
+			        "Example:",
+			        "    execute:0x200000  execute code at 0x200000"]
 		}
 	}
 
@@ -488,6 +510,26 @@ ConnectionBase {
 			return "Failed to run command."
 		print("read32(" + Utils.hex(addr, 8) + ")" + "=" +
 		             Utils.hex(value, 8))
+	}
+
+	/*! \internal */
+	function commandLineCommandRead(args) {
+		if (args.length !== 3)
+			return "Invalid number of arguments (expected 3)."
+		var fileName = args[0]
+		var addr = Utils.parseInteger(args[1])
+		if (isNaN(addr))
+			return "Invalid address parameter (not a number)."
+		var length = Utils.parseInteger(args[2])
+		if (isNaN(length))
+			return "Invalid length parameter (not a number)."
+		var data = read(addr, length)
+		if (!data)
+			return "Failed reading from device."
+		if (!data.writeFile(fileName))
+			return "Failed writing to file."
+		print("read(" + fileName + ", " + Utils.hex(addr, 8) + ", " +
+		      Utils.hex(length, 8) + ")")
 	}
 
 	/*! \internal */
@@ -539,6 +581,34 @@ ConnectionBase {
 	}
 
 	/*! \internal */
+	function commandLineCommandWrite(args) {
+		if (args.length !== 2)
+			return "Invalid number of arguments (expected 2)."
+		var fileName = args[0]
+		var addr = Utils.parseInteger(args[1])
+		if (isNaN(addr))
+			return "Invalid address parameter (not a number)."
+		var data = Utils.readFile(fileName)
+		if (!data)
+			return "Failed reading from file."
+		if (!write(addr, data))
+			return "Failed writing to device."
+		print("write(" + fileName + ", " + Utils.hex(addr, 8) + ")")
+	}
+
+	/*! \internal */
+	function commandLineCommandExecute(args) {
+		if (args.length !== 1)
+			return "Invalid number of arguments (expected 1)."
+		var addr = Utils.parseInteger(args[0])
+		if (isNaN(addr))
+			return "Invalid address parameter (not a number)."
+		if (!go(addr))
+			return "Failed to run command."
+		print("execute(" + Utils.hex(addr, 8) + ")")
+	}
+
+	/*! \internal */
 	function commandLineCommand(command, args) {
 		if (command === "read8")
 			return commandLineCommandRead8(args)
@@ -546,12 +616,18 @@ ConnectionBase {
 			return commandLineCommandRead16(args)
 		else if (command === "read32")
 			return commandLineCommandRead32(args)
+		else if (command === "read")
+			return commandLineCommandRead(args)
 		else if (command === "write8")
 			return commandLineCommandWrite8(args)
 		else if (command === "write16")
 			return commandLineCommandWrite16(args)
 		else if (command === "write32")
 			return commandLineCommandWrite32(args)
+		else if (command === "write")
+			return commandLineCommandWrite(args)
+		else if (command === "execute")
+			return commandLineCommandExecute(args)
 		else
 			return "Unknown command."
 	}
