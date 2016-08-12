@@ -33,7 +33,7 @@ static bool serial_is_at91(const QSerialPortInfo& info)
 
 SambaConnectionSerialHelper::SambaConnectionSerialHelper(QQuickItem* parent)
 	: QQuickItem(parent),
-      m_port(""),
+	  m_port(""),
 	  m_baudRate(0)
 {
 }
@@ -130,7 +130,7 @@ void SambaConnectionSerialHelper::open()
 
 		// switch to binary mode
 		writeSerial(QString("N#"));
-		QString resp(QString::fromLatin1(readAllSerial()));
+		QString resp(QString::fromLatin1(readAllSerial(2)));
 		if (resp == "\n\r")
 		{
 			emit connectionOpened(m_at91);
@@ -178,16 +178,23 @@ void SambaConnectionSerialHelper::writeSerial(const QByteArray &data)
 	m_serial.waitForBytesWritten(10);
 }
 
-QByteArray SambaConnectionSerialHelper::readAllSerial()
+QByteArray SambaConnectionSerialHelper::readAllSerial(int minBytes, int timeout)
 {
 	QByteArray resp;
-	while (true)
-	{
-		m_serial.waitForReadyRead(10);
-		if (m_serial.bytesAvailable() == 0)
+	QElapsedTimer timer;
+
+	/* timeout=0 -> default timeout, timeout<0 -> no timeout */
+	if (timeout == 0)
+		timeout = 10;
+
+	timer.start();
+	do {
+		if (timeout > 0 && (timer.elapsed() >= timeout))
 			break;
-		resp.append(m_serial.readAll());
-	};
+		m_serial.waitForReadyRead(10);
+		if (m_serial.bytesAvailable())
+			resp.append(m_serial.readAll());
+	} while (resp.length() < minBytes);
 
 	qCDebug(sambaLogConnSerial).noquote().nospace() << "SERIAL>>" << resp.toHex();
 
@@ -203,57 +210,66 @@ void SambaConnectionSerialHelper::close()
 	}
 }
 
-QVariant SambaConnectionSerialHelper::readu8(quint32 address)
+QVariant SambaConnectionSerialHelper::readu8(quint32 address, int timeout)
 {
 	if (!m_serial.isOpen())
 		return QVariant();
 
 	writeSerial(QString().sprintf("o%x,#", address));
 
-	QByteArray resp = readAllSerial();
+	QByteArray resp = readAllSerial(1, timeout);
 	quint8 value = (quint8)resp[0];
 	return QVariant(value);
 }
 
-QVariant SambaConnectionSerialHelper::readu16(quint32 address)
+QVariant SambaConnectionSerialHelper::readu16(quint32 address, int timeout)
 {
 	if (!m_serial.isOpen())
 		return QVariant();
 
 	writeSerial(QString().sprintf("h%x,#", address));
 
-	QByteArray resp = readAllSerial();
+	QByteArray resp = readAllSerial(2, timeout);
 	quint16 value = (((quint8)resp[1]) << 8) + ((quint8)resp[0]);
 	return QVariant(value);
 }
 
-QVariant SambaConnectionSerialHelper::readu32(quint32 address)
+QVariant SambaConnectionSerialHelper::readu32(quint32 address, int timeout)
 {
 	if (!m_serial.isOpen())
 		return false;
 
 	writeSerial(QString().sprintf("w%x,#", address));
 
-	QByteArray resp = readAllSerial();
+	QByteArray resp = readAllSerial(4, timeout);
 	quint32 value = (((quint8)resp[3]) << 24) + (((quint8)resp[2]) << 16) +
 			(((quint8)resp[1]) << 8) + ((quint8)resp[0]);
 	return QVariant(value);
 }
 
-SambaByteArray *SambaConnectionSerialHelper::read(quint32 address, unsigned length)
+SambaByteArray *SambaConnectionSerialHelper::read(quint32 address, unsigned length, int timeout)
 {
 	if (!m_serial.isOpen() || length == 0)
 		return new SambaByteArray();
 
 	QByteArray data;
+	QElapsedTimer timer;
+
+	/* timeout=0 -> default timeout, timeout<0 -> no timeout */
+	if (timeout == 0)
+		timeout = 10;
+
 	int offset = 0;
+	timer.start();
 	while (length > 0)
 	{
+		if (timeout > 0 && (timer.elapsed() >= timeout))
+			break;
 		int chunkSize = length > MAX_BUF_SIZE ? MAX_BUF_SIZE : length;
 		if ((chunkSize & 63) == 0)
 			chunkSize--;
 		writeSerial(QString().sprintf("R%x,%x#", address + offset, chunkSize));
-		data.append(readAllSerial());
+		data.append(readAllSerial(chunkSize, timeout - timer.elapsed()));
 		offset += chunkSize;
 		length -= chunkSize;
 	}

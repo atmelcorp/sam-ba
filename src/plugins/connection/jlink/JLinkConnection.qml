@@ -65,28 +65,28 @@ Connection {
 	/*!
 	\sa Connection::readu8()
 	*/
-	function readu8(address) {
+	function readu8(address, timeout) {
 		return helper.readu8(address)
 	}
 
 	/*!
 	\sa Connection::readu16()
 	*/
-	function readu16(address) {
+	function readu16(address, timeout) {
 		return helper.readu16(address)
 	}
 
 	/*!
 	\sa Connection::readu32()
 	*/
-	function readu32(address) {
+	function readu32(address, timeout) {
 		return helper.readu32(address)
 	}
 
 	/*!
 	\sa Connection::read()
 	*/
-	function read(address, length) {
+	function read(address, length, timeout) {
 		return helper.read(address, length)
 	}
 

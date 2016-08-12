@@ -169,26 +169,35 @@ ConnectionBase {
 	}
 
 	/*!
-	\qmlmethod int Connection::readu8(int address)
+	\qmlmethod int Connection::readu8(int address, int timeout)
 	\brief Read a single unsigned byte at the given \a address.
+
+	Returns the unsigned byte read at \a address or undefined if an error
+	occured or if no value could be read after \a timeout milliseconds.
 	*/
-	function readu8(address) {
+	function readu8(address, timeout) {
 		return
 	}
 
 	/*!
-	\qmlmethod int Connection::readu16(int address)
+	\qmlmethod int Connection::readu16(int address, int timeout)
 	\brief Read a single unsigned 16-bit word at the given \a address.
+
+	Returns the unsigned 16-bit word read at \a address or undefined if an
+	error occured or if no value could be read after \a timeout milliseconds.
 	*/
-	function readu16(address) {
+	function readu16(address, timeout) {
 		return
 	}
 
 	/*!
-	\qmlmethod int Connection::readu32(int address)
+	\qmlmethod int Connection::readu32(int address, int timeout)
 	\brief Read a single unsigned 32-bit word at the given \a address.
+
+	Returns the unsigned 32-bit word read at \a address or undefined if an
+	error occured or if no value could be read after \a timeout milliseconds.
 	*/
-	function readu32(address) {
+	function readu32(address, timeout) {
 		return
 	}
 
@@ -196,10 +205,10 @@ ConnectionBase {
 	\qmlmethod ByteArray Connection::read(int address, int length)
 	\brief Read \a length bytes at address \a address.
 
-	Returns a ByteArray with the data on success, or \tt undefined if an error
-	occured.
+	Returns a ByteArray with the data or undefined if an error occured or
+	if no data could be read after \a timeout milliseconds.
 	*/
-	function read(address, length) {
+	function read(address, length, timeout) {
 		return
 	}
 
@@ -209,7 +218,7 @@ ConnectionBase {
 
 	Returns true on success, false otherwise.
 	*/
-	function writeu8(address, data) {
+	function writeu8(address, data, timeout) {
 		return false
 	}
 
@@ -372,16 +381,16 @@ ConnectionBase {
 
 		// wait for completion
 		var startTime = new Date().getTime()
-		var currentTime = startTime
-		while ((currentTime - startTime) < cmd.timeout) {
-			var ack = readu32(applet.mailboxAddr);
+		var elapsed = 0
+		while (elapsed < cmd.timeout) {
+			var ack = readu32(applet.mailboxAddr, cmd.timeout - elapsed);
 			if (ack === (0xffffffff - cmd.code)) {
 				// return applet status
 				return readu32(applet.mailboxAddr + 4)
 			}
 
 			Utils.msleep(5)
-			currentTime = new Date().getTime()
+			elapsed = new Date().getTime() - startTime
 		}
 	}
 

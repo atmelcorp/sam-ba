@@ -81,29 +81,29 @@ Connection {
 	/*!
 	\sa Connection::readu8()
 	*/
-	function readu8(address) {
-		return helper.readu8(address)
+	function readu8(address, timeout) {
+		return helper.readu8(address, timeout)
 	}
 
 	/*!
 	\sa Connection::readu16()
 	*/
-	function readu16(address) {
-		return helper.readu16(address)
+	function readu16(address, timeout) {
+		return helper.readu16(address, timeout)
 	}
 
 	/*!
 	\sa Connection::readu32()
 	*/
-	function readu32(address) {
-		return helper.readu32(address)
+	function readu32(address, timeout) {
+		return helper.readu32(address, timeout)
 	}
 
 	/*!
 	\sa Connection::read()
 	*/
-	function read(address, length) {
-		return helper.read(address, length)
+	function read(address, length, timeout) {
+		return helper.read(address, length, timeout)
 	}
 
 	/*!

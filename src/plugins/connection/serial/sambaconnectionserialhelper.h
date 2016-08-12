@@ -41,10 +41,10 @@ public:
 	Q_INVOKABLE void open();
 	Q_INVOKABLE void close();
 
-	Q_INVOKABLE QVariant readu8(quint32 address);
-	Q_INVOKABLE QVariant readu16(quint32 address);
-	Q_INVOKABLE QVariant readu32(quint32 address);
-	Q_INVOKABLE SambaByteArray* read(quint32 address, unsigned length);
+	Q_INVOKABLE QVariant readu8(quint32 address, int timeout);
+	Q_INVOKABLE QVariant readu16(quint32 address, int timeout);
+	Q_INVOKABLE QVariant readu32(quint32 address, int timeout);
+	Q_INVOKABLE SambaByteArray* read(quint32 address, unsigned length, int timeout);
 
 	Q_INVOKABLE bool writeu8(quint32 address, quint8 data);
 	Q_INVOKABLE bool writeu16(quint32 address, quint16 data);
@@ -63,7 +63,7 @@ signals:
 private:
 	void writeSerial(const QString &str);
 	void writeSerial(const QByteArray &data);
-	QByteArray readAllSerial();
+	QByteArray readAllSerial(int minBytes = 0, int timeout = 0);
 
 private:
 	bool m_at91;
