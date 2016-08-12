@@ -54,21 +54,21 @@ Applet {
 		switch (args.length) {
 		case 3:
 			if (args[2].length > 0) {
-				device.config.qspiFreq = Number(args[2]);
+				device.config.qspiFreq = Utils.parseInteger(args[2]);
 				if (isNaN(device.config.qspiFreq))
 					return "Invalid QSPI frequency (not a number)."
 			}
 			// fall-through
 		case 2:
 			if (args[1].length > 0) {
-				device.config.qspiIoset = Number(args[1]);
+				device.config.qspiIoset = Utils.parseInteger(args[1]);
 				if (isNaN(device.config.qspiIoset))
 					return "Invalid QSPI ioset (not a number)."
 			}
 			// fall-through
 		case 1:
 			if (args[0].length > 0) {
-				device.config.qspiInstance = Number(args[0]);
+				device.config.qspiInstance = Utils.parseInteger(args[0]);
 				if (isNaN(device.config.qspiInstance))
 					return "Invalid QSPI instance (not a number)."
 			}

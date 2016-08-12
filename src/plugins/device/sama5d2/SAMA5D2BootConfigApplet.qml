@@ -125,7 +125,7 @@ Applet {
 		// value (required)
 		if (args[1].length === 0)
 			return "Invalid value parameter (empty)"
-		var value = Number(args[1])
+		var value = Utils.parseInteger(args[1])
 		if (isNaN(value)) {
 			if (index === 0)
 				value = BSCR.fromText(args[1])

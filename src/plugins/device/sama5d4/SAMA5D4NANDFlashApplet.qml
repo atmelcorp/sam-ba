@@ -74,21 +74,21 @@ Applet {
 		{
 		case 3:
 			if (args[2].length > 0) {
-				device.config.nandHeader = Number(args[2]);
+				device.config.nandHeader = Utils.parseInteger(args[2]);
 				if (isNaN(device.config.nandHeader))
 					return "Invalid NAND header (not a number)."
 			}
 			// fall-through
 		case 2:
 			if (args[1].length > 0) {
-				device.config.nandBusWidth = Number(args[1]);
+				device.config.nandBusWidth = Utils.parseInteger(args[1]);
 				if (isNaN(device.config.nandBusWidth))
 					return "Invalid NAND bus width (not a number)."
 			}
 			// fall-through
 		case 1:
 			if (args[0].length > 0) {
-				device.config.nandIoset = Number(args[0]);
+				device.config.nandIoset = Utils.parseInteger(args[0]);
 				if (isNaN(device.config.nandIoset))
 					return "Invalid NAND ioset (not a number)."
 			}

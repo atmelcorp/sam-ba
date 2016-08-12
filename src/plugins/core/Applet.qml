@@ -980,14 +980,14 @@ AppletBase {
 		switch (args.length) {
 		case 2:
 			if (args[1].length !== 0) {
-				length = Number(args[1])
+				length = Utils.parseInteger(args[1])
 				if (isNaN(length))
 					return "Invalid length parameter (not a number)."
 			}
 			// fall-through
 		case 1:
 			if (args[0].length !== 0) {
-				addr = Number(args[0])
+				addr = Utils.parseInteger(args[0])
 				if (isNaN(addr))
 					return "Invalid address parameter (not a number)."
 			}
@@ -1027,7 +1027,7 @@ AppletBase {
 		if (args.length > 1) {
 			// address (optional)
 			if (args[1].length !== 0) {
-				addr = Number(args[1])
+				addr = Utils.parseInteger(args[1])
 				if (isNaN(addr))
 					return "Invalid address parameter (not a number)."
 			}
@@ -1036,7 +1036,7 @@ AppletBase {
 		if (args.length > 2) {
 			// length (optional)
 			if (args[2].length !== 0) {
-				length = Number(args[2])
+				length = Utils.parseInteger(args[2])
 				if (isNaN(length))
 					return "Invalid length parameter (not a number)."
 			}
@@ -1071,7 +1071,7 @@ AppletBase {
 		// address (optional)
 		if (args.length > 1) {
 			if (args[1].length !== 0) {
-				addr = Number(args[1])
+				addr = Utils.parseInteger(args[1])
 				if (isNaN(addr))
 					return "Invalid address parameter (not a number)."
 			}

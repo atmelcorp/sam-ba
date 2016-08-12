@@ -363,12 +363,12 @@ ConnectionBase {
 		// write applet arguments
 		if (Array.isArray(args)) {
 			for (var i = 0; i < args.length; i++) {
-				writeu32(applet.mailboxAddr + mbxOffset, Number(args[i]));
+				writeu32(applet.mailboxAddr + mbxOffset, Utils.parseInteger(args[i]));
 				mbxOffset += 4;
 			}
 		}
 		else if (typeof args === "number") {
-			writeu32(applet.mailboxAddr + mbxOffset, Number(args))
+			writeu32(applet.mailboxAddr + mbxOffset, Utils.parseInteger(args))
 			mbxOffset += 4
 		}
 		else
@@ -452,7 +452,7 @@ ConnectionBase {
 	function commandLineCommandRead8(args) {
 		if (args.length !== 1)
 			return "Invalid number of arguments (expected 1)."
-		var addr = Number(args[0])
+		var addr = Utils.parseInteger(args[0])
 		if (isNaN(addr))
 			return "Invalid address parameter (not a number)."
 		var value = readu8(addr)
@@ -466,7 +466,7 @@ ConnectionBase {
 	function commandLineCommandRead16(args) {
 		if (args.length !== 1)
 			return "Invalid number of arguments (expected 1)."
-		var addr = Number(args[0])
+		var addr = Utils.parseInteger(args[0])
 		if (isNaN(addr))
 			return "Invalid address parameter (not a number)."
 		var value = readu16(addr)
@@ -480,7 +480,7 @@ ConnectionBase {
 	function commandLineCommandRead32(args) {
 		if (args.length !== 1)
 			return "Invalid number of arguments (expected 1)."
-		var addr = Number(args[0])
+		var addr = Utils.parseInteger(args[0])
 		if (isNaN(addr))
 			return "Invalid address parameter (not a number)."
 		var value = readu32(addr)
@@ -494,10 +494,10 @@ ConnectionBase {
 	function commandLineCommandWrite8(args) {
 		if (args.length !== 2)
 			return "Invalid number of arguments (expected 2)."
-		var addr = Number(args[0])
+		var addr = Utils.parseInteger(args[0])
 		if (isNaN(addr))
 			return "Invalid address parameter (not a number)."
-		var value = Number(args[1])
+		var value = Utils.parseInteger(args[1])
 		if (isNaN(value))
 			return "Invalid value parameter (not a number)."
 		if (!writeu8(addr, value & 0xff))
@@ -510,10 +510,10 @@ ConnectionBase {
 	function commandLineCommandWrite16(args) {
 		if (args.length !== 2)
 			return "Invalid number of arguments (expected 2)."
-		var addr = Number(args[0])
+		var addr = Utils.parseInteger(args[0])
 		if (isNaN(addr))
 			return "Invalid address parameter (not a number)."
-		var value = Number(args[1])
+		var value = Utils.parseInteger(args[1])
 		if (isNaN(value))
 			return "Invalid value parameter (not a number)."
 		if (!writeu16(addr, value & 0xffff))
@@ -526,10 +526,10 @@ ConnectionBase {
 	function commandLineCommandWrite32(args) {
 		if (args.length !== 2)
 			return "Invalid number of arguments (expected 2)."
-		var addr = Number(args[0])
+		var addr = Utils.parseInteger(args[0])
 		if (isNaN(addr))
 			return "Invalid address parameter (not a number)."
-		var value = Number(args[1])
+		var value = Utils.parseInteger(args[1])
 		if (isNaN(value))
 			return "Invalid value parameter (not a number)."
 		if (!writeu32(addr, value))

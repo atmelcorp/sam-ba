@@ -59,28 +59,28 @@ Applet {
 		{
 		case 4:
 			if (args[3].length > 0) {
-				device.config.spiFreq = Number(args[3]);
+				device.config.spiFreq = Utils.parseInteger(args[3]);
 				if (isNaN(device.config.spiFreq))
 					return "Invalid SPI frequency (not a number)."
 			}
 			// fall-through
 		case 3:
 			if (args[2].length > 0) {
-				device.config.spiChipSelect = Number(args[2]);
+				device.config.spiChipSelect = Utils.parseInteger(args[2]);
 				if (isNaN(device.config.spiChipSelect))
 					return "Invalid SPI chip select (not a number)."
 			}
 			// fall-through
 		case 2:
 			if (args[1].length > 0) {
-				device.config.spiIoset = Number(args[1]);
+				device.config.spiIoset = Utils.parseInteger(args[1]);
 				if (isNaN(device.config.spiIoset))
 					return "Invalid SPI ioset (not a number)."
 			}
 			// fall-through
 		case 1:
 			if (args[0].length > 0) {
-				device.config.spiInstance = Number(args[0]);
+				device.config.spiInstance = Utils.parseInteger(args[0]);
 				if (isNaN(device.config.spiInstance))
 					return "Invalid SPI instance (not a number)."
 			}

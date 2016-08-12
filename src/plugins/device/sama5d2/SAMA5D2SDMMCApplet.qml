@@ -58,28 +58,28 @@ Applet {
 		{
 		case 4:
 			if (args[3].length > 0) {
-				device.config.sdmmcVoltages = Number(args[3]);
+				device.config.sdmmcVoltages = Utils.parseInteger(args[3]);
 				if (isNaN(device.config.sdmmcVoltages))
 					return "Invalid SD/MMC voltages (not a number)."
 			}
 			// fall-through
 		case 3:
 			if (args[2].length > 0) {
-				device.config.sdmmcBusWidth = Number(args[2]);
+				device.config.sdmmcBusWidth = Utils.parseInteger(args[2]);
 				if (isNaN(device.config.sdmmcBusWidth))
 					return "Invalid SD/MMC bus width (not a number)."
 			}
 			// fall-through
 		case 2:
 			if (args[1].length > 0) {
-				device.config.sdmmcPartition = Number(args[1]);
+				device.config.sdmmcPartition = Utils.parseInteger(args[1]);
 				if (isNaN(device.config.sdmmcPartition))
 					return "Invalid SD/MMC partition (not a number)."
 			}
 			// fall-through
 		case 1:
 			if (args[0].length > 0) {
-				device.config.sdmmcInstance = Number(args[0]);
+				device.config.sdmmcInstance = Utils.parseInteger(args[0]);
 				if (isNaN(device.config.sdmmcInstance))
 					return "Invalid SD/MMC instance (not a number)."
 			}
