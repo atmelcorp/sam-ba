@@ -1,0 +1,5 @@
+{
+	"module": "SAMBA.Device.SAM9xx5",
+	"module_version": "3.1",
+	"classname": "SAM9xx5"
+}

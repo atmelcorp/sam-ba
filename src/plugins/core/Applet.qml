@@ -116,6 +116,10 @@ AppletBase {
 				throw new Error("Applet does not support 'Initialize' command")
 			}
 		}
+
+		// limit buffer size
+		if (bufferSize > 128*1024)
+			bufferSize = 128*1024
 	}
 
 	/*!

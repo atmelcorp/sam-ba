@@ -1,0 +1,7 @@
+module SAMBA.Device.SAM9xx5
+SAM9xx5 3.1 SAM9xx5.qml
+SAM9xx5Config 3.1 SAM9xx5Config.qml
+SAM9xx5LowlevelApplet 3.1 SAM9xx5LowlevelApplet.qml
+SAM9xx5ExtRamApplet 3.1 SAM9xx5ExtRamApplet.qml
+SAM9xx5NANDFlashApplet 3.1 SAM9xx5NANDFlashApplet.qml
+SAM9xx5SerialFlashApplet 3.1 SAM9xx5SerialFlashApplet.qml
