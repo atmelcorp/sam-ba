@@ -30,7 +30,8 @@ SambaApplet::SambaApplet(QQuickItem* parent)
 	  m_memoryPages(0),
 	  m_eraseSupport(0),
 	  m_paddingByte(0xff),
-	  m_trimPadding(false)
+	  m_trimPadding(false),
+	  m_nandHeader(0)
 {
 }
 
@@ -256,4 +257,15 @@ void SambaApplet::setTrimPadding(bool trimPadding)
 {
 	m_trimPadding = trimPadding;
 	emit trimPaddingChanged();
+}
+
+quint32 SambaApplet::nandHeader() const
+{
+	return m_nandHeader;
+}
+
+void SambaApplet::setNandHeader(quint32 nandHeader)
+{
+	m_nandHeader = nandHeader;
+	emit nandHeaderChanged();
 }
