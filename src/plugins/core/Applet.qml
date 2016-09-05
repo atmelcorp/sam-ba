@@ -85,12 +85,14 @@ AppletBase {
 				pageSize = connection.appletMailboxRead(2)
 				memoryPages = connection.appletMailboxRead(3)
 				eraseSupport = connection.appletMailboxRead(4)
+				nandHeader = connection.appletMailboxRead(5)
 			} else {
 				memorySize = 0
 				bufferAddr = 0
 				bufferSize = 0
 				pageSize = 0
 				eraseSupport = 0
+				nandHeader = 0
 				throw new Error("Could not initialize applet" +
 						" (status: " + status + ")");
 			}
@@ -105,10 +107,12 @@ AppletBase {
 					memorySize = connection.appletMailboxRead(0)
 					bufferAddr = connection.appletMailboxRead(1)
 					bufferSize = connection.appletMailboxRead(2)
+					nandHeader = 0
 				} else {
 					memorySize = 0
 					bufferAddr = 0
 					bufferSize = 0
+					nandHeader = 0
 					throw new Error("Could not initialize applet " +
 							name + " (status: " + status + ")")
 				}
@@ -139,6 +143,8 @@ AppletBase {
 			callInitialize(connection, device)
 			if (memorySize > 1)
 				print("Detected memory size is " + memorySize + " bytes.")
+			if (nandHeader !== 0)
+				print("NAND header value " + Utils.hex(nandHeader, 8))
 		}
 	}
 
