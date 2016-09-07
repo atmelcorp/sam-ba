@@ -915,8 +915,21 @@ AppletBase {
 
 	/*! \internal */
 	function defaultCommandLineCommands() {
-		return ["erase", "read", "write",
-				"writeboot", "verify", "verifyboot"]
+		var commands = []
+		if (canEraseAll())
+			commands.push("fullerase");
+		if (canErasePages())
+			commands.push("erase");
+		if (canReadPages()) {
+			commands.push("read");
+			commands.push("verify");
+			commands.push("verifyboot");
+		}
+		if (canWritePages()) {
+			commands.push("write");
+			commands.push("writeboot");
+		}
+		return commands
 	}
 
 	/*! \internal */
@@ -926,7 +939,12 @@ AppletBase {
 
 	/*! \internal */
 	function defaultCommandLineCommandHelp(command) {
-		if (command === "erase") {
+		if (command === "fullerase") {
+			return ["* fullerase - erase all the memory",
+			        "Syntax:",
+			        "    fullerase"]
+		}
+		else if (command === "erase") {
 			return ["* erase - erase all or part of the memory",
 			        "Syntax:",
 			        "    erase:[<addr>]:[<length>]",
@@ -981,6 +999,20 @@ AppletBase {
 	/*! \internal */
 	function commandLineCommandHelp(command) {
 		return defaultCommandLineCommandHelp(command)
+	}
+
+	/*! \internal */
+	function commandLineCommandFullErase(connection, device, args) {
+		var addr, length
+
+		if (args.length != 0)
+			return "Invalid number of arguments (expected 0)."
+
+		try {
+			eraseAll(connection, device)
+		} catch(err) {
+			return err.message
+		}
 	}
 
 	/*! \internal */
@@ -1124,7 +1156,10 @@ AppletBase {
 
 	/*! \internal */
 	function defaultCommandLineCommand(connection, device, command, args) {
-		if (command === "erase" && canErasePages()) {
+		if (command === "fullerase" && canEraseAll()) {
+			return commandLineCommandFullErase(connection, device, args)
+		}
+		else if (command === "erase" && canErasePages()) {
 			return commandLineCommandErase(connection, device, args)
 		}
 		else if (command === "read" && canReadPages()) {
