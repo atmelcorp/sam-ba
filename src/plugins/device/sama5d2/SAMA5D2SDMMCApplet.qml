@@ -22,9 +22,9 @@ Applet {
 	codeAddr: 0x220000
 	mailboxAddr: 0x220004
 	commands: [
-		AppletCommand { name:"initialize"; code:0; timeout: 1000 },
+		AppletCommand { name:"initialize"; code:0 },
 		AppletCommand { name:"readPages"; code:0x32 },
-		AppletCommand { name:"writePages"; code:0x33; timeout: 1000 }
+		AppletCommand { name:"writePages"; code:0x33 }
 	]
 
 	/*! \internal */

@@ -23,7 +23,7 @@ Applet {
 	mailboxAddr: 0x20000004
 	commands: [
 		AppletCommand { name:"initialize"; code:0 },
-		AppletCommand { name:"erasePages"; code:0x31; timeout:2000 },
+		AppletCommand { name:"erasePages"; code:0x31 },
 		AppletCommand { name:"readPages"; code:0x32 },
 		AppletCommand { name:"writePages"; code:0x33 }
 	]

@@ -47,7 +47,7 @@ Device {
 			commands: [
 				AppletCommand { name:"legacyInitialize"; code:0 },
 				AppletCommand { name:"legacyEraseAll"; code:1; timeout:25000 },
-				AppletCommand { name:"legacyWriteBuffer"; code:2; timeout:1000 },
+				AppletCommand { name:"legacyWriteBuffer"; code:2 },
 				AppletCommand { name:"legacyReadBuffer"; code:3 },
 				AppletCommand { name:"legacyGpnvm"; code:6 }
 			]
