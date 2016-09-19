@@ -20,5 +20,5 @@ import SAMBA 3.1
 	\brief Defines a single Applet command
 */
 AppletCommandBase {
-	timeout: 500
+	timeout: 10000
 }
