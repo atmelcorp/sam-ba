@@ -1,6 +1,6 @@
 # Atmel SAM-BA - SAM Boot Assistant
-Release version: 3.1.3
-Release date: 2016-06
+Release version: 3.1.4
+Release date: 2016-09
 
 ## Overview
 
@@ -44,6 +44,7 @@ This release supports the following platforms:
 
 This release contains several examples:
 
+- examples/sam9xx5: examples for SAM9xx5 (SPI Flash, NAND)
 - examples/sama5d2: examples for SAMA5D2 (boot configuration, SPI/QSPI Flash, SD/MMC, NAND)
 - examples/sama5d3: examples for SAMA5D3 (SPI Flash, NAND)
 - examples/sama5d4: examples for SAMA5D4 (SPI Flash, NAND, PIO)
