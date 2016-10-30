@@ -6,7 +6,7 @@ equals(QT_MAJOR_VERSION, 5) {
 	equals(QT_MINOR_VERSION, 6): ICU_VERSION = 56
 }
 isEmpty(ICU_VERSION) {
-	error(Unknown QT version, please update samba3.pro)
+	error("Unknown QT version, please update samba3.pro")
 }
 
 # for Windows targets, copy AT91 USB driver
