@@ -4,6 +4,7 @@ TEMPLATE = subdirs
 equals(QT_MAJOR_VERSION, 5) {
 	equals(QT_MINOR_VERSION, 5): ICU_VERSION = 54
 	equals(QT_MINOR_VERSION, 6): ICU_VERSION = 56
+	equals(QT_MINOR_VERSION, 7): ICU_VERSION = 57
 }
 isEmpty(ICU_VERSION) {
 	error("Unknown QT version, please update samba3.pro")
