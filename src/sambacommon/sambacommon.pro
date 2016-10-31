@@ -28,12 +28,12 @@ HEADERS += \
     sambaengine.h \
     sambautils.h
 
-unix:!mac:{
+unix:!mac {
     QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\''
     QMAKE_RPATH =
     target.path = /lib
 }
-else:win32:{
+else:win32 {
     target.path = /
 }
 
