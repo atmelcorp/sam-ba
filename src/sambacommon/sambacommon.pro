@@ -30,7 +30,7 @@ HEADERS += \
 
 unix:!mac {
     QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\''
-    QMAKE_RPATH =
+    QMAKE_LFLAGS_RPATH =
     target.path = /lib
 }
 else:win32 {

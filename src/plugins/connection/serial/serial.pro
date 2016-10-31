@@ -19,7 +19,7 @@ else:unix:LIBS += -L$$OUT_PWD/../../../sambacommon/ -lsambacommon
 # set RPATH on Linux
 unix:!mac {
     QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../../../../lib\''
-    QMAKE_RPATH =
+    QMAKE_LFLAGS_RPATH =
 }
 
 qml.files = \

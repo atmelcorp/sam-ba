@@ -28,7 +28,7 @@ else:unix: LIBS += -L$$OUT_PWD/../../sambacommon/ -lsambacommon
 unix:!mac {
     QMAKE_LFLAGS += '-Wl,-rpath-link,$$[QT_INSTALL_LIBS]'
     QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/lib\''
-    QMAKE_RPATH =
+    QMAKE_LFLAGS_RPATH =
 }
 
 qml.files = \
