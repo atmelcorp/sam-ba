@@ -25,10 +25,10 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../sambacommon/d
 else:unix: LIBS += -L$$OUT_PWD/../../sambacommon/ -lsambacommon
 
 # set RPATH on Linux
-unix:!mac:{
+unix:!mac {
     QMAKE_LFLAGS += '-Wl,-rpath-link,$$[QT_INSTALL_LIBS]'
     QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/lib\''
-    QMAKE_RPATH =
+    QMAKE_LFLAGS_RPATH =
 }
 
 qml.files = \

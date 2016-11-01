@@ -4,9 +4,10 @@ TEMPLATE = subdirs
 equals(QT_MAJOR_VERSION, 5) {
 	equals(QT_MINOR_VERSION, 5): ICU_VERSION = 54
 	equals(QT_MINOR_VERSION, 6): ICU_VERSION = 56
+	equals(QT_MINOR_VERSION, 7): ICU_VERSION = 57
 }
 isEmpty(ICU_VERSION) {
-	error(Unknown QT version, please update samba3.pro)
+	error("Unknown QT version, please update samba3.pro")
 }
 
 # for Windows targets, copy AT91 USB driver
@@ -24,7 +25,7 @@ qtconf.files = qt.conf
 INSTALLS += qtconf
 
 # copy Qt libs
-unix:{
+unix {
 	qtlibs.path = /lib
 	qtlibs.files = \
 		$$[QT_INSTALL_LIBS]/libQt5Core.so.5 \
@@ -46,9 +47,9 @@ unix:{
 	qmlmodules.files = $$[QT_INSTALL_LIBS]/../qml/QtQuick.2
 	INSTALLS += qmlmodules
 }
-else:win32:{
+else:win32 {
 	qtlibs.path = /
-	CONFIG(debug, debug|release):{
+	CONFIG(debug, debug|release) {
 		qtlibs.files = \
 			$$[QT_INSTALL_LIBS]/../bin/Qt5Cored.dll \
 			$$[QT_INSTALL_LIBS]/../bin/Qt5Guid.dll \
@@ -57,7 +58,7 @@ else:win32:{
 			$$[QT_INSTALL_LIBS]/../bin/Qt5Quickd.dll \
 			$$[QT_INSTALL_LIBS]/../bin/Qt5SerialPortd.dll
 	}
-	else:{
+	else {
 		qtlibs.files = \
 			$$[QT_INSTALL_LIBS]/../bin/Qt5Core.dll \
 			$$[QT_INSTALL_LIBS]/../bin/Qt5Gui.dll \
