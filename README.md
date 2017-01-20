@@ -23,8 +23,6 @@ The following versions are built on each release:
 - Windows x86 32-bit (this binary can also be run on 64-bit Windows)
 - Linux x86 64-bit
 
-Unsupported builds can also be provided for Linux x86 32-bit and ARMv7.
-
 ## Directory Architecture
 
 - dist

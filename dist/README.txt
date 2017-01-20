@@ -21,7 +21,7 @@ https://github.com/atmelcorp/sam-ba
 
 This release supports the following platforms:
 - Windows 32-bit and 64-bit
-- Linux x86 and x86_64
+- Linux x86_64
 
 ## Contents
 
