@@ -12,10 +12,12 @@ AppletLoader {
 	device: SAMA5D2 {
 		// this configuration is suitable for the sama5d2-xplained:
 		config {
-			// SDMMC0 (eMMC)
-			sdmmcInstance: 0
-			// Partition 1 (First Boot Partition)
-			sdmmcPartition: 1
+			sdmmc {
+				// SDMMC0 (eMMC)
+				instance: 0
+				// Partition 1 (First Boot Partition)
+				partition: 1
+			}
 		}
 	}
 

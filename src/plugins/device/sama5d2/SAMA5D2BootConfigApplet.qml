@@ -19,9 +19,6 @@ import SAMBA.Device.SAMA5D2 3.1
 Applet {
 	name: "bootconfig"
 	description: "Boot Configuration"
-	codeUrl: Qt.resolvedUrl("applets/applet-bootconfig_sama5d2-generic_sram.bin")
-	codeAddr: 0x220000
-	mailboxAddr: 0x220004
 	commands: [
 		AppletCommand { name:"initialize"; code:0 },
 		AppletCommand { name:"readBootCfg"; code:0x34 },

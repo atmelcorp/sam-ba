@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 
-SUBDIRS = core connection device
+SUBDIRS = core connection device applet

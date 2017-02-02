@@ -7,11 +7,6 @@ DEVICE_FILES *= \
     SAMA5D2Config.qml \
     SAMA5D2.qml \
     SAMA5D2BootConfigApplet.qml \
-    SAMA5D2LowlevelApplet.qml \
-    SAMA5D2NANDFlashApplet.qml \
-    SAMA5D2QSPIFlashApplet.qml \
-    SAMA5D2SDMMCApplet.qml \
-    SAMA5D2SerialFlashApplet.qml \
     sama5d2-bcw.js \
     sama5d2-bootcfg.js \
     sama5d2-bscr.js \

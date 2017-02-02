@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Atmel Corporation.
+ * Copyright (c) 2015-2017, Atmel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -18,9 +18,6 @@ import SAMBA 3.1
 Applet {
 	name: "serialflash"
 	description: "AT25/AT26 Serial Flash"
-	codeUrl: Qt.resolvedUrl("applets/applet-serialflash_sama5d3-generic_sram.bin")
-	codeAddr: 0x300000
-	mailboxAddr: 0x300004
 	commands: [
 		AppletCommand { name:"initialize"; code:0 },
 		AppletCommand { name:"erasePages"; code:0x31 },
@@ -30,24 +27,25 @@ Applet {
 
 	/*! \internal */
 	function buildInitArgs(connection, device) {
-		if (typeof device.config.spiInstance === "undefined")
+		var config = device.config.serialflash
+
+		if (typeof config.instance === "undefined")
 			throw new Error("Incomplete configuration, missing value for spiInstance")
 
-		if (typeof device.config.spiIoset === "undefined")
+		if (typeof config.ioset === "undefined")
 			throw new Error("Incomplete configuration, missing value for spiIoset")
 
-		if (typeof device.config.spiChipSelect === "undefined")
+		if (typeof config.chipSelect === "undefined")
 			throw new Error("Incomplete configuration, missing value for spiChipSelect")
 
-		if (typeof device.config.spiFreq === "undefined")
+		if (typeof config.freq === "undefined")
 			throw new Error("Incomplete configuration, missing value for spiFreq")
 
 		var args = defaultInitArgs(connection, device)
-		var config = [ device.config.spiInstance,
-		               device.config.spiIoset,
-		               device.config.spiChipSelect,
-		               Math.floor(device.config.spiFreq * 1000000) ]
-		Array.prototype.push.apply(args, config)
+		args.push(config.instance)
+		args.push(config.ioset)
+		args.push(config.chipSelect)
+		args.push(Math.floor(config.freq * 1000000))
 		return args
 	}
 
@@ -55,41 +53,44 @@ Applet {
 
 	/*! \internal */
 	function commandLineParse(device, args)	{
-		switch (args.length)
-		{
-		case 4:
+		if (args.length > 4)
+			return "Invalid number of arguments."
+
+		var config = device.config.serialflash
+
+		if (args.length >= 4) {
 			if (args[3].length > 0) {
-				device.config.spiFreq = Utils.parseInteger(args[3]);
-				if (isNaN(device.config.spiFreq))
+				config.freq = Utils.parseInteger(args[3]);
+				if (isNaN(config.freq))
 					return "Invalid SPI frequency (not a number)."
 			}
-			// fall-through
-		case 3:
+		}
+
+		if (args.length >= 3) {
 			if (args[2].length > 0) {
-				device.config.spiChipSelect = Utils.parseInteger(args[2]);
-				if (isNaN(device.config.spiChipSelect))
+				config.chipSelect = Utils.parseInteger(args[2]);
+				if (isNaN(config.chipSelect))
 					return "Invalid SPI chip select (not a number)."
 			}
-			// fall-through
-		case 2:
+		}
+
+		if (args.length >= 2) {
 			if (args[1].length > 0) {
-				device.config.spiIoset = Utils.parseInteger(args[1]);
-				if (isNaN(device.config.spiIoset))
+				config.ioset = Utils.parseInteger(args[1]);
+				if (isNaN(config.ioset))
 					return "Invalid SPI ioset (not a number)."
 			}
-			// fall-through
-		case 1:
+		}
+
+		if (args.length >= 1) {
 			if (args[0].length > 0) {
-				device.config.spiInstance = Utils.parseInteger(args[0]);
-				if (isNaN(device.config.spiInstance))
+				device.instance = Utils.parseInteger(args[0]);
+				if (isNaN(config.instance))
 					return "Invalid SPI instance (not a number)."
 			}
-			// fall-through
-		case 0:
-			return true;
-		default:
-			return "Invalid number of arguments."
 		}
+
+		return true;
 	}
 
 	/*! \internal */

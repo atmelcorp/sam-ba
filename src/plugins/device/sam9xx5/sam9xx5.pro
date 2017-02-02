@@ -6,10 +6,6 @@ DEVICE_FILES *= \
     qmldir \
     SAM9xx5Config.qml \
     SAM9xx5.qml \
-    SAM9xx5LowlevelApplet.qml \
-    SAM9xx5ExtRamApplet.qml \
-    SAM9xx5NANDFlashApplet.qml \
-    SAM9xx5SerialFlashApplet.qml \
     applets/README.txt \
     applets/applet-lowlevel_sam9x35-generic_sram.bin \
     applets/applet-extram_sam9x35-generic_sram.bin \

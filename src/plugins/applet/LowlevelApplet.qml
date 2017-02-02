@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Atmel Corporation.
+ * Copyright (c) 2015-2017, Atmel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -16,23 +16,16 @@ import SAMBA 3.1
 
 /*! \internal */
 Applet {
-	name: "extram"
-	description: "External RAM"
-	codeUrl: Qt.resolvedUrl("applets/applet-extram_sam9x35-generic_sram.bin")
-	codeAddr: 0x300000
-	mailboxAddr: 0x300004
+	name: "lowlevel"
+	description: "Low-Level"
 	commands: [
 		AppletCommand { name:"initialize"; code:0 }
 	]
 
 	/*! \internal */
 	function buildInitArgs(connection, device) {
-		if (typeof device.config.extramPreset === "undefined")
-			throw new Error("Incomplete configuration, missing value for extramPreset")
-
 		var args = defaultInitArgs(connection, device)
-		var config = [ 0, device.config.extramPreset ]
-		Array.prototype.push.apply(args, config)
+		Array.prototype.push.apply(args, [0, 0, 0])
 		return args
 	}
 }

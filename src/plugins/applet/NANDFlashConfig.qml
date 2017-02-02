@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Atmel Corporation.
+ * Copyright (c) 2017, Atmel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -12,16 +12,19 @@
  */
 
 import QtQuick 2.3
-import SAMBA 3.1
 
-/*! \internal */
-Applet {
-	name: "lowlevel"
-	description: "Low-Level"
-	codeUrl: Qt.resolvedUrl("applets/applet-lowlevel_sama5d3-generic_sram.bin")
-	codeAddr: 0x300000
-	mailboxAddr: 0x300004
-	commands: [
-		AppletCommand { name:"initialize"; code:0 }
-	]
+/*!
+	\qmltype NANDFlashConfig
+	\inqmlmodule SAMBA.Applet
+	\brief Contains configuration values for the NAND Flash applet.
+*/
+Item {
+	/*! NAND I/O set */
+	property var ioset
+
+	/*! NAND Bus Width, in bits (8/16) */
+	property var busWidth
+
+	/*! NAND Header */
+	property var header
 }

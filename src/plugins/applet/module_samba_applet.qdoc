@@ -1,0 +1,6 @@
+/*!
+\qmlmodule SAMBA.Applet 3.1
+\title SAMBA Applet Module
+
+This module contains applet-specific classes.
+*/

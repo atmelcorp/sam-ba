@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Atmel Corporation.
+ * Copyright (c) 2015-2017, Atmel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -18,9 +18,6 @@ import SAMBA 3.1
 Applet {
 	name: "nandflash"
 	description: "NAND Flash"
-	codeUrl: Qt.resolvedUrl("applets/applet-nandflash_sama5d2-generic_sram.bin")
-	codeAddr: 0x220000
-	mailboxAddr: 0x220004
 	commands: [
 		AppletCommand { name:"initialize"; code:0 },
 		AppletCommand { name:"erasePages"; code:0x31 },
@@ -29,22 +26,25 @@ Applet {
 	]
 	trimPadding: true
 
+	property string nandHeaderHelp: "For information on NAND header values, please refer to product datasheet."
+
 	/*! \internal */
 	function buildInitArgs(connection, device) {
-		if (typeof device.config.nandIoset === "undefined")
-			throw new Error("Incomplete configuration, missing value for nandIoset")
+		var config = device.config.nandflash
 
-		if (typeof device.config.nandBusWidth === "undefined")
-			throw new Error("Incomplete configuration, missing value for nandBusWidth")
+		if (typeof config.ioset === "undefined")
+			throw new Error("Incomplete NAND Flash configuration, missing value for 'ioset' property")
 
-		if (typeof device.config.nandHeader === "undefined")
-			throw new Error("Incomplete configuration, missing value for nandHeader")
+		if (typeof config.busWidth === "undefined")
+			throw new Error("Incomplete NAND Flash configuration, missing value for 'busWidth' property")
+
+		if (typeof config.header === "undefined")
+			throw new Error("Incomplete NAND Flash configuration, missing value for 'header' property")
 
 		var args = defaultInitArgs(connection, device)
-		var config = [ device.config.nandIoset,
-		               device.config.nandBusWidth,
-		               device.config.nandHeader ]
-		Array.prototype.push.apply(args, config)
+		args.push(config.ioset)
+		args.push(config.busWidth)
+		args.push(config.header)
 		return args
 	}
 
@@ -63,41 +63,43 @@ Applet {
 	/*! \internal */
 	function prepareBootFile(connection, device, data) {
 		patch6thVector(data)
-		prependNandHeader(device.config.nandHeader, data)
+		prependNandHeader(device.config.nandflash.header, data)
 	}
 
 	/* -------- Command Line Handling -------- */
 
 	/*! \internal */
 	function commandLineParse(device, args)	{
-		switch (args.length)
-		{
-		case 3:
+		if (args.length > 3)
+			return "Invalid number of arguments."
+
+		var config = device.config.nandflash
+
+		if (args.length >= 3) {
 			if (args[2].length > 0) {
-				device.config.nandHeader = Utils.parseInteger(args[2]);
-				if (isNaN(device.config.nandHeader))
+				config.header = Utils.parseInteger(args[2]);
+				if (isNaN(config.header))
 					return "Invalid NAND header (not a number)."
 			}
-			// fall-through
-		case 2:
+		}
+
+		if (args.length >= 2) {
 			if (args[1].length > 0) {
-				device.config.nandBusWidth = Utils.parseInteger(args[1]);
-				if (isNaN(device.config.nandBusWidth))
+				config.busWidth = Utils.parseInteger(args[1]);
+				if (isNaN(config.busWidth))
 					return "Invalid NAND bus width (not a number)."
 			}
-			// fall-through
-		case 1:
+		}
+
+		if (args.length >= 1) {
 			if (args[0].length > 0) {
-				device.config.nandIoset = Utils.parseInteger(args[0]);
-				if (isNaN(device.config.nandIoset))
+				config.ioset = Utils.parseInteger(args[0]);
+				if (isNaN(config.ioset))
 					return "Invalid NAND ioset (not a number)."
 			}
-			// fall-through
-		case 0:
-			return true
-		default:
-			return "Invalid number of arguments."
 		}
+
+		return true
 	}
 
 	/*! \internal */
@@ -111,6 +113,6 @@ Applet {
 		        "    nandflash                 use default board settings",
 		        "    nandflash:2:8:0xc0098da5  use fully custom settings (IOSET2, 8-bit bus, header is 0xc0098da5)",
 		        "    nandflash:::0xc0098da5    use default board settings but force header to 0xc0098da5",
-		        "For information on NAND header values, please refer to SAMA5D2 datasheet section \"15.4.6 Detailed Memory Boot Procedures\"."]
+		        nandHeaderHelp]
 	}
 }

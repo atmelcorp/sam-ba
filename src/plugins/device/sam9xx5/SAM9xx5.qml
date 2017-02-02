@@ -13,6 +13,7 @@
 
 import QtQuick 2.3
 import SAMBA 3.1
+import SAMBA.Applet 3.1
 import SAMBA.Device.SAM9xx5 3.1
 
 /*!
@@ -86,23 +87,28 @@ import SAMBA.Device.SAM9xx5 3.1
 
 	\section2 Custom configuration
 
-	Each configuration value can be set individually. For example, the
-	following QML snipplet configures a device using MT47H64M16 DDRAM and a
-	serialflash on SPI1 I/O set 1 and Chip Select 3 at 33Mhz:
+	Each configuration value can be set individually.  Please see
+	SAM9xx5Config for details on the configuration values.
 
+	For example, the following QML snipplet configures a device using
+	MT47H64M16 DDRAM and a serialflash on SPI1 I/O set 1 and Chip Select 3
+	at 33Mhz:
 
 	\qml
 	SAM9xx5 {
 		config {
-			extramPreset: 1
-			spiInstance: 1
-			spiIoset:1 
-			spiChipSelect: 3
-			spiFreq: 33
+			extram {
+				preset: 1
+			}
+			serialflash {
+				instance: 1
+				ioset:1
+				chipSelect: 3
+				freq: 33
+			}
 		}
 	}
 	\endqml
-
 */
 Device {
 	name: "sam9xx5"
@@ -121,10 +127,27 @@ Device {
 	property alias config: config
 
 	applets: [
-		SAM9xx5LowlevelApplet { },
-		SAM9xx5ExtRamApplet { },
-		SAM9xx5SerialFlashApplet { },
-		SAM9xx5NANDFlashApplet { }
+		LowlevelApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-lowlevel_sam9x35-generic_sram.bin")
+			codeAddr: 0x300000
+			mailboxAddr: 0x300004
+		},
+		ExtRamApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-extram_sam9x35-generic_sram.bin")
+			codeAddr: 0x300000
+			mailboxAddr: 0x300004
+		},
+		SerialFlashApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-serialflash_sam9x35-generic_ddram.bin")
+			codeAddr: 0x20000000
+			mailboxAddr: 0x20000004
+		},
+		NANDFlashApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-nandflash_sam9x35-generic_ddram.bin")
+			codeAddr: 0x20000000
+			mailboxAddr: 0x20000004
+			nandHeaderHelp: "For information on NAND header values, please refer to SAM9xx5 datasheet section \"10.4.4 Detailed Memory Boot Procedures\"."
+		}
 	]
 
 	/*!
@@ -178,24 +201,24 @@ Device {
 
 	onBoardChanged: {
 		if (board === "" || typeof board === "undefined") {
-			config.extramPreset = undefined
-			config.spiInstance = undefined
-			config.spiIoset = undefined
-			config.spiChipSelect = undefined
-			config.spiFreq = undefined
-			config.nandIoset = undefined
-			config.nandBusWidth = undefined
-			config.nandHeader = undefined
+			config.extram.preset = undefined
+			config.serialflash.instance = undefined
+			config.serialflash.ioset = undefined
+			config.serialflash.chipSelect = undefined
+			config.serialflash.freq = undefined
+			config.nandflash.ioset = undefined
+			config.nandflash.busWidth = undefined
+			config.nandflash.header = undefined
 		}
 		else if (board === "sam9xx5-ek") {
-			config.extramPreset = 1 /* MT47H64M16 */
-			config.spiInstance = 0
-			config.spiIoset = 1
-			config.spiChipSelect = 0
-			config.spiFreq = 66
-			config.nandIoset = 1
-			config.nandBusWidth = 16
-			config.nandHeader = 0xc0082405
+			config.extram.preset = 1 /* MT47H64M16 */
+			config.serialflash.instance = 0
+			config.serialflash.ioset = 1
+			config.serialflash.chipSelect = 0
+			config.serialflash.freq = 66
+			config.nandflash.ioset = 1
+			config.nandflash.busWidth = 16
+			config.nandflash.header = 0xc0082405
 		}
 		else {
 			var invalidBoard = board

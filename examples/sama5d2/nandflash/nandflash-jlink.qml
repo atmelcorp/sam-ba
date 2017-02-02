@@ -9,9 +9,11 @@ AppletLoader {
 
 	device: SAMA5D2 {
 		config {
-			nandIoset: 2
-			nandBusWidth: 8
-			nandHeader: 0xc0098da5
+			nandflash {
+				ioset: 2
+				busWidth: 8
+				header: 0xc0098da5
+			}
 		}
 	}
 

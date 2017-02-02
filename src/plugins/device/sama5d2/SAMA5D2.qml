@@ -13,6 +13,7 @@
 
 import QtQuick 2.3
 import SAMBA 3.1
+import SAMBA.Applet 3.1
 import SAMBA.Device.SAMA5D2 3.1
 
 /*!
@@ -55,6 +56,21 @@ import SAMBA.Device.SAMA5D2 3.1
 
 	Supported commands are "init", "read", "write" and "blockErase".
 
+	\section2 NAND Applet
+
+	This applet is used to flash NAND memories (see SAMA5D2Config for
+	configuration information).
+
+	Supported commands are "init", "read", "write" and "blockErase".
+
+	\section2 SDMMC Applet
+
+	This applet is used to read/write SD/MMC and e.MMC devices. It supports
+	all SDMMC peripherals present on the SAMA5D2 device (see SAMA5D2Config
+	for configuration information).
+
+	Supported commands are "init", "read" and "write".
+
 	\section1 Configuration
 
 	When creating an instance of the SAMA5D2 type, some configuration can
@@ -79,21 +95,24 @@ import SAMBA.Device.SAMA5D2 3.1
 
 	\section2 Custom configuration
 
-	Each configuration value can be set individually. For example, the
-	following QML snipplet configures a device using SPI1 on I/O set 2 and
-	Chip Select 3 at 33Mhz:
+	Each configuration value can be set individually.  Please see
+	SAMA5D2Config for details on the configuration values.
+
+	For example, the following QML snipplet configures a device using SPI1
+	on I/O set 2 and Chip Select 3 at 33Mhz:
 
 	\qml
 	SAMA5D2 {
 		config {
-			spiInstance: 1
-			spiIoset: 2
-			spiChipSelect: 3
-			spiFreq: 33
+			serialflash {
+				instance: 1
+				ioset: 2
+				chipSelect: 3
+				freq: 33
+			}
 		}
 	}
 	\endqml
-
 */
 Device {
 	name: "sama5d2"
@@ -101,7 +120,7 @@ Device {
 	aliases: [ "sama5d21", "sama5d22", "sama5d23", "sama5d24",
 	           "sama5d26", "sama5d27", "sama5d28" ]
 
-	description: "SAM5D2x series"
+	description: "SAMA5D2x series"
 
 	boards: [ "sama5d2-xplained" ]
 
@@ -112,12 +131,37 @@ Device {
 	property alias config: config
 
 	applets: [
-		SAMA5D2BootConfigApplet { },
-		SAMA5D2LowlevelApplet { },
-		SAMA5D2SerialFlashApplet { },
-		SAMA5D2QSPIFlashApplet { },
-		SAMA5D2NANDFlashApplet { },
-		SAMA5D2SDMMCApplet { }
+		SAMA5D2BootConfigApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-bootconfig_sama5d2-generic_sram.bin")
+			codeAddr: 0x220000
+			mailboxAddr: 0x220004
+		},
+		LowlevelApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-lowlevel_sama5d2-generic_sram.bin")
+			codeAddr: 0x220000
+			mailboxAddr: 0x220004
+		},
+		SerialFlashApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-serialflash_sama5d2-generic_sram.bin")
+			codeAddr: 0x220000
+			mailboxAddr: 0x220004
+		},
+		QSPIFlashApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-qspiflash_sama5d2-generic_sram.bin")
+			codeAddr: 0x220000
+			mailboxAddr: 0x220004
+		},
+		NANDFlashApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-nandflash_sama5d2-generic_sram.bin")
+			codeAddr: 0x220000
+			mailboxAddr: 0x220004
+			nandHeaderHelp: "For information on NAND header values, please refer to SAMA5D2 datasheet section \"15.4.6 Detailed Memory Boot Procedures\"."
+		},
+		SDMMCApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-sdmmc_sama5d2-generic_sram.bin")
+			codeAddr: 0x220000
+			mailboxAddr: 0x220004
+		}
 	]
 
 	/*!
@@ -152,36 +196,38 @@ Device {
 
 	onBoardChanged: {
 		if (board === "" || typeof board === "undefined") {
-			config.spiInstance = undefined
-			config.spiIoset = undefined
-			config.spiChipSelect = undefined
-			config.spiFreq = undefined
-			config.qspiInstance = undefined
-			config.qspiIoset = undefined
-			config.qspiFreq = undefined
-			config.nandIoset = undefined
-			config.nandBusWidth = undefined
-			config.nandHeader = undefined
-			config.sdmmcInstance = undefined
-			config.sdmmcPartition = undefined
-			config.sdmmcBusWidth = undefined
-			config.sdmmcVoltages = undefined
+			config.sdmmc.instance = undefined
+			config.sdmmc.ioset = undefined
+			config.sdmmc.partition = undefined
+			config.sdmmc.busWidth = undefined
+			config.sdmmc.voltages = undefined
+			config.serialflash.instance = undefined
+			config.serialflash.ioset = undefined
+			config.serialflash.chipSelect = undefined
+			config.serialflash.freq = undefined
+			config.nandflash.ioset = undefined
+			config.nandflash.busWidth = undefined
+			config.nandflash.header = undefined
+			config.qspiflash.instance = undefined
+			config.qspiflash.ioset = undefined
+			config.qspiflash.freq = undefined
 		}
 		else if (board === "sama5d2-xplained") {
-			config.spiInstance = 0
-			config.spiIoset = 1
-			config.spiChipSelect = 0
-			config.spiFreq = 66
-			config.qspiInstance = 0
-			config.qspiIoset = 3
-			config.qspiFreq = 66
-			config.nandIoset = undefined
-			config.nandBusWidth = undefined
-			config.nandHeader = undefined
-			config.sdmmcInstance = undefined
-			config.sdmmcPartition = undefined
-			config.sdmmcBusWidth = 0
-			config.sdmmcVoltages = 1 + 4 /* 1.8V + 3.3V */
+			config.sdmmc.instance = 0
+			config.sdmmc.ioset = 1
+			config.sdmmc.partition = 0
+			config.sdmmc.busWidth = 0
+			config.sdmmc.voltages = 1 + 4 /* 1.8V + 3.3V */
+			config.serialflash.instance = 0
+			config.serialflash.ioset = 1
+			config.serialflash.chipSelect = 0
+			config.serialflash.freq = 66
+			config.nandflash.ioset = undefined
+			config.nandflash.busWidth = undefined
+			config.nandflash.header = undefined
+			config.qspiflash.instance = 0
+			config.qspiflash.ioset = 3
+			config.qspiflash.freq = 66
 		}
 		else {
 			var invalidBoard = board

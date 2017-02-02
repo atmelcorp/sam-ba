@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Atmel Corporation.
+ * Copyright (c) 2017, Atmel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -12,16 +12,19 @@
  */
 
 import QtQuick 2.3
-import SAMBA 3.1
 
-/*! \internal */
-Applet {
-	name: "lowlevel"
-	description: "Low-Level"
-	codeUrl: Qt.resolvedUrl("applets/applet-lowlevel_sama5d4-generic_sram.bin")
-	codeAddr: 0x200000
-	mailboxAddr: 0x200004
-	commands: [
-		AppletCommand { name:"initialize"; code:0 }
-	]
+/*!
+	\qmltype QSPIFlashConfig
+	\inqmlmodule SAMBA.Applet
+	\brief Contains configuration values for the QSPI Flash applet.
+*/
+Item {
+	/*! QuadSPI peripheral instance */
+	property var instance
+
+	/*! QuadSPI I/O set */
+	property var ioset
+
+	/*! QuadSPI frequency, in MHz */
+	property var freq
 }

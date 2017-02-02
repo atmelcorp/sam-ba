@@ -12,10 +12,14 @@ AppletLoader {
 		// to use a custom config, remove the board property and uncomment
 		// the following lines:
 		//config {
-		//	extramPreset: 1
-		//	nandIoset: 1
-		//	nandBusWidth: 8
-		//	nandHeader: 0xc0082405
+		//	extram {
+		//		preset: 1
+		//	}
+		//	nandflash {
+		//		ioset: 1
+		//		busWidth: 8
+		//		header: 0xc0082405
+		//	}
 		//}
 	}
 

@@ -14,9 +14,11 @@ AppletLoader {
 		// to use a custom config, remove the board property and uncomment
 		// the following lines:
 		//config {
-		//	qspiInstance: 0
-		//	qspiIoset: 3
-		//	qspiFreq: 66
+		//	qspiflash {
+		//		instance: 0
+		//		ioset: 3
+		//		freq: 66
+		//	}
 		//}
 	}
 

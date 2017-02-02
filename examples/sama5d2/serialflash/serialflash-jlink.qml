@@ -12,10 +12,12 @@ AppletLoader {
 		// to use a custom config, remove the board property and uncomment
 		// the following lines:
 		//config {
-		//	spiInstance: 0
-		//	spiIoset: 1
-		//	spiChipSelect: 0
-		//	spiFreq: 66
+		//	serialflash {
+		//		instance: 0
+		//		ioset: 1
+		//		chipSelect: 0
+		//		freq: 66
+		//	}
 		//}
 	}
 

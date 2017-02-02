@@ -1,0 +1,13 @@
+module SAMBA.Applet
+ExtRamApplet 3.1 ExtRamApplet.qml
+ExtRamConfig 3.1 ExtRamConfig.qml
+LowlevelApplet 3.1 LowlevelApplet.qml
+LowlevelConfig 3.1 LowlevelConfig.qml
+NANDFlashApplet 3.1 NANDFlashApplet.qml
+NANDFlashConfig 3.1 NANDFlashConfig.qml
+QSPIFlashApplet 3.1 QSPIFlashApplet.qml
+QSPIFlashConfig 3.1 QSPIFlashConfig.qml
+SDMMCApplet 3.1 SDMMCApplet.qml
+SDMMCConfig 3.1 SDMMCConfig.qml
+SerialFlashApplet 3.1 SerialFlashApplet.qml
+SerialFlashConfig 3.1 SerialFlashConfig.qml

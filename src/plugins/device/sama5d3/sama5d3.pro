@@ -6,9 +6,6 @@ DEVICE_FILES *= \
     qmldir \
     SAMA5D3Config.qml \
     SAMA5D3.qml \
-    SAMA5D3LowlevelApplet.qml \
-    SAMA5D3NANDFlashApplet.qml \
-    SAMA5D3SerialFlashApplet.qml \
     applets/README.txt \
     applets/applet-lowlevel_sama5d3-generic_sram.bin \
     applets/applet-nandflash_sama5d3-generic_sram.bin \

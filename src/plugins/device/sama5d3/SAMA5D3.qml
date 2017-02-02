@@ -13,6 +13,7 @@
 
 import QtQuick 2.3
 import SAMBA 3.1
+import SAMBA.Applet 3.1
 import SAMBA.Device.SAMA5D3 3.1
 
 /*!
@@ -33,6 +34,13 @@ import SAMBA.Device.SAMA5D3 3.1
 
 	This applet is used to flash AT25 serial flash memories. It supports
 	all SPI peripherals present on the SAMA5D3 device (see SAMA5D3Config for
+	configuration information).
+
+	Supported commands are "init", "read", "write" and "blockErase".
+
+	\section2 NAND Applet
+
+	This applet is used to flash NAND memories (see SAMA5D2Config for
 	configuration information).
 
 	Supported commands are "init", "read", "write" and "blockErase".
@@ -61,21 +69,24 @@ import SAMBA.Device.SAMA5D3 3.1
 
 	\section2 Custom configuration
 
-	Each configuration value can be set individually. For example, the
-	following QML snipplet configures a device using SPI1 on I/O set 1 and
-	Chip Select 3 at 33Mhz:
+	Each configuration value can be set individually.  Please see
+	SAMA5D3Config for details on the configuration values.
+
+	For example, the following QML snipplet configures a device using SPI1
+	on I/O set 2 and Chip Select 3 at 33Mhz:
 
 	\qml
 	SAMA5D3 {
 		config {
-			spiInstance: 1
-			spiIoset: 1
-			spiChipSelect: 3
-			spiFreq: 33
+			serialflash {
+				instance: 1
+				ioset: 1
+				chipSelect: 3
+				freq: 33
+			}
 		}
 	}
 	\endqml
-
 */
 Device {
 	name: "sama5d3"
@@ -93,9 +104,22 @@ Device {
 	property alias config: config
 
 	applets: [
-		SAMA5D3LowlevelApplet { },
-		SAMA5D3SerialFlashApplet { },
-		SAMA5D3NANDFlashApplet { }
+		LowlevelApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-lowlevel_sama5d3-generic_sram.bin")
+			codeAddr: 0x300000
+			mailboxAddr: 0x300004
+		},
+		SerialFlashApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-serialflash_sama5d3-generic_sram.bin")
+			codeAddr: 0x300000
+			mailboxAddr: 0x300004
+		},
+		NANDFlashApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-nandflash_sama5d3-generic_sram.bin")
+			codeAddr: 0x300000
+			mailboxAddr: 0x300004
+			nandHeaderHelp: "For information on NAND header values, please refer to SAMA5D3 datasheet section \"11.4.4 Detailed Memory Boot Procedures\"."
+		}
 	]
 
 	/*!
@@ -136,22 +160,22 @@ Device {
 
 	onBoardChanged: {
 		if (board === "" || typeof board === "undefined") {
-			config.spiInstance = undefined
-			config.spiIoset = undefined
-			config.spiChipSelect = undefined
-			config.spiFreq = undefined
-			config.nandIoset = undefined
-			config.nandBusWidth = undefined
-			config.nandHeader = undefined
+			config.serialflash.instance = undefined
+			config.serialflash.ioset = undefined
+			config.serialflash.chipSelect = undefined
+			config.serialflash.freq = undefined
+			config.nandflash.ioset = undefined
+			config.nandflash.busWidth = undefined
+			config.nandflash.header = undefined
 		}
 		else if (board === "sama5d3-xplained") {
-			config.spiInstance = 0
-			config.spiIoset = 1
-			config.spiChipSelect = 0
-			config.spiFreq = 48
-			config.nandIoset = 1
-			config.nandBusWidth = 8
-			config.nandHeader = 0xc0902405
+			config.serialflash.instance = 0
+			config.serialflash.ioset = 1
+			config.serialflash.chipSelect = 0
+			config.serialflash.freq = 48
+			config.nandflash.ioset = 1
+			config.nandflash.busWidth = 8
+			config.nandflash.header = 0xc0902405
 		}
 		else {
 			var invalidBoard = board

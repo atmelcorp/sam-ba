@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Atmel Corporation.
+ * Copyright (c) 2015-2017, Atmel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -18,9 +18,6 @@ import SAMBA 3.1
 Applet {
 	name: "qspiflash"
 	description: "QSPI Flash"
-	codeUrl: Qt.resolvedUrl("applets/applet-qspiflash_sama5d2-generic_sram.bin")
-	codeAddr: 0x220000
-	mailboxAddr: 0x220004
 	commands: [
 		AppletCommand { name:"initialize"; code:0 },
 		AppletCommand { name:"erasePages"; code:0x31 },
@@ -30,20 +27,21 @@ Applet {
 
 	/*! \internal */
 	function buildInitArgs(connection, device) {
-		if (typeof device.config.qspiInstance === "undefined")
-			throw new Error("Incomplete configuration, missing value for qspiInstance")
+		var config = device.config.qspiflash
 
-		if (typeof device.config.qspiIoset === "undefined")
-			throw new Error("Incomplete configuration, missing value for qspiIoset")
+		if (typeof config.instance === "undefined")
+			throw new Error("Incomplete QSPI Flash configuration, missing value for 'instance' property")
 
-		if (typeof device.config.qspiFreq === "undefined")
-			throw new Error("Incomplete configuration, missing value for qspiFreq")
+		if (typeof config.ioset === "undefined")
+			throw new Error("Incomplete QSPI Flash configuration, missing value for 'ioset' property")
+
+		if (typeof config.freq === "undefined")
+			throw new Error("Incomplete QSPI Flash configuration, missing value for 'freq' property")
 
 		var args = defaultInitArgs(connection, device)
-		var config = [ device.config.qspiInstance,
-		               device.config.qspiIoset,
-		               Math.floor(device.config.qspiFreq * 1000000) ]
-		Array.prototype.push.apply(args, config)
+		args.push(config.instance)
+		args.push(config.ioset)
+		args.push(Math.floor(config.freq * 1000000))
 		return args
 	}
 
@@ -51,33 +49,36 @@ Applet {
 
 	/*! \internal */
 	function commandLineParse(device, args)	{
-		switch (args.length) {
-		case 3:
+		if (args.length > 3)
+			return "Invalid number of arguments."
+
+		var config = device.config.qspiflash
+
+		if (args.length >= 3) {
 			if (args[2].length > 0) {
-				device.config.qspiFreq = Utils.parseInteger(args[2]);
-				if (isNaN(device.config.qspiFreq))
+				config.freq = Utils.parseInteger(args[2]);
+				if (isNaN(config.freq))
 					return "Invalid QSPI frequency (not a number)."
 			}
-			// fall-through
-		case 2:
+		}
+
+		if (args.length >= 2) {
 			if (args[1].length > 0) {
-				device.config.qspiIoset = Utils.parseInteger(args[1]);
-				if (isNaN(device.config.qspiIoset))
+				config.ioset = Utils.parseInteger(args[1]);
+				if (isNaN(config.ioset))
 					return "Invalid QSPI ioset (not a number)."
 			}
-			// fall-through
-		case 1:
+		}
+
+		if (args.length >= 1) {
 			if (args[0].length > 0) {
-				device.config.qspiInstance = Utils.parseInteger(args[0]);
-				if (isNaN(device.config.qspiInstance))
+				config.instance = Utils.parseInteger(args[0]);
+				if (isNaN(config.instance))
 					return "Invalid QSPI instance (not a number)."
 			}
-			// fall-through
-		case 0:
-			return true
-		default:
-			return "Invalid number of arguments."
 		}
+
+		return true
 	}
 
 	/*! \internal */
@@ -85,7 +86,7 @@ Applet {
 		return ["Syntax: qspiflash:[<instance>]:[<ioset>]:[<frequency>]",
 		        "Parameters:",
 		        "    instance   QSPI controller instance",
-		        "    ioset      I/O set",
+		        "    ioset      QSPI I/O set",
 		        "    frequency  QSPI clock frequency in MHz",
 		        "Examples:",
 		        "    qspiflash         use default board settings",
