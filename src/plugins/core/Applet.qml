@@ -20,6 +20,10 @@ import SAMBA 3.1
 	\brief Contains a description of a SAM-BA Applet and its runtime variables
 */
 AppletBase {
+
+	/* Set default applet trace level to 3 (INFO) */
+	traceLevel: 3
+
 	/*!
 		\qmlmethod void Applet::defaultInitArgs(Connection connection, Device device)
 		\brief Returns the default input mailbox for applet initialization
