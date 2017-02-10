@@ -45,8 +45,7 @@ Applet {
 
 		var args = defaultInitArgs(connection, device)
 		args.push(config.instance)
-		// I/O set parameter needs applet update
-		//args.push(config.ioset)
+		args.push(config.ioset)
 		args.push(config.partition)
 		args.push(config.busWidth)
 		args.push(config.voltages)
