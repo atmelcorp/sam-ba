@@ -59,21 +59,16 @@ import SAMBA.Device.SAMA5D3 3.1
 	be supplied. The configuration parameters are then used during applet
 	initialization where relevant.
 
-	The configuration can be set either by selecting a preset board, or by
-	setting custom values. If both board and custom values are set, the board
-	settings are used.
-
 	\section2 Board selection
 
-	A set of pre-configured values can be selected by changing the 'board'
-	property. For example, the following QML snipplet selects the SAMA5D3
-	Xplained board:
+	A set of pre-configured values can be selected by instanciating
+	sub-classes of SAMA5D3.  The following preset boards are available:
 
-	\qml
-	SAMA5D3 {
-		board: "sama5d3-xplained"
-	}
-	\endqml
+	\table
+	\header \li Command-Line Name \li QML Name        \li Board Name
+	\row    \li sama5d3-ek        \li SAMA5D3EK       \li SAMA5D3x-MB
+	\row    \li sama5d3-xplained  \li SAMA5D3Xplained \li SAMA5D3 Xplained
+	\endtable
 
 	\section2 Custom configuration
 
@@ -102,8 +97,6 @@ Device {
 	aliases: [ "sama5d31", "sama5d33", "sama5d34", "sama5d35", "sama5d36" ]
 
 	description: "SAMA5D3x series"
-
-	boards: [ "sama5d3-xplained" ]
 
 	/*!
 		\brief The device configuration used by applets (peripherals, I/O sets, etc.)
@@ -168,42 +161,6 @@ Device {
 			default:
 				print("Warning: Invalid EXID, no known SAMA5D3 chip detected!")
 				break;
-		}
-	}
-
-	onBoardChanged: {
-		if (board === "" || typeof board === "undefined") {
-			config.sdmmc.instance = undefined
-			config.sdmmc.ioset = undefined
-			config.sdmmc.partition = undefined
-			config.sdmmc.busWidth = undefined
-			config.sdmmc.voltages = undefined
-			config.serialflash.instance = undefined
-			config.serialflash.ioset = undefined
-			config.serialflash.chipSelect = undefined
-			config.serialflash.freq = undefined
-			config.nandflash.ioset = undefined
-			config.nandflash.busWidth = undefined
-			config.nandflash.header = undefined
-		}
-		else if (board === "sama5d3-xplained") {
-			config.sdmmc.instance = 0
-			config.sdmmc.ioset = 1
-			config.sdmmc.partition = 0
-			config.sdmmc.busWidth = 0
-			config.sdmmc.voltages = 4 /* 3.3V */
-			config.serialflash.instance = 0
-			config.serialflash.ioset = 1
-			config.serialflash.chipSelect = 0
-			config.serialflash.freq = 48
-			config.nandflash.ioset = 1
-			config.nandflash.busWidth = 8
-			config.nandflash.header = 0xc0902405
-		}
-		else {
-			var invalidBoard = board
-			board = undefined
-			throw new Error("Unknown SAMA5D3 board '" + invalidBoard + "'")
 		}
 	}
 

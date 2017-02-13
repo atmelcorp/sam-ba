@@ -16,17 +16,39 @@
 #include <QFile>
 #include <iostream>
 
+enum ComponentType {
+	COMPONENT_UNKNOWN,
+	COMPONENT_CONNECTION,
+	COMPONENT_DEVICE,
+	COMPONENT_BOARD,
+};
+
+struct Component {
+	ComponentType type;
+	QObject* object;
+};
+
 static void cerr_msg(const QString& str)
 {
 	std::cerr << str.toLocal8Bit().constData() << std::endl;
 }
 
-static QObject* parseJson(SambaEngine& engine, const QJsonObject& obj)
+static Component parseJson(SambaEngine& engine, const QJsonObject& obj)
 {
+	Component comp = { .type = COMPONENT_UNKNOWN, .object = 0 };
+
 	// parse JSON
 	QString module = obj["module"].toString();
 	QString module_version = obj["module_version"].toString();
 	QString classname = obj["classname"].toString();
+	QString type = obj["type"].toString();
+
+	if (type == "connection")
+		comp.type = COMPONENT_CONNECTION;
+	else if (type == "device")
+		comp.type = COMPONENT_DEVICE;
+	else if (type == "board")
+		comp.type = COMPONENT_BOARD;
 
 	// create object instance
 	QString script = QString("import %1 %2; %3 { }")
@@ -36,9 +58,11 @@ static QObject* parseJson(SambaEngine& engine, const QJsonObject& obj)
 	if (component.status() != QQmlComponent::Ready) {
 		cerr_msg(script);
 		cerr_msg(component.errorString());
-		return 0;
+		return comp;
 	}
-	return engine.createComponentInstance(&component, 0);
+	comp.object = engine.createComponentInstance(&component, 0);
+
+	return comp;
 }
 
 SambaTool::SambaTool(int& argc, char** argv)
@@ -92,27 +116,48 @@ bool SambaTool::loadMetadata(QString fileName)
 
 	QByteArray data = file.readAll();
 	QJsonDocument doc(QJsonDocument::fromJson(data));
-	QObject* obj = parseJson(m_engine, doc.object());
-	if (!obj) {
+	Component comp = parseJson(m_engine, doc.object());
+	if (!comp.object) {
 		cerr_msg(QString("Couldn't parse metadata file '%1'.").arg(fileName));
 		return false;
 	}
 
-	SambaConnection* port = qobject_cast<SambaConnection*>(obj);
-	if (port) {
-		m_ports << port;
-		return true;
-	}
-
-	SambaDevice* device = qobject_cast<SambaDevice*>(obj);
-	if (device) {
-		m_devices << device;
-		return true;
+	switch (comp.type) {
+	case COMPONENT_CONNECTION:
+		{
+			SambaConnection* port = qobject_cast<SambaConnection*>(comp.object);
+			if (port) {
+				m_ports << port;
+				return true;
+			}
+			break;
+		}
+	case COMPONENT_DEVICE:
+		{
+			SambaDevice* device = qobject_cast<SambaDevice*>(comp.object);
+			if (device) {
+				m_devices << device;
+				return true;
+			}
+			break;
+		}
+	case COMPONENT_BOARD:
+		{
+			SambaDevice* board = qobject_cast<SambaDevice*>(comp.object);
+			if (board) {
+				m_boards << board;
+				return true;
+			}
+			break;
+		}
+	case COMPONENT_UNKNOWN:
+		// ignore, will be handled just after the switch
+		break;
 	}
 
 	cerr_msg(QString("Ignoring metadata file '%1': unknown metadata type.")
 	         .arg(fileName));
-	delete obj;
+	delete comp.object;
 	return false;
 }
 
@@ -293,9 +338,8 @@ bool SambaTool::parseDeviceOption(const QString& value)
 void SambaTool::displayBoardHelp()
 {
 	QStringList boards;
-	foreach(SambaDevice* device, m_devices)
-		foreach(QString board, device->boards())
-			boards << board;
+	foreach(SambaDevice* board, m_boards)
+		boards << board->name();
 	cerr_msg(QString("Known boards: %1").arg(boards.join(", ")));
 }
 
@@ -308,28 +352,21 @@ bool SambaTool::parseBoardOption(const QString& value)
 	if (args.length() > 0)
 		cerr_msg("Warning: Boards have no arguments.");
 
-	SambaDevice* device = 0;
-	foreach (SambaDevice* d, m_devices) {
-		if (d->boards().contains(name)) {
-			device = d;
+	SambaDevice* board = 0;
+	foreach (SambaDevice* b, m_boards) {
+		if (!b->name().compare(name, Qt::CaseInsensitive) ||
+		    b->aliases().contains(name, Qt::CaseInsensitive)) {
+			board = b;
 			break;
 		}
 	}
-	if (!device) {
+	if (!board) {
 		cerr_msg(QString("Error: Unknown board '%1'.").arg(name));
 		displayBoardHelp();
 		return false;
 	}
 
-	device->setBoard(QVariant(name));
-	if (device->board().toString() != name)
-	{
-		cerr_msg(QString("Error: Could not create board '%1'.").arg(name));
-		delete device;
-		return false;
-	}
-
-	m_device = device;
+	m_device = board;
 	return true;
 }
 

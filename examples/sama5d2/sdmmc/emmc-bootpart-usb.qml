@@ -9,13 +9,11 @@ AppletLoader {
 		//baudRate: 57600
 	}
 
-	device: SAMA5D2 {
-		// this configuration is suitable for the sama5d2-xplained:
+	device: SAMA5D2Xplained {
+		/* override part of default config */
 		config {
+			/* use first boot partition */
 			sdmmc {
-				// SDMMC0 (eMMC)
-				instance: 0
-				// Partition 1 (First Boot Partition)
 				partition: 1
 			}
 		}

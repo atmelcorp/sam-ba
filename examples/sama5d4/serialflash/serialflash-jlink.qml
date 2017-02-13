@@ -7,10 +7,10 @@ AppletLoader {
 		//port: "99999999"
 	}
 
-	device: SAMA5D4 {
-		board: "sama5d4-xplained"
-		// to use a custom config, remove the board property and uncomment
-		// the following lines:
+	device: SAMA5D4Xplained {
+		// to use a custom config, replace SAMA5D4Xplained by SAMA5D4 and
+		// uncomment the following lines, or see documentation for
+		// custom board creation.
 		//config {
 		//	serialflash {
 		//		instance: 0

@@ -9,10 +9,10 @@ AppletLoader {
 		//baudRate: 57600
 	}
 
-	device: SAM9xx5 {
-		board: "sam9xx5-ek"
-		// to use a custom config, remove the board property and uncomment
-		// the following lines:
+	device: SAM9xx5EK {
+		// to use a custom config, replace SAM9xx5EK by SAM9xx5 and
+		// uncomment the following lines, or see documentation for
+		// custom board creation.
 		//config {
 		//	extram {
 		//		preset: 1

@@ -1,5 +1,6 @@
 {
 	"module": "SAMBA.Connection.JLink",
 	"module_version": "3.1",
-	"classname": "JLinkConnection"
+	"classname": "JLinkConnection",
+	"type": "connection"
 }

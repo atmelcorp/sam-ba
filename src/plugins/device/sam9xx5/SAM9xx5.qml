@@ -79,21 +79,15 @@ import SAMBA.Device.SAM9xx5 3.1
 	be supplied. The configuration parameters are then used during applet
 	initialization where relevant.
 
-	The configuration can be set either by selecting a preset board, or by
-	setting custom values. If both board and custom values are set, the board
-	settings are used.
+	\section2 Preset Board selection
 
-	\section2 Board selection
+	A set of pre-configured values can be selected by instanciating
+	sub-classes of SAM9xx5.  The following preset boards are available:
 
-	A set of pre-configured values can be selected by changing the 'board'
-	property. For example, the following QML snipplet selects the SAM9xx5
-	EK board:
-
-	\qml
-	SAM9xx5 {
-		board: "sam9xx5-ek"
-	}
-	\endqml
+	\table
+	\header \li Command-Line Name \li QML Name  \li Board Name
+	\row    \li sam9xx5-ek        \li SAM9xx5EK \li AT91SAM9x5-EK
+	\endtable
 
 	\section2 Custom configuration
 
@@ -127,8 +121,6 @@ Device {
 	           "sam9x25", "sam9x35" ]
 
 	description: "SAM9xx5 series"
-
-	boards: [ "sam9xx5-ek" ]
 
 	/*!
 		\brief The device configuration used by applets (peripherals, I/O sets, etc.)
@@ -212,44 +204,6 @@ Device {
 			print("Warning: Invalid CIDR/EXID (" +
 			      Utils.hex(cidr) + "/" + Utils.hex(exid) +
 			      ", no known SAM9xx5 chip detected!")
-	}
-
-	onBoardChanged: {
-		if (board === "" || typeof board === "undefined") {
-			config.extram.preset = undefined
-			config.sdmmc.instance = undefined
-			config.sdmmc.ioset = undefined
-			config.sdmmc.partition = undefined
-			config.sdmmc.busWidth = undefined
-			config.sdmmc.voltages = undefined
-			config.serialflash.instance = undefined
-			config.serialflash.ioset = undefined
-			config.serialflash.chipSelect = undefined
-			config.serialflash.freq = undefined
-			config.nandflash.ioset = undefined
-			config.nandflash.busWidth = undefined
-			config.nandflash.header = undefined
-		}
-		else if (board === "sam9xx5-ek") {
-			config.extram.preset = 1 /* MT47H64M16 */
-			config.sdmmc.instance = 1
-			config.sdmmc.ioset = 1
-			config.sdmmc.partition = 0
-			config.sdmmc.busWidth = 0
-			config.sdmmc.voltages = 4 /* 3.3V */
-			config.serialflash.instance = 0
-			config.serialflash.ioset = 1
-			config.serialflash.chipSelect = 0
-			config.serialflash.freq = 66
-			config.nandflash.ioset = 1
-			config.nandflash.busWidth = 16
-			config.nandflash.header = 0xc0082405
-		}
-		else {
-			var invalidBoard = board
-			board = undefined
-			throw new Error("Unknown SAM9xx5 board '" + invalidBoard + "'")
-		}
 	}
 
 	SAM9xx5Config {

@@ -1,5 +1,6 @@
 {
 	"module": "SAMBA.Device.SAMV7",
 	"module_version": "3.1",
-	"classname": "SAMV7"
+	"classname": "SAMV7",
+	"type": "device"
 }

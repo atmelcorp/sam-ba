@@ -7,16 +7,7 @@ AppletLoader {
 		//port: "99999999"
 	}
 
-	device: SAMA5D2 {
-		// this configuration is suitable for the sama5d2-xplained:
-		config {
-			sdmmc {
-				// SDMMC0 (eMMC)
-				instance: 0
-				// Partition 0 (User Partition)
-				partition: 0
-			}
-		}
+	device: SAMA5D2Xplained {
 	}
 
 	onConnectionOpened: {

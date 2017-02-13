@@ -88,6 +88,7 @@ private:
 	SambaEngine m_engine;
 	QList<SambaConnection*> m_ports;
 	QList<SambaDevice*> m_devices;
+	QList<SambaDevice*> m_boards;
 
 	quint32 m_status;
 

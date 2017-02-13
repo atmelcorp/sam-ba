@@ -77,21 +77,15 @@ import SAMBA.Device.SAMA5D2 3.1
 	be supplied. The configuration parameters are then used during applet
 	initialization where relevant.
 
-	The configuration can be set either by selecting a preset board, or by
-	setting custom values. If both board and custom values are set, the board
-	settings are used.
+	\section2 Preset Board selection
 
-	\section2 Board selection
+	A set of pre-configured values can be selected by instanciating
+	sub-classes of SAMA5D2.  The following preset boards are available:
 
-	A set of pre-configured values can be selected by changing the 'board'
-	property. For example, the following QML snipplet selects the SAMA5D2
-	Xplained Ultra board:
-
-	\qml
-	SAMA5D2 {
-		board: "sama5d2-xplained"
-	}
-	\endqml
+	\table
+	\header \li Command-Line Name \li QML Name        \li Board Name
+	\row    \li sama5d2-xplained  \li SAMA5D2Xplained \li SAMA5D2 Xplained Ultra
+	\endtable
 
 	\section2 Custom configuration
 
@@ -121,8 +115,6 @@ Device {
 	           "sama5d26", "sama5d27", "sama5d28" ]
 
 	description: "SAMA5D2x series"
-
-	boards: [ "sama5d2-xplained" ]
 
 	/*!
 		\brief The device configuration used by applets (peripherals, I/O sets, etc.)
@@ -192,48 +184,6 @@ Device {
 		// to a signed integer like the left part (thanks javascript...)
 		if ((cidr & 0xffffffe0) !== (0x8a5c08c0 & 0xffffffe0))
 			print("Warning: Invalid CIDR, no known SAMA5D2 chip detected!")
-	}
-
-	onBoardChanged: {
-		if (board === "" || typeof board === "undefined") {
-			config.sdmmc.instance = undefined
-			config.sdmmc.ioset = undefined
-			config.sdmmc.partition = undefined
-			config.sdmmc.busWidth = undefined
-			config.sdmmc.voltages = undefined
-			config.serialflash.instance = undefined
-			config.serialflash.ioset = undefined
-			config.serialflash.chipSelect = undefined
-			config.serialflash.freq = undefined
-			config.nandflash.ioset = undefined
-			config.nandflash.busWidth = undefined
-			config.nandflash.header = undefined
-			config.qspiflash.instance = undefined
-			config.qspiflash.ioset = undefined
-			config.qspiflash.freq = undefined
-		}
-		else if (board === "sama5d2-xplained") {
-			config.sdmmc.instance = 0
-			config.sdmmc.ioset = 1
-			config.sdmmc.partition = 0
-			config.sdmmc.busWidth = 0
-			config.sdmmc.voltages = 1 + 4 /* 1.8V + 3.3V */
-			config.serialflash.instance = 0
-			config.serialflash.ioset = 1
-			config.serialflash.chipSelect = 0
-			config.serialflash.freq = 66
-			config.nandflash.ioset = undefined
-			config.nandflash.busWidth = undefined
-			config.nandflash.header = undefined
-			config.qspiflash.instance = 0
-			config.qspiflash.ioset = 3
-			config.qspiflash.freq = 66
-		}
-		else {
-			var invalidBoard = board
-			board = undefined
-			throw new Error("Unknown SAMA5D2 board '" + invalidBoard + "'")
-		}
 	}
 
 	SAMA5D2Config {

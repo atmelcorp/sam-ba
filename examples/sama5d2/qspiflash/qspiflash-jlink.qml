@@ -7,10 +7,10 @@ AppletLoader {
 		//port: "99999999"
 	}
 
-	device: SAMA5D2 {
-		board: "sama5d2-xplained"
-		// to use a custom config, remove the board property and uncomment
-		// the following lines:
+	device: SAMA5D2Xplained {
+		// to use a custom config, replace SAMA5D2Xplained by SAMA5D2 and
+		// uncomment the following lines, or see documentation for
+		// custom board creation.
 		//config {
 		//	qspiflash {
 		//		instance: 0

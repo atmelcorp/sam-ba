@@ -5,6 +5,7 @@
 ### Enhancements
 
 - Added support for SD/MMC and e.MMC for SAM9xx5, SAMA5D3 and SAMA5D4
+- Board-specific configurations are now in separate QML files, one per board.
 
 ### Bugfixes
 
@@ -14,6 +15,9 @@
 - Some common QML code is shared between similar applets for different devices
 - Applet configuration parameters in the device object are now split by applet
   (config.serialflash, config.sdmmc, etc.)
+- Board selection is not done using a 'board' property on the device anymore.
+  Instead, the boards are defined using inheritance: for example, the
+  SAMA5D2Xplained QML object inherits from SAMA5D2 QML object.
 
 
 

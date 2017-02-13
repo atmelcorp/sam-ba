@@ -7,14 +7,12 @@ AppletLoader {
 		//port: "99999999"
 	}
 
-	device: SAMA5D2 {
-		// this configuration is suitable for the sama5d2-xplained:
+	device: SAMA5D2Xplained {
+		/* override part of default config */
 		config {
+			/* use SDCard socket */
 			sdmmc {
-				// SDMMC1 (SD/MMC slot)
 				instance: 1
-				// Partition 0 (User Partition)
-				partition: 0
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 {
 	"module": "SAMBA.Device.SAM9xx5",
 	"module_version": "3.1",
-	"classname": "SAM9xx5",
-	"type": "device"
+	"classname": "SAM9xx5EK",
+	"type": "board"
 }

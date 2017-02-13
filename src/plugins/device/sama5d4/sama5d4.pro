@@ -4,8 +4,10 @@ DEVICE = SAMA5D4
 
 DEVICE_FILES *= \
     qmldir \
-    SAMA5D4Config.qml \
     SAMA5D4.qml \
+    SAMA5D4Config.qml \
+    SAMA5D4EK.qml \
+    SAMA5D4Xplained.qml \
     applets/README.txt \
     applets/applet-lowlevel_sama5d4-generic_sram.bin \
     applets/applet-nandflash_sama5d4-generic_sram.bin \
@@ -14,7 +16,10 @@ DEVICE_FILES *= \
 
 include(../device.pri)
 
-metadata.files = device_sama5d4.json
+metadata.files = \
+    device_sama5d4.json \
+    board_sama5d4-ek.json \
+    board_sama5d4-xplained.json
 metadata.path = /metadata
 INSTALLS *= metadata
 
