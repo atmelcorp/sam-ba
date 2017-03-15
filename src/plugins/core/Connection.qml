@@ -372,7 +372,7 @@ ConnectionBase {
 		}
 
 		// run applet
-		go(applet.codeAddr)
+		go(applet.entryAddr)
 
 		// wait for completion
 		var startTime = new Date().getTime()

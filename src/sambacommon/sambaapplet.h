@@ -28,6 +28,7 @@ class SAMBACOMMONSHARED_EXPORT SambaApplet : public QQuickItem
 	Q_PROPERTY(QString codeUrl READ codeUrl WRITE setCodeUrl NOTIFY codeUrlChanged)
 	Q_PROPERTY(quint32 codeAddr READ codeAddr WRITE setCodeAddr NOTIFY codeAddrChanged)
 	Q_PROPERTY(quint32 mailboxAddr READ mailboxAddr WRITE setMailboxAddr NOTIFY mailboxAddrChanged)
+	Q_PROPERTY(quint32 entryAddr READ entryAddr WRITE setEntryAddr NOTIFY entryAddrChanged)
 	Q_PROPERTY(quint32 traceLevel READ traceLevel WRITE setTraceLevel NOTIFY traceLevelChanged)
 	Q_PROPERTY(QQmlListProperty<SambaAppletCommand> commands READ commands)
 	Q_PROPERTY(quint32 bufferAddr READ bufferAddr WRITE setBufferAddr NOTIFY bufferAddrChanged)
@@ -58,6 +59,9 @@ public:
 
 	quint32 mailboxAddr() const;
 	void setMailboxAddr(quint32 mailboxAddr);
+
+	quint32 entryAddr() const;
+	void setEntryAddr(quint32 entryAddr);
 
 	quint32 traceLevel() const;
 	void setTraceLevel(quint32 traceLevel);
@@ -102,6 +106,7 @@ signals:
 	void codeUrlChanged();
 	void codeAddrChanged();
 	void mailboxAddrChanged();
+	void entryAddrChanged();
 	void traceLevelChanged();
 	void retriesChanged();
 	void commandsChanged();
@@ -122,6 +127,7 @@ private:
 	QString m_codeUrl;
 	quint32 m_codeAddr;
 	quint32 m_mailboxAddr;
+	quint32 m_entryAddr;
 	quint32 m_traceLevel;
 	quint32 m_retries;
 	QList<SambaAppletCommand*> m_commands;

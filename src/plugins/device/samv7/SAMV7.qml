@@ -32,6 +32,7 @@ Device {
 			codeUrl: Qt.resolvedUrl("applets/applet-lowlevelinit-samv7.bin")
 			codeAddr: 0x20401000
 			mailboxAddr: 0x20401040
+			entryAddr: 0x20401000
 			commands: [
 				AppletCommand { name:"legacyInitialize"; code:0 }
 			]
@@ -42,6 +43,7 @@ Device {
 			codeUrl: Qt.resolvedUrl("applets/applet-flash-samv7.bin")
 			codeAddr: 0x20401000
 			mailboxAddr: 0x20401040
+			entryAddr: 0x20401000
 			pageSize: 512
 			eraseSupport: 256 /* 256 pages: 128K */
 			commands: [

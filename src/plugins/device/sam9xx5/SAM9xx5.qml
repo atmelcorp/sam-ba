@@ -133,26 +133,31 @@ Device {
 			codeUrl: Qt.resolvedUrl("applets/applet-lowlevel_sam9x35-generic_sram.bin")
 			codeAddr: 0x300000
 			mailboxAddr: 0x300004
+			entryAddr: 0x300000
 		},
 		ExtRamApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-extram_sam9x35-generic_sram.bin")
 			codeAddr: 0x300000
 			mailboxAddr: 0x300004
+			entryAddr: 0x300000
 		},
 		SDMMCApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-sdmmc_sam9x35-generic_ddram.bin")
 			codeAddr: 0x20000000
 			mailboxAddr: 0x20000004
+			entryAddr: 0x20000000
 		},
 		SerialFlashApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-serialflash_sam9x35-generic_ddram.bin")
 			codeAddr: 0x20000000
 			mailboxAddr: 0x20000004
+			entryAddr: 0x20000000
 		},
 		NANDFlashApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-nandflash_sam9x35-generic_ddram.bin")
 			codeAddr: 0x20000000
 			mailboxAddr: 0x20000004
+			entryAddr: 0x20000000
 			nandHeaderHelp: "For information on NAND header values, please refer to SAM9xx5 datasheet section \"10.4.4 Detailed Memory Boot Procedures\"."
 		}
 	]

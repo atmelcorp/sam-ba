@@ -127,32 +127,38 @@ Device {
 			codeUrl: Qt.resolvedUrl("applets/applet-bootconfig_sama5d2-generic_sram.bin")
 			codeAddr: 0x220000
 			mailboxAddr: 0x220004
+			entryAddr: 0x220000
 		},
 		LowlevelApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-lowlevel_sama5d2-generic_sram.bin")
 			codeAddr: 0x220000
 			mailboxAddr: 0x220004
+			entryAddr: 0x220000
 		},
 		SerialFlashApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-serialflash_sama5d2-generic_sram.bin")
 			codeAddr: 0x220000
 			mailboxAddr: 0x220004
+			entryAddr: 0x220000
 		},
 		QSPIFlashApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-qspiflash_sama5d2-generic_sram.bin")
 			codeAddr: 0x220000
 			mailboxAddr: 0x220004
+			entryAddr: 0x220000
 		},
 		NANDFlashApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-nandflash_sama5d2-generic_sram.bin")
 			codeAddr: 0x220000
 			mailboxAddr: 0x220004
+			entryAddr: 0x220000
 			nandHeaderHelp: "For information on NAND header values, please refer to SAMA5D2 datasheet section \"15.4.6 Detailed Memory Boot Procedures\"."
 		},
 		SDMMCApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-sdmmc_sama5d2-generic_sram.bin")
 			codeAddr: 0x220000
 			mailboxAddr: 0x220004
+			entryAddr: 0x220000
 		}
 	]
 

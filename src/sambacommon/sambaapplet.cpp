@@ -20,6 +20,7 @@ SambaApplet::SambaApplet(QQuickItem* parent)
 	  m_codeUrl(""),
 	  m_codeAddr(0),
 	  m_mailboxAddr(0),
+	  m_entryAddr(0),
 	  m_traceLevel(5),
 	  m_retries(20),
 	  m_bufferAddr(0),
@@ -88,6 +89,17 @@ void SambaApplet::setMailboxAddr(quint32 mailboxAddr)
 {
 	m_mailboxAddr = mailboxAddr;
 	emit mailboxAddrChanged();
+}
+
+quint32 SambaApplet::entryAddr() const
+{
+	return m_entryAddr;
+}
+
+void SambaApplet::setEntryAddr(quint32 entryAddr)
+{
+	m_entryAddr = entryAddr;
+	emit entryAddrChanged();
 }
 
 QQmlListProperty<SambaAppletCommand> SambaApplet::commands()
