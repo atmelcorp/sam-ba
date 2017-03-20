@@ -106,8 +106,17 @@ to refer to the \l{SAM-BA API Reference} and
 \li \l{SAMBA.Connection.Serial Module}
 \li Contains support for connection to devices using USB/Serial
 \row
+\li \l{SAMBA.Device.SAM9xx5 Module}
+\li Contains support for SAM9xx5 device
+\row
 \li \l{SAMBA.Device.SAMA5D2 Module}
 \li Contains support for SAMA5D2 device
+\row
+\li \l{SAMBA.Device.SAMA5D3 Module}
+\li Contains support for SAMA5D3 device
+\row
+\li \l{SAMBA.Device.SAMA5D4 Module}
+\li Contains support for SAMA5D4 device
 \row
 \li \l{SAMBA.Device.SAMV7 Module}
 \li Contains support for SAMV7 device
