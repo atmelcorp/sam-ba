@@ -21,6 +21,22 @@ import SAMBA.Applet 3.1
 
 	By default, no configuration values are set.
 
+	\section1 Serial Console Configuration
+
+	The following serial console configurations are supported:
+
+	\table
+	\header \li Instance \li Peripheral \li I/O Set \li TX Pin
+	\row    \li 0        \li DBGU       \li 1       \li PB25A
+	\row    \li 1        \li UART0      \li 1       \li PE30B
+	\row    \li 2        \li UART1      \li 1       \li PC26C
+	\row    \li 3        \li USART0     \li 1       \li PD13A
+	\row    \li 4        \li USART1     \li 1       \li PD17A
+	\row    \li 5        \li USART2     \li 1       \li PB5B
+	\row    \li 6        \li USART3     \li 1       \li PE17B
+	\row    \li 7        \li USART4     \li 1       \li PE27B
+	\endtable
+
 	\section1 SD/MMC Configuration
 
 	The following SD/MMC configurations are supported:
@@ -188,6 +204,16 @@ import SAMBA.Applet 3.1
 	\endtable
 */
 Item {
+	/*!
+		\brief Configuration for applet serial console output
+
+		See \l{SAMBA.Applet::}{SerialConfig} for a list of configurable properties.
+        */
+	property alias serial: serial
+	SerialConfig {
+		id: serial
+	}
+
 	/*!
 		\brief Configuration for SD/MMC applet
 

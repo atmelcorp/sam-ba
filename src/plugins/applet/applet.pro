@@ -12,6 +12,7 @@ qml.files = \
     QSPIFlashConfig.qml \
     SDMMCApplet.qml \
     SDMMCConfig.qml \
+    SerialConfig.qml \
     SerialFlashApplet.qml \
     SerialFlashConfig.qml
 

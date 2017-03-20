@@ -21,6 +21,21 @@ import SAMBA.Applet 3.1
 
 	By default, no configuration values are set.
 
+	\section1 Serial Console Configuration
+
+	The following serial console configurations are supported:
+
+	\table
+	\header \li Instance \li Peripheral \li I/O Set \li TX Pin
+	\row    \li 0        \li DBGU       \li 1       \li PB31A
+	\row    \li 1        \li UART0      \li 1       \li PC30A
+	\row    \li 2        \li UART1      \li 1       \li PA31B
+	\row    \li 3        \li USART0     \li 1       \li PD18A
+	\row    \li 4        \li USART1     \li 1       \li PB29A
+	\row    \li 5        \li USART2     \li 1       \li PE26B
+	\row    \li 6        \li USART3     \li 1       \li PE19B
+	\endtable
+
 	\section1 SD/MMC Configuration
 
 	The following SD/MMC configurations are supported:
@@ -131,6 +146,16 @@ import SAMBA.Applet 3.1
 	Other NAND pins are not muxed by the PIO controller.
 */
 Item {
+	/*!
+		\brief Configuration for applet serial console output
+
+		See \l{SAMBA.Applet::}{SerialConfig} for a list of configurable properties.
+        */
+	property alias serial: serial
+	SerialConfig {
+		id: serial
+	}
+
 	/*!
 		\brief Configuration for SD/MMC applet
 

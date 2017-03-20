@@ -28,6 +28,11 @@ SAMA5D4 {
 	description: "SAMA5D4 Xplained Ultra"
 
 	config {
+		serial {
+			instance: 6 /* USART3 */
+			ioset: 1
+		}
+
 		sdmmc {
 			instance: 1
 			ioset: 1

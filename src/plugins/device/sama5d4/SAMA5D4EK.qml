@@ -26,6 +26,11 @@ SAMA5D4 {
 	description: "SAMA5D4 Evaluation Kit"
 
 	config {
+		serial {
+			instance: 6 /* USART3 */
+			ioset: 1
+		}
+
 		sdmmc {
 			instance: 0
 			ioset: 1

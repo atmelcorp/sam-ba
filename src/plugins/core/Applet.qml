@@ -32,7 +32,14 @@ AppletBase {
 		This method is called by the default buildInitArgs implementation.
 	*/
 	function defaultInitArgs(connection, device) {
-		return [ connection.appletConnectionType, traceLevel ]
+		var serial_instance = device.config.serial.instance
+		var serial_ioset = device.config.serial.ioset
+                if (typeof serial_instance === "undefined" ||
+		    typeof serial_ioset === "undefined") {
+			serial_instance = serial_ioset = 0xffffffff
+		}
+		return [ connection.appletConnectionType, traceLevel,
+		         serial_instance, serial_ioset ]
 	}
 
 	/*!

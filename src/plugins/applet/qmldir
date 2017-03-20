@@ -9,5 +9,6 @@ QSPIFlashApplet 3.1 QSPIFlashApplet.qml
 QSPIFlashConfig 3.1 QSPIFlashConfig.qml
 SDMMCApplet 3.1 SDMMCApplet.qml
 SDMMCConfig 3.1 SDMMCConfig.qml
+SerialConfig 3.1 SerialConfig.qml
 SerialFlashApplet 3.1 SerialFlashApplet.qml
 SerialFlashConfig 3.1 SerialFlashConfig.qml

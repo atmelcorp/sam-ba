@@ -28,6 +28,11 @@ SAMA5D2 {
 	description: "SAMA5D2 Xplained Ultra"
 
 	config {
+		serial {
+			instance: 1 /* UART1 */
+			ioset: 1
+		}
+
 		// eMMC: SDMMC0, I/O Set 1, User Partition, Automatic bus width, 1.8V/3.3V switch supported
 		sdmmc {
 			instance: 0

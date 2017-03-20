@@ -36,6 +36,9 @@ Device {
 			commands: [
 				AppletCommand { name:"legacyInitialize"; code:0 }
 			]
+			function buildInitArgs(connection, device) {
+				return [ connection.appletConnectionType, traceLevel ]
+			}
 		},
 		Applet {
 			name: "flash"
@@ -53,6 +56,9 @@ Device {
 				AppletCommand { name:"legacyReadBuffer"; code:3 },
 				AppletCommand { name:"legacyGpnvm"; code:6 }
 			]
+			function buildInitArgs(connection, device) {
+				return [ connection.appletConnectionType, traceLevel ]
+			}
 		}
 	]
 

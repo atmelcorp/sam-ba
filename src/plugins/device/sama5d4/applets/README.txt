@@ -1,13 +1,13 @@
 These SAMA5D4 Applets were built from the Atmel Software Package:
 
 Repository: https://github.com/atmelcorp/atmel-software-package
-Commit: a1abf171a583e7ea689ebacf75e1bd22c5fb8926
+Commit: 8798f307abc4528411a619722c983dfdab06007d
 
 To get the sources and rebuild an applet (using GCC):
 
 1. get the software package source git checkout:
         git clone https://github.com/atmelcorp/atmel-software-package
-        git checkout a1abf171a583e7ea689ebacf75e1bd22c5fb8926
+        git checkout 8798f307abc4528411a619722c983dfdab06007d
 
 2. build the applet (for example: serialflash):
         cd samba_applets/serialflash

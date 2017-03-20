@@ -21,6 +21,21 @@ import SAMBA.Applet 3.1
 
 	By default, no configuration values are set.
 
+	\section1 Serial Console Configuration
+
+	The following serial console configurations are supported:
+
+	\table
+	\header \li Instance \li Peripheral \li I/O Set \li TX Pin
+	\row    \li 0        \li DBGU       \li 1       \li PA10A
+	\row    \li 1        \li UART0      \li 1       \li PC8C
+	\row    \li 2        \li UART1      \li 1       \li PC16C
+	\row    \li 3        \li USART0     \li 1       \li PA0A
+	\row    \li 4        \li USART1     \li 1       \li PA5A
+	\row    \li 5        \li USART2     \li 1       \li PA7A
+	\row    \li 6        \li USART3     \li 1       \li PC22B
+	\endtable
+
 	\section1 DDRAM
 
 	The following DDRAM configurations are supported:
@@ -146,6 +161,16 @@ import SAMBA.Applet 3.1
 	CCFG_EBICSA register.  This maps SMC D16-D31 pins to NAND D0-D15.
 */
 Item {
+	/*!
+		\brief Configuration for applet serial console output
+
+		See \l{SAMBA.Applet::}{SerialConfig} for a list of configurable properties.
+        */
+	property alias serial: serial
+	SerialConfig {
+		id: serial
+	}
+
 	/*!
 		\brief Configuration for DDRAM applet
 

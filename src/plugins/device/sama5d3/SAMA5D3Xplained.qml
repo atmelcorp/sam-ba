@@ -26,6 +26,11 @@ SAMA5D3 {
 	description: "SAMA5D3 Xplained"
 
 	config {
+		serial {
+			instance: 0 /* DBGU */
+			ioset: 1
+		}
+
 		sdmmc {
 			instance: 0
 			ioset: 1

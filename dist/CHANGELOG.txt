@@ -6,6 +6,8 @@
 
 - Added support for SD/MMC and e.MMC for SAM9xx5, SAMA5D3 and SAMA5D4
 - Board-specific configurations are now in separate QML files, one per board.
+- Serial peripheral and pin used for applet traces is now configurable via the
+  board configuration.
 
 ### Bugfixes
 

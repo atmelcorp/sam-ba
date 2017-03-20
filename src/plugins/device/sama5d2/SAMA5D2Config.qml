@@ -21,6 +21,34 @@ import SAMBA.Applet 3.1
 
 	By default, no configuration values are set.
 
+	\section1 Serial Console Configuration
+
+	The following serial console configurations are supported:
+
+	\table
+	\header \li Instance \li Peripheral \li I/O Set \li TX Pin
+	\row    \li 0        \li UART0      \li 1       \li PB27C
+	\row    \li 1        \li UART1      \li 1       \li PD3A
+	\row    \li 1        \li UART1      \li 2       \li PC8E
+	\row    \li 2        \li UART2      \li 1       \li PD5B
+	\row    \li 2        \li UART2      \li 2       \li PD24A
+	\row    \li 2        \li UART2      \li 3       \li PD20C
+	\row    \li 3        \li UART3      \li 1       \li PC13D
+	\row    \li 3        \li UART3      \li 2       \li PD0C
+	\row    \li 3        \li UART3      \li 3       \li PB12C
+	\row    \li 4        \li UART4      \li 1       \li PB4A
+	\row    \li 5        \li FLEXCOM0   \li 1       \li PB28C
+	\row    \li 6        \li FLEXCOM1   \li 1       \li PA24A
+	\row    \li 7        \li FLEXCOM2   \li 1       \li PA6E
+	\row    \li 7        \li FLEXCOM2   \li 2       \li PD26C
+	\row    \li 8        \li FLEXCOM3   \li 1       \li PA15E
+	\row    \li 8        \li FLEXCOM3   \li 2       \li PC20E
+	\row    \li 8        \li FLEXCOM3   \li 3       \li PB23E
+	\row    \li 9        \li FLEXCOM4   \li 1       \li PC28B
+	\row    \li 9        \li FLEXCOM4   \li 2       \li PD12B
+	\row    \li 9        \li FLEXCOM4   \li 3       \li PD21C
+	\endtable
+
 	\section1 SD/MMC Configuration
 
 	The following SD/MMC configurations are supported:
@@ -400,6 +428,16 @@ import SAMBA.Applet 3.1
 
 */
 Item {
+	/*!
+		\brief Configuration for applet serial console output
+
+		See \l{SAMBA.Applet::}{SerialConfig} for a list of configurable properties.
+        */
+	property alias serial: serial
+	SerialConfig {
+		id: serial
+	}
+
 	/*!
 		\brief Configuration for SD/MMC applet
 

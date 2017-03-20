@@ -29,6 +29,11 @@ SAM9xx5 {
 	description: "SAM9xx5-EK"
 
 	config {
+		serial {
+			instance: 0 /* DBGU */
+			ioset: 1
+		}
+
 		extram {
 			preset: 1 /* MT47H64M16 */
 		}
