@@ -1,0 +1,8 @@
+/*!
+\qmlmodule SAMBA.Device.SAMV71 3.1
+\title SAMBA.Device.SAMV71 Module
+
+The SAMBA.Device.SAMV71 module contains an implementation of the
+SAMBA::Device type for the SAMV71 devices.
+device.
+*/

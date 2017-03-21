@@ -5,6 +5,7 @@ qml.files = \
     BootConfigApplet.qml \
     ExtRamApplet.qml \
     ExtRamConfig.qml \
+    InternalFlashApplet.qml \
     LowlevelApplet.qml \
     LowlevelConfig.qml \
     NANDFlashApplet.qml \

@@ -1,0 +1,6 @@
+{
+	"module": "SAMBA.Device.SAMV71",
+	"module_version": "3.1",
+	"classname": "SAME70Xplained",
+	"type": "board"
+}

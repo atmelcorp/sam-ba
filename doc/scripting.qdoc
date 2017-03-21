@@ -118,8 +118,8 @@ to refer to the \l{SAM-BA API Reference} and
 \li \l{SAMBA.Device.SAMA5D4 Module}
 \li Contains support for SAMA5D4 device
 \row
-\li \l{SAMBA.Device.SAMV7 Module}
-\li Contains support for SAMV7 device
+\li \l{SAMBA.Device.SAMV71 Module}
+\li Contains support for SAMV71 device
 \endtable
 
 */

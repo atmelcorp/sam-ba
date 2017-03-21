@@ -1,0 +1,7 @@
+module SAMBA.Device.SAMV71
+BootCfg 3.1 samv71-bootcfg.js
+SAME70Xplained 3.1 SAME70Xplained.qml
+SAMV71 3.1 SAMV71.qml
+SAMV71BootConfigApplet 3.1 SAMV71BootConfigApplet.qml
+SAMV71Config 3.1 SAMV71Config.qml
+SAMV71Xplained 3.1 SAMV71Xplained.qml

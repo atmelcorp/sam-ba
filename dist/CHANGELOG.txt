@@ -9,6 +9,8 @@
 - Serial peripheral and pin used for applet traces is now configurable via the
   board configuration.
 - J-Link driver now supports SAMV71 device family (E70/S70/V70/V71)
+- SAMV71 device family support was completely reworked. It now uses 3.x applets
+  from the software package like the other devices.
 
 ### Bugfixes
 

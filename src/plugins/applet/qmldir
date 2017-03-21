@@ -2,6 +2,7 @@ module SAMBA.Applet
 BootConfigApplet 3.1 BootConfigApplet.qml
 ExtRamApplet 3.1 ExtRamApplet.qml
 ExtRamConfig 3.1 ExtRamConfig.qml
+InternalFlashApplet 3.1 InternalFlashApplet.qml
 LowlevelApplet 3.1 LowlevelApplet.qml
 LowlevelConfig 3.1 LowlevelConfig.qml
 NANDFlashApplet 3.1 NANDFlashApplet.qml

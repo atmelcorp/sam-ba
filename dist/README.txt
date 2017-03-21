@@ -48,7 +48,7 @@ This release contains several examples:
 - examples/sama5d2: examples for SAMA5D2 (boot configuration, NAND, SD/MMC, SPI/QSPI Flash)
 - examples/sama5d3: examples for SAMA5D3 (NAND, SD/MMC, SPI Flash)
 - examples/sama5d4: examples for SAMA5D4 (NAND, SD/MMC, SPI Flash, PIO)
-- examples/samv7: examples for SAMx7 MCU series (SAMV70, SAMV71, SAME70)
+- examples/samv71: examples for SAMV71 MCU series (SAME70/S70/V70/V71)
 - examples/scripting: examples relating to the QML scripting environment
 
 Please see README.txt file in each example directory for more information.

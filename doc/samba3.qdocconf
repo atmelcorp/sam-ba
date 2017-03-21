@@ -15,7 +15,7 @@ headerdirs = \
 	../src/plugins/device/sama5d2 \
 	../src/plugins/device/sama5d3 \
 	../src/plugins/device/sama5d4 \
-	../src/plugins/device/samv7
+	../src/plugins/device/samv71
 sourcedirs = . \
 	../src/sambacommon \
 	../src/plugins/applet \
@@ -26,7 +26,7 @@ sourcedirs = . \
 	../src/plugins/device/sama5d2 \
 	../src/plugins/device/sama5d3 \
 	../src/plugins/device/sama5d4 \
-	../src/plugins/device/samv7
+	../src/plugins/device/samv71
 exampledirs =
 
 sources.fileextensions = "*.cpp *.qdoc *.qml *.js"
