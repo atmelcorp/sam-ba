@@ -18,72 +18,24 @@
 
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(*(x)))
 
-struct mpu_device {
-	const char *name;
-	unsigned int exid;
-};
-
 struct mpu_regs {
+	unsigned int core;
 	const char *name;
 	unsigned int cidr_reg;
-	unsigned int cidr_mask;
 	unsigned int cidr;
-	unsigned int exid_reg;
+	unsigned int cidr_mask;
 	unsigned int wdt_mr_reg;
 	unsigned int sfr_l2cc_hramc_reg;
-	const struct mpu_device* devices;
 };
 
-static const struct mpu_device sam9xx5_devices[] = {
-	{ "SAM9G15", 0x00000000 },
-	{ "SAM9G35", 0x00000001 },
-	{ "SAM9X35", 0x00000002 },
-	{ "SAM9G25", 0x00000003 },
-	{ "SAM9X25", 0x00000004 },
-	{ NULL, 0},
-};
-
-static const struct mpu_device sama5d2_devices[] = {
-	{ "SAMA5D21-CU", 0x0000005a },
-	{ "SAMA5D22-CN", 0x00000069 },
-	{ "SAMA5D22-CU", 0x00000059 },
-	{ "SAMA5D23-CN", 0x00000068 },
-	{ "SAMA5D23-CU", 0x00000058 },
-	{ "SAMA5D24-CU", 0x00000014 },
-	{ "SAMA5D26-CN", 0x00000022 },
-	{ "SAMA5D26-CU", 0x00000012 },
-	{ "SAMA5D27-CN", 0x00000021 },
-	{ "SAMA5D27-CU", 0x00000011 },
-	{ "SAMA5D28-CN", 0x00000020 },
-	{ "SAMA5D28-CU", 0x00000010 },
-	{ NULL, 0 },
-};
-
-static const struct mpu_device sama5d3_devices[] = {
-	{ "SAMA5D31", 0x00444300 },
-	{ "SAMA5D33", 0x00414300 },
-	{ "SAMA5D34", 0x00414301 },
-	{ "SAMA5D35", 0x00584300 },
-	{ "SAMA5D36", 0x00004301 },
-	{ NULL, 0 },
-};
-
-static const struct mpu_device sama5d4_devices[] = {
-	{ "SAMA5D41", 0x00000001 },
-	{ "SAMA5D42", 0x00000002 },
-	{ "SAMA5D43", 0x00000003 },
-	{ "SAMA5D44", 0x00000004 },
-	{ NULL, 0 },
-};
-
-/* Register definitions for SAM9 & SAMA5 devices */
+/* Register definitions */
 /* Order is important: probing stops on first matching device */
 static const struct mpu_regs mpu_regs[] = {
-	{ "SAMA5D2x", 0xfc069000, 0xffffffe0, 0x8a5c08c0, 0xfc069004, 0xf8048044, 0xf8030058, sama5d2_devices },
-	{ "SAMA5D4x", 0xfc069040, 0xfffffff0, 0x8a5c07c0, 0xfc069044, 0xfc068644, 0, sama5d4_devices },
-	{ "SAMA5D3x", 0xffffee40, 0xffffffff, 0x8a5c07c2, 0xffffee44, 0xfffffe44, 0, sama5d3_devices },
-	{ "SAM9xx5",  0xfffff240, 0xffffffff, 0x819a05a1, 0xfffff244, 0xfffffe44, 0, sam9xx5_devices },
-	{ NULL, 0, 0, 0, 0, 0, 0, NULL },
+	{ JLINK_CORE_ARM926EJ_S, "SAM9xx5", 0xfffff240, 0x819a05a1, 0xffffffff, 0xfffffe44, 0 },
+	{ JLINK_CORE_CORTEX_A5, "SAMA5D2x", 0xfc069000, 0x8a5c08c0, 0xffffffe0, 0xf8048044, 0xf8030058 },
+	{ JLINK_CORE_CORTEX_A5, "SAMA5D4x", 0xfc069040, 0x8a5c07c0, 0xfffffff0, 0xfc068644, 0 },
+	{ JLINK_CORE_CORTEX_A5, "SAMA5D3x", 0xffffee40, 0x8a5c07c2, 0xffffffff, 0xfffffe44, 0 },
+	{ 0, NULL, 0, 0, 0, 0, 0, },
 };
 
 /* WDT_MR Fields */
@@ -115,7 +67,7 @@ static void jlink_debug_log(const char* sErr)
 SambaConnectionJlinkHelper::SambaConnectionJlinkHelper(QQuickItem* parent)
 	: QQuickItem(parent),
 	  m_swd(false),
-	  m_devFamily(-1)
+	  m_core(-1)
 {
 	JLINKARM_EnableLog(jlink_debug_log);
 	JLINKARM_EnableLogCom(jlink_debug_log);
@@ -229,37 +181,35 @@ void SambaConnectionJlinkHelper::open()
 	JLINKARM_Halt();
 	while (!JLINKARM_IsHalted()) {}
 
-	m_devFamily = JLINKARM_GetDeviceFamily();
-	if ((m_devFamily == JLINKARM_DEV_FAMILY_CORTEX_A5) ||
-	    (m_devFamily == JLINKARM_DEV_FAMILY_ARM9))
+	m_core = JLINKARM_CORE_GetFound();
+	if ((m_core == JLINK_CORE_ARM926EJ_S) ||
+	    (m_core == JLINK_CORE_CORTEX_A5))
 	{
-		// Configure SVC Mode without IRQ & FIQ
-		JLINKARM_WriteReg(ARM_REG_CPSR, F_BIT | I_BIT | ARM_MODE_SVC);
+		if ((m_core == JLINK_CORE_ARM926EJ_S) ||
+		    (m_core == JLINK_CORE_CORTEX_A5)) {
+			// Configure SVC Mode without IRQ & FIQ
+			JLINKARM_WriteReg(ARM_REG_CPSR, F_BIT | I_BIT | ARM_MODE_SVC);
 
-		if (!JLINKARM_CP15_IsPresent())
-		{
-			emit connectionFailed("CP15 not present");
-			return;
-		}
-		else
-		{
-			unsigned int c0 = 0;
-			unsigned int c1 = 0;
+			if (!JLINKARM_CP15_IsPresent())
+			{
+				emit connectionFailed("CP15 not present");
+				return;
+			}
+			else
+			{
+				unsigned int c1 = 0;
 
-			// read ID
-			JLINKARM_CP15_ReadEx(0, 0, 0, 0, &c0);
+				// read Control Register
+				JLINKARM_CP15_ReadEx(1, 0, 0, 0, &c1);
 
-			// read Control Register
-			JLINKARM_CP15_ReadEx(1, 0, 0, 0, &c1);
-
-			// Disable MMU / Disable DCache and ICache / Vector relocation off
-			c1 &= ~(CP15_C1_MMU | CP15_C1_DCACHE | CP15_C1_SYSTEM_PROTECT | CP15_C1_ICACHE | CP15_C1_VECTORS);
-			JLINKARM_CP15_WriteEx(1, 0, 0, 0, c1);
+				// Disable MMU / Disable DCache and ICache / Vector relocation off
+				c1 &= ~(CP15_C1_MMU | CP15_C1_DCACHE | CP15_C1_SYSTEM_PROTECT | CP15_C1_ICACHE | CP15_C1_VECTORS);
+				JLINKARM_CP15_WriteEx(1, 0, 0, 0, c1);
+			}
 		}
 
 		// Read Devices Chip ID register
 		int serie = -1;
-		int device = -1;
 		for (unsigned i = 0; mpu_regs[i].cidr_reg; i++)
 		{
 			U32 cidr = 0;
@@ -267,25 +217,12 @@ void SambaConnectionJlinkHelper::open()
 
 			if ((cidr & mpu_regs[i].cidr_mask) == mpu_regs[i].cidr) {
 				serie = i;
-
-				U32 exid = 0;
-				JLINKARM_ReadMemU32(mpu_regs[i].exid_reg, 1, &exid, NULL);
-				for (unsigned j = 0; mpu_regs[i].devices[j].name; j++) {
-					if (exid == mpu_regs[i].devices[j].exid) {
-						device = j;
-						break;
-					}
-				}
-
 				break;
 			}
 		}
 		if (serie >= 0)
 		{
-			if (device >= 0)
-				qCInfo(sambaLogConnJlink, "Found Atmel %s device", mpu_regs[serie].devices[device].name);
-			else
-				qCInfo(sambaLogConnJlink, "Found Unknown Atmel %s device", mpu_regs[serie].name);
+			qCInfo(sambaLogConnJlink, "Found Atmel %s device", mpu_regs[serie].name);
 
 			// Disable Watchdog
 			qCInfo(sambaLogConnJlink, "Disabling watchdog");
@@ -300,7 +237,7 @@ void SambaConnectionJlinkHelper::open()
 		else
 		{
 			JLINKARM_Close();
-			emit connectionFailed("Could not identify device");
+			emit connectionFailed("Unsupported device");
 		}
 
 		JLINKARM_SetSpeed(JLINKARM_SPEED_AUTO);
@@ -322,7 +259,7 @@ void SambaConnectionJlinkHelper::open()
 	else
 	{
 		JLINKARM_Close();
-		emit connectionFailed("Unsupported device family");
+		emit connectionFailed("Unsupported device");
 	}
 }
 
@@ -424,8 +361,8 @@ bool SambaConnectionJlinkHelper::write(quint32 address, SambaByteArray *data)
 
 bool SambaConnectionJlinkHelper::go(quint32 address)
 {
-	if ((m_devFamily == JLINKARM_DEV_FAMILY_CORTEX_A5) ||
-	    (m_devFamily == JLINKARM_DEV_FAMILY_ARM9))
+	if ((m_core == JLINK_CORE_ARM926EJ_S) ||
+	    (m_core == JLINK_CORE_CORTEX_A5))
 	{
 		if (!JLINKARM_IsHalted())
 			return false;

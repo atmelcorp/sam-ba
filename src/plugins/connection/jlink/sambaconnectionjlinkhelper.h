@@ -62,7 +62,7 @@ signals:
 private:
 	QString m_serialNumber;
 	bool m_swd;
-	int m_devFamily;
+	int m_core;
 };
 
 class Q_DECL_EXPORT SambaConnectionPluginJlink : public QQmlExtensionPlugin
