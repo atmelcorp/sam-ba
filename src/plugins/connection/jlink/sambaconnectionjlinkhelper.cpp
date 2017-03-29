@@ -183,7 +183,8 @@ void SambaConnectionJlinkHelper::open()
 
 	m_core = JLINKARM_CORE_GetFound();
 	if ((m_core == JLINK_CORE_ARM926EJ_S) ||
-	    (m_core == JLINK_CORE_CORTEX_A5))
+	    (m_core == JLINK_CORE_CORTEX_A5) ||
+	    (m_core == JLINK_CORE_CORTEX_M7))
 	{
 		if ((m_core == JLINK_CORE_ARM926EJ_S) ||
 		    (m_core == JLINK_CORE_CORTEX_A5)) {
@@ -370,6 +371,26 @@ bool SambaConnectionJlinkHelper::go(quint32 address)
 		// set beginning address
 		JLINKARM_WriteReg(ARM_REG_R14_SVC, 0);
 		JLINKARM_WriteReg(ARM_REG_R15, address);
+		JLINKARM_ClrBP(0);
+		JLINKARM_SetBP(0, 0);
+
+		// run
+		JLINKARM_Go();
+		return true;
+	} else if (m_core == JLINK_CORE_CORTEX_M7) {
+		if (!JLINKARM_IsHalted())
+			return false;
+
+		quint32 pc;
+		quint8 status;
+		JLINKARM_ReadMemU32(address + 4, 1, &pc, &status);
+
+		// make sure that pc is even
+		pc &= 0xfffffffe;
+
+		// set beginning address
+		JLINKARM_WriteReg((ARM_REG)JLINKARM_CM4_REG_R14, 0);
+		JLINKARM_WriteReg((ARM_REG)JLINKARM_CM4_REG_R15, pc);
 		JLINKARM_ClrBP(0);
 		JLINKARM_SetBP(0, 0);
 
