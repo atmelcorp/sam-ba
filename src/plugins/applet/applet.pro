@@ -2,6 +2,7 @@ TEMPLATE = aux
 
 qml.files = \
     qmldir \
+    BootConfigApplet.qml \
     ExtRamApplet.qml \
     ExtRamConfig.qml \
     LowlevelApplet.qml \

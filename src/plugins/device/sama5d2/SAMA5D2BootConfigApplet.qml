@@ -13,24 +13,46 @@
 
 import QtQuick 2.3
 import SAMBA 3.1
+import SAMBA.Applet 3.1
 import SAMBA.Device.SAMA5D2 3.1
 
 /*! \internal */
-Applet {
-	name: "bootconfig"
-	description: "Boot Configuration"
-	commands: [
-		AppletCommand { name:"initialize"; code:0 },
-		AppletCommand { name:"readBootCfg"; code:0x34 },
-		AppletCommand { name:"writeBootCfg"; code:0x35 }
-	]
+BootConfigApplet {
 
-	/* -------- Command Line Handling -------- */
+	// parameter indexes must match applet index argument
+	configParams: [ "BSCR", "BUREG0", "BUREG1", "BUREG2", "BUREG3", "FUSE" ]
+
+	/* -------- Configuration Parameters Handling -------- */
 
 	/*! \internal */
-	function commandLineCommands() {
-		return [ "readcfg", "writecfg" ]
+	function configValueFromText(index, text) {
+		switch (index) {
+		case 0:
+			return BSCR.fromText(text)
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+			return BCW.fromText(text)
+		}
 	}
+
+	/*! \internal */
+	function configValueToText(index, value) {
+		switch (index) {
+		case 0:
+			return BSCR.toText(value)
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+			return BCW.toText(value)
+		}
+	}
+
+	/* -------- Command Line Handling -------- */
 
 	/*! \internal */
 	function commandLineCommandHelp(command) {
@@ -74,76 +96,6 @@ Applet {
 			        "        SECURE_MODE,",
 			        "    Tokens with a star (*) are selected by default if no token from the same line is provided (field value is 0).",
 			        "    Please refer to SAMA5D2 Datasheet section \"15.4 Boot configuration\" for information on boot settings."]
-		}
-	}
-
-	/*! \internal */
-	function commandLineCommandReadBootConfig(connection, device, args) {
-		if (args.length !== 1)
-			return "Invalid number of arguments (expected 1)."
-
-		// source (required)
-		if (args[0].length === 0)
-			return "Invalid configuration word / register parameter (empty)"
-		var source = args[0]
-
-		// sources index must match applet index parameter
-		var sources = ["BSCR", "BUREG0", "BUREG1", "BUREG2", "BUREG3", "FUSE"]
-		var index = sources.indexOf(source.toUpperCase())
-		if (index < 0)
-			return "Unknown configuration word / register parameter"
-
-		var value = readBootCfg(connection, device, index)
-
-		var text
-		if (index === 0)
-			text = BSCR.toText(value)
-		else
-			text = BCW.toText(value)
-		print(sources[index] + "=" + Utils.hex(value, 8) + " / " + text)
-	}
-
-	/*! \internal */
-	function commandLineCommandWriteBootConfig(connection, device, args) {
-		if (args.length !== 2)
-			return "Invalid number of arguments (expected 2)."
-
-		// source (required)
-		if (args[0].length === 0)
-			return "Invalid configuration word / register parameter (empty)"
-		var source = args[0]
-
-		// sources index must match applet index parameter
-		var sources = ["BSCR", "BUREG0", "BUREG1", "BUREG2", "BUREG3", "FUSE"]
-		var index = sources.indexOf(source.toUpperCase())
-		if (index < 0)
-			return "Unknown configuration word / register parameter"
-
-		// value (required)
-		if (args[1].length === 0)
-			return "Invalid value parameter (empty)"
-		var value = Utils.parseInteger(args[1])
-		if (isNaN(value)) {
-			if (index === 0)
-				value = BSCR.fromText(args[1])
-			else
-				value = BCW.fromText(args[1])
-		}
-
-		print("Setting " + sources[index] + " to " + Utils.hex(value, 8))
-		writeBootCfg(connection, device, index, value)
-	}
-
-	/*! \internal */
-	function commandLineCommand(connection, device, command, args) {
-		if (command === "readcfg") {
-			return commandLineCommandReadBootConfig(connection, device, args);
-		}
-		else if (command === "writecfg") {
-			return commandLineCommandWriteBootConfig(connection, device, args);
-		}
-		else {
-			return defaultCommandLineCommandHandler(connection, device, command, args)
 		}
 	}
 }
