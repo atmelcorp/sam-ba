@@ -30,3 +30,28 @@ Sample scripts to flash a linux environment on NANDFlash of the
     On Linux:
         ../../../sam-ba -x nandflash-jlink.qml
 
+## Command Line
+
+Alternatively, it is possible to use command-line commands instead of the QML script.
+
+The following commands are equivalent to the nandflash-usb.qml script:
+
+        sam-ba -p usb -b sama5d2 -a nandflash -c erase
+        sam-ba -p usb -b sama5d2 -a nandflash -c writeboot:at91bootstrap.bin
+        sam-ba -p usb -b sama5d2 -a nandflash -c write:u-boot-env.bin:0x4000
+        sam-ba -p usb -b sama5d2 -a nandflash -c write:u-boot.bin:0x8000
+        sam-ba -p usb -b sama5d2 -a nandflash -c write:at91-sama5d2_xplained.dtb:0x60000
+        sam-ba -p usb -b sama5d2 -a nandflash -c write:zImage:0x6c000
+        sam-ba -p usb -b sama5d2 -a bootconfig -c writecfg:bscr:valid,bureg0
+        sam-ba -p usb -b sama5d2 -a bootconfig -c writecfg:bureg0:ext_mem_boot,sdmmc1_disabled,sdmmc0_disabled,nfc_ioset2,spi1_disabled,spi0_disabled,qspi1_disabled,qspi0_disabled
+
+The following commands are equivalent to the nandflash-jlink.qml script:
+
+        sam-ba -p jlink -b sama5d2 -a nandflash -c erase
+        sam-ba -p jlink -b sama5d2 -a nandflash -c writeboot:at91bootstrap.bin
+        sam-ba -p jlink -b sama5d2 -a nandflash -c write:u-boot-env.bin:0x4000
+        sam-ba -p jlink -b sama5d2 -a nandflash -c write:u-boot.bin:0x8000
+        sam-ba -p jlink -b sama5d2 -a nandflash -c write:at91-sama5d2_xplained.dtb:0x60000
+        sam-ba -p jlink -b sama5d2 -a nandflash -c write:zImage:0x6c000
+        sam-ba -p jlink -b sama5d2 -a bootconfig -c writecfg:bscr:valid,bureg0
+        sam-ba -p jlink -b sama5d2 -a bootconfig -c writecfg:bureg0:ext_mem_boot,sdmmc1_disabled,sdmmc0_disabled,nfc_ioset2,spi1_disabled,spi0_disabled,qspi1_disabled,qspi0_disabled

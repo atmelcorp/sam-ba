@@ -26,3 +26,20 @@ Sample scripts to flash a program on the internal flash of the
     On Linux:
         ../../../sam-ba -x internalflash-jlink.qml
 
+## Command Line
+
+Alternatively, it is possible to use command-line commands instead of the QML script.
+
+The following commands are equivalent to the internalflash-usb.qml script:
+
+        sam-ba -p usb -b samv71-xplained -a internalflash -c erase -c write:program.bin
+        sam-ba -p usb -b samv71-xplained -a bootconfig -c writecfg:bootmode:flash
+
+The following commands are equivalent to the internalflash-jlink.qml script:
+
+        sam-ba -p jlink::swd -b samv71-xplained -a internalflash -c erase -c write:program.bin
+        sam-ba -p jlink::swd -b samv71-xplained -a bootconfig -c writecfg:bootmode:flash
+
+The following command uses the JTAG connection to reset the bootmode to the SAM-BA Monitor:
+
+        sam-ba -p jlink::swd -b samv71-xplained -a bootconfig -c writecfg:bootmode:monitor

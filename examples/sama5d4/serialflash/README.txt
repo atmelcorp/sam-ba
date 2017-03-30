@@ -30,3 +30,18 @@ Sample scripts to flash an application on SPI SerialFlash of the
     On Linux:
         ../../../sam-ba -x serialflash-jlink.qml
 
+## Command Line
+
+Alternatively, it is possible to use command-line commands instead of the QML script.
+
+The following commands are equivalent to the serialflash-usb.qml script:
+
+        sam-ba -p usb -b sama5d4-xplained -a lowlevel
+        sam-ba -p usb -b sama5d4-xplained -a serialflash -c erase
+        sam-ba -p usb -b sama5d4-xplained -a serialflash -c writeboot:application.bin
+
+The following commands are equivalent to the serialflash-jlink.qml script:
+
+        sam-ba -p jlink -b sama5d4-xplained -a lowlevel
+        sam-ba -p jlink -b sama5d4-xplained -a serialflash -c erase
+        sam-ba -p jlink -b sama5d4-xplained -a serialflash -c writeboot:application.bin

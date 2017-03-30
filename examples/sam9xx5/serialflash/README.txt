@@ -31,3 +31,20 @@ Sample scripts to flash a linux environment on SerialFlash of the
     On Linux:
         ../../../sam-ba -x serialflash-jlink.qml
 
+## Command Line
+
+Alternatively, it is possible to use command-line commands instead of the QML script.
+
+The following commands are equivalent to the serialflash-usb.qml script:
+
+        sam-ba -p usb -b sam9xx5-ek -a lowlevel
+        sam-ba -p usb -b sam9xx5-ek -a extram
+        sam-ba -p usb -b sam9xx5-ek -a serialflash -c erase
+        sam-ba -p usb -b sam9xx5-ek -a serialflash -c writeboot:application.bin
+
+The following commands are equivalent to the serialflash-jlink.qml script:
+
+        sam-ba -p jlink -b sam9xx5-ek -a lowlevel
+        sam-ba -p jlink -b sam9xx5-ek -a extram
+        sam-ba -p jlink -b sam9xx5-ek -a serialflash -c erase
+        sam-ba -p jlink -b sam9xx5-ek -a serialflash -c writeboot:application.bin
