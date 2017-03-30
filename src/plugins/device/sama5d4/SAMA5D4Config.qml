@@ -21,6 +21,60 @@ import SAMBA.Applet 3.1
 
 	By default, no configuration values are set.
 
+	\section1 SD/MMC Configuration
+
+	The following SD/MMC configurations are supported:
+
+	\table
+	\header \li Instance \li Peripheral      \li I/O Set \li Bus Width
+	\row    \li 0        \li HSMCI0 (Slot A) \li 1       \li 1-bit, 4-bit, 8-bit
+	\row    \li 0        \li HSMCI0 (Slot B) \li 2       \li 1-bit, 4-bit
+	\row    \li 1        \li HSMCI1          \li 1       \li 1-bit, 4-bit
+	\endtable
+
+	The SD/MMC applet on SAMA5D4 does not support voltage switching, so the
+	\a voltage configuration property is ignored.
+
+	\section2 Pin List for SD/MMC Instance 0 (I/O Set 1)
+
+	\table
+	\header \li Pin   \li Use
+	\row    \li PC4B  \li Clock
+	\row    \li PC5B  \li Command
+	\row    \li PC6B  \li Data 0 (bus width: 1-bit, 4-bit, 8-bit)
+	\row    \li PC7B  \li Data 1 (bus width: 4-bit, 8-bit)
+	\row    \li PC8B  \li Data 2 (bus width: 4-bit, 8-bit)
+	\row    \li PC9B  \li Data 3 (bus width: 4-bit, 8-bit)
+	\row    \li PC10B \li Data 4 (bus width: 8-bit)
+	\row    \li PC11B \li Data 5 (bus width: 8-bit)
+	\row    \li PC12B \li Data 6 (bus width: 8-bit)
+	\row    \li PC13B \li Data 7 (bus width: 8-bit)
+	\endtable
+
+	\section2 Pin List for SD/MMC Instance 0 (I/O Set 2)
+
+	\table
+	\header \li Pin   \li Use
+	\row    \li PC4B  \li Clock
+	\row    \li PE0B  \li Command
+	\row    \li PE1B  \li Data 0 (bus width: 1-bit, 4-bit)
+	\row    \li PE2B  \li Data 1 (bus width: 4-bit)
+	\row    \li PE3B  \li Data 2 (bus width: 4-bit)
+	\row    \li PE4B  \li Data 3 (bus width: 4-bit)
+	\endtable
+
+	\section2 Pin List for SD/MMC Instance 1 (I/O Set 1)
+
+	\table
+	\header \li Pin  \li Use
+	\row    \li PE18C \li Clock
+	\row    \li PE19C \li Command
+	\row    \li PE20C \li Data 0 (Bus Width: 1-bit, 4-bit)
+	\row    \li PE21C \li Data 1 (Bus Width: 4-bit)
+	\row    \li PE22C \li Data 2 (Bus Width: 4-bit)
+	\row    \li PE23C \li Data 3 (Bus Width: 4-bit)
+	\endtable
+
 	\section1 SPI Serial Flash Configuration
 
 	The following SPI Serial Flash configurations are supported:
@@ -134,6 +188,16 @@ import SAMBA.Applet 3.1
 	\endtable
 */
 Item {
+	/*!
+		\brief Configuration for SD/MMC applet
+
+		See \l{SAMBA.Applet::}{SDMMCConfig} for a list of configurable properties.
+        */
+	property alias sdmmc: sdmmc
+	SDMMCConfig {
+		id: sdmmc
+	}
+
 	/*!
 		\brief Configuration for SPI Serial Flash applet
 

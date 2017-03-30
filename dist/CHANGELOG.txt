@@ -4,6 +4,8 @@
 
 ### Enhancements
 
+- Added support for SD/MMC and e.MMC for SAM9xx5, SAMA5D3 and SAMA5D4
+
 ### Bugfixes
 
 ### API Changes

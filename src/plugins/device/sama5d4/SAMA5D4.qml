@@ -30,6 +30,14 @@ import SAMBA.Device.SAMA5D4 3.1
 	flash external memories. Please see SAMBA::Applet for more information on the
 	applet mechanism.
 
+	\section2 SDMMC Applet
+
+	This applet is used to read/write SD/MMC and e.MMC devices. It supports
+	all HSMCI peripherals present on the SAMA5D4 device (see SAMA5D4Config
+	for configuration information).
+
+	Supported commands are "init", "read" and "write".
+
 	\section2 SerialFlash Applet
 
 	This applet is used to flash AT25 serial flash memories. It supports
@@ -109,6 +117,11 @@ Device {
 			codeAddr: 0x200000
 			mailboxAddr: 0x200004
 		},
+		SDMMCApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-sdmmc_sama5d4-generic_sram.bin")
+			codeAddr: 0x200000
+			mailboxAddr: 0x200004
+		},
 		SerialFlashApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-serialflash_sama5d4-generic_sram.bin")
 			codeAddr: 0x200000
@@ -149,6 +162,11 @@ Device {
 
 	onBoardChanged: {
 		if (board === "" || typeof board === "undefined") {
+			config.sdmmc.instance = undefined
+			config.sdmmc.ioset = undefined
+			config.sdmmc.partition = undefined
+			config.sdmmc.busWidth = undefined
+			config.sdmmc.voltages = undefined
 			config.serialflash.instance = undefined
 			config.serialflash.ioset = undefined
 			config.serialflash.chipSelect = undefined
@@ -158,6 +176,11 @@ Device {
 			config.nandflash.header = undefined
 		}
 		else if (board === "sama5d4-xplained") {
+			config.sdmmc.instance = 1
+			config.sdmmc.ioset = 1
+			config.sdmmc.partition = 0
+			config.sdmmc.busWidth = 0
+			config.sdmmc.voltages = 4 /* 3.3V */
 			config.serialflash.instance = 0
 			config.serialflash.ioset = 1
 			config.serialflash.chipSelect = 0

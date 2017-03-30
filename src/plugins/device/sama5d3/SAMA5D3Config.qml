@@ -21,6 +21,60 @@ import SAMBA.Applet 3.1
 
 	By default, no configuration values are set.
 
+	\section1 SD/MMC Configuration
+
+	The following SD/MMC configurations are supported:
+
+	\table
+	\header \li Instance \li Peripheral \li I/O Set \li Bus Width
+	\row    \li 0        \li HSMCI0     \li 1       \li 1-bit, 4-bit, 8-bit
+	\row    \li 1        \li HSMCI1     \li 1       \li 1-bit, 4-bit
+	\row    \li 2        \li HSMCI2     \li 1       \li 1-bit, 4-bit
+	\endtable
+
+	The SD/MMC applet on SAMA5D3 does not support voltage switching, so the
+	\a voltage configuration property is ignored.
+
+	\section2 Pin List for SD/MMC Instance 0 (I/O Set 1)
+
+	\table
+	\header \li Pin   \li Use
+	\row    \li PD9A  \li Clock
+	\row    \li PD0A  \li Command
+	\row    \li PD1A  \li Data 0 (bus width: 1-bit, 4-bit, 8-bit)
+	\row    \li PD2A  \li Data 1 (bus width: 4-bit, 8-bit)
+	\row    \li PD3A  \li Data 2 (bus width: 4-bit, 8-bit)
+	\row    \li PD4A  \li Data 3 (bus width: 4-bit, 8-bit)
+	\row    \li PD5A \li Data 4 (bus width: 8-bit)
+	\row    \li PD6A \li Data 5 (bus width: 8-bit)
+	\row    \li PD7A \li Data 6 (bus width: 8-bit)
+	\row    \li PD8A \li Data 7 (bus width: 8-bit)
+	\endtable
+
+	\section2 Pin List for SD/MMC Instance 1 (I/O Set 1)
+
+	\table
+	\header \li Pin   \li Use
+	\row    \li PB24A \li Clock
+	\row    \li PB19A \li Command
+	\row    \li PB20A \li Data 0 (bus width: 1-bit, 4-bit)
+	\row    \li PB21A \li Data 1 (bus width: 4-bit)
+	\row    \li PB22A \li Data 2 (bus width: 4-bit)
+	\row    \li PB23A \li Data 3 (bus width: 4-bit)
+	\endtable
+
+	\section2 Pin List for SD/MMC Instance 2 (I/O Set 1)
+
+	\table
+	\header \li Pin  \li Use
+	\row    \li PC15A \li Clock
+	\row    \li PC10A \li Command
+	\row    \li PC11A \li Data 0 (Bus Width: 1-bit, 4-bit)
+	\row    \li PC12A \li Data 1 (Bus Width: 4-bit)
+	\row    \li PC13A \li Data 2 (Bus Width: 4-bit)
+	\row    \li PC14A \li Data 3 (Bus Width: 4-bit)
+	\endtable
+
 	\section1 SPI Serial Flash Configuration
 
 	The following SPI Serial Flash configurations are supported:
@@ -77,6 +131,16 @@ import SAMBA.Applet 3.1
 	Other NAND pins are not muxed by the PIO controller.
 */
 Item {
+	/*!
+		\brief Configuration for SD/MMC applet
+
+		See \l{SAMBA.Applet::}{SDMMCConfig} for a list of configurable properties.
+        */
+	property alias sdmmc: sdmmc
+	SDMMCConfig {
+		id: sdmmc
+	}
+
 	/*!
 		\brief Configuration for SPI Serial Flash applet
 

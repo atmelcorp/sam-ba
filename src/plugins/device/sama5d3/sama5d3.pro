@@ -9,6 +9,7 @@ DEVICE_FILES *= \
     applets/README.txt \
     applets/applet-lowlevel_sama5d3-generic_sram.bin \
     applets/applet-nandflash_sama5d3-generic_sram.bin \
+    applets/applet-sdmmc_sama5d3-generic_sram.bin \
     applets/applet-serialflash_sama5d3-generic_sram.bin
 
 include(../device.pri)

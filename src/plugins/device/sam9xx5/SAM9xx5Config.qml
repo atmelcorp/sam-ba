@@ -33,6 +33,43 @@ import SAMBA.Applet 3.1
 	\row \li 3 \li LPDDR2 \li MT42L128M16 \li 2x256MB
 	\endtable
 
+	\section1 SD/MMC Configuration
+
+	The following SD/MMC configurations are supported:
+
+	\table
+	\header \li Instance \li Peripheral \li I/O Set \li Bus Width
+	\row    \li 0        \li HSMCI0     \li 1       \li 1-bit, 4-bit
+	\row    \li 1        \li HSMCI1     \li 1       \li 1-bit, 4-bit
+	\endtable
+
+	The SD/MMC applet on SAM9xx5 does not support voltage switching, so the
+	\a voltage configuration property is ignored.
+
+	\section2 Pin List for SD/MMC Instance 0 (I/O Set 1)
+
+	\table
+	\header \li Pin   \li Use
+	\row    \li PA17A \li Clock
+	\row    \li PA16A \li Command
+	\row    \li PA15A \li Data 0 (bus width: 1-bit, 4-bit)
+	\row    \li PA18A \li Data 1 (bus width: 4-bit)
+	\row    \li PA19A \li Data 2 (bus width: 4-bit)
+	\row    \li PA20A \li Data 3 (bus width: 4-bit)
+	\endtable
+
+	\section2 Pin List for SD/MMC Instance 1 (I/O Set 1)
+
+	\table
+	\header \li Pin   \li Use
+	\row    \li PA13B \li Clock
+	\row    \li PA12B \li Command
+	\row    \li PA11B \li Data 0 (bus width: 1-bit, 4-bit)
+	\row    \li PA2B  \li Data 1 (bus width: 4-bit)
+	\row    \li PA3B  \li Data 2 (bus width: 4-bit)
+	\row    \li PA4B  \li Data 3 (bus width: 4-bit)
+	\endtable
+
 	\section1 SPI Serial Flash Configuration
 
 	The following SPI Serial Flash configurations are supported:
@@ -117,6 +154,16 @@ Item {
 	property alias extram: extram
 	ExtRamConfig {
 		id: extram
+	}
+
+	/*!
+		\brief Configuration for SD/MMC applet
+
+		See \l{SAMBA.Applet::}{SDMMCConfig} for a list of configurable properties.
+        */
+	property alias sdmmc: sdmmc
+	SDMMCConfig {
+		id: sdmmc
 	}
 
 	/*!

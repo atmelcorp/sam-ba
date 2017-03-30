@@ -44,6 +44,16 @@ import SAMBA.Device.SAM9xx5 3.1
 
 	The only supported command is "init".
 
+	\section2 SDMMC Applet
+
+	This applet is used to read/write SD/MMC and e.MMC devices. It supports
+	all HSMCI peripherals present on the SAM9xx5 device (see SAM9xx5Config
+	for configuration information).
+
+	The External RAM applet must have been initialized first.
+
+	Supported commands are "init", "read" and "write".
+
 	\section2 SerialFlash Applet
 
 	This applet is used to flash AT25 serial flash memories. It supports
@@ -137,6 +147,11 @@ Device {
 			codeAddr: 0x300000
 			mailboxAddr: 0x300004
 		},
+		SDMMCApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-sdmmc_sam9x35-generic_ddram.bin")
+			codeAddr: 0x20000000
+			mailboxAddr: 0x20000004
+		},
 		SerialFlashApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-serialflash_sam9x35-generic_ddram.bin")
 			codeAddr: 0x20000000
@@ -202,6 +217,11 @@ Device {
 	onBoardChanged: {
 		if (board === "" || typeof board === "undefined") {
 			config.extram.preset = undefined
+			config.sdmmc.instance = undefined
+			config.sdmmc.ioset = undefined
+			config.sdmmc.partition = undefined
+			config.sdmmc.busWidth = undefined
+			config.sdmmc.voltages = undefined
 			config.serialflash.instance = undefined
 			config.serialflash.ioset = undefined
 			config.serialflash.chipSelect = undefined
@@ -212,6 +232,11 @@ Device {
 		}
 		else if (board === "sam9xx5-ek") {
 			config.extram.preset = 1 /* MT47H64M16 */
+			config.sdmmc.instance = 1
+			config.sdmmc.ioset = 1
+			config.sdmmc.partition = 0
+			config.sdmmc.busWidth = 0
+			config.sdmmc.voltages = 4 /* 3.3V */
 			config.serialflash.instance = 0
 			config.serialflash.ioset = 1
 			config.serialflash.chipSelect = 0

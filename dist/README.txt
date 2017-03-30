@@ -44,10 +44,10 @@ This release supports the following platforms:
 
 This release contains several examples:
 
-- examples/sam9xx5: examples for SAM9xx5 (NAND, SPI Flash)
+- examples/sam9xx5: examples for SAM9xx5 (NAND, SD/MMC, SPI Flash)
 - examples/sama5d2: examples for SAMA5D2 (boot configuration, NAND, SD/MMC, SPI/QSPI Flash)
-- examples/sama5d3: examples for SAMA5D3 (NAND, SPI Flash)
-- examples/sama5d4: examples for SAMA5D4 (NAND, SPI Flash, PIO)
+- examples/sama5d3: examples for SAMA5D3 (NAND, SD/MMC, SPI Flash)
+- examples/sama5d4: examples for SAMA5D4 (NAND, SD/MMC, SPI Flash, PIO)
 - examples/samv7: examples for SAMx7 MCU series (SAMV70, SAMV71, SAME70)
 - examples/scripting: examples relating to the QML scripting environment
 

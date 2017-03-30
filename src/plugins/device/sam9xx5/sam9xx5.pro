@@ -10,6 +10,7 @@ DEVICE_FILES *= \
     applets/applet-lowlevel_sam9x35-generic_sram.bin \
     applets/applet-extram_sam9x35-generic_sram.bin \
     applets/applet-nandflash_sam9x35-generic_ddram.bin \
+    applets/applet-sdmmc_sam9x35-generic_ddram.bin \
     applets/applet-serialflash_sam9x35-generic_ddram.bin
 
 include(../device.pri)
