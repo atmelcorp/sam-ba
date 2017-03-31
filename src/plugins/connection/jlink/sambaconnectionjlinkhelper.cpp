@@ -405,3 +405,14 @@ bool SambaConnectionJlinkHelper::go(quint32 address)
 
 	return false;
 }
+
+bool SambaConnectionJlinkHelper::waitForMonitor(int timeout)
+{
+	QElapsedTimer timer;
+	timer.start();
+	while (!JLINKARM_IsHalted() && timer.elapsed() < timeout) {
+		QThread::msleep(10);
+	}
+
+	return JLINKARM_IsHalted();
+}

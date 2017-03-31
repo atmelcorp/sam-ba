@@ -15,6 +15,7 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QStringList>
+#include "xmodemhelper.h"
 
 #define MAX_BUF_SIZE (32*1024)
 
@@ -126,7 +127,7 @@ void SambaConnectionSerialHelper::open()
 		// resync in case some data was already sent to monitor:
 		// send a single '#' and ignore response
 		writeSerial(QString("#"));
-		readAllSerial();
+		readAllSerial(20);
 
 		// switch to binary mode
 		writeSerial(QString("N#"));
@@ -185,7 +186,7 @@ QByteArray SambaConnectionSerialHelper::readAllSerial(int minBytes, int timeout)
 
 	/* timeout=0 -> default timeout, timeout<0 -> no timeout */
 	if (timeout == 0)
-		timeout = 10;
+		timeout = minBytes * 10;
 
 	timer.start();
 	do {
@@ -269,7 +270,12 @@ SambaByteArray *SambaConnectionSerialHelper::read(quint32 address, unsigned leng
 		if ((chunkSize & 63) == 0)
 			chunkSize--;
 		writeSerial(QString().sprintf("R%x,%x#", address + offset, chunkSize));
-		data.append(readAllSerial(chunkSize, timeout - timer.elapsed()));
+		if (m_at91) {
+			data.append(readAllSerial(chunkSize, timeout - timer.elapsed()));
+		} else {
+			XmodemHelper xmodem(m_serial);
+			data.append(xmodem.receive(chunkSize));
+		}
 		offset += chunkSize;
 		length -= chunkSize;
 	}
@@ -315,7 +321,13 @@ bool SambaConnectionSerialHelper::write(quint32 address, SambaByteArray *data)
 	{
 		int chunkSize = length > MAX_BUF_SIZE ? MAX_BUF_SIZE : length;
 		writeSerial(QString().sprintf("S%x,%x#", address + offset, chunkSize));
-		writeSerial(data->constData().mid(offset, chunkSize));
+		if (m_at91) {
+			writeSerial(data->constData().mid(offset, chunkSize));
+		} else {
+			XmodemHelper xmodem(m_serial);
+			if (!xmodem.send(data->constData().mid(offset, chunkSize)))
+				return false;
+		}
 		offset += chunkSize;
 		length -= chunkSize;
 	}
@@ -331,4 +343,17 @@ bool SambaConnectionSerialHelper::go(quint32 address)
 	writeSerial(QString().sprintf("G%x#", address));
 
 	return true;
+}
+
+bool SambaConnectionSerialHelper::waitForMonitor(int timeout)
+{
+	if (!m_serial.isOpen())
+		return false;
+
+	if (m_at91) {
+		return true;
+	} else {
+		QByteArray response = readAllSerial(1, timeout);
+		return (response.size() > 1) && (response.at(0) == 6);
+	}
 }

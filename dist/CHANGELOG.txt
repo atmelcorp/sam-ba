@@ -1,9 +1,11 @@
 # Atmel SAM-BA - SAM Boot Assistant
 
-## Version 3.???
+## Version 3.2.???
 
 ### Enhancements
 
+- Implemented XMODEM support (allows programming using SAM-BA Monitor protocol
+  over UART)
 - Added support for SD/MMC and e.MMC for SAM9xx5, SAMA5D3 and SAMA5D4
 - Board-specific configurations are now in separate QML files, one per board.
 - Serial peripheral and pin used for applet traces is now configurable via the

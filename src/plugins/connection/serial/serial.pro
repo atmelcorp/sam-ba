@@ -6,8 +6,10 @@ TARGET = samba_conn_serial
 
 DESTPATH = /qml/SAMBA/Connection/Serial
 
-SOURCES += sambaconnectionserialhelper.cpp
-HEADERS += sambaconnectionserialhelper.h
+SOURCES += sambaconnectionserialhelper.cpp \
+    xmodemhelper.cpp
+HEADERS += sambaconnectionserialhelper.h \
+    xmodemhelper.h
 
 # include/link sambacommon library
 INCLUDEPATH += $$PWD/../../../sambacommon

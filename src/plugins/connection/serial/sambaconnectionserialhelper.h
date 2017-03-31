@@ -52,6 +52,7 @@ public:
 	Q_INVOKABLE bool write(quint32 address, SambaByteArray *data);
 
 	Q_INVOKABLE bool go(quint32 address);
+	Q_INVOKABLE bool waitForMonitor(int timeout);
 
 signals:
 	void portChanged();
@@ -63,7 +64,7 @@ signals:
 private:
 	void writeSerial(const QString &str);
 	void writeSerial(const QByteArray &data);
-	QByteArray readAllSerial(int minBytes = 0, int timeout = 0);
+	QByteArray readAllSerial(int minBytes = 0, int timeout = 100);
 
 private:
 	bool m_at91;

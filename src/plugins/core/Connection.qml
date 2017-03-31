@@ -258,6 +258,19 @@ ConnectionBase {
 	}
 
 	/*!
+	\qmlmethod bool Connection::waitForMonitor(int timeout)
+	\brief Wait \a timeout milliseconds for monitor to be ready
+
+	Some connection plugins do no implement this feature and will
+	return \a true even when the monitor is not yet ready.
+
+	Returns true on success, false otherwise.
+	*/
+	function waitForMonitor(timeout) {
+		return false;
+	}
+
+	/*!
 	\qmlmethod bool Connection::appletUpload(Applet applet)
 	\brief Uploads an \a applet to the device.
 
@@ -374,8 +387,12 @@ ConnectionBase {
 		// run applet
 		go(applet.entryAddr)
 
-		// wait for completion
+		// wait for device to go back to monitor
 		var startTime = new Date().getTime()
+		waitForMonitor(cmd.timeout)
+
+		// wait for completion (waitForMonitor is not always reliable depending
+		// on the connection type)
 		var elapsed = 0
 		while (elapsed < cmd.timeout) {
 			var ack = readu32(applet.mailboxAddr, cmd.timeout - elapsed);

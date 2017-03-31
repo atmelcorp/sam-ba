@@ -125,6 +125,13 @@ Connection {
 		return helper.go(address)
 	}
 
+	/*!
+	\sa Connection::waitForMonitor()
+	*/
+	function waitForMonitor(timeout) {
+		return helper.waitForMonitor(timeout)
+	}
+
 	/*! \internal */
 	function handle_helper_connectionOpened(at91) {
 		appletConnectionType = ConnectionBase.JTAG

@@ -51,6 +51,7 @@ public:
 	Q_INVOKABLE bool write(quint32 address, SambaByteArray *data);
 
 	Q_INVOKABLE bool go(quint32 address);
+	Q_INVOKABLE bool waitForMonitor(int timeout);
 
 signals:
 	void serialNumberChanged();
