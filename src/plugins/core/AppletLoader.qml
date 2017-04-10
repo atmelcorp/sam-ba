@@ -29,9 +29,7 @@ import SAMBA 3.1
 	\li Read
 	\li Write
 	\li Verify
-	\li Full Erase
-	\li Partial Erase
-	\li Set/Clear GPNVM
+	\li Erase
 	\endlist
 
 	Here is an example script using the AppletLoader to flash a file on the SPI
@@ -196,49 +194,6 @@ Item {
 	function appletErase(offset, size)
 	{
 		connection.applet.erase(connection, device, offset, size)
-	}
-
-	/*!
-		\qmlmethod void AppletLoader::appletFullErase()
-		\brief Fully Erase the Device
-
-		Completely erase the device using the applet 'full erase'
-		command or several applet 'page erase' commands.
-
-		Throws an \a Error if the applet has no Full Erase command or
-		if an error occured during erase
-	*/
-	function appletFullErase()
-	{
-		connection.applet.eraseAll(connection, device)
-	}
-
-	/*!
-		\qmlmethod void AppletLoader::appletSetGpnvm(int index)
-		\brief Sets GPNVM.
-
-		Sets GPNVM at index \a index using the applet 'GPNVM' command.
-
-		Throws an \a Error if the applet has no GPNVM command or if an
-		error occured during setting GPNVM
-	*/
-	function appletSetGpnvm(index)
-	{
-		connection.applet.setGpnvm(connection, device, index)
-	}
-
-	/*!
-		\qmlmethod void AppletLoader::appletClearGpnvm(int index)
-		\brief Clears GPNVM.
-
-		Clears GPNVM at index \a index using the applet 'GPNVM' command.
-
-		Throws an \a Error if the applet has no GPNVM command or if an
-		error occured during clearing GPNVM
-	*/
-	function appletClearGpnvm(index)
-	{
-		connection.applet.clearGpnvm(connection, device, index)
 	}
 
 	/*!

@@ -78,8 +78,7 @@ AppletBase {
 
 	/*! \internal */
 	function canInitialize() {
-		return hasCommand("initialize") ||
-		       hasCommand("legacyInitialize")
+		return hasCommand("initialize")
 	}
 
 	/*! \internal */
@@ -106,29 +105,6 @@ AppletBase {
 				nandHeader = 0
 				throw new Error("Could not initialize applet" +
 						" (status: " + status + ")");
-			}
-		} else {
-			cmd = command("legacyInitialize")
-			if (cmd) {
-				args = buildInitArgs(connection, device)
-				if (name === "lowlevel")
-					args.push(0, 0, 0)
-				status = connection.appletExecute(cmd, args)
-				if (status === 0) {
-					memorySize = connection.appletMailboxRead(0)
-					bufferAddr = connection.appletMailboxRead(1)
-					bufferSize = connection.appletMailboxRead(2)
-					nandHeader = 0
-				} else {
-					memorySize = 0
-					bufferAddr = 0
-					bufferSize = 0
-					nandHeader = 0
-					throw new Error("Could not initialize applet " +
-							name + " (status: " + status + ")")
-				}
-			} else {
-				throw new Error("Applet does not support 'Initialize' command")
 			}
 		}
 
@@ -159,47 +135,6 @@ AppletBase {
 		}
 	}
 
-	/*! \internal */
-	function canEraseAll() {
-		return hasCommand("legacyEraseAll")
-	}
-
-	/*! \internal */
-	function callEraseAll(connection, device) {
-		var status, cmd
-
-		cmd = command("legacyEraseAll")
-		if (cmd) {
-			status = connection.appletExecute(cmd, [])
-			if (status !== 0)
-				throw new Error("Failed to fully erase device " +
-						"(status: " + status + ")")
-		} else {
-			throw new Error("Applet does not support 'Erase All' command")
-		}
-	}
-
-	/*!
-		\qmlmethod void Applet::eraseAll(Connection connection, Device device)
-		\brief Fully Erase the Device
-
-		Completely erase the device using the applet 'full erase'
-		command or several applet 'page erase' commands.
-
-		Throws an \a Error if the applet has no Full Erase command or
-		if an error occured during erase
-	*/
-	function eraseAll(connection, device)
-	{
-		if (canEraseAll()) {
-			callEraseAll(connection, device)
-		} else if (canErasePages()) {
-			erase(connection, device)
-		} else {
-			throw new Error("Applet '" + name +
-		                        "' does not support any erase command")
-		}
-	}
 
 	/*! \internal */
 	function canErasePages() {
@@ -294,8 +229,7 @@ AppletBase {
 
 	/*! \internal */
 	function canReadPages() {
-		return hasCommand("readPages") ||
-		       hasCommand("legacyReadBuffer")
+		return hasCommand("readPages")
 	}
 
 	/*! \internal */
@@ -332,37 +266,7 @@ AppletBase {
 			return data
 		}
 
-		cmd = command("legacyReadBuffer")
-		if (cmd) {
-			if (pageOffset + length > memoryPages) {
-				remaining = memoryPages - pageOffset
-				throw new Error("Cannot read past end of memory, only " +
-						(remaining * pageSize) +
-						" bytes remaining at offset " +
-						Utils.hex(pageOffset * pageSize, 8) +
-						" (requested " + (length * pageSize) +
-						" bytes)")
-			}
-			args = [ bufferAddr, length * pageSize, pageOffset * pageSize ]
-			status = connection.appletExecute(cmd, args)
-			if (status !== 0 && status !== 9)
-				throw new Error("Failed to read pages at address " +
-						Utils.hex(pageOffset * pageSize, 8) +
-						" (status: " + status + ")")
-			pagesRead = connection.appletMailboxRead(0) / pageSize
-			if (status !== 9 && pagesRead !== length)
-				throw new Error("Could not read pages at address "
-						+ Utils.hex(pageOffset * pageSize, 8)
-						+ " (applet returned success but did not return enough data)")
-			data = connection.appletBufferRead(pagesRead * pageSize)
-			if (data.length < pagesRead * pageSize)
-				throw new Error("Could not read pages at address "
-						+ Utils.hex(pageOffset * pageSize, 8)
-						+ " (read from applet buffer failed)")
-			return data
-		}
-
-		throw new Error("Applet supports neither 'Read Pages' nor 'Read Buffer' commands")
+		throw new Error("Applet does not support 'Read Pages' commands")
 	}
 
 	/*!
@@ -513,8 +417,7 @@ AppletBase {
 
 	/*! \internal */
 	function canWritePages() {
-		return hasCommand("writePages") ||
-		       hasCommand("legacyWriteBuffer")
+		return hasCommand("writePages")
 	}
 
 	/*! \internal */
@@ -553,40 +456,7 @@ AppletBase {
 						" (applet returned success but did not write enough data)");
 			return pagesWritten
 		} else {
-			cmd = command("legacyWriteBuffer")
-			if (cmd) {
-				if ((data.length & (pageSize - 1)) != 0)
-					throw new Error("Invalid write data buffer length " +
-							"(must be a multiple of page size)")
-				length = data.length / pageSize
-				if (pageOffset + length > memoryPages) {
-					remaining = memoryPages - pageOffset
-					throw new Error("Cannot write past end of memory, only " +
-							(remaining * pageSize) +
-							" bytes remaining at offset " +
-							Utils.hex(pageOffset * pageSize, 8) +
-							" (requested " + (length * pageSize) +
-							" bytes)")
-				}
-				if (!connection.appletBufferWrite(data))
-					throw new Error("Could not write pages at address "
-							+ Utils.hex(pageOffset * pageSize, 8)
-							+ " (write to applet buffer failed)")
-				args = [ bufferAddr, length * pageSize, pageOffset * pageSize ]
-				status = connection.appletExecute(cmd, args)
-				if (status !== 0 && status !== 9)
-					throw new Error("Failed to write pages at address " +
-							Utils.hex(pageOffset * pageSize, 8) +
-							" (status: " + status + ")")
-				pagesWritten = connection.appletMailboxRead(0) / pageSize
-				if (status !== 9 && pagesWritten !== length)
-					throw new Error("Could not write pages at address " +
-							Utils.hex(pageOffset * pageSize, 8) +
-							" (applet returned success but did not write enough data)")
-				return pagesWritten
-			} else {
-				throw new Error("Applet supports neither 'Write Pages' nor 'Write Buffer' commands")
-			}
+			throw new Error("Applet does not support 'Write Pages' commands")
 		}
 	}
 
@@ -708,82 +578,6 @@ AppletBase {
 	{
 		write(connection, device, offset, fileName, bootFile)
 		verify(connection, device, offset, fileName, bootFile)
-	}
-
-	/*! \internal */
-	function canSetGpnvm() {
-		return hasCommand("legacyGpnvm")
-	}
-
-	/*! \internal */
-	function callSetGpnvm(connection, device, index)
-	{
-		var status, cmd
-
-		cmd = command("legacyGpnvm")
-		if (cmd) {
-			status = connection.appletExecute(cmd, [ 1, index ])
-			if (status !== 0)
-				throw new Error("GPNVM Set command failed (status=" +
-						status + ")")
-		} else {
-			throw new Error("Applet does not support 'GPNVM' command")
-		}
-	}
-
-	/*!
-		\qmlmethod void Applet::setGpnvm(Connection connection, Device device, int index)
-		\brief Sets GPNVM.
-
-		Sets GPNVM at index \a index using the applet 'GPNVM' command.
-
-		Throws an \a Error if the applet has no GPNVM command or if an
-		error occured during setting GPNVM
-	*/
-	function setGpnvm(connection, device, index)
-	{
-		if (!canSetGpnvm())
-			throw new Error("Applet '" + name
-					+ "' does not support 'Set GPNVM' command")
-		callSetGpnvm(connection, device, index)
-	}
-
-	/*! \internal */
-	function canClearGpnvm() {
-		return hasCommand("legacyGpnvm")
-	}
-
-	/*! \internal */
-	function callClearGpnvm(connection, device, index)
-	{
-		var status, cmd
-
-		cmd = command("legacyGpnvm")
-		if (cmd) {
-			status = connection.appletExecute(cmd, [ 0, index ])
-			if (status !== 0)
-				throw new Error("GPNVM Clear command failed (status=" +
-						status + ")")
-		} else {
-			throw new Error("Applet does not support 'GPNVM' command")
-		}
-	}
-
-	/*!
-		\qmlmethod void Applet::clearGpnvm(Connection connection, Device device, int index)
-		\brief Clears GPNVM.
-
-		Clears GPNVM at index \a index using the applet 'GPNVM' command.
-
-		Throws an \a Error if the applet has no GPNVM command or if an
-		error occured during clearing GPNVM
-	*/
-	function clearGpnvm(connection, device, index)
-	{
-		if (!connection.applet.canClearGpnvm())
-			throw new Error("Applet '" + name
-					+ "' does not support 'Clear GPNVM' command")
-		callClearGpnvm(connection, device, index)
 	}
 
 	/*! \internal */
@@ -927,8 +721,6 @@ AppletBase {
 	/*! \internal */
 	function defaultCommandLineCommands() {
 		var commands = []
-		if (canEraseAll())
-			commands.push("fullerase");
 		if (canErasePages())
 			commands.push("erase");
 		if (canReadPages()) {
@@ -950,12 +742,7 @@ AppletBase {
 
 	/*! \internal */
 	function defaultCommandLineCommandHelp(command) {
-		if (command === "fullerase") {
-			return ["* fullerase - erase all the memory",
-			        "Syntax:",
-			        "    fullerase"]
-		}
-		else if (command === "erase") {
+		if (command === "erase") {
 			return ["* erase - erase all or part of the memory",
 			        "Syntax:",
 			        "    erase:[<addr>]:[<length>]",
@@ -1010,20 +797,6 @@ AppletBase {
 	/*! \internal */
 	function commandLineCommandHelp(command) {
 		return defaultCommandLineCommandHelp(command)
-	}
-
-	/*! \internal */
-	function commandLineCommandFullErase(connection, device, args) {
-		var addr, length
-
-		if (args.length != 0)
-			return "Invalid number of arguments (expected 0)."
-
-		try {
-			eraseAll(connection, device)
-		} catch(err) {
-			return err.message
-		}
 	}
 
 	/*! \internal */
@@ -1167,10 +940,7 @@ AppletBase {
 
 	/*! \internal */
 	function defaultCommandLineCommand(connection, device, command, args) {
-		if (command === "fullerase" && canEraseAll()) {
-			return commandLineCommandFullErase(connection, device, args)
-		}
-		else if (command === "erase" && canErasePages()) {
+		if (command === "erase" && canErasePages()) {
 			return commandLineCommandErase(connection, device, args)
 		}
 		else if (command === "read" && canReadPages()) {
