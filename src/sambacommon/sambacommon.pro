@@ -16,6 +16,8 @@ SOURCES += \
     sambaconnection.cpp \
     sambadevice.cpp \
     sambaengine.cpp \
+    sambafile.cpp \
+    sambafileinstance.cpp \
     sambautils.cpp
 
 HEADERS += \
@@ -26,6 +28,8 @@ HEADERS += \
     sambaconnection.h \
     sambadevice.h \
     sambaengine.h \
+    sambafile.h \
+    sambafileinstance.h \
     sambautils.h
 
 unix:!mac:{
