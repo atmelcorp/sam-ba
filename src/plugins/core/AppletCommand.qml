@@ -19,6 +19,22 @@ import SAMBA 3.1
 	\inqmlmodule SAMBA
 	\brief Defines a single Applet command
 */
-AppletCommandBase {
-	timeout: 10000
+Item {
+	/*!
+		\qmlproperty string AppletCommand::name
+		\brief The command name
+	*/
+	property var name
+
+	/*!
+		\qmlproperty string AppletCommand::code
+		\brief The command code (a byte)
+	*/
+	property var code
+
+	/*!
+		\qmlproperty int AppletCommand::timeout
+		\brief The command timeout (in milliseconds)
+	*/
+	property var timeout: 10000
 }

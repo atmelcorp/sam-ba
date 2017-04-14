@@ -134,7 +134,7 @@ Connection {
 
 	/*! \internal */
 	function handle_helper_connectionOpened(at91) {
-		appletConnectionType = ConnectionBase.JTAG
+		appletConnectionType = AppletConnectionType.JTAG
 		connectionOpened()
 	}
 

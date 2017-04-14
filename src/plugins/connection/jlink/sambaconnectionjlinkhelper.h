@@ -14,8 +14,10 @@
 #ifndef SAMBA_CONNECTION_JLINK_H
 #define SAMBA_CONNECTION_JLINK_H
 
-#include <sambaconnection.h>
+#include <sambabytearray.h>
 #include <QLoggingCategory>
+#include <QtQml>
+#include <QtQuick/QQuickItem>
 
 Q_DECLARE_LOGGING_CATEGORY(sambaLogConnJlink)
 

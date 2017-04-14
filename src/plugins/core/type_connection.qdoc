@@ -1,4 +1,0 @@
-/*!
-	\qmlproperty Applet Connection::applet
-	\brief The current applet, or \tt undefined if no applet is loaded.
-*/

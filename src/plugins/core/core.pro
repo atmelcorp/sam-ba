@@ -24,6 +24,7 @@ unix:!mac:{
 
 qml.files = qmldir \
     AppletCommand.qml \
+    AppletConnectionType.js \
     Applet.qml \
     AppletLoader.qml \
     Connection.qml \
@@ -37,4 +38,5 @@ INSTALLS += target qml
 
 OTHER_FILES += \
     $$qml.files \
-    module_samba.qdoc
+    module_samba.qdoc \
+    type_utils.qdoc

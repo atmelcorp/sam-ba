@@ -15,9 +15,6 @@
 #define SAMBA_TOOL_CONTEXT_H
 
 #include "sambacommon.h"
-#include "sambaapplet.h"
-#include "sambadevice.h"
-#include "sambaconnection.h"
 #include "sambascriptcontext.h"
 #include <QObject>
 

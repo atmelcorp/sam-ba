@@ -150,7 +150,7 @@ Connection {
 
 	/*! \internal */
 	function handle_helper_connectionOpened(at91) {
-		appletConnectionType = !at91 ? ConnectionBase.Serial : ConnectionBase.USB
+		appletConnectionType = at91 ? AppletConnectionType.USB : AppletConnectionType.SERIAL
 		connectionOpened()
 	}
 

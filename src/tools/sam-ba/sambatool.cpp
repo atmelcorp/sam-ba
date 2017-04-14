@@ -65,6 +65,43 @@ static Component parseJson(SambaEngine& engine, const QJsonObject& obj)
 	return comp;
 }
 
+static QStringList callArrayJsFunction(QObject* obj, const QString& functionName)
+{
+	const char* func = QString("%1()").arg(functionName).toLocal8Bit();
+	if (obj->metaObject()->indexOfMethod(func) == -1) {
+		return QStringList();
+	}
+	func = functionName.toLocal8Bit();
+	QVariant returnedValue;
+	if (!QMetaObject::invokeMethod(obj, func,
+	                               Q_RETURN_ARG(QVariant, returnedValue))) {
+		return QStringList();
+	}
+	if (!returnedValue.canConvert(QVariant::StringList)) {
+		return QStringList();
+	}
+	return returnedValue.toStringList();
+}
+
+static QStringList callArrayJsFunction(QObject* obj, const QString& functionName, const QString& arg)
+{
+	const char* func = QString("%1(QVariant)").arg(functionName).toLocal8Bit();
+	if (obj->metaObject()->indexOfMethod(func) == -1) {
+		return QStringList();
+	}
+	func = functionName.toLocal8Bit();
+	QVariant returnedValue;
+	if (!QMetaObject::invokeMethod(obj, func,
+	                               Q_RETURN_ARG(QVariant, returnedValue),
+	                               Q_ARG(QVariant, QVariant(arg)))) {
+		return QStringList();
+	}
+	if (!returnedValue.canConvert(QVariant::StringList)) {
+		return QStringList();
+	}
+	return returnedValue.toStringList();
+}
+
 SambaTool::SambaTool(int& argc, char** argv)
     : QCoreApplication(argc, argv),
       m_engine(this),
@@ -88,9 +125,11 @@ SambaTool::~SambaTool()
 	m_devices.clear();
 }
 
-static bool portCompare(const SambaConnection* p1, const SambaConnection* p2)
+static bool portCompare(const QObject* p1, const QObject* p2)
 {
-    return p1->priority() < p2->priority();
+	quint32 prio1 = p1->property("priority").toUInt();
+	quint32 prio2 = p2->property("priority").toUInt();
+	return prio1 < prio2;
 }
 
 bool SambaTool::loadAllMetadata()
@@ -124,96 +163,43 @@ bool SambaTool::loadMetadata(QString fileName)
 
 	switch (comp.type) {
 	case COMPONENT_CONNECTION:
-		{
-			SambaConnection* port = qobject_cast<SambaConnection*>(comp.object);
-			if (port) {
-				m_ports << port;
-				return true;
-			}
-			break;
-		}
+		m_ports << comp.object;
+		return true;
 	case COMPONENT_DEVICE:
-		{
-			SambaDevice* device = qobject_cast<SambaDevice*>(comp.object);
-			if (device) {
-				m_devices << device;
-				return true;
-			}
-			break;
-		}
+		m_devices << comp.object;
+		return true;
 	case COMPONENT_BOARD:
-		{
-			SambaDevice* board = qobject_cast<SambaDevice*>(comp.object);
-			if (board) {
-				m_boards << board;
-				return true;
-			}
-			break;
-		}
+		m_boards << comp.object;
+		return true;
 	case COMPONENT_UNKNOWN:
+	default:
 		// ignore, will be handled just after the switch
 		break;
 	}
 
-	cerr_msg(QString("Ignoring metadata file '%1': unknown metadata type.")
+	cerr_msg(QString("Ignoring metadata file '%1': unknown metadata type or missing properties.")
 	         .arg(fileName));
-	delete comp.object;
+	if (comp.object)
+		delete comp.object;
 	return false;
 }
 
 void SambaTool::displayVersion()
 {
 	cerr_msg(QString("SAM-BA Command Line Tool v%1").arg(applicationVersion()));
-	cerr_msg("Copyright 2015-2016 ATMEL Corporation");
+	cerr_msg("Copyright 2015-2017 ATMEL Corporation");
 }
 
 void SambaTool::displayPortHelp()
 {
 	QString values;
-	foreach(SambaConnection* port, m_ports)
+	foreach(QObject* port, m_ports)
 	{
 		if (values.size() > 0)
 			values += ", ";
-		values += port->name();
+		values += port->property("name").toString();
 	}
 	cerr_msg(QString("Known ports: %2").arg(values));
-}
-
-QStringList SambaTool::callArrayJsFunction(QObject* obj, const QString& functionName)
-{
-	const char* func = QString("%1()").arg(functionName).toLocal8Bit();
-	if (obj->metaObject()->indexOfMethod(func) == -1) {
-		return QStringList();
-	}
-	func = functionName.toLocal8Bit();
-	QVariant returnedValue;
-	if (!QMetaObject::invokeMethod(obj, func,
-	                               Q_RETURN_ARG(QVariant, returnedValue))) {
-		return QStringList();
-	}
-	if (!returnedValue.canConvert(QVariant::StringList)) {
-		return QStringList();
-	}
-	return returnedValue.toStringList();
-}
-
-QStringList SambaTool::callArrayJsFunction(QObject* obj, const QString& functionName, const QString& arg)
-{
-	const char* func = QString("%1(QVariant)").arg(functionName).toLocal8Bit();
-	if (obj->metaObject()->indexOfMethod(func) == -1) {
-		return QStringList();
-	}
-	func = functionName.toLocal8Bit();
-	QVariant returnedValue;
-	if (!QMetaObject::invokeMethod(obj, func,
-	                               Q_RETURN_ARG(QVariant, returnedValue),
-	                               Q_ARG(QVariant, QVariant(arg)))) {
-		return QStringList();
-	}
-	if (!returnedValue.canConvert(QVariant::StringList)) {
-		return QStringList();
-	}
-	return returnedValue.toStringList();
 }
 
 void SambaTool::displayJsCommandLineHelp(QObject* obj)
@@ -255,10 +241,12 @@ bool SambaTool::parsePortOption(const QString& value)
 	QString name = args.first();
 	args.removeFirst();
 
-	SambaConnection* port = 0;
-	foreach (SambaConnection* p, m_ports) {
-		if (!p->name().compare(name, Qt::CaseInsensitive) ||
-		    p->aliases().contains(name, Qt::CaseInsensitive)) {
+	QObject* port = 0;
+	foreach (QObject* p, m_ports) {
+		QString portName = p->property("name").toString();
+		QStringList portAliases = p->property("aliases").toStringList();
+		if (!portName.compare(name, Qt::CaseInsensitive) ||
+		    portAliases.contains(name, Qt::CaseInsensitive)) {
 			port = p;
 			break;
 		}
@@ -303,8 +291,8 @@ bool SambaTool::parsePortOption(const QString& value)
 void SambaTool::displayDeviceHelp()
 {
 	QStringList devices;
-	foreach(SambaDevice* device, m_devices)
-		devices << device->name();
+	foreach(QObject* device, m_devices)
+		devices << device->property("name").toString();
 	cerr_msg(QString("Known devices: %1").arg(devices.join(", ")));
 }
 
@@ -317,10 +305,12 @@ bool SambaTool::parseDeviceOption(const QString& value)
 	if (args.length() > 0)
 		cerr_msg("Warning: Devices have no arguments.");
 
-	SambaDevice* device = 0;
-	foreach (SambaDevice* d, m_devices) {
-		if (!d->name().compare(name, Qt::CaseInsensitive) ||
-		    d->aliases().contains(name, Qt::CaseInsensitive)) {
+	QObject* device = 0;
+	foreach (QObject* d, m_devices) {
+		QString devName = d->property("name").toString();
+		QStringList devAliases = d->property("aliases").toStringList();
+		if (!devName.compare(name, Qt::CaseInsensitive) ||
+		    devAliases.contains(name, Qt::CaseInsensitive)) {
 			device = d;
 			break;
 		}
@@ -338,8 +328,8 @@ bool SambaTool::parseDeviceOption(const QString& value)
 void SambaTool::displayBoardHelp()
 {
 	QStringList boards;
-	foreach(SambaDevice* board, m_boards)
-		boards << board->name();
+	foreach(QObject* board, m_boards)
+		boards << board->property("name").toString();
 	cerr_msg(QString("Known boards: %1").arg(boards.join(", ")));
 }
 
@@ -352,10 +342,12 @@ bool SambaTool::parseBoardOption(const QString& value)
 	if (args.length() > 0)
 		cerr_msg("Warning: Boards have no arguments.");
 
-	SambaDevice* board = 0;
-	foreach (SambaDevice* b, m_boards) {
-		if (!b->name().compare(name, Qt::CaseInsensitive) ||
-		    b->aliases().contains(name, Qt::CaseInsensitive)) {
+	QObject* board = 0;
+	foreach (QObject* b, m_boards) {
+		QString brdName = b->property("name").toString();
+		QStringList brdAliases = b->property("aliases").toStringList();
+		if (!brdName.compare(name, Qt::CaseInsensitive) ||
+		    brdAliases.contains(name, Qt::CaseInsensitive)) {
 			board = b;
 			break;
 		}
@@ -377,12 +369,37 @@ void SambaTool::displayAppletHelp()
 		return;
 	}
 
-	QStringList applets;
-	for (int i = 0; i < m_device->appletCount(); i++) {
-		SambaApplet *applet = m_device->applet(i);
-		applets << applet->name();
+	QStringList names = callArrayJsFunction(m_device, "appletNames");
+	cerr_msg(QString("Known applets: %1").arg(names.join(", ")));
+}
+
+QObject* SambaTool::findApplet(const QString& name)
+{
+	if (m_device->metaObject()->indexOfMethod("applet(QVariant)") == -1) {
+		cerr_msg(QString("Error: Could not find applet '%1': Invalid number of arguments for 'applet' method.")
+			 .arg(name));
+		return nullptr;
 	}
-	cerr_msg(QString("Known applets: %1").arg(applets.join(", ")));
+	QVariant returnedValue;
+	if (!QMetaObject::invokeMethod(m_device, "applet",
+	                               Q_RETURN_ARG(QVariant, returnedValue),
+	                               Q_ARG(QVariant, QVariant(name)))) {
+		cerr_msg(QString("Error: Could not find applet '%1': Could not invoke 'applet' method.")
+			 .arg(name));
+		return nullptr;
+	}
+	if (returnedValue.type() == QVariant::String) {
+		cerr_msg(QString("Error: Could not find applet '%1': %2")
+			 .arg(name).arg(returnedValue.toString()));
+		return nullptr;
+	}
+	QObject* applet = qvariant_cast<QObject*>(returnedValue);
+	if (!applet) {
+		cerr_msg(QString("Error: Could not find applet '%1': unexpected value returned from 'applet' method.")
+			 .arg(name).arg(returnedValue.toString()));
+		return nullptr;
+	}
+	return applet;
 }
 
 bool SambaTool::parseAppletOption(const QString& value)
@@ -397,7 +414,7 @@ bool SambaTool::parseAppletOption(const QString& value)
 	QString appletName = args.first();
 	args.removeFirst();
 
-	SambaApplet *applet = m_device->applet(appletName);
+	QObject* applet = findApplet(appletName);
 	if (!applet) {
 		cerr_msg(QString("Error: Unknown applet '%1'.").arg(value));
 		displayAppletHelp();
@@ -410,7 +427,7 @@ bool SambaTool::parseAppletOption(const QString& value)
 			return false;
 		}
 		if (applet->metaObject()->indexOfMethod("commandLineParse(QVariant,QVariant)") == -1) {
-			cerr_msg(QString("Error: Could not create applet '%1': Invalid number of arguments.")
+			cerr_msg(QString("Error: Could not configure applet '%1': Invalid number of arguments for 'commandLineParse' method.")
 			         .arg(value));
 			return false;
 		}
@@ -419,12 +436,12 @@ bool SambaTool::parseAppletOption(const QString& value)
 		                               Q_RETURN_ARG(QVariant, returnedValue),
 		                               Q_ARG(QVariant, QVariant::fromValue<QObject*>(m_device)),
 		                               Q_ARG(QVariant, QVariant(args)))) {
-			cerr_msg(QString("Error: Could not create applet '%1': Could not invoke parseArguments method.")
+			cerr_msg(QString("Error: Could not configure applet '%1': Could not invoke 'commandLineParse' method.")
 			         .arg(value));
 			return false;
 		}
 		if (returnedValue.type() == QVariant::String) {
-			cerr_msg(QString("Error: Could not create applet '%1': %2")
+			cerr_msg(QString("Error: Could not configure applet '%1': %2")
 			         .arg(value).arg(returnedValue.toString()));
 			return false;
 		}
@@ -694,7 +711,7 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 					return Failed;
 			}
 		} else {
-			QString port(m_ports.first()->name());
+			QString port(m_ports.first()->property("name").toString());
 			cerr_msg(QString("No port option on command-line, using '%1'.").arg(port));
 			if (!parsePortOption(port))
 				return Failed;

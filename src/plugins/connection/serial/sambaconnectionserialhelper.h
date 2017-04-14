@@ -14,9 +14,11 @@
 #ifndef SAMBA_CONNECTION_SERIAL_H
 #define SAMBA_CONNECTION_SERIAL_H
 
-#include <sambaconnection.h>
+#include <sambabytearray.h>
 #include <QLoggingCategory>
 #include <QSerialPort>
+#include <QtQml>
+#include <QtQuick/QQuickItem>
 
 Q_DECLARE_LOGGING_CATEGORY(sambaLogConnSerial)
 

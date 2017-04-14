@@ -16,9 +16,6 @@
 
 #include "sambacommon.h"
 #include "sambaengine.h"
-#include "sambaapplet.h"
-#include "sambaconnection.h"
-#include "sambadevice.h"
 #include "sambatoolcontext.h"
 #include <QObject>
 #include <QUrl>
@@ -71,13 +68,12 @@ private:
 	bool parseDeviceOption(const QString& value);
 
 	void displayAppletHelp();
+	QObject* findApplet(const QString& name);
 	bool parseAppletOption(const QString& value);
 
 	void displayMonitorCommandHelp();
 	void displayAppletCommandHelp();
 
-	QStringList callArrayJsFunction(QObject* obj, const QString& functionName);
-	QStringList callArrayJsFunction(QObject* obj, const QString& functionName, const QString& arg);
 	void displayJsCommandLineHelp(QObject* obj);
 	void displayJsCommandLineCommandsHelp(QObject* obj);
 
@@ -86,18 +82,18 @@ private slots:
 
 private:
 	SambaEngine m_engine;
-	QList<SambaConnection*> m_ports;
-	QList<SambaDevice*> m_devices;
-	QList<SambaDevice*> m_boards;
+	QList<QObject*> m_ports;
+	QList<QObject*> m_devices;
+	QList<QObject*> m_boards;
 
 	quint32 m_status;
 
 	QUrl m_userScript;
 	QStringList m_userScriptArguments;
 
-	SambaConnection* m_port;
-	SambaDevice* m_device;
-	SambaApplet* m_applet;
+	QObject* m_port;
+	QObject* m_device;
+	QObject* m_applet;
 	QVariant m_commands;
 };
 

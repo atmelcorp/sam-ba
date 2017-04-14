@@ -9,24 +9,16 @@ VERSION = 3.1.0
 DEFINES += SAMBACOMMON_LIBRARY
 
 SOURCES += \
-    sambaappletcommand.cpp \
-    sambaapplet.cpp \
     sambabytearray.cpp \
     sambacommon.cpp \
-    sambaconnection.cpp \
-    sambadevice.cpp \
     sambaengine.cpp \
     sambafile.cpp \
     sambafileinstance.cpp \
     sambautils.cpp
 
 HEADERS += \
-    sambaappletcommand.h \
-    sambaapplet.h \
     sambabytearray.h \
     sambacommon.h \
-    sambaconnection.h \
-    sambadevice.h \
     sambaengine.h \
     sambafile.h \
     sambafileinstance.h \

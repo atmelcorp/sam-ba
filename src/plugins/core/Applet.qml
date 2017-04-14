@@ -19,10 +19,141 @@ import SAMBA 3.1
 	\inqmlmodule SAMBA
 	\brief Contains a description of a SAM-BA Applet and its runtime variables
 */
-AppletBase {
+Item {
+	/*!
+		\qmlproperty string Applet::name
+		\brief The applet name
+	*/
+	property var name
 
-	/* Set default applet trace level to 3 (INFO) */
-	traceLevel: 3
+	/*!
+		\qmlproperty string Applet::description
+		\brief The applet description
+	*/
+	property var description
+
+	/*!
+		\qmlproperty string Applet::traceLevel
+		\brief The trace level that will be set during applet initialization
+	*/
+	property var traceLevel: 3
+
+	/*!
+		\qmlproperty string Applet::codeUrl
+		\brief The applet binary file URL
+	*/
+	property var codeUrl
+
+	/*!
+		\qmlproperty string Applet::codeAddr
+		\brief The applet loading address
+	*/
+	property var codeAddr
+
+	/*!
+		\qmlproperty string Applet::mailboxAddr
+		\brief The address at which the applet mailbox is located
+	*/
+	property var mailboxAddr
+
+	/*!
+		\qmlproperty string Applet::entryAddr
+		\brief The address of the applet entry point
+	*/
+	property var entryAddr
+
+	/*!
+		\qmlproperty string Applet::bufferAddr
+		\brief The address at which the applet buffer is located
+	*/
+	property var bufferAddr: 0
+
+	/*!
+		\qmlproperty string Applet::bufferSize
+		\brief The size of the applet buffer in bytes
+	*/
+	property var bufferSize: 0
+
+	/*!
+		\qmlproperty string Applet::bufferPages
+		\brief The size of the applet buffer in pages
+	*/
+	property var bufferPages: bufferSize / pageSize
+
+	/*!
+		\qmlproperty string Applet::pageSize
+		\brief The size of a page in bytes
+	*/
+	property var pageSize: 0
+
+	/*!
+		\qmlproperty string Applet::memoryPages
+		\brief The total memory size in pages
+	*/
+	property var memoryPages: 0
+
+	/*!
+		\qmlproperty string Applet::memorySize
+		\brief The total memory size in bytes
+	*/
+	property var memorySize: memoryPages * pageSize
+
+	/*!
+		\qmlproperty string Applet::eraseSupport
+		\brief The supported memory erase sizes in pages
+		This property contains a bitfield of the supported erase sizes. For
+		example a memory with 512-bytes pages that supports 4KB (8 pages) and
+		32KB (64 pages) will report an erase support value of 72.
+	*/
+	property var eraseSupport: 0
+
+	/*!
+		\qmlproperty string Applet::paddingByte
+		\brief The byte value that will be used to pad data when writing data
+		that is not a round number of pages. Default is 0xff.
+	*/
+	property var paddingByte: 0xff
+
+	/*!
+		\qmlproperty string Applet::trimPadding
+		\brief If true, empty pages at end of an erase block will not be written.
+		This feature is used for NAND memories and will only work if only one
+		erase block size is supported.
+	*/
+	property var trimPadding: false
+
+	/*!
+		\qmlproperty string Applet::nandHeader
+		\brief Header value that will be added before the program code.
+		Required by ROM-code to boot from NAND memory.
+	*/
+	property var nandHeader: 0
+
+	/*!
+		\qmlproperty list<AppletCommand> Applet::commands
+		\brief List of all supported commands for this applet
+	*/
+	property list<AppletCommand> commands
+
+	/*!
+		\qmlmethod bool Applet::hasCommand(string name)
+		\brief Checks if a given command is supported by the applet.
+	*/
+	function hasCommand(name) {
+		return typeof command(name) != "undefined"
+	}
+
+	/*!
+		\qmlmethod AppletCommand Applet::command(string name)
+		\brief Retrieve a command from the list of supported commands. If the
+		command name is not found, returns \a undefined.
+	*/
+	function command(name) {
+		for (var i = 0; i < commands.length; i++)
+			if (commands[i].name === name)
+				return commands[i]
+		return
+	}
 
 	/*!
 		\qmlmethod void Applet::defaultInitArgs(Connection connection, Device device)
@@ -97,10 +228,10 @@ AppletBase {
 				eraseSupport = connection.appletMailboxRead(4)
 				nandHeader = connection.appletMailboxRead(5)
 			} else {
-				memorySize = 0
 				bufferAddr = 0
 				bufferSize = 0
 				pageSize = 0
+				memoryPages = 0
 				eraseSupport = 0
 				nandHeader = 0
 				throw new Error("Could not initialize applet" +
@@ -128,13 +259,33 @@ AppletBase {
 
 		if (canInitialize()) {
 			callInitialize(connection, device)
-			if (memorySize > 1)
+			if (memorySize > 0)
 				print("Detected memory size is " + memorySize + " bytes.")
+			if (pageSize > 0)
+				print("Page size is " + pageSize + " bytes.")
+			if (bufferSize > 0)
+				print("Buffer is " + bufferSize + " bytes (" + bufferPages + " pages) at address " +
+				      Utils.hex(bufferAddr, 8) + ".")
 			if (nandHeader !== 0)
-				print("NAND header value " + Utils.hex(nandHeader, 8))
+				print("NAND header value is " + Utils.hex(nandHeader, 8) + ".")
+			if (eraseSupport != 0) {
+				var i, size
+				var eraseSizes = []
+				for (i = 0; i < 32; i++) {
+					if ((eraseSupport & (1 << i)) !== 0) {
+						size = (1 << i) * pageSize
+						if (size > 1024*1024)
+							eraseSizes.push("" + (size >> 20) + "MB")
+						else if (size > 1024)
+							eraseSizes.push("" + (size >> 10) + "KB")
+						else
+							eraseSizes.push("" + size + "B")
+					}
+				}
+				print("Supported erase block sizes: " + eraseSizes.join(", "))
+			}
 		}
 	}
-
 
 	/*! \internal */
 	function canErasePages() {
@@ -300,8 +451,7 @@ AppletBase {
 		while (remaining > 0) {
 			var count = Math.min(remaining, bufferPages)
 
-			var result = callReadPages(connection, device,
-									   offset, count)
+			var result = callReadPages(connection, device, offset, count)
 			if (result.length < count * pageSize)
 				count = result.length / pageSize
 
