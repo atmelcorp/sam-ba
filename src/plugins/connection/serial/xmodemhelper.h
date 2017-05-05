@@ -1,9 +1,9 @@
 #ifndef XMODEMHELPER_H
 #define XMODEMHELPER_H
 
+#include <QByteArray>
 #include <QElapsedTimer>
 #include <QSerialPort>
-#include <sambabytearray.h>
 
 class XmodemHelper
 {

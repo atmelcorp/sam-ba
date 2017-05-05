@@ -23,7 +23,7 @@ import SAMBA 3.1
 UtilsBase {
 	/*!
 		\qmlmethod string Utils::hex(number value, number digits)
-		\brief Convert \a value to a hexadecimal string with \a digits.
+		\brief Convert \a value to a hexadecimal string with at least \a digits.
 
 		Returns the hexadecimal string
 	*/

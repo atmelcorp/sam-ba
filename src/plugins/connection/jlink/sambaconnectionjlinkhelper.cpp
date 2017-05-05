@@ -313,14 +313,14 @@ QVariant SambaConnectionJlinkHelper::readu32(quint32 address)
 	}
 }
 
-SambaByteArray *SambaConnectionJlinkHelper::read(quint32 address, unsigned length)
+QByteArray SambaConnectionJlinkHelper::read(quint32 address, unsigned length)
 {
 	if (JLINKARM_IsHalted()) {
 		QByteArray data(length, 0);
 		JLINKARM_ReadMem(address, length, data.data());
-		return new SambaByteArray(data);
+		return data;
 	} else {
-		return 0;
+		return QByteArray();
 	}
 }
 
@@ -354,10 +354,10 @@ bool SambaConnectionJlinkHelper::writeu32(quint32 address, quint32 data)
 	}
 }
 
-bool SambaConnectionJlinkHelper::write(quint32 address, SambaByteArray *data)
+bool SambaConnectionJlinkHelper::write(quint32 address, const QByteArray& data)
 {
 	if (JLINKARM_IsHalted()) {
-		JLINKARM_WriteMem(address, data->constData().length(), data->constData().constData());
+		JLINKARM_WriteMem(address, data.length(), data.constData());
 		return true;
 	} else {
 		return false;

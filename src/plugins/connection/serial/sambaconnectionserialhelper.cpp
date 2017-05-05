@@ -248,10 +248,10 @@ QVariant SambaConnectionSerialHelper::readu32(quint32 address, int timeout)
 	return QVariant(value);
 }
 
-SambaByteArray *SambaConnectionSerialHelper::read(quint32 address, unsigned length, int timeout)
+QByteArray SambaConnectionSerialHelper::read(quint32 address, unsigned length, int timeout)
 {
 	if (!m_serial.isOpen() || length == 0)
-		return new SambaByteArray();
+		return QByteArray();
 
 	QByteArray data;
 	QElapsedTimer timer;
@@ -280,7 +280,7 @@ SambaByteArray *SambaConnectionSerialHelper::read(quint32 address, unsigned leng
 		length -= chunkSize;
 	}
 
-	return new SambaByteArray(data);
+	return data;
 }
 
 bool SambaConnectionSerialHelper::writeu8(quint32 address, quint8 data)
@@ -310,22 +310,22 @@ bool SambaConnectionSerialHelper::writeu32(quint32 address, quint32 data)
 	return true;
 }
 
-bool SambaConnectionSerialHelper::write(quint32 address, SambaByteArray *data)
+bool SambaConnectionSerialHelper::write(quint32 address, const QByteArray& data)
 {
 	if (!m_serial.isOpen())
 		return false;
 
-	int length = data->constData().length();
+	int length = data.length();
 	int offset = 0;
 	while (length > 0)
 	{
 		int chunkSize = length > MAX_BUF_SIZE ? MAX_BUF_SIZE : length;
 		writeSerial(QString().sprintf("S%x,%x#", address + offset, chunkSize));
 		if (m_at91) {
-			writeSerial(data->constData().mid(offset, chunkSize));
+			writeSerial(data.mid(offset, chunkSize));
 		} else {
 			XmodemHelper xmodem(m_serial);
-			if (!xmodem.send(data->constData().mid(offset, chunkSize)))
+			if (!xmodem.send(data.mid(offset, chunkSize)))
 				return false;
 		}
 		offset += chunkSize;

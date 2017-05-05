@@ -14,7 +14,7 @@
 #ifndef SAMBA_CONNECTION_SERIAL_H
 #define SAMBA_CONNECTION_SERIAL_H
 
-#include <sambabytearray.h>
+#include <QByteArray>
 #include <QLoggingCategory>
 #include <QSerialPort>
 #include <QtQml>
@@ -46,12 +46,12 @@ public:
 	Q_INVOKABLE QVariant readu8(quint32 address, int timeout);
 	Q_INVOKABLE QVariant readu16(quint32 address, int timeout);
 	Q_INVOKABLE QVariant readu32(quint32 address, int timeout);
-	Q_INVOKABLE SambaByteArray* read(quint32 address, unsigned length, int timeout);
+	Q_INVOKABLE QByteArray read(quint32 address, unsigned length, int timeout);
 
 	Q_INVOKABLE bool writeu8(quint32 address, quint8 data);
 	Q_INVOKABLE bool writeu16(quint32 address, quint16 data);
 	Q_INVOKABLE bool writeu32(quint32 address, quint32 data);
-	Q_INVOKABLE bool write(quint32 address, SambaByteArray *data);
+	Q_INVOKABLE bool write(quint32 address, const QByteArray& data);
 
 	Q_INVOKABLE bool go(quint32 address);
 	Q_INVOKABLE bool waitForMonitor(int timeout);

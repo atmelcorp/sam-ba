@@ -186,25 +186,14 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void Applet::patch6thVector(ByteArray data)
-		\brief Change the 6th vector of a boot file to contain its size
-	*/
-	function patch6thVector(data) {
-		// write size into 6th vector
-		data.writeu32(20, data.length)
-		print("Patched file length (" + data.length + ") at offset 20")
-	}
-
-	/*!
-		\qmlmethod void Applet::prepareBootFile(Connection connection, Device device, ByteArray data)
+		\qmlmethod void Applet::prepareBootFile(Connection connection, Device device, File file)
 		\brief Prepare a application file for use as a boot file
 
-		The default implementation calls patch6thVector.
-		It is intended to be overridden by Applet
-		sub-classes/instances.
+		The default implementation enables on-the-fly patching of 6th vector.
+		It is intended to be overridden by Applet sub-classes/instances.
 	*/
-	function prepareBootFile(connection, device, data) {
-		patch6thVector(data)
+	function prepareBootFile(connection, device, file) {
+		file.enable6thVectorPatching(true)
 	}
 
 	/*! \internal */
@@ -235,7 +224,7 @@ Item {
 				eraseSupport = 0
 				nandHeader = 0
 				throw new Error("Could not initialize applet" +
-						" (status: " + status + ")");
+						" (status: " + status + ")")
 			}
 		}
 
@@ -308,12 +297,12 @@ Item {
 				return connection.appletMailboxRead(0)
 			} else if (status === 9) {
 				print("Skipped bad pages at offset " +
-				      Utils.hex(pageOffset * pageSize, 8));
+				      Utils.hex(pageOffset * pageSize, 8))
 				return length
 			} else {
 				throw new Error("Could not erase pages at address " +
 						Utils.hex(pageOffset * pageSize, 8) +
-						" (status: " + status + ")");
+						" (status: " + status + ")")
 			}
 		}
 	}
@@ -365,14 +354,10 @@ Item {
 		for (var i in plan) {
 			offset = plan[i].start
 			for (var n = 0; n < plan[i].count; n++) {
-				var count = callErasePages(connection, device, offset,
-									   plan[i].length)
+				var count = callErasePages(connection, device, offset, plan[i].length)
 				var percent = 100 * (1 - ((end - offset - count) / size))
-				print("Erased " +
-				      (count * pageSize) +
-				      " bytes at address " +
-				      Utils.hex(offset * pageSize, 8) +
-				      " (" + percent.toFixed(2) + "%)")
+				print("Erased " + (count * pageSize) + " bytes at address " +
+				      Utils.hex(offset * pageSize, 8) + " (" + percent.toFixed(2) + "%)")
 				offset += count
 			}
 		}
@@ -408,7 +393,7 @@ Item {
 			if (status !== 9 && pagesRead !== length)
 				throw new Error("Could not read pages at address "
 						+ Utils.hex(pageOffset * pageSize, 8)
-						+ " (applet returned success but did not return enough data)");
+						+ " (applet returned success but did not return enough data)")
 			data = connection.appletBufferRead(pagesRead * pageSize)
 			if (data.length < pagesRead * pageSize)
 				throw new Error("Could not read pages at address "
@@ -436,53 +421,100 @@ Item {
 			throw new Error("Applet '" + name +
 			                "' does not support 'read pages' command")
 
-		if ((offset & (pageSize - 1)) !== 0)
-			throw new Error("Read offset is not page-aligned")
-		offset /= pageSize
+		var file = File.open(fileName, true)
+		if (!file)
+			throw new Error("Could not write file '" + fileName + "'")
 
-		// TODO handle non-page aligned sizes
-		if ((size & (pageSize - 1)) !== 0)
-			throw new Error("Read size is not page-aligned")
-		size /= pageSize
+		try {
+			var badPageTotal = 0
+			var badPageFirst
+			var badPageCount = 0
+			var remaining = size
+			while (remaining > 0) {
+				/* compute first and last page for the current offset and remaining bytes to read */
+				var firstPage = Math.floor(offset / pageSize)
+				var lastPage = Math.ceil((offset + remaining) / pageSize)
 
-		var data, percent
-		var badOffset, badCount = 0
-		var remaining = size
-		while (remaining > 0) {
-			var count = Math.min(remaining, bufferPages)
+				/* read as much as the buffer can fit, and at least one page */
+				var count = Math.max(1, Math.min(lastPage - firstPage, bufferPages))
 
-			var result = callReadPages(connection, device, offset, count)
-			if (result.length < count * pageSize)
-				count = result.length / pageSize
+				/* read pages from the applet */
+				var result = callReadPages(connection, device, badPageTotal + firstPage, count)
+				if (result.byteLength < count * pageSize)
+					count = result.byteLength / pageSize
 
-			if (count === 0) {
-				if (badCount === 0)
-					badOffset = offset
-				badCount++
-				offset++
-				continue
-			} else if (badCount > 0) {
-				print("Skipped " + badCount + " bad page(s) at address " +
-				      Utils.hex(badOffset * pageSize, 8))
-				badCount = 0
+				/* if applet returned 0 pages read, it means that at least one page was faulty. */
+				/* skip it and continue */
+				/* TODO: only do this for NAND! */
+				if (count === 0) {
+					if (badPageCount === 0)
+						badPageFirst = firstPage
+					badPageCount++
+					badPageTotal++
+					continue
+				} else if (badPageCount > 0) {
+					print("Skipped " + badPageCount + " bad page(s) at address " +
+					      Utils.hex(badPageFirst * pageSize, 8))
+					badPageCount = 0
+				}
+
+				if (count !== 0) {
+					/* compute offset and length of data */
+					var readOffset = offset - firstPage * pageSize
+					var readLength = Math.min(remaining, count * pageSize - readOffset)
+
+					/* write data to output file */
+					var written = file.write(result.slice(readOffset, readOffset + readLength))
+					if (written != readLength)
+						throw new Error("Could not write to file '" + fileName + "'")
+
+					/* update progression percentage and display it */
+					var percent = 100 * (1 - ((remaining - readLength) / size))
+					print("Read " + readLength + " bytes at address " +
+					      Utils.hex(offset, 8) + " (" + percent.toFixed(2) + "%)")
+
+					/* finally, update the offset and remaining bytes counters */
+					offset += readLength
+					remaining -= readLength
+				}
 			}
+		}
+		finally {
+			file.close()
+		}
+	}
 
-			if (!data)
-				data = result
-			else
-				data.append(result)
+	/*! \internal */
+	function prepareForWrite(connection, device, offset, file, bootFile)
+	{
+		file.setPaddingByte(paddingByte)
 
-			percent = 100 * (1 - ((remaining - count) / size))
-			print("Read " + (count * pageSize) + " bytes at address " +
-			      Utils.hex(offset * pageSize, 8) +
-			      " (" + percent.toFixed(2) + "%)")
+		// patch data and/or add header as required for booting from ROM-code
+		if (!!bootFile)
+			prepareBootFile(connection, device, file)
 
-			offset += count
-			remaining -= count
+		// adjust offset and add padding before data if required
+		if ((offset & (pageSize - 1)) !== 0) {
+			var paddingBefore = offset & (pageSize - 1)
+
+			print("Offset " + Utils.hex(offset, 8) + " not paged-aligned: adding " +
+			      paddingBefore + " byte(s) of padding and adjusting offset to " +
+			      Utils.hex(offset - paddingBefore, 8))
+
+			file.setPaddingBefore(paddingBefore)
+			offset -= paddingBefore
 		}
 
-		if (!data.writeFile(fileName))
-			throw new Error("Could not write to file '" + fileName + "'")
+		// add padding after data if required
+		if ((file.size() & (pageSize - 1)) !== 0) {
+			var paddingAfter = pageSize - (file.size() & (pageSize - 1))
+
+			print("Appending " + paddingAfter + " bytes of padding to fill the last written page")
+
+			file.setPaddingAfter(paddingAfter)
+		}
+
+		return offset
 	}
 
 	/*!
@@ -506,60 +538,50 @@ Item {
 			throw new Error("Applet '" + name +
 			                "' does not support 'read buffer' command")
 
-		var data = Utils.readFile(fileName)
-		if (!data)
+		var file = File.open(fileName, false)
+		if (!file)
 			throw new Error("Could not read file '" + fileName + "'")
-		if (!!bootFile)
-			prepareBootFile(connection, device, data)
 
-		if ((offset & (pageSize - 1)) !== 0) {
-			throw new Error("Verify offset is not page-aligned")
-		}
+		offset = prepareForWrite(connection, device, offset, file, bootFile)
 		offset /= pageSize
 
-		// handle input data padding
-		if ((data.length & (pageSize - 1)) !== 0) {
-			var pad = pageSize - (data.length & (pageSize - 1))
-			data.pad(pad, paddingByte)
-			print("Added " + pad + " bytes of padding to align to page size")
-		}
-		var size = data.length / pageSize
-
-		var current = 0
-		var percent
-		var badOffset, badCount = 0
+		var badPageTotal = 0
+		var badPageFirst
+		var badPageCount = 0
+		var size = file.size() / pageSize
 		var remaining = size
-		while (remaining > 0)
-		{
+		while (remaining > 0) {
 			var count = Math.min(remaining, bufferPages)
 
-			var result = callReadPages(connection, device, offset, count)
-			if (result.length < count * pageSize)
-				count = result.length / pageSize
+			var result = callReadPages(connection, device, badPageTotal + offset, count)
+			if (result.byteLength < count * pageSize)
+				count = result.byteLength / pageSize
 
 			if (count === 0) {
-				if (badCount === 0)
-					badOffset = offset
-				badCount++
-				offset++
+				if (badPageCount === 0)
+					badPageFirst = offset
+				badPageCount++
+				badPageTotal++
 				continue
-			} else if (badCount > 0) {
-				print("Skipped " + badCount + " bad page(s) at address " +
-				      Utils.hex(badOffset * pageSize, 8))
-				badCount = 0
+			} else if (badPageCount > 0) {
+				print("Skipped " + badPageCount + " bad page(s) at address " +
+				      Utils.hex(badPageFirst * pageSize, 8))
+				badPageCount = 0
 			}
 
-			var comp = result.compare(data.mid(current * pageSize, result.length));
-			if (comp !== undefined)
-				throw new Error("Failed verification. First error at file offset " +
-				                Utils.hex(current * pageSize + comp, 8))
+			file.seek(offset * pageSize)
+			var data = file.read(count * pageSize)
 
-			percent = 100 * (1 - ((remaining - count) / size))
+			var comp = Utils.compareBuffers(result, data)
+			if (comp !== undefined)
+				throw new Error("Failed verification. First error at offset " +
+				                Utils.hex(offset * pageSize + comp, 8))
+
+			var percent = 100 * (1 - ((remaining - count) / size))
 			print("Verified " + (count * pageSize) + " bytes at address " +
 			      Utils.hex(offset * pageSize, 8) +
 			      " (" + percent.toFixed(2) + "%)")
 
-			current += count
 			offset += count
 			remaining -= count
 		}
@@ -578,8 +600,8 @@ Item {
 		if (cmd) {
 			if ((data.length & (pageSize - 1)) != 0)
 				throw new Error("Invalid write data buffer length " +
-						"(must be a multiple of page size)");
-			length = data.length / pageSize
+						"(must be a multiple of page size)")
+			length = data.byteLength / pageSize
 			if (pageOffset + length > memoryPages) {
 				remaining = memoryPages - pageOffset
 				throw new Error("Cannot write past end of memory, only " +
@@ -592,7 +614,7 @@ Item {
 			if (!connection.appletBufferWrite(data))
 				throw new Error("Could not write pages at address "
 						+ Utils.hex(pageOffset * pageSize, 8)
-						+ " (write to applet buffer failed)");
+						+ " (write to applet buffer failed)")
 			args = [ pageOffset, length ]
 			status = connection.appletExecute(cmd, args)
 			if (status !== 0 && status !== 9)
@@ -603,7 +625,7 @@ Item {
 			if (status !== 9 && pagesWritten !== length)
 				throw new Error("Could not write pages at address " +
 						Utils.hex(pageOffset * pageSize, 8) +
-						" (applet returned success but did not write enough data)");
+						" (applet returned success but did not write enough data)")
 			return pagesWritten
 		} else {
 			throw new Error("Applet does not support 'Write Pages' commands")
@@ -617,12 +639,11 @@ Item {
 		Reads the contents of the file named \a fileName and writes it
 		at offset \a offset using the applet 'write' command.
 
-		If \a bootFile is \tt true, the file size will be written at
-		offset 20 into the data before writing. This is required when
-		the code is to be loaded by the ROM code.
+		If \a bootFile is \tt true, file data will be modified to be
+		suitable for booting, as required by the device ROM-code.
 
 		Throws an \a Error if the applet has no write command or if an
-		error occured during writing
+		error occured during writing or verifying.
 	*/
 	function write(connection, device, offset, fileName, bootFile)
 	{
@@ -630,81 +651,85 @@ Item {
 			throw new Error("Applet '" + name +
 			                "' does not support 'buffer write' command")
 
-		var data = Utils.readFile(fileName)
-		if (!data)
+		var file = File.open(fileName, false)
+		if (!file)
 			throw new Error("Could not read from file '" + fileName + "'")
-		if (!!bootFile)
-			prepareBootFile(connection, device, data)
 
-		if ((offset & (pageSize - 1)) !== 0)
-			throw new Error("Write offset is not page-aligned")
-		offset /= pageSize
+		// prepare file file for writing, adjust offset if needed
+		offset = prepareForWrite(connection, device, offset, file, bootFile)
 
-		// handle input data padding
-		if ((data.length & (pageSize - 1)) !== 0) {
-			var pad = pageSize - (data.length & (pageSize - 1))
-			data.pad(pad, paddingByte)
-			print("Added " + pad + " bytes of padding to align to page size")
-		}
-		var size = data.length / pageSize
+		try {
+			var size = file.size() / pageSize
 
-		var current = 0
-		var percent
-		var badOffset, badCount = 0
-		var remaining = size
-		while (remaining > 0) {
-			var pagesToSkip = 0
-			var pagesToWrite = remaining
+			var current = 0
+			var percent
+			var badOffset, badCount = 0
+			var remaining = size
+			while (remaining > 0) {
+				var pagesToSkip
+				var pagesToWrite
+				var data
 
-			if (trimPadding) {
-				var pagesToEndOfBlock = Math.min(remaining, eraseSupport - (offset & (eraseSupport - 1)))
-
-				// only skip empty pages for full blocks
-				if (pagesToEndOfBlock == eraseSupport)
-					pagesToSkip = data.getTrimCount(current * pageSize, pagesToEndOfBlock, pageSize, paddingByte)
-				pagesToWrite = pagesToEndOfBlock - pagesToSkip
-			}
-
-			// write non-empty pages
-			while (pagesToWrite > 0) {
-				var count = Math.min(pagesToWrite, bufferPages)
-
-				var pagesWritten = callWritePages(connection, device, offset,
-						data.mid(current * pageSize, count * pageSize))
-				if (pagesWritten < count)
-					count = pagesWritten
-
-				if (count === 0) {
-					if (badCount === 0)
-						badOffset = offset
-					badCount++
-					offset++
-					continue
-				} else if (badCount > 0) {
-					print("Skipped " + badCount + " bad page(s) at address " +
-					      Utils.hex(badOffset * pageSize, 8))
-					badCount = 0
+				file.seek(current * pageSize)
+				if (trimPadding) {
+					var pagesToEndOfBlock = Math.min(remaining, eraseSupport - (offset & (eraseSupport - 1)))
+					data = file.read(pagesToEndOfBlock * pageSize)
+					// only skip empty pages for full blocks
+					if (pagesToEndOfBlock == eraseSupport)
+						pagesToSkip = Utils.getBufferTrimCount(data, 0, pagesToEndOfBlock, pageSize, paddingByte)
+					else
+						pagesToSkip = 0
+					pagesToWrite = pagesToEndOfBlock - pagesToSkip
+				} else {
+					pagesToSkip = 0
+					pagesToWrite = Math.min(remaining, bufferPages)
+					data = file.read(pagesToWrite * pageSize)
 				}
 
-				percent = 100 * (1 - ((remaining - count) / size))
-				print("Wrote " + (count * pageSize) + " bytes at address " +
-				      Utils.hex(offset * pageSize, 8) +
-				      " (" + percent.toFixed(2) + "%)")
+				// write non-empty pages
+				while (pagesToWrite > 0) {
+					var count = Math.min(pagesToWrite, bufferPages)
 
-				current += count
-				offset += count
-				remaining -= count
-				pagesToWrite -= count
-			}
+					var pagesWritten = callWritePages(connection, device, offset, data.slice(0, count * pageSize))
+					if (pagesWritten < count)
+						count = pagesWritten
 
-			// skip empty pages
-			if (pagesToSkip > 0) {
-				print("Skipped " + pagesToSkip + " empty page(s) at address " +
-				      Utils.hex(offset * pageSize, 8))
-				current += pagesToSkip
-				offset += pagesToSkip
-				remaining -= pagesToSkip
+					if (count === 0) {
+						if (badCount === 0)
+							badOffset = offset
+						badCount++
+						offset++
+						continue
+					} else if (badCount > 0) {
+						print("Skipped " + badCount + " bad page(s) at address " +
+						      Utils.hex(badOffset * pageSize, 8))
+						badCount = 0
+					}
+
+					percent = 100 * (1 - ((remaining - count) / size))
+					print("Wrote " + (count * pageSize) + " bytes at address " +
+					      Utils.hex(offset * pageSize, 8) +
+					      " (" + percent.toFixed(2) + "%)")
+
+					data = data.slice(count * pageSize)
+					current += count
+					offset += count
+					remaining -= count
+					pagesToWrite -= count
+				}
+
+				// skip empty pages
+				if (pagesToSkip > 0) {
+					print("Skipped " + pagesToSkip + " empty page(s) at address " +
+					      Utils.hex(offset * pageSize, 8))
+					current += pagesToSkip
+					offset += pagesToSkip
+					remaining -= pagesToSkip
+				}
 			}
+		}
+		finally {
+			file.close()
 		}
 	}
 
@@ -741,7 +766,7 @@ Item {
 			if (status !== 0)
 				throw new Error("Read Boot Config command failed (status=" +
 						status + ")")
-			return connection.appletMailboxRead(0);
+			return connection.appletMailboxRead(0)
 		} else {
 			throw new Error("Applet does not support 'Read Boot Config' command")
 		}
@@ -872,15 +897,15 @@ Item {
 	function defaultCommandLineCommands() {
 		var commands = []
 		if (canErasePages())
-			commands.push("erase");
+			commands.push("erase")
 		if (canReadPages()) {
-			commands.push("read");
-			commands.push("verify");
-			commands.push("verifyboot");
+			commands.push("read")
+			commands.push("verify")
+			commands.push("verifyboot")
 		}
 		if (canWritePages()) {
-			commands.push("write");
-			commands.push("writeboot");
+			commands.push("write")
+			commands.push("writeboot")
 		}
 		return commands
 	}
@@ -969,7 +994,7 @@ Item {
 			}
 			// fall-through
 		case 0:
-			break;
+			break
 		default:
 			return "Invalid number of arguments (expected 0, 1 or 2)."
 		}

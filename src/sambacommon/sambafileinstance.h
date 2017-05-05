@@ -15,6 +15,7 @@
 #define SAMBAFILEINSTANCE_H
 
 #include "sambacommon.h"
+#include <QByteArray>
 #include <QFile>
 #include <QObject>
 
@@ -37,8 +38,20 @@ public:
 	Q_INVOKABLE qint64 write(const QByteArray &byteArray);
 	Q_INVOKABLE void close();
 
+	Q_INVOKABLE void setHeader(const QByteArray& header);
+	Q_INVOKABLE void enable6thVectorPatching(bool enable);
+	Q_INVOKABLE void setPaddingByte(quint8 value);
+	Q_INVOKABLE void setPaddingBefore(int count);
+	Q_INVOKABLE void setPaddingAfter(int count);
+
 private:
 	QFile m_file;
+	qint64 m_offset;
+	QByteArray m_header;
+	bool m_enable6thVectorPatching;
+	quint8 m_paddingValue;
+	int m_paddingBefore;
+	int m_paddingAfter;
 };
 
 #endif // SAMBAFILEINSTANCE_H

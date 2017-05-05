@@ -20,45 +20,54 @@ SambaUtils::SambaUtils()
 
 }
 
-void SambaUtils::sleep(int secs)
+void SambaUtils::sleep(int secs) const
 {
 	QThread::sleep(secs);
 }
 
-void SambaUtils::msleep(int msecs)
+void SambaUtils::msleep(int msecs) const
 {
 	QThread::msleep(msecs);
 }
 
-void SambaUtils::usleep(int usecs)
+void SambaUtils::usleep(int usecs) const
 {
 	QThread::usleep(usecs);
 }
 
-SambaByteArray *SambaUtils::createByteArray(int length)
+QVariant SambaUtils::compareBuffers(const QByteArray& buffer1, const QByteArray& buffer2) const
 {
-	return new SambaByteArray(length);
+	unsigned i;
+
+	for (i = 0; i < (unsigned)qMin(buffer1.length(), buffer2.length()); i++) {
+		if (buffer1[i] != buffer2[i])
+			return QVariant(i);
+	}
+
+	if (buffer1.length() != buffer2.length())
+		return QVariant(i);
+
+	return QVariant();
 }
 
-SambaByteArray *SambaUtils::readUrl(const QString& fileUrl)
+unsigned SambaUtils::getBufferTrimCount(const QByteArray& buffer, unsigned offset, unsigned pages, unsigned pageSize, char paddingByte) const
 {
-	SambaByteArray *array = new SambaByteArray();
-	if (array->readUrl(fileUrl))
-		return array;
-	delete array;
-	return NULL;
-}
+	unsigned page;
 
-SambaByteArray *SambaUtils::readFile(const QString& fileName)
-{
-	SambaByteArray *array = new SambaByteArray();
-	if (array->readFile(fileName))
-		return array;
-	delete array;
-	return NULL;
-}
+	if (offset + pages * pageSize > (unsigned)buffer.length())
+		return 0;
 
-bool SambaUtils::writeFile(const QString& fileName, const SambaByteArray& data)
-{
-	return data.writeFile(fileName);
+	for (page = pages; page > 0; page--) {
+		bool empty = true;
+		for (unsigned i = 0; i < pageSize; i++) {
+			if (buffer[offset + (page - 1) * pageSize + i] != paddingByte) {
+				empty = false;
+				break;
+			}
+		}
+		if (!empty)
+			break;
+	}
+
+	return pages - page;
 }

@@ -15,7 +15,6 @@
 #define SAMBA_UTILS_H
 
 #include "sambacommon.h"
-#include "sambabytearray.h"
 #include <QObject>
 
 class SAMBACOMMONSHARED_EXPORT SambaUtils : public QObject
@@ -25,14 +24,12 @@ class SAMBACOMMONSHARED_EXPORT SambaUtils : public QObject
 public:
 	explicit SambaUtils();
 
-	Q_INVOKABLE void sleep(int secs);
-	Q_INVOKABLE void msleep(int msecs);
-	Q_INVOKABLE void usleep(int usecs);
+	Q_INVOKABLE void sleep(int secs) const;
+	Q_INVOKABLE void msleep(int msecs) const;
+	Q_INVOKABLE void usleep(int usecs) const;
 
-	Q_INVOKABLE SambaByteArray *createByteArray(int length);
-	Q_INVOKABLE SambaByteArray *readUrl(const QString& fileUrl);
-	Q_INVOKABLE SambaByteArray *readFile(const QString& fileName);
-	Q_INVOKABLE bool writeFile(const QString& fileName, const SambaByteArray& data);
+	Q_INVOKABLE QVariant compareBuffers(const QByteArray& buffer1, const QByteArray& buffer2) const;
+	Q_INVOKABLE unsigned getBufferTrimCount(const QByteArray& buffer, unsigned offset, unsigned pages, unsigned pageSize, char paddingByte) const;
 };
 
 #endif // SAMBA_UTILS_H

@@ -12,7 +12,6 @@
  */
 
 #include "sambacoreplugin.h"
-#include "sambabytearray.h"
 #include "sambafile.h"
 #include "sambautils.h"
 
@@ -26,7 +25,6 @@ static QObject* file_instance_provider(QQmlEngine *engine, QJSEngine *scriptEngi
 void SambaCorePlugin::registerTypes(const char *uri)
 {
 	Q_ASSERT(uri == QLatin1String("SAMBA"));
-	qmlRegisterType<SambaByteArray>(uri, 3, 0, "ByteArray");
 	qmlRegisterSingletonType<SambaFile>(uri, 3, 0, "File", file_instance_provider);
 	qmlRegisterUncreatableType<SambaFileInstance>(uri, 3, 0, "FileInstance", "Please use SAMBA.File to create instances of this type");
 	qmlRegisterType<SambaUtils>(uri, 3, 0, "UtilsBase");

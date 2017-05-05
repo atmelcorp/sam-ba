@@ -9,7 +9,6 @@ VERSION = 3.1.0
 DEFINES += SAMBACOMMON_LIBRARY
 
 SOURCES += \
-    sambabytearray.cpp \
     sambacommon.cpp \
     sambaengine.cpp \
     sambafile.cpp \
@@ -17,7 +16,6 @@ SOURCES += \
     sambautils.cpp
 
 HEADERS += \
-    sambabytearray.h \
     sambacommon.h \
     sambaengine.h \
     sambafile.h \
@@ -35,6 +33,3 @@ else:win32:{
 
 # install
 INSTALLS += target
-
-OTHER_FILES += \
-	type_bytearray.qdoc
