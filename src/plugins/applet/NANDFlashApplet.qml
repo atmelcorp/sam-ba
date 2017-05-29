@@ -29,7 +29,7 @@ Applet {
 	property string nandHeaderHelp: "For information on NAND header values, please refer to product datasheet."
 
 	/*! \internal */
-	function buildInitArgs(connection, device) {
+	function buildInitArgs() {
 		var config = device.config.nandflash
 
 		if (typeof config.ioset === "undefined")
@@ -41,7 +41,7 @@ Applet {
 		if (typeof config.header === "undefined")
 			throw new Error("Incomplete NAND Flash configuration, missing value for 'header' property")
 
-		var args = defaultInitArgs(connection, device)
+		var args = defaultInitArgs()
 		args.push(config.ioset)
 		args.push(config.busWidth)
 		args.push(config.header)
@@ -49,27 +49,25 @@ Applet {
 	}
 
 	/*! \internal */
-	function prependNandHeader(nandHeader, data) {
+	function prepareBootFile(file) {
+		file.enable6thVectorPatching(true)
+
 		// prepare nand header
-		var header = Utils.createByteArray(52 * 4)
+		var header = new ArrayBuffer(52 * 4)
+		var headerView = new DataView(header)
 		for (var i = 0; i < 52; i++)
-			header.writeu32(i * 4, nandHeader)
-		// prepend header to data
-		data.prepend(header)
+			headerView.setUint32(i * 4, nandHeader, true)
+
+		// prepend header to file data
+		file.setHeader(header)
 		print("Prepended NAND header prefix (" +
 			  Utils.hex(nandHeader, 8) + ")")
-	}
-
-	/*! \internal */
-	function prepareBootFile(connection, device, data) {
-		patch6thVector(data)
-		prependNandHeader(device.config.nandflash.header, data)
 	}
 
 	/* -------- Command Line Handling -------- */
 
 	/*! \internal */
-	function commandLineParse(device, args)	{
+	function commandLineParse(args)	{
 		if (args.length > 3)
 			return "Invalid number of arguments."
 

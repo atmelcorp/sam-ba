@@ -2,12 +2,10 @@ import SAMBA 3.1
 import SAMBA.Connection.Serial 3.1
 import SAMBA.Device.SAMA5D2 3.1
 
-AppletLoader {
-	connection: SerialConnection {
-		//port: "ttyACM0"
-		//port: "COM85"
-		//baudRate: 57600
-	}
+SerialConnection {
+	//port: "ttyACM0"
+	//port: "COM85"
+	//baudRate: 57600
 
 	device: SAMA5D2Xplained {
 		/* override part of default config */
@@ -21,19 +19,19 @@ AppletLoader {
 
 	onConnectionOpened: {
 		// initialize SD/MMC applet
-		appletInitialize("sdmmc")
+		initializeApplet("sdmmc")
 
 		// write file
-		appletWrite(0, "filesystem_image.raw", false)
+		applet.write(0, "filesystem_image.raw", false)
 
 		// initialize boot config applet
-		appletInitialize("bootconfig")
+		initializeApplet("bootconfig")
 
 		// Use BUREG0 as boot configuration word
-		appletWriteBootCfg(BootCfg.BSCR, BSCR.fromText("VALID,BUREG0"))
+		applet.writeBootCfg(BootCfg.BSCR, BSCR.fromText("VALID,BUREG0"))
 
 		// Enable external boot only on SDMMC0
-		appletWriteBootCfg(BootCfg.BUREG0,
+		applet.writeBootCfg(BootCfg.BUREG0,
 			BCW.fromText("EXT_MEM_BOOT,UART1_IOSET1,JTAG_IOSET1," +
 			             "SDMMC0_DISABLED,SDMMC1,NFC_DISABLED," +
 			             "SPI1_DISABLED,SPI0_DISABLED," +

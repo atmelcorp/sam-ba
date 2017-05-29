@@ -38,7 +38,6 @@ private slots:
 
 private:
 	QQmlEngine m_qmlEngine;
-	bool m_hasWarnings;
 };
 
 #endif // SAMBA_ENGINE_H

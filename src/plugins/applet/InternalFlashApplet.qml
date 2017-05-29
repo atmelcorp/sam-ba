@@ -25,7 +25,7 @@ Applet {
 		AppletCommand { name:"writePages"; code:0x33 }
 	]
 
-	function prepareBootFile(connection, device, data) {
+	function prepareBootFile(file) {
 		// nothing to do here
 	}
 }

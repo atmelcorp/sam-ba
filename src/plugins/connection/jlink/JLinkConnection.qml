@@ -135,6 +135,8 @@ Connection {
 	/*! \internal */
 	function handle_helper_connectionOpened(at91) {
 		appletConnectionType = AppletConnectionType.JTAG
+		if (autoDeviceInit && (typeof device !== "undefined"))
+			device.initialize()
 		connectionOpened()
 	}
 

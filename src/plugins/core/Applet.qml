@@ -33,6 +33,18 @@ Item {
 	property var description
 
 	/*!
+		\qmlproperty Device Applet::device
+		\brief The parent device for this applet
+	*/
+	property var device
+
+	/*!
+		\qmlproperty Device Applet::connection
+		\brief the currently selected connection
+	*/
+	property var connection
+
+	/*!
 		\qmlproperty string Applet::traceLevel
 		\brief The trace level that will be set during applet initialization
 	*/
@@ -156,13 +168,13 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void Applet::defaultInitArgs(Connection connection, Device device)
+		\qmlmethod void Applet::defaultInitArgs()
 		\brief Returns the default input mailbox for applet initialization
 
 		The default mailbox contains the connection type followed by the trace level.
 		This method is called by the default buildInitArgs implementation.
 	*/
-	function defaultInitArgs(connection, device) {
+	function defaultInitArgs() {
 		var serial_instance = device.config.serial.instance
 		var serial_ioset = device.config.serial.ioset
                 if (typeof serial_instance === "undefined" ||
@@ -174,25 +186,25 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void Applet::buildInitArgs(Connection connection, Device device)
+		\qmlmethod void Applet::buildInitArgs()
 		\brief Returns the input mailbox for applet initialization
 
 		The default implementation just calls defaultInitArgs.
 		It is intended to be overridden by Applet
 		sub-classes/instances.
 	*/
-	function buildInitArgs(connection, device) {
-		return defaultInitArgs(connection, device)
+	function buildInitArgs() {
+		return defaultInitArgs()
 	}
 
 	/*!
-		\qmlmethod void Applet::prepareBootFile(Connection connection, Device device, File file)
+		\qmlmethod void Applet::prepareBootFile(File file)
 		\brief Prepare a application file for use as a boot file
 
 		The default implementation enables on-the-fly patching of 6th vector.
 		It is intended to be overridden by Applet sub-classes/instances.
 	*/
-	function prepareBootFile(connection, device, file) {
+	function prepareBootFile(file) {
 		file.enable6thVectorPatching(true)
 	}
 
@@ -202,12 +214,12 @@ Item {
 	}
 
 	/*! \internal */
-	function callInitialize(connection, device) {
+	function callInitialize() {
 		var args, status, cmd
 
 		cmd = command("initialize")
 		if (cmd) {
-			args = buildInitArgs(connection, device)
+			args = buildInitArgs()
 			status = connection.appletExecute(cmd, args)
 			if (status === 0) {
 				bufferAddr = connection.appletMailboxRead(0)
@@ -234,20 +246,15 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void Applet::initialize(Connection connection, Device device)
+		\qmlmethod void Applet::initialize()
 		\brief Load and initializes the applet.
 
 		Throws an \a Error if the applet could not be loaded or initialized.
 	*/
-	function initialize(connection, device)
+	function initialize()
 	{
-		if (connection.applet !== this) {
-			if (!connection.appletUpload(this))
-				throw new Error("Applet " + name + " could not be loaded")
-		}
-
 		if (canInitialize()) {
-			callInitialize(connection, device)
+			callInitialize()
 			if (memorySize > 0)
 				print("Detected memory size is " + memorySize + " bytes.")
 			if (pageSize > 0)
@@ -282,7 +289,7 @@ Item {
 	}
 
 	/*! \internal */
-	function callErasePages(connection, device, pageOffset, length) {
+	function callErasePages(pageOffset, length) {
 		var args, status
 
 		if (!canErasePages()) {
@@ -308,7 +315,7 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void Applet::erase(Connection connection, Device device, int offset, int size)
+		\qmlmethod void Applet::erase(int offset, int size)
 		\brief Erases a block of memory.
 
 		Erases \a size bytes at offset \a offset using the applet
@@ -317,7 +324,7 @@ Item {
 		Throws an \a Error if the applet has no block erase command or
 		if an error occured during erasing
 	*/
-	function erase(connection, device, offset, size)
+	function erase(offset, size)
 	{
 		if (!canErasePages()) {
 			throw new Error("Applet '" + name +
@@ -354,7 +361,7 @@ Item {
 		for (var i in plan) {
 			offset = plan[i].start
 			for (var n = 0; n < plan[i].count; n++) {
-				var count = callErasePages(connection, device, offset, plan[i].length)
+				var count = callErasePages(offset, plan[i].length)
 				var percent = 100 * (1 - ((end - offset - count) / size))
 				print("Erased " + (count * pageSize) + " bytes at address " +
 				      Utils.hex(offset * pageSize, 8) + " (" + percent.toFixed(2) + "%)")
@@ -369,7 +376,7 @@ Item {
 	}
 
 	/*! \internal */
-	function callReadPages(connection, device, pageOffset, length) {
+	function callReadPages(pageOffset, length) {
 		var remaining, args, status, pagesRead, data, cmd
 
 		cmd = command("readPages")
@@ -406,7 +413,7 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void Applet::read(Connection connection, Device device, int offset, int size, string fileName)
+		\qmlmethod void Applet::read(int offset, int size, string fileName)
 		\brief Read data from the device into a file.
 
 		Reads \a size bytes at offset \a offset using the applet 'read'
@@ -415,7 +422,7 @@ Item {
 		Throws an \a Error if the applet has no read command or if an
 		error occured during reading
 	*/
-	function read(connection, device, offset, size, fileName)
+	function read(offset, size, fileName)
 	{
 		if (!canReadPages())
 			throw new Error("Applet '" + name +
@@ -439,7 +446,7 @@ Item {
 				var count = Math.max(1, Math.min(lastPage - firstPage, bufferPages))
 
 				/* read pages from the applet */
-				var result = callReadPages(connection, device, badPageTotal + firstPage, count)
+				var result = callReadPages(badPageTotal + firstPage, count)
 				if (result.byteLength < count * pageSize)
 					count = result.byteLength / pageSize
 
@@ -485,13 +492,13 @@ Item {
 	}
 
 	/*! \internal */
-	function prepareForWrite(connection, device, offset, file, bootFile)
+	function prepareForWrite(offset, file, bootFile)
 	{
 		file.setPaddingByte(paddingByte)
 
 		// patch data and/or add header as required for booting from ROM-code
 		if (!!bootFile)
-			prepareBootFile(connection, device, file)
+			prepareBootFile(file)
 
 		// adjust offset and add padding before data if required
 		if ((offset & (pageSize - 1)) !== 0) {
@@ -518,7 +525,7 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void Applet::verify(Connection connection, Device device, int offset, string fileName, bool bootFile)
+		\qmlmethod void Applet::verify(int offset, string fileName, bool bootFile)
 		\brief Compares data between a file and the device memory.
 
 		Reads the contents of the file named \a fileName and compares
@@ -532,7 +539,7 @@ Item {
 		Throws an \a Error if the applet has no read command, if an
 		error occured during reading or if the verification failed.
 	*/
-	function verify(connection, device, offset, fileName, bootFile)
+	function verify(offset, fileName, bootFile)
 	{
 		if (!canReadPages())
 			throw new Error("Applet '" + name +
@@ -542,7 +549,7 @@ Item {
 		if (!file)
 			throw new Error("Could not read file '" + fileName + "'")
 
-		offset = prepareForWrite(connection, device, offset, file, bootFile)
+		offset = prepareForWrite(offset, file, bootFile)
 		offset /= pageSize
 
 		var badPageTotal = 0
@@ -553,7 +560,7 @@ Item {
 		while (remaining > 0) {
 			var count = Math.min(remaining, bufferPages)
 
-			var result = callReadPages(connection, device, badPageTotal + offset, count)
+			var result = callReadPages(badPageTotal + offset, count)
 			if (result.byteLength < count * pageSize)
 				count = result.byteLength / pageSize
 
@@ -593,7 +600,7 @@ Item {
 	}
 
 	/*! \internal */
-	function callWritePages(connection, device, pageOffset, data) {
+	function callWritePages(pageOffset, data) {
 		var length, remaining, args, status, pagesWritten, cmd
 
 		cmd = command("writePages")
@@ -633,7 +640,7 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void Applet::write(Connection connection, Device device, int offset, string fileName, bool bootFile)
+		\qmlmethod void Applet::write(int offset, string fileName, bool bootFile)
 		\brief Writes data from a file to the device.
 
 		Reads the contents of the file named \a fileName and writes it
@@ -645,7 +652,7 @@ Item {
 		Throws an \a Error if the applet has no write command or if an
 		error occured during writing or verifying.
 	*/
-	function write(connection, device, offset, fileName, bootFile)
+	function write(offset, fileName, bootFile)
 	{
 		if (!canWritePages())
 			throw new Error("Applet '" + name +
@@ -656,7 +663,7 @@ Item {
 			throw new Error("Could not read from file '" + fileName + "'")
 
 		// prepare file file for writing, adjust offset if needed
-		offset = prepareForWrite(connection, device, offset, file, bootFile)
+		offset = prepareForWrite(offset, file, bootFile)
 
 		try {
 			var size = file.size() / pageSize
@@ -690,7 +697,7 @@ Item {
 				while (pagesToWrite > 0) {
 					var count = Math.min(pagesToWrite, bufferPages)
 
-					var pagesWritten = callWritePages(connection, device, offset, data.slice(0, count * pageSize))
+					var pagesWritten = callWritePages(offset, data.slice(0, count * pageSize))
 					if (pagesWritten < count)
 						count = pagesWritten
 
@@ -734,7 +741,7 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void Applet::writeVerify(Connection connection, Device device, int offset, string fileName, bool bootFile)
+		\qmlmethod void Applet::writeVerify(int offset, string fileName, bool bootFile)
 		\brief Writes/Compares data from a file to the device memory.
 
 		Reads the contents of the file named \a fileName and writes it
@@ -749,14 +756,14 @@ Item {
 		Throws an \a Error if the applet has no read and write commands
 		or if an error occured during reading, writing or verifying.
 	*/
-	function writeVerify(connection, device, offset, fileName, bootFile)
+	function writeVerify(offset, fileName, bootFile)
 	{
-		write(connection, device, offset, fileName, bootFile)
-		verify(connection, device, offset, fileName, bootFile)
+		write(offset, fileName, bootFile)
+		verify(offset, fileName, bootFile)
 	}
 
 	/*! \internal */
-	function callReadBootCfg(connection, device, index)
+	function callReadBootCfg(index)
 	{
 		var status, cmd
 
@@ -773,7 +780,7 @@ Item {
 	}
 
 	/*!
-		\qmlmethod int Applet::readBootCfg(Connection connection, Device device, int index)
+		\qmlmethod int Applet::readBootCfg(int index)
 		\brief Read the boot configuration
 
 		Read and returns the boot configuration at index \a index using the applet
@@ -782,13 +789,13 @@ Item {
 		Throws an \a Error if the applet has no 'Read Boot Config' command or
 		if an error occured during calling the applet command
 	*/
-	function readBootCfg(connection, device, index)
+	function readBootCfg(index)
 	{
-		return callReadBootCfg(connection, device, index)
+		return callReadBootCfg(index)
 	}
 
 	/*! \internal */
-	function callWriteBootCfg(connection, device, index, value)
+	function callWriteBootCfg(index, value)
 	{
 		var status, cmd
 
@@ -804,7 +811,7 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void Applet::writeBootCfg(Connection connection, Device device, int index, int value)
+		\qmlmethod void Applet::writeBootCfg(int index, int value)
 		\brief Write the boot configuration
 
 		Write the boot configuration \a value at index \a index using the
@@ -813,9 +820,9 @@ Item {
 		Throws an \a Error if the applet has no 'Write Boot Config' command or
 		if an error occured during calling the applet command
 	*/
-	function writeBootCfg(connection, device, index, value)
+	function writeBootCfg(index, value)
 	{
-		callWriteBootCfg(connection, device, index, value)
+		callWriteBootCfg(index, value)
 	}
 
 	/*! \internal */
@@ -883,7 +890,7 @@ Item {
 	/* -------- Command Line Handling -------- */
 
 	/*! \internal */
-	function commandLineParse(device, args) {
+	function commandLineParse(args) {
 		if (args.length > 0)
 			return "Invalid number of arguments."
 	}
@@ -975,7 +982,7 @@ Item {
 	}
 
 	/*! \internal */
-	function commandLineCommandErase(connection, device, args) {
+	function commandLineCommandErase(args) {
 		var addr, length
 
 		switch (args.length) {
@@ -1005,14 +1012,14 @@ Item {
 			length = memorySize - addr
 
 		try {
-			erase(connection, device, addr, length)
+			erase(addr, length)
 		} catch(err) {
 			return err.message
 		}
 	}
 
 	/*! \internal */
-	function commandLineCommandRead(connection, device, args) {
+	function commandLineCommandRead(args) {
 		var filename, addr, length
 
 		if (args.length < 1)
@@ -1049,14 +1056,14 @@ Item {
 			length = memorySize - addr
 
 		try {
-			read(connection, device, addr, length, filename)
+			read(addr, length, filename)
 		} catch(err) {
 			return err.message
 		}
 	}
 
 	/*! \internal */
-	function commandLineCommandWriteVerify(connection, device, args, shouldWrite) {
+	function commandLineCommandWriteVerify(args, shouldWrite) {
 		var addr, length, filename
 
 		if (args.length < 1)
@@ -1083,16 +1090,16 @@ Item {
 
 		try {
 			if (shouldWrite)
-				write(connection, device, addr, filename, false)
+				write(addr, filename, false)
 			else
-				verify(connection, device, addr, filename, false)
+				verify(addr, filename, false)
 		} catch(err) {
 			return err.message
 		}
 	}
 
 	/*! \internal */
-	function commandLineCommandWriteVerifyBoot(connection, device, args, shouldWrite) {
+	function commandLineCommandWriteVerifyBoot(args, shouldWrite) {
 		var addr, length, filename
 
 		if (args.length !== 1)
@@ -1105,37 +1112,33 @@ Item {
 
 		try {
 			if (shouldWrite)
-				write(connection, device, 0, filename, true)
+				write(0, filename, true)
 			else
-				verify(connection, device, 0, filename, true)
+				verify(0, filename, true)
 		} catch(err) {
 			return err.message
 		}
 	}
 
 	/*! \internal */
-	function defaultCommandLineCommand(connection, device, command, args) {
+	function defaultCommandLineCommand(command, args) {
 		if (command === "erase" && canErasePages()) {
-			return commandLineCommandErase(connection, device, args)
+			return commandLineCommandErase(args)
 		}
 		else if (command === "read" && canReadPages()) {
-			return commandLineCommandRead(connection, device, args)
+			return commandLineCommandRead(args)
 		}
 		else if (command === "write" && canWritePages()) {
-			return commandLineCommandWriteVerify(connection, device,
-			                                     args, true)
+			return commandLineCommandWriteVerify(args, true)
 		}
 		else if (command === "writeboot" && canWritePages()) {
-			return commandLineCommandWriteVerifyBoot(connection, device,
-			                                         args, true)
+			return commandLineCommandWriteVerifyBoot(args, true)
 		}
 		else if (command === "verify" && canReadPages()) {
-			return commandLineCommandWriteVerify(connection, device,
-			                                     args, false)
+			return commandLineCommandWriteVerify(args, false)
 		}
 		else if (command === "verifyboot" && canReadPages()) {
-			return commandLineCommandWriteVerifyBoot(connection, device,
-			                                         args, false)
+			return commandLineCommandWriteVerifyBoot(args, false)
 		}
 		else {
 			return "Unknown command."
@@ -1143,8 +1146,7 @@ Item {
 	}
 
 	/*! \internal */
-	function commandLineCommand(connection, device, command, args) {
-		return defaultCommandLineCommand(connection, device,
-		                                 command, args)
+	function commandLineCommand(command, args) {
+		return defaultCommandLineCommand(command, args)
 	}
 }

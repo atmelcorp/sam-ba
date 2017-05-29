@@ -26,7 +26,7 @@ Applet {
 	]
 
 	/*! \internal */
-	function buildInitArgs(connection, device) {
+	function buildInitArgs() {
 		var config = device.config.qspiflash
 
 		if (typeof config.instance === "undefined")
@@ -38,7 +38,7 @@ Applet {
 		if (typeof config.freq === "undefined")
 			throw new Error("Incomplete QSPI Flash configuration, missing value for 'freq' property")
 
-		var args = defaultInitArgs(connection, device)
+		var args = defaultInitArgs()
 		args.push(config.instance)
 		args.push(config.ioset)
 		args.push(Math.floor(config.freq * 1000000))
@@ -48,7 +48,7 @@ Applet {
 	/* -------- Command Line Handling -------- */
 
 	/*! \internal */
-	function commandLineParse(device, args)	{
+	function commandLineParse(args)	{
 		if (args.length > 3)
 			return "Invalid number of arguments."
 

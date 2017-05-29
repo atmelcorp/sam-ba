@@ -117,21 +117,21 @@ Device {
 	]
 
 	/*!
-		\brief Initialize the SAMV7 device using the given \a connection.
+		\brief Initialize the SAMV7 device using the current connection.
 
 		This method calls checkDeviceID.
 	*/
-	function initialize(connection) {
-		checkDeviceID(connection)
+	function initialize() {
+		checkDeviceID()
 	}
 
 	/*!
 		\brief Checks that the device is a SAME70/S70/V70/V71.
 
-		Reads CHIPID_CIDR register using the given \a connection and display
+		Reads CHIPID_CIDR register using the current connection and display
 		a warning if its value does not match the expected value.
 	*/
-	function checkDeviceID(connection) {
+	function checkDeviceID() {
 		// read ARCH field of CHIPID_CIDR register
 		var arch = (connection.readu32(0x400e0940) >> 20) & 0xff
 		if (arch < 0x10 || arch > 0x13)

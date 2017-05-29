@@ -25,7 +25,7 @@ Applet {
 	]
 
 	/*! \internal */
-	function buildInitArgs(connection, device) {
+	function buildInitArgs() {
 		var config = device.config.sdmmc
 
 		if (typeof config.instance === "undefined")
@@ -43,7 +43,7 @@ Applet {
 		if (typeof config.voltages === "undefined")
 			throw new Error("Incomplete SD/MMC configuration, missing value for 'voltages' property")
 
-		var args = defaultInitArgs(connection, device)
+		var args = defaultInitArgs()
 		args.push(config.instance)
 		args.push(config.ioset)
 		args.push(config.partition)
@@ -55,7 +55,7 @@ Applet {
 	/* -------- Command Line Handling -------- */
 
 	/*! \internal */
-	function commandLineParse(device, args)	{
+	function commandLineParse(args)	{
 		if (args.length > 5)
 			return "Invalid number of arguments."
 

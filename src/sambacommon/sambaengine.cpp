@@ -15,8 +15,7 @@
 #include <QFile>
 
 SambaEngine::SambaEngine(QObject *parent)
-    : QObject(parent),
-      m_hasWarnings(false)
+    : QObject(parent)
 {
 	m_qmlEngine.setOutputWarningsToStandardError(false);
 
@@ -46,7 +45,6 @@ void SambaEngine::engineWarnings(const QList<QQmlError> &warnings)
 			url = warning.url().toString();
 		qCWarning(sambaLogQml, "%s:%d: %s", url.toLocal8Bit().constData(),
 				  warning.line(), warning.description().toLocal8Bit().constData());
-		m_hasWarnings = true;
 	}
 }
 
@@ -61,8 +59,6 @@ QQmlEngine* SambaEngine::qmlEngine()
 
 QObject* SambaEngine::createComponentInstance(QQmlComponent* component, QQmlContext* context)
 {
-	m_hasWarnings = false;
-
 	if (component->status() != QQmlComponent::Ready)
 	{
 		qCCritical(sambaLogCore) << component->errorString();
@@ -72,11 +68,6 @@ QObject* SambaEngine::createComponentInstance(QQmlComponent* component, QQmlCont
 	QObject* obj = component->create(context);
 	if (!obj)
 		return 0;
-
-	if (m_hasWarnings) {
-		delete obj;
-		return 0;
-	}
 
 	return obj;
 }

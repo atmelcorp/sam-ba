@@ -14,25 +14,19 @@
 import QtQuick 2.3
 import SAMBA 3.1
 
-AppletLoader {
-	device: Tool.device
-
-	connection: Tool.port
-
-	onConnectionOpened: {
-		appletInitialize(Tool.applet.name)
-		var applet = connection.applet
-
+Item {
+	function handle_connectionOpened()
+	{
+		Tool.port.initializeApplet(Tool.appletName)
 		for (var i = 0; i < Tool.commands.length; i++) {
 			var args = Tool.commands[i]
 			var command = args.shift()
 			print("Executing command '" + Tool.commands[i].join(":") + "'")
 			var errMsg
 			if (args.length === 1 && args[0] === "help")
-				errMsg = applet.commandLineCommandHelp(command)
+				errMsg = Tool.port.applet.commandLineCommandHelp(command)
 			else
-				errMsg = applet.commandLineCommand(Tool.port, Tool.device,
-				                                   command, args)
+				errMsg = Tool.port.applet.commandLineCommand(command, args)
 			if (Array.isArray(errMsg)) {
 				for (var j = 0; j < errMsg.length; j++)
 					Tool.error(errMsg[j])
@@ -47,7 +41,15 @@ AppletLoader {
 		}
 	}
 
-	onConnectionFailed: {
+	function handle_connectionFailed()
+	{
 		Tool.returnCode = -1
+	}
+
+	Component.onCompleted: {
+		Tool.port.device = Tool.device
+		Tool.port.connectionOpened.connect(handle_connectionOpened)
+		Tool.port.connectionFailed.connect(handle_connectionFailed)
+		Tool.port.open()
 	}
 }

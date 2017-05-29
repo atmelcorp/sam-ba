@@ -2,12 +2,10 @@ import SAMBA 3.1
 import SAMBA.Connection.Serial 3.1
 import SAMBA.Device.SAM9xx5 3.1
 
-AppletLoader {
-	connection: SerialConnection {
-		//port: "ttyACM0"
-		//port: "COM85"
-		//baudRate: 57600
-	}
+SerialConnection {
+	//port: "ttyACM0"
+	//port: "COM85"
+	//baudRate: 57600
 
 	device: SAM9xx5EK {
 		// to use a custom config, replace SAM9xx5EK by SAM9xx5 and
@@ -28,18 +26,18 @@ AppletLoader {
 
 	onConnectionOpened: {
 		// initialize Low-Level applet
-		appletInitialize("lowlevel")
+		initializeApplet("lowlevel")
 
 		// initialize External RAM applet
-		appletInitialize("extram")
+		initializeApplet("extram")
 
 		// initialize serial flash applet
-		appletInitialize("serialflash")
+		initializeApplet("serialflash")
 
 		// erase all memory
-		appletErase(0, connection.applet.memorySize)
+		applet.erase(0, applet.memorySize)
 
 		// write files
-		appletWrite(0x00000, "application.bin", true)
+		applet.write(0x00000, "application.bin", true)
 	}
 }

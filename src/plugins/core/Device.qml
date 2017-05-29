@@ -21,6 +21,12 @@ import SAMBA 3.1
 */
 Item {
 	/*!
+		\qmlproperty Connection Device::connection
+		\brief The parent connection object
+	*/
+	property var connection
+
+	/*!
 		\qmlproperty string Device::name
 		\brief The device name
 	*/
@@ -68,10 +74,22 @@ Item {
 	}
 
 	/*!
-		\qmlmethod void Device::initialize(Connection connection)
-		Initialize the device using \a connection.
+		\qmlmethod void Device::initialize()
+		Initialize the device using configured connection.
 	*/
-	function initialize(connection) {
+	function initialize() {
 		// do nothing
+	}
+
+	/*! \internal */
+	onConnectionChanged: {
+		for (var i = 0; i < applets.length; i++)
+			applets[i].connection = connection
+	}
+
+	/*! \internal */
+	Component.onCompleted: {
+		for (var i = 0; i < applets.length; i++)
+			applets[i].device = this
 	}
 }

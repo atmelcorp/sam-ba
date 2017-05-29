@@ -133,21 +133,21 @@ Device {
 	]
 
 	/*!
-		\brief Initialize the SAMA5D4 device using the given \a connection.
+		\brief Initialize the SAMA5D4 device using the current connection.
 
 		This method calls checkDeviceID.
 	*/
-	function initialize(connection) {
-		checkDeviceID(connection)
+	function initialize() {
+		checkDeviceID()
 	}
 
 	/*!
 		\brief Checks that the device is a SAMA5D4.
 
-		Reads CHIPID_CIDR register using the given \a connection and display
+		Reads CHIPID_CIDR register using the current connection and display
 		a warning if its value does not match the expected value for SAMA5D4.
 	*/
-	function checkDeviceID(connection) {
+	function checkDeviceID() {
 		// read CHIPID_CIDR register
 		var cidr = connection.readu32(0xfc069040)
 		// Compare cidr using mask to skip revision field.

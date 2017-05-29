@@ -67,7 +67,7 @@ Applet {
 	}
 
 	/*! \internal */
-	function commandLineCommandReadBootConfig(connection, device, args) {
+	function commandLineCommandReadBootConfig(args) {
 		if (args.length !== 1)
 			return "Invalid number of arguments (expected 1)."
 
@@ -81,7 +81,7 @@ Applet {
 		if (index < 0)
 			return "Unknown configuration parameter"
 
-		var value = readBootCfg(connection, device, index)
+		var value = readBootCfg(index)
 		var text = configValueToText(index, value)
 		if (typeof text === "undefined")
 			print(configParams[index] + "=" + Utils.hex(value, 8))
@@ -90,7 +90,7 @@ Applet {
 	}
 
 	/*! \internal */
-	function commandLineCommandWriteBootConfig(connection, device, args) {
+	function commandLineCommandWriteBootConfig(args) {
 		if (args.length !== 2)
 			return "Invalid number of arguments (expected 2)."
 
@@ -117,19 +117,19 @@ Applet {
 			print("Setting " + configParams[index] + " to " + Utils.hex(value, 8))
 		else
 			print("Setting " + configParams[index] + " to " + Utils.hex(value, 8) + " (" + text + ")")
-		writeBootCfg(connection, device, index, value)
+		writeBootCfg(index, value)
 	}
 
 	/*! \internal */
-	function commandLineCommand(connection, device, command, args) {
+	function commandLineCommand(command, args) {
 		if (command === "readcfg") {
-			return commandLineCommandReadBootConfig(connection, device, args);
+			return commandLineCommandReadBootConfig(args);
 		}
 		else if (command === "writecfg") {
-			return commandLineCommandWriteBootConfig(connection, device, args);
+			return commandLineCommandWriteBootConfig(args);
 		}
 		else {
-			return defaultCommandLineCommandHandler(connection, device, command, args)
+			return defaultCommandLineCommandHandler(command, args)
 		}
 	}
 

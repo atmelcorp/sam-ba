@@ -26,7 +26,7 @@ Applet {
 	]
 
 	/*! \internal */
-	function buildInitArgs(connection, device) {
+	function buildInitArgs() {
 		var config = device.config.serialflash
 
 		if (typeof config.instance === "undefined")
@@ -41,7 +41,7 @@ Applet {
 		if (typeof config.freq === "undefined")
 			throw new Error("Incomplete configuration, missing value for spiFreq")
 
-		var args = defaultInitArgs(connection, device)
+		var args = defaultInitArgs()
 		args.push(config.instance)
 		args.push(config.ioset)
 		args.push(config.chipSelect)
@@ -52,7 +52,7 @@ Applet {
 	/* -------- Command Line Handling -------- */
 
 	/*! \internal */
-	function commandLineParse(device, args)	{
+	function commandLineParse(args)	{
 		if (args.length > 4)
 			return "Invalid number of arguments."
 
@@ -84,7 +84,7 @@ Applet {
 
 		if (args.length >= 1) {
 			if (args[0].length > 0) {
-				device.instance = Utils.parseInteger(args[0]);
+				config.instance = Utils.parseInteger(args[0]);
 				if (isNaN(config.instance))
 					return "Invalid SPI instance (not a number)."
 			}

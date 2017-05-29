@@ -8,10 +8,7 @@ import SAMBA.Device.SAMA5D2 3.1
  *
  * The configuration in this example matches the SAMA5D2 Xplained Ultra board.
  */
-AppletLoader {
-	connection: SerialConnection {
-	}
-
+SerialConnection {
 	device: SAMA5D2 {
 		config {
 			// eMMC: SDMMC0, I/O Set 1, User Partition, Automatic bus width, 1.8V/3.3V switch supported
@@ -42,7 +39,7 @@ AppletLoader {
 
 	onConnectionOpened: {
 		// initialize serial flash applet
-		appletInitialize("serialflash")
+		initializeApplet("serialflash")
 
 		// (...)
 	}

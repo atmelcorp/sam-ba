@@ -2,12 +2,10 @@ import SAMBA 3.1
 import SAMBA.Connection.Serial 3.1
 import SAMBA.Device.SAMV71 3.1
 
-AppletLoader {
-	connection: SerialConnection {
-		//port: "ttyACM0"
-		//port: "COM85"
-		//baudRate: 57600
-	}
+SerialConnection {
+	//port: "ttyACM0"
+	//port: "COM85"
+	//baudRate: 57600
 
 	device: SAMV71Xplained {
 		// to use a custom config, replace SAMV71Xplained by SAMV71 and
@@ -23,18 +21,18 @@ AppletLoader {
 
 	onConnectionOpened: {
 		// initialize internal flash applet
-		appletInitialize("internalflash")
+		initializeApplet("internalflash")
 
 		// erase all memory
-		appletErase(0, connection.applet.memorySize)
+		applet.erase(0, applet.memorySize)
 
 		// write files
-		appletWrite(0x00000, "program.bin")
+		applet.write(0x00000, "program.bin")
 
 		// initialize boot config applet
-		appletInitialize("bootconfig")
+		initializeApplet("bootconfig")
 
 		// Enable boot from flash
-		appletWriteBootCfg(BootCfg.BOOTMODE, BootCfg.BOOTMODE_FLASH)
+		applet.writeBootCfg(BootCfg.BOOTMODE, BootCfg.BOOTMODE_FLASH)
 	}
 }

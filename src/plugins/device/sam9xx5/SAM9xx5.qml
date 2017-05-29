@@ -163,21 +163,21 @@ Device {
 	]
 
 	/*!
-		\brief Initialize the SAM9xx5 device using the given \a connection.
+		\brief Initialize the SAM9xx5 device using the current connection.
 
 		This method calls checkDeviceID.
 	*/
-	function initialize(connection) {
-		checkDeviceID(connection)
+	function initialize() {
+		checkDeviceID()
 	}
 
 	/*!
 		\brief Checks that the device is a SAM9xx5.
 
-		Reads CHIPID_CIDR register using the given \a connection and display
+		Reads CHIPID_CIDR register using the current connection and display
 		a warning if its value does not match the expected value for SAM9xx5.
 	*/
-	function checkDeviceID(connection) {
+	function checkDeviceID() {
 		// read CHIPID_CIDR & CHIPID_EXID registers
 		var cidr = connection.readu32(0xfffff240)
 		var exid = connection.readu32(0xfffff244)

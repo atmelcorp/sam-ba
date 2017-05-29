@@ -15,7 +15,7 @@ import QtQuick 2.3
 import SAMBA 3.1
 
 Item {
-	function handleMonitorCommands() {
+	function handle_connectionOpened() {
 		Tool.returnCode = 0
 
 		for (var i = 0; i < Tool.commands.length; i++) {
@@ -40,18 +40,15 @@ Item {
 		}
 	}
 
-	function handle_portOpened() {
-		handleMonitorCommands();
-	}
-
-	function handle_portFailed(message) {
+	function handle_connectionFailed(message) {
 		Tool.error(message)
 		Tool.returnCode = -1
 	}
 
 	Component.onCompleted: {
-		Tool.port.connectionOpened.connect(handle_portOpened)
-		Tool.port.connectionFailed.connect(handle_portFailed)
+		Tool.port.device = Tool.device
+		Tool.port.connectionOpened.connect(handle_connectionOpened)
+		Tool.port.connectionFailed.connect(handle_connectionFailed)
 		Tool.port.open()
 	}
 }

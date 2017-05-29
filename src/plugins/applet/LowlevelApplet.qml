@@ -23,8 +23,8 @@ Applet {
 	]
 
 	/*! \internal */
-	function buildInitArgs(connection, device) {
-		var args = defaultInitArgs(connection, device)
+	function buildInitArgs() {
+		var args = defaultInitArgs()
 		Array.prototype.push.apply(args, [0, 0, 0])
 		return args
 	}

@@ -8,16 +8,13 @@ import SAMBA.Device.SAMA5D2 3.1
  *
  * The configuration in this example matches the SAMA5D2 Xplained Ultra board.
  */
-AppletLoader {
-	connection: SerialConnection {
-	}
-
+SerialConnection {
 	device: MyCustomBoard {
 	}
 
 	onConnectionOpened: {
 		// initialize serial flash applet
-		appletInitialize("serialflash")
+		initializeApplet("serialflash")
 
 		// (...)
 	}

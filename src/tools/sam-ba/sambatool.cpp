@@ -50,7 +50,7 @@ static Component parseJson(SambaEngine& engine, const QJsonObject& obj)
 	else if (type == "board")
 		comp.type = COMPONENT_BOARD;
 
-	// create object instance
+	// create component
 	QString script = QString("import %1 %2; %3 { }")
 			.arg(module).arg(module_version).arg(classname);
 	QQmlComponent component(engine.qmlEngine());
@@ -60,7 +60,12 @@ static Component parseJson(SambaEngine& engine, const QJsonObject& obj)
 		cerr_msg(component.errorString());
 		return comp;
 	}
-	comp.object = engine.createComponentInstance(&component, 0);
+
+	// create instance
+	comp.object = component.beginCreate(engine.qmlEngine()->rootContext());
+	if (comp.object && comp.type == COMPONENT_CONNECTION)
+			comp.object->setProperty("autoConnect", QVariant::fromValue(false));
+	component.completeCreate();
 
 	return comp;
 }
@@ -375,6 +380,12 @@ void SambaTool::displayAppletHelp()
 
 QObject* SambaTool::findApplet(const QString& name)
 {
+	if (!m_device) {
+		cerr_msg(QString("Error: Could not find applet '%1': No device or board is set!")
+		         .arg(name));
+		return nullptr;
+	}
+
 	if (m_device->metaObject()->indexOfMethod("applet(QVariant)") == -1) {
 		cerr_msg(QString("Error: Could not find applet '%1': Invalid number of arguments for 'applet' method.")
 			 .arg(name));
@@ -404,29 +415,18 @@ QObject* SambaTool::findApplet(const QString& name)
 
 bool SambaTool::parseAppletOption(const QString& value)
 {
-	if (!m_device) {
-		cerr_msg(QString("Error: Unknown applet '%1': No device or board is set!")
-		         .arg(value));
-		return false;
-	}
-
 	QStringList args = value.split(":");
 	QString appletName = args.first();
 	args.removeFirst();
 
 	QObject* applet = findApplet(appletName);
-	if (!applet) {
-		cerr_msg(QString("Error: Unknown applet '%1'.").arg(value));
-		displayAppletHelp();
-		return false;
-	}
 
 	if (args.length() > 0) {
 		if (args.length() == 1 && args[0] == "help") {
 			displayJsCommandLineHelp(applet);
 			return false;
 		}
-		if (applet->metaObject()->indexOfMethod("commandLineParse(QVariant,QVariant)") == -1) {
+		if (applet->metaObject()->indexOfMethod("commandLineParse(QVariant)") == -1) {
 			cerr_msg(QString("Error: Could not configure applet '%1': Invalid number of arguments for 'commandLineParse' method.")
 			         .arg(value));
 			return false;
@@ -434,7 +434,6 @@ bool SambaTool::parseAppletOption(const QString& value)
 		QVariant returnedValue;
 		if (!QMetaObject::invokeMethod(applet, "commandLineParse",
 		                               Q_RETURN_ARG(QVariant, returnedValue),
-		                               Q_ARG(QVariant, QVariant::fromValue<QObject*>(m_device)),
 		                               Q_ARG(QVariant, QVariant(args)))) {
 			cerr_msg(QString("Error: Could not configure applet '%1': Could not invoke 'commandLineParse' method.")
 			         .arg(value));
@@ -510,7 +509,7 @@ void SambaTool::run()
 		if (m_device)
 			toolContext.setDevice(QVariant::fromValue<QObject*>(m_device));
 		if (m_applet)
-			toolContext.setApplet(QVariant::fromValue<QObject*>(m_applet));
+			toolContext.setAppletName(m_applet->property("name"));
 		if (m_commands.isValid())
 			toolContext.setCommands(m_commands);
 

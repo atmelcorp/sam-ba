@@ -44,42 +44,49 @@ import QtQuick 2.3
 import SAMBA 3.1
 import SAMBA.Connection.Serial 3.1
 
-Item {
-	SerialConnection {
-		id: connection
-
-		onConnectionOpened: print("Connection opened")
-		onConnectionFailed: print("Connection failed: " + message)
-		onConnectionClosed: print("Connection closed")
-	}
-
-	Component.onCompleted: connection.open()
-	Component.onDestruction: connection.close()
+SerialConnection {
+	onConnectionOpened: print("Connection opened")
+	onConnectionFailed: print("Connection failed: " + message)
+	onConnectionClosed: print("Connection closed")
 }
 \endqml
 
-This script builds upon the previous one by adding an instance of
-SerialConnection which is given the identifier "connection". This identifier
-can then be used to call methods on the connection object.
+This script instanciates a serial connection with its default properties.  In
+particular, the \tt autoConnect property that defaults to \tt true will trigger
+an automatic connection once the QML object is created.
 
-The \tt open method of the \tt connection will called on script startup.  This
-will trigger one of the \tt onConnectionOpened or \tt onConnectionFailed
-signals and in turn display a message.
+This will in turn trigger one of the \tt onConnectionOpened or \tt
+onConnectionFailed signals and display a message.
 
-When the script completes, the \tt close method of the \tt connection will be
-called. This will trigger the \tt onConnectionClosed signal and display a final
-message.
+When the script completes, the connection will be automatically closed.  This
+will trigger the \tt onConnectionClosed signal and display a final message.
 
 \section2 Using SAM-BA Applets
 
-The AppletLoader QML type is provided to facilitate the use of
-\l{SAMBA::Applet}{SAM-BA Applets}.
+The \l{SAMBA::}{Connection} object provides several functions to load applets
+and make tha currently loaded applet to execute commands.
 
-It combines a \l{SAMBA::}{Connection} and a \l{SAMBA::}{Device} and provides
-several functions to call the most common applet commands.
+The applet must first be loaded using the initializeApplet function.  This
+function will upload the applet code to the device, call the initialization
+function and update the \tt applet property of the connection.
 
-More information including example use can be found in \l{SAMBA::}{AppletLoader}
-documentation.
+In this example, a SerialConnection is used to load the \tt serialflash applet
+on a SAMA5D2 Xplained Ultra board and the applet \tt erase function is called:
+
+\qml
+import QtQuick 2.3
+import SAMBA 3.1
+import SAMBA.Connection.Serial 3.1
+import SAMBA.Device.SAMA5D2 3.1
+
+SerialConnection {
+	device: SAMA5D2Xplained {}
+	onConnectionOpened: {
+		initializeApplet("serialflash")
+		applet.erase()
+	}
+}
+\endqml
 
 \section2 More QML examples
 

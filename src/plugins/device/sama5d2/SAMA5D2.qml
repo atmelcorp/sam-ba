@@ -163,13 +163,13 @@ Device {
 	]
 
 	/*!
-		\brief Initialize the SAMA5D2 device using the given \a connection.
+		\brief Initialize the SAMA5D2 device using the current connection.
 
 		This method calls checkDeviceID and then reconfigures the
 		L2-Cache as SRAM for use by the applets.
 	*/
-	function initialize(connection) {
-		checkDeviceID(connection)
+	function initialize() {
+		checkDeviceID()
 
 		// Reconfigure L2-Cache as SRAM
 		var SFR_L2CC_HRAMC = 0xf8030058
@@ -179,10 +179,10 @@ Device {
 	/*!
 		\brief Checks that the device is a SAMA5D2.
 
-		Reads CHIPID_CIDR register using the given \a connection and display
+		Reads CHIPID_CIDR register using the current connection and display
 		a warning if its value does not match the expected value for SAMA5D2.
 	*/
-	function checkDeviceID(connection) {
+	function checkDeviceID() {
 		// read CHIPID_CIDR register
 		var cidr = connection.readu32(0xfc069000)
 		// Compare cidr using mask to skip revision field.

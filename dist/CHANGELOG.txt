@@ -25,6 +25,9 @@
 - Board selection is not done using a 'board' property on the device anymore.
   Instead, the boards are defined using inheritance: for example, the
   SAMA5D2Xplained QML object inherits from SAMA5D2 QML object.
+- Removed AppletLoader object. Connection object can now be used directly when
+  working with applets.  Example QML scripts in examples/ directory updated
+  accordingly.
 
 
 

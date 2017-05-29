@@ -118,8 +118,6 @@ import SAMBA 3.1
 	\li the applet has already been loaded/intialized
 	\li its read command is named "read" and that it takes as arguments the buffer address, the number of bytes to read and the starting address
 	\endlist
-
-	It is recommended to use the AppletLoader helper type when using applets. It contains several methods to facilitate communication with applets.
 */
 Item {
 	/*!
@@ -145,10 +143,34 @@ Item {
 	property var priority
 
 	/*!
+		\qmlproperty bool Connection::autoConnect
+		\brief Connection automatic connection flag
+
+		Whether the connection should be automatically established once
+		the Connection QML object is ready.
+	*/
+	property bool autoConnect: true
+
+	/*!
 		\qmlproperty int Connection::appletConnectionType
 		\brief The connection type value passed at applet initialization
 	*/
 	property var appletConnectionType
+
+	/*!
+		\qmlproperty Device Connection::device
+		\brief Device whose applets will be used
+	*/
+	property var device
+
+	/*!
+		\qmlproperty bool Connection::autoDeviceInit
+		\brief Connection automatic device initialization flag
+
+		Whether the device initialize() function should be automatically called once
+		the connection is opened.
+	*/
+	property bool autoDeviceInit: true
 
 	/*!
 		\qmlproperty Applet Connection::applet
@@ -450,6 +472,28 @@ Item {
 		}
 	}
 
+	/*!
+		\qmlmethod void Connection::initializeApplet(string appletName)
+		\brief Loads and initializes the \a appletName applet for the
+		currently selected device.
+
+		Throws an \a Error if the applet is not found or could not be
+		loaded/initialized.
+	*/
+	function initializeApplet(appletName)
+	{
+		var newapplet = device.applet(appletName)
+		if (!newapplet)
+			throw new Error("Applet " + appletName + " not found")
+
+		if (applet !== newapplet) {
+			if (!appletUpload(newapplet))
+				throw new Error("Applet " + name + " could not be loaded")
+		}
+
+		applet.initialize()
+	}
+
 	/* -------- Command Line Handling -------- */
 
 	/*! \internal */
@@ -686,5 +730,23 @@ Item {
 			return commandLineCommandExecute(args)
 		else
 			return "Unknown command."
+	}
+
+	/*! \internal */
+	onDeviceChanged: {
+		applet = undefined
+		if (typeof device !== "undefined")
+			device.connection = this
+	}
+
+	/*! \internal */
+	Component.onCompleted: {
+		if (autoConnect)
+			open()
+	}
+
+	/*! \internal */
+	Component.onDestruction: {
+		close()
 	}
 }

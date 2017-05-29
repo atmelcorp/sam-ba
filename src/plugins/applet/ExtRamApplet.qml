@@ -23,13 +23,13 @@ Applet {
 	]
 
 	/*! \internal */
-	function buildInitArgs(connection, device) {
+	function buildInitArgs() {
 		var config = device.config.extram
 
 		if (typeof config.preset === "undefined")
 			throw new Error("Incomplete External RAM configuration, missing value for 'preset' property")
 
-		var args = defaultInitArgs(connection, device)
+		var args = defaultInitArgs()
 		var config = [ 0, config.preset ]
 		Array.prototype.push.apply(args, config)
 		return args

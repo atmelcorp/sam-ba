@@ -23,7 +23,7 @@ class SambaToolContext : public SambaScriptContext
 	Q_OBJECT
 	Q_PROPERTY(QVariant port READ port NOTIFY portChanged)
 	Q_PROPERTY(QVariant device READ device NOTIFY deviceChanged)
-	Q_PROPERTY(QVariant applet READ applet NOTIFY appletChanged)
+	Q_PROPERTY(QVariant appletName READ appletName NOTIFY appletNameChanged)
 	Q_PROPERTY(QVariant commands READ commands NOTIFY commandsChanged)
 
 public:
@@ -53,14 +53,14 @@ public:
 		emit deviceChanged();
 	}
 
-	QVariant applet() const {
-		return m_applet;
+	QVariant appletName() const {
+		return m_appletName;
 	}
 
-	void setApplet(QVariant applet)
+	void setAppletName(QVariant appletName)
 	{
-		m_applet = applet;
-		emit appletChanged();
+		m_appletName = appletName;
+		emit appletNameChanged();
 	}
 
 	QVariant commands() const {
@@ -81,14 +81,14 @@ public:
 signals:
 	void portChanged();
 	void deviceChanged();
-	void appletChanged();
+	void appletNameChanged();
 	void commandsChanged();
 	void toolError(const QString& message);
 
 private:
 	QVariant m_port;
 	QVariant m_device;
-	QVariant m_applet;
+	QVariant m_appletName;
 	QVariant m_commands;
 };
 

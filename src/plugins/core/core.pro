@@ -26,7 +26,6 @@ qml.files = qmldir \
     AppletCommand.qml \
     AppletConnectionType.js \
     Applet.qml \
-    AppletLoader.qml \
     Connection.qml \
     Device.qml \
     Utils.qml
