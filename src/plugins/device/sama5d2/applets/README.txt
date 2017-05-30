@@ -1,13 +1,13 @@
 These SAMA5D2 Applets were built from the Atmel Software Package:
 
 Repository: https://github.com/atmelcorp/atmel-software-package
-Commit: 8798f307abc4528411a619722c983dfdab06007d
+Commit: 38a8aeabec11350283b9225e06783d9d280bb1bf
 
 To get the sources and rebuild an applet (using GCC):
 
 1. get the software package source git checkout:
         git clone https://github.com/atmelcorp/atmel-software-package
-        git checkout 8798f307abc4528411a619722c983dfdab06007d
+        git checkout 38a8aeabec11350283b9225e06783d9d280bb1bf
 
 2. build the applet (for example: qspiflash):
         cd samba_applets/qspiflash

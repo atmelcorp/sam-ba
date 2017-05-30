@@ -45,7 +45,6 @@ import SAMBA.Applet 3.1
 	\row \li 0 \li DDR2 \li MT47H128M8 \li 4x128MB
 	\row \li 1 \li DDR2 \li MT47H64M16 \li 128MB
 	\row \li 2 \li DDR2 \li MT47H128M16 \li 2x256MB
-	\row \li 3 \li LPDDR2 \li MT42L128M16 \li 2x256MB
 	\endtable
 
 	\section1 SD/MMC Configuration
