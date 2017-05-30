@@ -240,54 +240,67 @@ void SambaTool::displayJsCommandLineCommandsHelp(QObject* obj)
 	}
 }
 
+QObject* SambaTool::findObject(const QList<QObject*>& objects, const QString& name, const QString& what)
+{
+	foreach (QObject* obj, objects) {
+		QString objName = obj->property("name").toString();
+		QStringList objAliases = obj->property("aliases").toStringList();
+		if (!objName.compare(name, Qt::CaseInsensitive) ||
+		    objAliases.contains(name, Qt::CaseInsensitive))
+			return obj;
+	}
+
+	cerr_msg(QString("Error: Unknown %1 '%2'.").arg(what).arg(name));
+	return nullptr;
+}
+
+bool SambaTool::parseObjectArguments(QObject* object, const QString& cmdline, const QStringList& args, const QString& what)
+{
+	if (args.length() > 0) {
+		// only one "help" argument: display help
+		if (args.length() == 1 && args[0] == "help") {
+			displayJsCommandLineHelp(object);
+			return false;
+		}
+
+		// javascript "commandLineParse" function not found: ignore arguments
+		if (object->metaObject()->indexOfMethod("commandLineParse(QVariant)") == -1) {
+			cerr_msg(QString("Warning: Arguments ignored for %1 '%2'")
+			         .arg(what).arg(cmdline));
+			return true;
+		}
+
+		// invoke javascript "commandLineParse" method
+		QVariant returnedValue;
+		if (!QMetaObject::invokeMethod(object, "commandLineParse",
+		                               Q_RETURN_ARG(QVariant, returnedValue),
+		                               Q_ARG(QVariant, QVariant(args)))) {
+			cerr_msg(QString("Error: Could not configure %1 '%2': Could not invoke 'commandLineParse' method.").arg(what).arg(cmdline));
+			return false;
+		}
+
+		// check if javascript function returned an error message
+		if (returnedValue.type() == QVariant::String) {
+			cerr_msg(QString("Error: Could not configure %1 '%2': %3")
+			         .arg(what).arg(cmdline).arg(returnedValue.toString()));
+			return false;
+		}
+	}
+	return true;
+}
+
 bool SambaTool::parsePortOption(const QString& value)
 {
 	QStringList args = value.split(":");
 	QString name = args.first();
 	args.removeFirst();
 
-	QObject* port = 0;
-	foreach (QObject* p, m_ports) {
-		QString portName = p->property("name").toString();
-		QStringList portAliases = p->property("aliases").toStringList();
-		if (!portName.compare(name, Qt::CaseInsensitive) ||
-		    portAliases.contains(name, Qt::CaseInsensitive)) {
-			port = p;
-			break;
-		}
-	}
-	if (!port) {
-		cerr_msg(QString("Error: Unknown port '%1'.").arg(value));
+	QObject* port = findObject(m_ports, name, "port");
+	if (!port)
 		return false;
-	}
 
-	if (args.length() > 0) {
-		if (args.length() == 1 && args[0] == "help") {
-			displayJsCommandLineHelp(port);
-			return false;
-		}
-		if (port->metaObject()->indexOfMethod("commandLineParse(QVariant)") == -1) {
-			cerr_msg(QString("Error: Could not create port '%1': Invalid number of arguments.")
-			         .arg(value));
-			delete port;
-			return false;
-		}
-		QVariant returnedValue;
-		if (!QMetaObject::invokeMethod(port, "commandLineParse",
-		                               Q_RETURN_ARG(QVariant, returnedValue),
-		                               Q_ARG(QVariant, QVariant(args)))) {
-			cerr_msg(QString("Error: Could not create port '%1': Could not invoke parse method.")
-			         .arg(value));
-			delete port;
-			return false;
-		}
-		if (returnedValue.type() == QVariant::String) {
-			cerr_msg(QString("Error: Could not create port '%1': %2")
-			         .arg(value).arg(returnedValue.toString()));
-			delete port;
-			return false;
-		}
-	}
+	if (!parseObjectArguments(port, value, args, "port"))
+		return false;
 
 	m_port = port;
 	return true;
@@ -307,24 +320,12 @@ bool SambaTool::parseDeviceOption(const QString& value)
 	QString name = args.first();
 	args.removeFirst();
 
-	if (args.length() > 0)
-		cerr_msg("Warning: Devices have no arguments.");
-
-	QObject* device = 0;
-	foreach (QObject* d, m_devices) {
-		QString devName = d->property("name").toString();
-		QStringList devAliases = d->property("aliases").toStringList();
-		if (!devName.compare(name, Qt::CaseInsensitive) ||
-		    devAliases.contains(name, Qt::CaseInsensitive)) {
-			device = d;
-			break;
-		}
-	}
-	if (!device) {
-		cerr_msg(QString("Error: Unknown device '%1'.").arg(name));
-		displayDeviceHelp();
+	QObject* device = findObject(m_devices, name, "device");
+	if (!device)
 		return false;
-	}
+
+	if (!parseObjectArguments(device, value, args, "device"))
+		return false;
 
 	m_device = device;
 	return true;
@@ -344,24 +345,12 @@ bool SambaTool::parseBoardOption(const QString& value)
 	QString name = args.first();
 	args.removeFirst();
 
-	if (args.length() > 0)
-		cerr_msg("Warning: Boards have no arguments.");
-
-	QObject* board = 0;
-	foreach (QObject* b, m_boards) {
-		QString brdName = b->property("name").toString();
-		QStringList brdAliases = b->property("aliases").toStringList();
-		if (!brdName.compare(name, Qt::CaseInsensitive) ||
-		    brdAliases.contains(name, Qt::CaseInsensitive)) {
-			board = b;
-			break;
-		}
-	}
-	if (!board) {
-		cerr_msg(QString("Error: Unknown board '%1'.").arg(name));
-		displayBoardHelp();
+	QObject* board = findObject(m_boards, name, "board");
+	if (!board)
 		return false;
-	}
+
+	if (!parseObjectArguments(board, value, args, "board"))
+		return false;
 
 	m_device = board;
 	return true;
@@ -416,35 +405,15 @@ QObject* SambaTool::findApplet(const QString& name)
 bool SambaTool::parseAppletOption(const QString& value)
 {
 	QStringList args = value.split(":");
-	QString appletName = args.first();
+	QString name = args.first();
 	args.removeFirst();
 
-	QObject* applet = findApplet(appletName);
+	QObject* applet = findApplet(name);
+	if (!applet)
+		return false;
 
-	if (args.length() > 0) {
-		if (args.length() == 1 && args[0] == "help") {
-			displayJsCommandLineHelp(applet);
-			return false;
-		}
-		if (applet->metaObject()->indexOfMethod("commandLineParse(QVariant)") == -1) {
-			cerr_msg(QString("Error: Could not configure applet '%1': Invalid number of arguments for 'commandLineParse' method.")
-			         .arg(value));
-			return false;
-		}
-		QVariant returnedValue;
-		if (!QMetaObject::invokeMethod(applet, "commandLineParse",
-		                               Q_RETURN_ARG(QVariant, returnedValue),
-		                               Q_ARG(QVariant, QVariant(args)))) {
-			cerr_msg(QString("Error: Could not configure applet '%1': Could not invoke 'commandLineParse' method.")
-			         .arg(value));
-			return false;
-		}
-		if (returnedValue.type() == QVariant::String) {
-			cerr_msg(QString("Error: Could not configure applet '%1': %2")
-			         .arg(value).arg(returnedValue.toString()));
-			return false;
-		}
-	}
+	if (!parseObjectArguments(applet, value, args, "applet"))
+		return false;
 
 	m_applet = applet;
 	return true;
@@ -580,12 +549,12 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 
 	QCommandLineOption deviceOption(QStringList() << "d" << "device",
 	                                "Connected device is <device>.",
-	                                "device");
+	                                "device[:options:...]");
 	parser.addOption(deviceOption);
 
 	QCommandLineOption boardOption(QStringList() << "b" << "board",
 	                               "Connected board is <board>.",
-	                               "board");
+	                               "board[:options:...]");
 	parser.addOption(boardOption);
 
 	QCommandLineOption monitorOption(QStringList() << "m" << "monitor",

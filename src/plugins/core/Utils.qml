@@ -51,7 +51,7 @@ UtilsBase {
 		if (hexPattern.test(text))
 			return parseInt(text, 16)
 
-		var decPattern = /^[0-9]+$/
+		var decPattern = /^-?[0-9]+$/
 		if (decPattern.test(text))
 			return parseInt(text, 10)
 

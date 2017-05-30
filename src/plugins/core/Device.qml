@@ -92,4 +92,44 @@ Item {
 		for (var i = 0; i < applets.length; i++)
 			applets[i].device = this
 	}
+
+	/* -------- Command Line Handling -------- */
+
+	/*! \internal */
+	function commandLineParse(args)	{
+		if (args.length > 2)
+			return "Invalid number of arguments."
+
+		if (args.length >= 2) {
+			if (args[1].length > 0) {
+				config.serial.ioset = Utils.parseInteger(args[1]);
+				if (isNaN(config.serial.ioset))
+					return "Invalid serial console ioset (not a number)."
+			}
+		}
+
+		if (args.length >= 1) {
+			if (args[0].length > 0) {
+				config.serial.instance = Utils.parseInteger(args[0]);
+				if (isNaN(config.serial.instance))
+					return "Invalid serial console instance (not a number)."
+			}
+		}
+
+		return true;
+	}
+
+	/*! \internal */
+	function commandLineHelp() {
+		return ["Syntax: " + name + ":[<instance>]:[<ioset>]",
+		        "Parameters:",
+		        "    instance   Serial console peripheral number",
+		        "    ioset      Serial console I/O set",
+		        "Examples:",
+		        "    " + name + "       use default device/board settings",
+		        "    " + name + ":1:2   use fully custom settings (peripheral number 1, I/O set 2)",
+		        "    " + name + "::2    use default device/board settings but force use of I/O set 2",
+		        "Note:",
+		        "    Peripheral numbers and I/O sets are device specific. Please see device documentation in 'doc' directory."]
+	}
 }

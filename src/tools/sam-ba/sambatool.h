@@ -76,6 +76,8 @@ private:
 
 	void displayJsCommandLineHelp(QObject* obj);
 	void displayJsCommandLineCommandsHelp(QObject* obj);
+	QObject* findObject(const QList<QObject*>& objects, const QString& name, const QString& what);
+	bool parseObjectArguments(QObject* object, const QString& cmdline, const QStringList& args, const QString& what);
 
 private slots:
 	void onToolError(const QString& message);
