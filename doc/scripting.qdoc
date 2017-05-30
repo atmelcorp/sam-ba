@@ -40,9 +40,8 @@ device and make it execute code.
 
 In this example, a SerialConnection is used:
 \qml
-import QtQuick 2.3
-import SAMBA 3.1
-import SAMBA.Connection.Serial 3.1
+import SAMBA 3.2
+import SAMBA.Connection.Serial 3.2
 
 SerialConnection {
 	onConnectionOpened: print("Connection opened")
@@ -74,10 +73,9 @@ In this example, a SerialConnection is used to load the \tt serialflash applet
 on a SAMA5D2 Xplained Ultra board and the applet \tt erase function is called:
 
 \qml
-import QtQuick 2.3
-import SAMBA 3.1
-import SAMBA.Connection.Serial 3.1
-import SAMBA.Device.SAMA5D2 3.1
+import SAMBA 3.2
+import SAMBA.Connection.Serial 3.2
+import SAMBA.Device.SAMA5D2 3.2
 
 SerialConnection {
 	device: SAMA5D2Xplained {}

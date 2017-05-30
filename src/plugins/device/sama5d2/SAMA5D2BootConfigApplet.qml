@@ -12,9 +12,9 @@
  */
 
 import QtQuick 2.3
-import SAMBA 3.1
-import SAMBA.Applet 3.1
-import SAMBA.Device.SAMA5D2 3.1
+import SAMBA 3.2
+import SAMBA.Applet 3.2
+import SAMBA.Device.SAMA5D2 3.2
 
 /*! \internal */
 BootConfigApplet {

@@ -5,8 +5,8 @@
 
 \section1 Introduction
 
-Starting with version 3.1, SAM-BA includes command line interface that provides
-support for the most common actions:
+SAM-BA includes command line interface that provides support for the most
+common actions:
 \list
 \li reading / writing to arbitrary memory addresses and/or peripherals
 \li uploading applets and using them to erase/read/write external memories
@@ -130,9 +130,9 @@ Running applet commands requires several parameters on the command line:
 \section2 Devices and Boards
 
 The list of supported devices can be displayed by using "\e{sam-ba -d help}".
-Running this command with SAM-BA 3.1 will display:
+Running this command with SAM-BA 3.2 will display:
 \code
-Known devices: sama5d2, samv7
+Known devices: sam9xx5, sama5d2, sama5d3, sama5d4, samv71
 \endcode
 For ease of use, several aliases are accepted by the tool: for example using
 "sama5d2" is equivalent to "sama5d27".

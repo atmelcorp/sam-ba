@@ -1,6 +1,6 @@
 # Atmel SAM-BA - SAM Boot Assistant
 
-## Version 3.2.???
+## Version 3.2.0-beta1 (unrealeased)
 
 ### Enhancements
 
@@ -20,6 +20,7 @@
 ### API Changes
 
 - SAM-BA now requires Qt 5.8 to build
+- SAM-BA QML API modules version is now 3.2
 - Some common QML code is shared between similar applets for different devices
 - Applet configuration parameters in the device object are now split by applet
   (config.serialflash, config.sdmmc, etc.)
@@ -27,8 +28,7 @@
   Instead, the boards are defined using inheritance: for example, the
   SAMA5D2Xplained QML object inherits from SAMA5D2 QML object.
 - Removed AppletLoader object. Connection object can now be used directly when
-  working with applets.  Example QML scripts in examples/ directory updated
-  accordingly.
+  working with applets.
 
 
 

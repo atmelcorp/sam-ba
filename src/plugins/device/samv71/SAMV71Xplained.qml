@@ -12,7 +12,7 @@
  */
 
 import QtQuick 2.3
-import SAMBA.Device.SAMV71 3.1
+import SAMBA.Device.SAMV71 3.2
 
 /*!
 	\qmltype SAMV71Xplained

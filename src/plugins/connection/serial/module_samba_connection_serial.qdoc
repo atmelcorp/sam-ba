@@ -1,5 +1,5 @@
 /*!
-\qmlmodule SAMBA.Connection.Serial 3.1
+\qmlmodule SAMBA.Connection.Serial 3.2
 \title SAMBA.Connection.Serial Module
 
 The SAMBA.Connection.Serial module contains an implementation of the

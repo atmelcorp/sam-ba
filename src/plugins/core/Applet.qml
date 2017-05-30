@@ -12,7 +12,7 @@
  */
 
 import QtQuick 2.3
-import SAMBA 3.1
+import SAMBA 3.2
 
 /*!
 	\qmltype Applet

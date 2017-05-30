@@ -12,7 +12,7 @@
  */
 
 import QtQuick 2.3
-import SAMBA.Device.SAMA5D4 3.1
+import SAMBA.Device.SAMA5D4 3.2
 
 /*!
 	\qmltype SAMA5D4Xplained

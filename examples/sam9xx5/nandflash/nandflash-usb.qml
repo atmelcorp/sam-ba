@@ -1,6 +1,6 @@
-import SAMBA 3.1
-import SAMBA.Connection.Serial 3.1
-import SAMBA.Device.SAM9xx5 3.1
+import SAMBA 3.2
+import SAMBA.Connection.Serial 3.2
+import SAMBA.Device.SAM9xx5 3.2
 
 SerialConnection {
 	//port: "ttyACM0"

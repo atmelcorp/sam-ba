@@ -490,10 +490,10 @@ void SambaTool::run()
 
 		QString script;
 		if (m_status & RunMonitor) {
-			script = "import SAMBA.Tool 3.1; MonitorCommandHandler {}";
+			script = "import SAMBA.Tool 3.2; MonitorCommandHandler {}";
 		}
 		else {
-			script = "import SAMBA.Tool 3.1; AppletCommandHandler {}";
+			script = "import SAMBA.Tool 3.2; AppletCommandHandler {}";
 		}
 		QObject* obj = m_engine.createComponentInstance(script, &context);
 		if (obj) {

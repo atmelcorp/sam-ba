@@ -1,4 +1,4 @@
 module SAMBA.Device.SAM9xx5
-SAM9xx5 3.1 SAM9xx5.qml
-SAM9xx5Config 3.1 SAM9xx5Config.qml
-SAM9xx5EK 3.1 SAM9xx5EK.qml
+SAM9xx5 3.2 SAM9xx5.qml
+SAM9xx5Config 3.2 SAM9xx5Config.qml
+SAM9xx5EK 3.2 SAM9xx5EK.qml

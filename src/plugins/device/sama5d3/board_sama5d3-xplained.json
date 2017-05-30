@@ -1,6 +1,6 @@
 {
 	"module": "SAMBA.Device.SAMA5D3",
-	"module_version": "3.1",
+	"module_version": "3.2",
 	"classname": "SAMA5D3Xplained",
 	"type": "board"
 }

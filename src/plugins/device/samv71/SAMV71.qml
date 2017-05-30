@@ -11,9 +11,9 @@
  * more details.
  */
 
-import SAMBA 3.1
-import SAMBA.Applet 3.1
-import SAMBA.Device.SAMV71 3.1
+import SAMBA 3.2
+import SAMBA.Applet 3.2
+import SAMBA.Device.SAMV71 3.2
 
 /*!
 	\qmltype SAMV71

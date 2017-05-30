@@ -1,6 +1,6 @@
-import SAMBA 3.1
-import SAMBA.Connection.JLink 3.1
-import SAMBA.Device.SAMA5D4 3.1
+import SAMBA 3.2
+import SAMBA.Connection.JLink 3.2
+import SAMBA.Device.SAMA5D4 3.2
 
 JLinkConnection {
 	//port: "99999999"

@@ -12,7 +12,7 @@
  */
 
 import QtQuick 2.3
-import SAMBA.Applet 3.1
+import SAMBA.Applet 3.2
 
 /*!
 	\qmltype SAMA5D3Config

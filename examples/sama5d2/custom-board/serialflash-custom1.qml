@@ -1,6 +1,6 @@
-import SAMBA 3.1
-import SAMBA.Connection.Serial 3.1
-import SAMBA.Device.SAMA5D2 3.1
+import SAMBA 3.2
+import SAMBA.Connection.Serial 3.2
+import SAMBA.Device.SAMA5D2 3.2
 
 /*
  * This example demonstrates the inline declaration of a custom board

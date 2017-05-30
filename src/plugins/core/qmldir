@@ -1,9 +1,9 @@
 module SAMBA
 plugin samba_core
 classname SambaCorePlugin
-Applet 3.1 Applet.qml
-AppletCommand 3.1 AppletCommand.qml
-AppletConnectionType 3.1 AppletConnectionType.js
-Connection 3.1 Connection.qml
-Device 3.1 Device.qml
-singleton Utils 3.1 Utils.qml
+Applet 3.2 Applet.qml
+AppletCommand 3.2 AppletCommand.qml
+AppletConnectionType 3.2 AppletConnectionType.js
+Connection 3.2 Connection.qml
+Device 3.2 Device.qml
+singleton Utils 3.2 Utils.qml

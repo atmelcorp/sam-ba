@@ -78,7 +78,7 @@ public:
 	void registerTypes(const char *uri)
 	{
 		Q_ASSERT(uri == QLatin1String("SAMBA.Connection.JLink"));
-		qmlRegisterType<SambaConnectionJlinkHelper>(uri, 3, 0, "JLinkConnectionHelper");
+		qmlRegisterType<SambaConnectionJlinkHelper>(uri, 3, 2, "JLinkConnectionHelper");
 	}
 };
 

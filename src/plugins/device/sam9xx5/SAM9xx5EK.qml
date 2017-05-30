@@ -12,7 +12,7 @@
  */
 
 import QtQuick 2.3
-import SAMBA.Device.SAM9xx5 3.1
+import SAMBA.Device.SAM9xx5 3.2
 
 /*!
 	\qmltype SAM9xx5EK
