@@ -3,6 +3,7 @@ TEMPLATE = subdirs
 # map Qt version to ICU versions
 equals(QT_MAJOR_VERSION, 5) {
 	equals(QT_MINOR_VERSION, 8): ICU_VERSION = 56
+	equals(QT_MINOR_VERSION, 9): ICU_VERSION = 56
 }
 isEmpty(ICU_VERSION) {
 	error(Unknown QT version)
@@ -71,7 +72,7 @@ else:win32:{
 	otherlibs.files = \
 		$$[QT_INSTALL_LIBS]/../bin/libwinpthread-1.dll \
 		$$[QT_INSTALL_LIBS]/../bin/libgcc_s_dw2-1.dll \
-		$$[QT_INSTALL_LIBS]/../bin/\"libstdc++-6.dll\"
+		$$[QT_INSTALL_LIBS]/../bin/libstdc++-6.dll \
 	otherlibs.CONFIG += no_check_exist
 	INSTALLS += otherlibs
 

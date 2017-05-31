@@ -19,7 +19,7 @@
 
 ### API Changes
 
-- SAM-BA now requires Qt 5.8 to build
+- SAM-BA now requires Qt 5.8 or 5.9 to build
 - SAM-BA QML API modules version is now 3.2
 - Some common QML code is shared between similar applets for different devices
 - Applet configuration parameters in the device object are now split by applet
