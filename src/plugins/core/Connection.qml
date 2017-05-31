@@ -642,7 +642,7 @@ Item {
 		var value = Utils.parseInteger(args[1])
 		if (isNaN(value))
 			return "Invalid value parameter (not a number)."
-		if (!writeu8(addr, value & 0xff))
+		if (!writeu8(addr, (value & 0xff) >>> 0))
 			return "Failed to run command."
 		print("write16(" + Utils.hex(addr, 8) + "," +
 		             Utils.hex(value, 2) + ")")
@@ -658,7 +658,7 @@ Item {
 		var value = Utils.parseInteger(args[1])
 		if (isNaN(value))
 			return "Invalid value parameter (not a number)."
-		if (!writeu16(addr, value & 0xffff))
+		if (!writeu16(addr, (value & 0xffff) >>> 0))
 			return "Failed to run command."
 		print("write16(" + Utils.hex(addr, 8) + "," +
 		             Utils.hex(value, 4) + ")")

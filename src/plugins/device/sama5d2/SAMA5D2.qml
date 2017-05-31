@@ -186,9 +186,7 @@ Device {
 		// read CHIPID_CIDR register
 		var cidr = connection.readu32(0xfc069000)
 		// Compare cidr using mask to skip revision field.
-		// The right part of the expression is masked in order to be converted
-		// to a signed integer like the left part (thanks javascript...)
-		if ((cidr & 0xffffffe0) !== (0x8a5c08c0 & 0xffffffe0))
+		if (((cidr & 0xffffffe0) >>> 0) !== 0x8a5c08c0)
 			print("Warning: Invalid CIDR, no known SAMA5D2 chip detected!")
 	}
 

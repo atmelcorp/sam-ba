@@ -133,7 +133,7 @@ Device {
 	*/
 	function checkDeviceID() {
 		// read ARCH field of CHIPID_CIDR register
-		var arch = (connection.readu32(0x400e0940) >> 20) & 0xff
+		var arch = ((connection.readu32(0x400e0940) >>> 20) & 0xff) >>> 0
 		if (arch < 0x10 || arch > 0x13)
 			print("Warning: Invalid CIDR, no known SAME70/S70/V70/V71 chip detected!")
 	}
