@@ -616,18 +616,30 @@ Item {
 	function commandLineCommandRead(args) {
 		if (args.length !== 3)
 			return "Invalid number of arguments (expected 3)."
+
 		var fileName = args[0]
+
 		var addr = Utils.parseInteger(args[1])
 		if (isNaN(addr))
 			return "Invalid address parameter (not a number)."
+
 		var length = Utils.parseInteger(args[2])
 		if (isNaN(length))
 			return "Invalid length parameter (not a number)."
+
+		var file = File.open(fileName, true)
+		if (!file)
+			return "Could not open file '" + fileName + "' for writing."
+
 		var data = read(addr, length)
 		if (!data)
 			return "Failed reading from device."
-		if (!data.writeFile(fileName))
+
+		if (file.write(data) !== data.byteLength)
 			return "Failed writing to file."
+
+		file.close()
+
 		print("read(" + fileName + ", " + Utils.hex(addr, 8) + ", " +
 		      Utils.hex(length, 8) + ")")
 	}
@@ -684,15 +696,24 @@ Item {
 	function commandLineCommandWrite(args) {
 		if (args.length !== 2)
 			return "Invalid number of arguments (expected 2)."
+
 		var fileName = args[0]
+
 		var addr = Utils.parseInteger(args[1])
 		if (isNaN(addr))
 			return "Invalid address parameter (not a number)."
-		var data = Utils.readFile(fileName)
-		if (!data)
+
+		var file = File.open(fileName, false)
+		if (!file)
+			throw new Error("Could not open file '" + fileName + "' for reading.")
+
+		var data = file.read(file.size())
+		if (data.byteLength != file.size())
 			return "Failed reading from file."
+
 		if (!write(addr, data))
 			return "Failed writing to device."
+
 		print("write(" + fileName + ", " + Utils.hex(addr, 8) + ")")
 	}
 
