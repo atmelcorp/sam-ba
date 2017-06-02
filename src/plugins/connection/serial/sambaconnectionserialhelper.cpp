@@ -17,8 +17,6 @@
 #include <QStringList>
 #include "xmodemhelper.h"
 
-#define MAX_BUF_SIZE (32*1024)
-
 #define ATMEL_USB_VID 0x03eb
 #define SAMBA_USB_PID 0x6124
 
@@ -35,7 +33,8 @@ static bool serial_is_at91(const QSerialPortInfo& info)
 SambaConnectionSerialHelper::SambaConnectionSerialHelper(QQuickItem* parent)
 	: QQuickItem(parent),
 	  m_port(""),
-	  m_baudRate(0)
+	  m_baudRate(0),
+	  m_maxChunkSize(16384)
 {
 }
 
@@ -58,12 +57,12 @@ void SambaConnectionSerialHelper::setPort(const QString& port)
 	}
 }
 
-quint32 SambaConnectionSerialHelper::baudRate() const
+qint32 SambaConnectionSerialHelper::baudRate() const
 {
 	return m_baudRate;
 }
 
-void SambaConnectionSerialHelper::setBaudRate(quint32 baudRate)
+void SambaConnectionSerialHelper::setBaudRate(qint32 baudRate)
 {
 	if (m_baudRate != baudRate)
 	{
@@ -85,8 +84,10 @@ QStringList SambaConnectionSerialHelper::availablePorts()
 	return list_at91 + list_other;
 }
 
-void SambaConnectionSerialHelper::open()
+void SambaConnectionSerialHelper::open(qint32 maxChunkSize)
 {
+	m_maxChunkSize = maxChunkSize;
+
 	if (port().isEmpty())
 	{
 		QStringList ports = availablePorts();
@@ -248,7 +249,7 @@ QVariant SambaConnectionSerialHelper::readu32(quint32 address, int timeout)
 	return QVariant(value);
 }
 
-QByteArray SambaConnectionSerialHelper::read(quint32 address, unsigned length, int timeout)
+QByteArray SambaConnectionSerialHelper::read(quint32 address, int length, int timeout)
 {
 	if (!m_serial.isOpen() || length == 0)
 		return QByteArray();
@@ -266,7 +267,7 @@ QByteArray SambaConnectionSerialHelper::read(quint32 address, unsigned length, i
 	{
 		if (timeout > 0 && (timer.elapsed() >= timeout))
 			break;
-		int chunkSize = length > MAX_BUF_SIZE ? MAX_BUF_SIZE : length;
+		int chunkSize = length > m_maxChunkSize ? m_maxChunkSize : length;
 		if ((chunkSize & 63) == 0)
 			chunkSize--;
 		writeSerial(QString().sprintf("R%x,%x#", address + offset, chunkSize));
@@ -319,7 +320,7 @@ bool SambaConnectionSerialHelper::write(quint32 address, const QByteArray& data)
 	int offset = 0;
 	while (length > 0)
 	{
-		int chunkSize = length > MAX_BUF_SIZE ? MAX_BUF_SIZE : length;
+		int chunkSize = length > m_maxChunkSize ? m_maxChunkSize : length;
 		writeSerial(QString().sprintf("S%x,%x#", address + offset, chunkSize));
 		if (m_at91) {
 			writeSerial(data.mid(offset, chunkSize));

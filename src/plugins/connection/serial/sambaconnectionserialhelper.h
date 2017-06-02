@@ -26,7 +26,7 @@ class Q_DECL_EXPORT SambaConnectionSerialHelper : public QQuickItem
 {
 	Q_OBJECT
 	Q_PROPERTY(QString port READ port WRITE setPort NOTIFY portChanged)
-	Q_PROPERTY(quint32 baudRate READ baudRate WRITE setBaudRate NOTIFY baudRateChanged)
+	Q_PROPERTY(qint32 baudRate READ baudRate WRITE setBaudRate NOTIFY baudRateChanged)
 
 public:
 	SambaConnectionSerialHelper(QQuickItem *parent = 0);
@@ -35,18 +35,18 @@ public:
 	QString port() const;
 	void setPort(const QString& port);
 
-	quint32 baudRate() const;
-	void setBaudRate(quint32 baudRate);
+	qint32 baudRate() const;
+	void setBaudRate(qint32 baudRate);
 
 	Q_INVOKABLE QStringList availablePorts();
 
-	Q_INVOKABLE void open();
+	Q_INVOKABLE void open(qint32 maxChunkSize = 16384);
 	Q_INVOKABLE void close();
 
 	Q_INVOKABLE QVariant readu8(quint32 address, int timeout);
 	Q_INVOKABLE QVariant readu16(quint32 address, int timeout);
 	Q_INVOKABLE QVariant readu32(quint32 address, int timeout);
-	Q_INVOKABLE QByteArray read(quint32 address, unsigned length, int timeout);
+	Q_INVOKABLE QByteArray read(quint32 address, int length, int timeout);
 
 	Q_INVOKABLE bool writeu8(quint32 address, quint8 data);
 	Q_INVOKABLE bool writeu16(quint32 address, quint16 data);
@@ -71,7 +71,8 @@ private:
 private:
 	bool m_at91;
 	QString m_port;
-	quint32 m_baudRate;
+	qint32 m_baudRate;
+	qint32 m_maxChunkSize;
 	QSerialPort m_serial;
 };
 

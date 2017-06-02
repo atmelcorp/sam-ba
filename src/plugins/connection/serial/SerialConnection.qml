@@ -65,10 +65,22 @@ Connection {
 	property alias baudRate: helper.baudRate
 
 	/*!
+	\qmlproperty int SerialConnection::maxChunkSize
+	\brief The maximum size of the data chunks when reading from the device
+
+	Some platforms have limitations on the maximum amount of data that can be
+	transferred in a single chunk on the serial device.  This property allows
+	some control on the way the read transfers are split.
+
+	The default value should be suitable for most cases.
+	*/
+	property var maxChunkSize: 16384
+
+	/*!
 	\sa Connection::open()
 	*/
 	function open() {
-		helper.open()
+		helper.open(maxChunkSize)
 	}
 
 	/*!
