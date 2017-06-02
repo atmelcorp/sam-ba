@@ -128,11 +128,11 @@ void SambaConnectionSerialHelper::open(qint32 maxChunkSize)
 		// resync in case some data was already sent to monitor:
 		// send a single '#' and ignore response
 		writeSerial(QString("#"));
-		readAllSerial(20);
+		readSerial(255);
 
 		// switch to binary mode
 		writeSerial(QString("N#"));
-		QString resp(QString::fromLatin1(readAllSerial(2)));
+		QString resp(QString::fromLatin1(readSerial(2)));
 		if (resp == "\n\r")
 		{
 			emit connectionOpened(m_at91);
@@ -146,7 +146,8 @@ void SambaConnectionSerialHelper::open(qint32 maxChunkSize)
 							"Cannot communicate with monitor on port '%s' because chip is in secure mode",
 							port().toLocal8Bit().constData()));
 			}
-			else {
+			else
+			{
 				emit connectionFailed(
 						QString().sprintf(
 							"Could not switch monitor on port '%s' to binary mode",
@@ -180,23 +181,29 @@ void SambaConnectionSerialHelper::writeSerial(const QByteArray &data)
 	m_serial.waitForBytesWritten(10);
 }
 
-QByteArray SambaConnectionSerialHelper::readAllSerial(int minBytes, int timeout)
+QByteArray SambaConnectionSerialHelper::readSerial(int len, int timeout)
 {
 	QByteArray resp;
 	QElapsedTimer timer;
 
 	/* timeout=0 -> default timeout, timeout<0 -> no timeout */
 	if (timeout == 0)
-		timeout = minBytes * 10;
+		timeout = len < 1000 ? 100 : (len / 10);
 
 	timer.start();
 	do {
-		if (timeout > 0 && (timer.elapsed() >= timeout))
-			break;
-		m_serial.waitForReadyRead(10);
-		if (m_serial.bytesAvailable())
-			resp.append(m_serial.readAll());
-	} while (resp.length() < minBytes);
+		int remaining = 0;
+		if (timeout > 0)
+		{
+			remaining = timeout - timer.elapsed();
+			if (remaining < 0)
+				break;
+		}
+		m_serial.waitForReadyRead(remaining > 100 ? remaining : 100);
+		int available = (int)m_serial.bytesAvailable();
+		if (available > 0)
+			resp.append(m_serial.read(qMin(available, len - resp.length())));
+	} while (resp.length() < len);
 
 	qCDebug(sambaLogConnSerial).noquote().nospace() << "SERIAL>>" << resp.toHex();
 
@@ -219,7 +226,7 @@ QVariant SambaConnectionSerialHelper::readu8(quint32 address, int timeout)
 
 	writeSerial(QString().sprintf("o%x,#", address));
 
-	QByteArray resp = readAllSerial(1, timeout);
+	QByteArray resp = readSerial(1, timeout);
 	quint8 value = (quint8)resp[0];
 	return QVariant(value);
 }
@@ -231,7 +238,7 @@ QVariant SambaConnectionSerialHelper::readu16(quint32 address, int timeout)
 
 	writeSerial(QString().sprintf("h%x,#", address));
 
-	QByteArray resp = readAllSerial(2, timeout);
+	QByteArray resp = readSerial(2, timeout);
 	quint16 value = (((quint8)resp[1]) << 8) + ((quint8)resp[0]);
 	return QVariant(value);
 }
@@ -243,7 +250,7 @@ QVariant SambaConnectionSerialHelper::readu32(quint32 address, int timeout)
 
 	writeSerial(QString().sprintf("w%x,#", address));
 
-	QByteArray resp = readAllSerial(4, timeout);
+	QByteArray resp = readSerial(4, timeout);
 	quint32 value = (((quint8)resp[3]) << 24) + (((quint8)resp[2]) << 16) +
 			(((quint8)resp[1]) << 8) + ((quint8)resp[0]);
 	return QVariant(value);
@@ -259,20 +266,25 @@ QByteArray SambaConnectionSerialHelper::read(quint32 address, int length, int ti
 
 	/* timeout=0 -> default timeout, timeout<0 -> no timeout */
 	if (timeout == 0)
-		timeout = 10;
+		timeout = length < 1000 ? 100 : (length / 10);
 
 	int offset = 0;
 	timer.start();
 	while (length > 0)
 	{
-		if (timeout > 0 && (timer.elapsed() >= timeout))
-			break;
+		int remaining = 0;
+		if (timeout > 0)
+		{
+			remaining = timeout - timer.elapsed();
+			if (remaining < 0)
+				break;
+		}
 		int chunkSize = length > m_maxChunkSize ? m_maxChunkSize : length;
 		if ((chunkSize & 63) == 0)
 			chunkSize--;
 		writeSerial(QString().sprintf("R%x,%x#", address + offset, chunkSize));
 		if (m_at91) {
-			data.append(readAllSerial(chunkSize, timeout - timer.elapsed()));
+			data.append(readSerial(chunkSize, remaining));
 		} else {
 			XmodemHelper xmodem(m_serial);
 			data.append(xmodem.receive(chunkSize));
@@ -354,7 +366,7 @@ bool SambaConnectionSerialHelper::waitForMonitor(int timeout)
 	if (m_at91) {
 		return true;
 	} else {
-		QByteArray response = readAllSerial(1, timeout);
+		QByteArray response = readSerial(1, timeout);
 		return (response.size() > 1) && (response.at(0) == 6);
 	}
 }

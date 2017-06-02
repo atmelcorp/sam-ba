@@ -66,7 +66,7 @@ signals:
 private:
 	void writeSerial(const QString &str);
 	void writeSerial(const QByteArray &data);
-	QByteArray readAllSerial(int minBytes = 0, int timeout = 100);
+	QByteArray readSerial(int len = 0, int timeout = 100);
 
 private:
 	bool m_at91;
