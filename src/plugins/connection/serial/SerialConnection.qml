@@ -162,6 +162,7 @@ Connection {
 
 	/*! \internal */
 	function handle_helper_connectionOpened(at91) {
+		print("Connection opened.")
 		appletConnectionType = at91 ? AppletConnectionType.USB : AppletConnectionType.SERIAL
 		if (autoDeviceInit && (typeof device !== "undefined"))
 			device.initialize()
@@ -170,12 +171,14 @@ Connection {
 
 	/*! \internal */
 	function handle_helper_connectionFailed(message) {
+		print("Error: " + message)
 		connectionFailed(message)
 	}
 
 	/*! \internal */
-	function handle_helper_connectionClosed(message) {
-		connectionClosed(message)
+	function handle_helper_connectionClosed() {
+		print("Connection closed.")
+		connectionClosed()
 	}
 
 	SerialConnectionHelper {
