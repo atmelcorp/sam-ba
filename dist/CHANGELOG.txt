@@ -1,6 +1,19 @@
 # Atmel SAM-BA - SAM Boot Assistant
 
-## Version 3.2.0-beta1 (unrealeased)
+## Version 3.2.0-beta2 (unreleased)
+
+### Enhancements
+
+- Build with Qt 5.9.0
+
+### Bugfixes
+
+- Fixed bug with USB on Windows 10
+- Fixed monitor commands: read/write
+
+
+
+## Version 3.2.0-beta1 (unreleased)
 
 ### Enhancements
 
