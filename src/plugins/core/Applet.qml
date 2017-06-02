@@ -402,7 +402,7 @@ Item {
 						+ Utils.hex(pageOffset * pageSize, 8)
 						+ " (applet returned success but did not return enough data)")
 			data = connection.appletBufferRead(pagesRead * pageSize)
-			if (data.length < pagesRead * pageSize)
+			if (data.byteLength < pagesRead * pageSize)
 				throw new Error("Could not read pages at address "
 						+ Utils.hex(pageOffset * pageSize, 8)
 						+ " (read from applet buffer failed)")
@@ -605,7 +605,7 @@ Item {
 
 		cmd = command("writePages")
 		if (cmd) {
-			if ((data.length & (pageSize - 1)) != 0)
+			if ((data.byteLength & (pageSize - 1)) != 0)
 				throw new Error("Invalid write data buffer length " +
 						"(must be a multiple of page size)")
 			length = data.byteLength / pageSize

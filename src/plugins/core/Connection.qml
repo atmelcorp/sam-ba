@@ -399,7 +399,7 @@ Item {
 	{
 		if (!applet)
 			return false
-		if (data.length > applet.bufferSize)
+		if (data.byteLength > applet.bufferSize)
 			return false
 		return write(applet.bufferAddr, data)
 	}
