@@ -521,7 +521,7 @@ Item {
 			file.setPaddingAfter(paddingAfter)
 		}
 
-		return offset
+		return offset / pageSize
 	}
 
 	/*!
