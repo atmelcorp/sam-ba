@@ -4,10 +4,12 @@ DEVICE = SAMA5D2
 
 DEVICE_FILES *= \
     qmldir \
+    SAMA5D27SOM1.qml \
+    SAMA5D27SOMBB.qml \
+    SAMA5D2BootConfigApplet.qml \
     SAMA5D2Config.qml \
     SAMA5D2.qml \
     SAMA5D2Xplained.qml \
-    SAMA5D2BootConfigApplet.qml \
     sama5d2-bcw.js \
     sama5d2-bootcfg.js \
     sama5d2-bscr.js \
@@ -23,6 +25,8 @@ include(../device.pri)
 
 metadata.files = \
     device_sama5d2.json \
+    board_sama5d27-som1.json \
+    board_sama5d27-som-bb.json \
     board_sama5d2-xplained.json
 metadata.path = /metadata
 INSTALLS *= metadata
