@@ -1,5 +1,13 @@
 # Atmel SAM-BA - SAM Boot Assistant
 
+## Version 3.2.0-beta4 (unreleased)
+
+### Bugfixes
+
+- Fixed bug when loading applets on Windows when SAM-BA path contains spaces
+
+
+
 ## Version 3.2.0-beta3 (unreleased)
 
 ### Bugfixes
