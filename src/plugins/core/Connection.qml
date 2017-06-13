@@ -345,7 +345,7 @@ Item {
 	{
 		applet = undefined
 
-		var file = File.open(new_applet.codeUrl, false)
+		var file = File.open(encodeURI(new_applet.codeUrl), false)
 		var appletCode = file.readAll()
 		file.close()
 		if (!appletCode)
