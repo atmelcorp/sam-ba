@@ -1,38 +1,10 @@
 # Atmel SAM-BA - SAM Boot Assistant
 
-## Version 3.2.0-beta4 (unreleased)
-
-### Bugfixes
-
-- Fixed bug when loading applets on Windows when SAM-BA path contains spaces
-
-
-
-## Version 3.2.0-beta3 (unreleased)
-
-### Bugfixes
-
-- Fixed bug when writing at non-zero offsets
-
-
-
-## Version 3.2.0-beta2 (unreleased)
+## Version 3.2.0-rc1
 
 ### Enhancements
 
 - Build with Qt 5.9.0
-
-### Bugfixes
-
-- Fixed bug with USB on Windows 10
-- Fixed monitor commands: read/write
-
-
-
-## Version 3.2.0-beta1 (unreleased)
-
-### Enhancements
-
 - Implemented XMODEM support (allows programming using SAM-BA Monitor protocol
   over UART)
 - Added support for SD/MMC and e.MMC for SAM9xx5, SAMA5D3 and SAMA5D4
@@ -46,9 +18,12 @@
 
 ### Bugfixes
 
+- Fixed bug when loading applets on Windows when SAM-BA path contains spaces
+- Fixed bug with USB on Windows 10
+
 ### API Changes
 
-- SAM-BA now requires Qt 5.8 or 5.9 to build
+- SAM-BA now requires Qt 5.9 to build
 - SAM-BA QML API modules version is now 3.2
 - Some common QML code is shared between similar applets for different devices
 - Applet configuration parameters in the device object are now split by applet

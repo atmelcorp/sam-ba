@@ -2,7 +2,6 @@ TEMPLATE = subdirs
 
 # map Qt version to ICU versions
 equals(QT_MAJOR_VERSION, 5) {
-	equals(QT_MINOR_VERSION, 8): ICU_VERSION = 56
 	equals(QT_MINOR_VERSION, 9): ICU_VERSION = 56
 }
 isEmpty(ICU_VERSION) {
