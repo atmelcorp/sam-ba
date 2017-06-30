@@ -521,7 +521,7 @@ Item {
 			file.setPaddingAfter(paddingAfter)
 		}
 
-		return offset / pageSize
+		return offset
 	}
 
 	/*!
@@ -664,6 +664,7 @@ Item {
 
 		// prepare file file for writing, adjust offset if needed
 		offset = prepareForWrite(offset, file, bootFile)
+		offset /= pageSize
 
 		try {
 			var size = file.size() / pageSize
