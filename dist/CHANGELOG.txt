@@ -1,5 +1,13 @@
 # Atmel SAM-BA - SAM Boot Assistant
 
+## Version 3.2.0-rc2
+
+### Bugfixes
+
+- Fixed bug in verify function: start offset was not computed correctly.
+
+
+
 ## Version 3.2.0-rc1
 
 ### Enhancements
