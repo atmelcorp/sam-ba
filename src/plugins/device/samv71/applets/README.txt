@@ -1,13 +1,13 @@
 These SAMV71 Applets were built from the Atmel Software Package:
 
 Repository: https://github.com/atmelcorp/atmel-software-package
-Commit: 38a8aeabec11350283b9225e06783d9d280bb1bf
+Commit: a3764374724ea6e83696998291e671a86e6e4537
 
 To get the sources and rebuild an applet (using GCC):
 
 1. get the software package source git checkout:
         git clone https://github.com/atmelcorp/atmel-software-package
-        git checkout 38a8aeabec11350283b9225e06783d9d280bb1bf
+        git checkout a3764374724ea6e83696998291e671a86e6e4537
 
 2. build the applet (for example: internalflash):
         cd samba_applets/internalflash

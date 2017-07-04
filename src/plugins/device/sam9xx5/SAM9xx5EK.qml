@@ -34,8 +34,9 @@ SAM9xx5 {
 			ioset: 1
 		}
 
+		// MT47H64M16
 		extram {
-			preset: 1 /* MT47H64M16 */
+			preset: 1
 		}
 
 		sdmmc {

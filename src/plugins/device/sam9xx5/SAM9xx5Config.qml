@@ -36,15 +36,17 @@ import SAMBA.Applet 3.2
 	\row    \li 6        \li USART3     \li 1       \li PC22B
 	\endtable
 
-	\section1 DDRAM
+	\section1 External RAM
 
-	The following DDRAM configurations are supported:
+	The following external RAM configurations are supported:
 
 	\table
-	\header \li Preset \li Type \li Model \li Size
-	\row \li 0 \li DDR2 \li MT47H128M8 \li 4x128MB
-	\row \li 1 \li DDR2 \li MT47H64M16 \li 128MB
-	\row \li 2 \li DDR2 \li MT47H128M16 \li 2x256MB
+	\header \li Preset \li Type   \li Model       \li Size
+	\row    \li 0      \li DDR2   \li MT47H128M8  \li 4x128MB
+	\row    \li 1      \li DDR2   \li MT47H64M16  \li 128MB
+	\row    \li 2      \li DDR2   \li MT47H128M16 \li 2x256MB
+	\row    \li 8      \li DDR2   \li W971G16SG   \li 128MB
+	\row    \li 9      \li DDR2   \li W972GG6KB   \li 2*256MB
 	\endtable
 
 	\section1 SD/MMC Configuration
@@ -171,7 +173,7 @@ Item {
 	}
 
 	/*!
-		\brief Configuration for DDRAM applet
+		\brief Configuration for external RAM applet
 
 		See \l{SAMBA.Applet::}{ExtRamConfig} for a list of configurable properties.
         */
