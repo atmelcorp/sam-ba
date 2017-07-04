@@ -23,7 +23,7 @@ SerialConnection {
 
 		// write new Boot Configuration Word in FUSE
 		// TODO: Set the correct boot config word value and uncomment
-		// the 'appletWriteBootCfg' function call below
+		// the 'applet.writeBootCfg' function call below
 		//applet.writeBootCfg(BootCfg.FUSE,
 		//	BCW.fromText("EXT_MEM_BOOT,QSPI0_IOSET1,JTAG_IOSET1"))
 
