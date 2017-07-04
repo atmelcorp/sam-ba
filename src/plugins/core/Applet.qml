@@ -557,6 +557,7 @@ Item {
 		var badPageCount = 0
 		var size = file.size() / pageSize
 		var remaining = size
+		var startOffset = offset
 		while (remaining > 0) {
 			var count = Math.min(remaining, bufferPages)
 
@@ -576,7 +577,7 @@ Item {
 				badPageCount = 0
 			}
 
-			file.seek(offset * pageSize)
+			file.seek((offset - startOffset) * pageSize)
 			var data = file.read(count * pageSize)
 
 			var comp = Utils.compareBuffers(result, data)
