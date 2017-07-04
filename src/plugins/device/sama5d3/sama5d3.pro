@@ -9,6 +9,7 @@ DEVICE_FILES *= \
     SAMA5D3EK.qml \
     SAMA5D3Xplained.qml \
     applets/README.txt \
+    applets/applet-extram_sama5d3-generic_sram.bin \
     applets/applet-lowlevel_sama5d3-generic_sram.bin \
     applets/applet-nandflash_sama5d3-generic_sram.bin \
     applets/applet-sdmmc_sama5d3-generic_sram.bin \

@@ -39,6 +39,18 @@ import SAMBA.Device.SAMV71 3.2
 
 	The only supported command is "init".
 
+	\section2 External RAM Applet
+
+	This applet is in charge of configuring the external RAM.
+
+	The Low-Level applet must have been initialized first.
+
+	The only supported command is "init".
+
+	Note: The external RAM is not needed for correct operation of the other
+	applets. It is only provided as a way to upload and run user programs
+	from external RAM.
+
 	\section2 InternalFlash Applet
 
 	This applet is used to read/write internal flash memory.
@@ -104,6 +116,12 @@ Device {
 		},
 		LowlevelApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-lowlevel_samv71-generic_sram.bin")
+			codeAddr: 0x20401000
+			mailboxAddr: 0x20401004
+			entryAddr: 0x20401080
+		},
+		ExtRamApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-extram_samv71-generic_sram.bin")
 			codeAddr: 0x20401000
 			mailboxAddr: 0x20401004
 			entryAddr: 0x20401080

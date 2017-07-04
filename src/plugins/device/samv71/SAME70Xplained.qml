@@ -30,5 +30,10 @@ SAMV71 {
 			instance: 6 /* USART1 */
 			ioset: 1
 		}
+
+		// IS42S16100E
+		extram {
+			preset: 6
+		}
 	}
 }

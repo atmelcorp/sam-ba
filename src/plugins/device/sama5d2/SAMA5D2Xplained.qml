@@ -33,6 +33,11 @@ SAMA5D2 {
 			ioset: 1
 		}
 
+		// MT41K128M16
+		extram {
+			preset: 4
+		}
+
 		// eMMC: SDMMC0, I/O Set 1, User Partition, Automatic bus width, 1.8V/3.3V switch supported
 		sdmmc {
 			instance: 0

@@ -30,6 +30,24 @@ import SAMBA.Device.SAMA5D4 3.2
 	flash external memories. Please see SAMBA::Applet for more information on the
 	applet mechanism.
 
+	\section2 Low-Level Applet
+
+	This applet is in charge of configuring the device clocks.
+
+	The only supported command is "init".
+
+	\section2 External RAM Applet
+
+	This applet is in charge of configuring the external RAM.
+
+	The Low-Level applet must have been initialized first.
+
+	The only supported command is "init".
+
+	Note: The external RAM is not needed for correct operation of the other
+	applets. It is only provided as a way to upload and run user programs
+	from external RAM.
+
 	\section2 SDMMC Applet
 
 	This applet is used to read/write SD/MMC and e.MMC devices. It supports
@@ -107,6 +125,12 @@ Device {
 	applets: [
 		LowlevelApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-lowlevel_sama5d4-generic_sram.bin")
+			codeAddr: 0x200000
+			mailboxAddr: 0x200004
+			entryAddr: 0x200000
+		},
+		ExtRamApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-extram_sama5d4-generic_sram.bin")
 			codeAddr: 0x200000
 			mailboxAddr: 0x200004
 			entryAddr: 0x200000

@@ -40,6 +40,17 @@ import SAMBA.Applet 3.2
 	\row    \li 6        \li USART1     \li 1       \li PB4D
 	\row    \li 7        \li USART2     \li 1       \li PD16B
 	\endtable
+
+	\section1 External RAM
+
+	The following external RAM configurations are supported:
+
+	\table
+	\header \li Preset \li Type   \li Model       \li Size
+	\row    \li 6      \li SDRAM  \li IS42S16100E \li 2MB
+	\row    \li 7      \li SDRAM  \li W981216BH   \li 2MB
+	\row    \li 10     \li SDRAM  \li AS4C16M16SA \li 32MB
+	\endtable
 */
 Item {
 	/*!
@@ -50,5 +61,15 @@ Item {
 	property alias serial: serial
 	SerialConfig {
 		id: serial
+	}
+
+	/*!
+		\brief Configuration for External RAM applet
+
+		See \l{SAMBA.Applet::}{ExtRamConfig} for a list of configurable properties.
+        */
+	property alias extram: extram
+	ExtRamConfig {
+		id: extram
 	}
 }

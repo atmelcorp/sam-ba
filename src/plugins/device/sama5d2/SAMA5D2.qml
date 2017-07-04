@@ -40,6 +40,18 @@ import SAMBA.Device.SAMA5D2 3.2
 
 	The only supported command is "init".
 
+	\section2 External RAM Applet
+
+	This applet is in charge of configuring the external RAM.
+
+	The Low-Level applet must have been initialized first.
+
+	The only supported command is "init".
+
+	Note: The external RAM is not needed for correct operation of the other
+	applets. It is only provided as a way to upload and run user programs
+	from external RAM.
+
 	\section2 SerialFlash Applet
 
 	This applet is used to flash AT25 serial flash memories. It supports
@@ -131,6 +143,12 @@ Device {
 		},
 		LowlevelApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-lowlevel_sama5d2-generic_sram.bin")
+			codeAddr: 0x220000
+			mailboxAddr: 0x220004
+			entryAddr: 0x220000
+		},
+		ExtRamApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-extram_sama5d2-generic_sram.bin")
 			codeAddr: 0x220000
 			mailboxAddr: 0x220004
 			entryAddr: 0x220000

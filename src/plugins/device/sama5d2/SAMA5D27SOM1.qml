@@ -30,6 +30,11 @@ SAMA5D2 {
 		serial {
 		}
 
+		// W971G16SG
+		extram {
+			preset: 8
+		}
+
 		// No SDMMC on this board
 		sdmmc {
 		}

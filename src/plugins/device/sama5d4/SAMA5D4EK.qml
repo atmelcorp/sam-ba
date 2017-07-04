@@ -31,6 +31,11 @@ SAMA5D4 {
 			ioset: 1
 		}
 
+		// MT47H128M8
+		extram {
+			preset: 0
+		}
+
 		sdmmc {
 			instance: 0
 			ioset: 1
