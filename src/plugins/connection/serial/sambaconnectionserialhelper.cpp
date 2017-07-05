@@ -199,7 +199,7 @@ QByteArray SambaConnectionSerialHelper::readSerial(int len, int timeout)
 			if (remaining < 0)
 				break;
 		}
-		m_serial.waitForReadyRead(remaining > 100 ? remaining : 100);
+		m_serial.waitForReadyRead(10);
 		int available = (int)m_serial.bytesAvailable();
 		if (available > 0)
 			resp.append(m_serial.read(qMin(available, len - resp.length())));
@@ -263,10 +263,17 @@ QByteArray SambaConnectionSerialHelper::read(quint32 address, int length, int ti
 
 	QByteArray data;
 	QElapsedTimer timer;
+	int default_timeout;
 
-	/* timeout=0 -> default timeout, timeout<0 -> no timeout */
-	if (timeout == 0)
-		timeout = length < 1000 ? 100 : (length / 10);
+	if (m_at91) {
+		/* default timeout on USB (0.1ms/byte) */
+		default_timeout = length < 1000 ? 100 : (length / 10);
+	} else {
+		/* default timeout on UART (10ms/byte) */
+		default_timeout = length < 100 ? 1000 : length * 10;
+	}
+	if (timeout > 0 && timeout < default_timeout)
+		timeout = default_timeout;
 
 	int offset = 0;
 	timer.start();
@@ -276,18 +283,22 @@ QByteArray SambaConnectionSerialHelper::read(quint32 address, int length, int ti
 		if (timeout > 0)
 		{
 			remaining = timeout - timer.elapsed();
-			if (remaining < 0)
+			if (remaining < 0) {
+				qCDebug(sambaLogConnSerial).noquote().nospace() << "SERIAL<< [read timeout]";
 				break;
+			}
 		}
 		int chunkSize = length > m_maxChunkSize ? m_maxChunkSize : length;
-		if ((chunkSize & 63) == 0)
+		if (m_at91 && (chunkSize & 63) == 0)
 			chunkSize--;
 		writeSerial(QString().sprintf("R%x,%x#", address + offset, chunkSize));
 		if (m_at91) {
 			data.append(readSerial(chunkSize, remaining));
 		} else {
 			XmodemHelper xmodem(m_serial);
-			data.append(xmodem.receive(chunkSize));
+			QByteArray received(xmodem.receive(chunkSize));
+			data.append(received);
+			chunkSize = received.size();
 		}
 		offset += chunkSize;
 		length -= chunkSize;

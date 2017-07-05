@@ -15,7 +15,9 @@ public:
 
 private:
 	void updateCRC(uint16_t &crc, const uint8_t data);
+	bool readData(uint8_t* data, int length);
 	bool readByte(uint8_t* data);
+	bool writeData(uint8_t* data, int length);
 	bool writeByte(uint8_t data);
 	int putPacket(const char* data, int offset, int length, uint8_t seqno);
 	QByteArray getPacket(int length, uint8_t seqno);

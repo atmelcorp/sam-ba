@@ -1,4 +1,5 @@
 #include "xmodemhelper.h"
+#include <QElapsedTimer>
 
 /* Xmodem protocol constants */
 #define XMODEM_XOH         0x01
@@ -28,14 +29,60 @@ void XmodemHelper::updateCRC(uint16_t &crc, const uint8_t data)
 	}
 }
 
+bool XmodemHelper::readData(uint8_t* data, int length)
+{
+	QElapsedTimer timer;
+	int timeout;
+	int total = 0;
+
+	/* timeout=0 -> default timeout, timeout<0 -> no timeout */
+	timeout = length < 1000 ? 100 : (length / 10);
+
+	timer.start();
+	while (length > 0) {
+		int remaining = 0;
+		if (timeout > 0) {
+			remaining = timeout - timer.elapsed();
+			if (remaining < 0)
+				return false;
+		}
+		m_serial.waitForReadyRead(10);
+		int available = (int)m_serial.bytesAvailable();
+		if (available > 0)
+			available = m_serial.read((char*)data, length);
+		data += available;
+		length -= available;
+		total += available;
+	}
+
+	return true;
+}
+
 bool XmodemHelper::readByte(uint8_t* data)
 {
-	char c;
+	QElapsedTimer timer;
+	char b;
 
-	m_serial.waitForReadyRead(100);
-	if (m_serial.getChar(&c)) {
-		if (data)
-			*data = *(uint8_t*)&c;
+	timer.start();
+	while (1) {
+		if (timer.elapsed() > 500)
+			return false;
+		m_serial.waitForReadyRead(10);
+		int available = (int)m_serial.bytesAvailable();
+		if (available > 0 && m_serial.read(&b, 1) == 1) {
+			if (data)
+				*data = *(uint8_t*)&b;
+			break;
+		}
+	}
+
+	return true;
+}
+
+bool XmodemHelper::writeData(uint8_t* data, int length)
+{
+	if (m_serial.write((char*)data, length)) {
+		m_serial.waitForBytesWritten(256);
 		return true;
 	}
 	return false;
@@ -52,21 +99,23 @@ bool XmodemHelper::writeByte(uint8_t data)
 
 int XmodemHelper::putPacket(const char *data, int offset, int length, uint8_t seqno)
 {
+	uint8_t chunk_data[XMODEM_DATALEN];
 	uint16_t crc = 0;
 	int chunk = length - offset;
 
 	if (chunk > XMODEM_DATALEN)
 		chunk = XMODEM_DATALEN;
 
+	memcpy(chunk_data, data + offset, chunk);
+	if (chunk < XMODEM_DATALEN)
+		memset(chunk_data + chunk, 0, XMODEM_DATALEN - chunk);
+
 	writeByte(XMODEM_XOH);
 	writeByte(seqno);
 	writeByte(~seqno);
+	writeData(chunk_data, XMODEM_DATALEN);
 	for (int i = 0; i < XMODEM_DATALEN; i++)
-	{
-		uint8_t b = i < chunk ? *(uint8_t*)(data + offset + i) : 0x00;
-		updateCRC(crc, b);
-		writeByte(b);
-	}
+		updateCRC(crc, chunk_data[i]);
 	writeByte((uint8_t)(crc >> 8));
 	writeByte((uint8_t)(crc & 0xff));
 
@@ -75,7 +124,7 @@ int XmodemHelper::putPacket(const char *data, int offset, int length, uint8_t se
 
 QByteArray XmodemHelper::getPacket(int length, uint8_t seqno)
 {
-	QByteArray data;
+	uint8_t data[XMODEM_DATALEN];
 	uint8_t seq, nseq, b;
 	uint16_t crc = 0;
 	uint16_t computed_crc = 0;
@@ -86,13 +135,11 @@ QByteArray XmodemHelper::getPacket(int length, uint8_t seqno)
 	readByte(&seq);
 	readByte(&nseq);
 
+	if (!readData(data, XMODEM_DATALEN))
+		return QByteArray();
+
 	for (int i = 0; i < XMODEM_DATALEN; i++)
-	{
-		readByte(&b);
-		updateCRC(computed_crc, b);
-		if (i < length)
-			data.append(b);
-	}
+		updateCRC(computed_crc, data[i]);
 
 	readByte(&b);
 	crc = (uint16_t)b << 8;
@@ -106,7 +153,7 @@ QByteArray XmodemHelper::getPacket(int length, uint8_t seqno)
 	}
 
 	writeByte(XMODEM_ACK);
-	return data;
+	return QByteArray((char*)data, length);
 }
 
 QByteArray XmodemHelper::receive(int length)
@@ -162,9 +209,13 @@ bool XmodemHelper::send(const QByteArray& data)
 	/* Startup synchronization */
 	/* Wait to receive a NAK from receiver */
 	while (true) {
-		if (!readByte(&b))
-			if (!readByte(&b))
-				return false;
+		int i;
+		for (i = 0; i < 16; i++) {
+			if (readByte(&b))
+				break;
+		}
+		if (i == 16)
+			return false;
 		if (b == XMODEM_NAK || b == 'C')
 			break;
 		else if (b == XMODEM_CAN)
