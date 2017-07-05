@@ -5,7 +5,7 @@ DEVICE = SAMA5D2
 DEVICE_FILES *= \
     qmldir \
     SAMA5D27SOM1.qml \
-    SAMA5D27SOM1EK1.qml \
+    SAMA5D27SOM1EK.qml \
     SAMA5D2BootConfigApplet.qml \
     SAMA5D2Config.qml \
     SAMA5D2.qml \
