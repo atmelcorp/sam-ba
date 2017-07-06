@@ -26,6 +26,7 @@ public:
 	explicit SambaFile(QObject* parent = 0);
 
 	Q_INVOKABLE SambaFileInstance* open(const QString& pathOrUrl, bool write);
+	Q_INVOKABLE qint64 size(const QString& pathOrUrl) const;
 };
 
 #endif // SAMBAFILE_H

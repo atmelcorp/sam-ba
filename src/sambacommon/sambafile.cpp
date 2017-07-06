@@ -12,6 +12,7 @@
  */
 
 #include "sambafile.h"
+#include <QUrl>
 
 SambaFile::SambaFile(QObject* parent)
 	: QObject(parent)
@@ -32,4 +33,18 @@ SambaFileInstance* SambaFile::open(const QString& pathOrUrl, bool write)
 	}
 
 	return file;
+}
+
+qint64 SambaFile::size(const QString& pathOrUrl) const
+{
+	QUrl url(pathOrUrl, QUrl::StrictMode);
+	QFile file;
+
+	if (url.isValid() && url.isLocalFile()) {
+		file.setFileName(url.toLocalFile());
+	} else {
+		file.setFileName(pathOrUrl);
+	}
+
+	return file.size();
 }
