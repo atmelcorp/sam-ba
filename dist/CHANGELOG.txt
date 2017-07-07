@@ -1,5 +1,22 @@
 # Atmel SAM-BA - SAM Boot Assistant
 
+## Version 3.2.0-rc3
+
+### Bugfixes
+
+- Fixed remaining bug in verify function: file offset was wrong.
+- Fixed timeout issues with XMODEM on UART.
+- Updated SOM1 board uo use the same name as Linux and softpack:
+  sama5d27-som1-ek.
+- Fix two remaining calls to AppletLoader functions in QML examples.
+
+### Enhancements
+
+- Provide applets for initializing external RAM on all devices.
+- All applets rebuilded using latest code from softpack.
+
+
+
 ## Version 3.2.0-rc2
 
 ### Bugfixes
