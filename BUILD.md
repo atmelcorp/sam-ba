@@ -3,13 +3,13 @@
 
 ## Pre-requisites
 
-- Qt 5.8.0
+- Qt 5.9.0
 
   Download from [qt.io](http://www.qt.io/download-open-source/#section-3).
 
-  For Linux, use package "Qt 5.8.0 for Linux 64-bit".
+  For Linux, use package "Qt 5.9.0 for Linux 64-bit".
 
-  For Windows, use package "Qt 5.8.0 for Windows 32-bit (MinGW 4.9.2)"
+  For Windows, use package "Qt 5.9.0 for Windows 32-bit"
 
 - J-Link SDK 5.02k
 
@@ -46,7 +46,7 @@ SAM-BA can be built either using command-line commands or using Qt Creator.
 ``plugins/connection/jlink/jlink.pro``
 
 4. Go in directory {BUILDDIR} and run
-``{QTDIR}/5.8/gcc_64/bin/qmake -r {SRCDIR}/sam-ba.pro``.  This will generate
+``{QTDIR}/5.9/gcc_64/bin/qmake -r {SRCDIR}/sam-ba.pro``.  This will generate
 the makefiles in {BUILDDIR} from the qmake templates in the source tree.
 
 5. Go in directory {BUILDDIR} and run
@@ -64,7 +64,7 @@ the makefiles in {BUILDDIR} from the qmake templates in the source tree.
 ``plugins\connection\jlink\jlink.pro``
 
 4. Go in directory {BUILDDIR} and run:
-``{QTDIR}\5.8\mingw53_32\bin\qmake -r {SRCDIR}\sam-ba.pro``.  This will
+``{QTDIR}\5.9\mingw53_32\bin\qmake -r {SRCDIR}\sam-ba.pro``.  This will
 generate the makefiles in {BUILDDIR} from the qmake templates in the source
 tree.
 
@@ -85,7 +85,7 @@ tree.
 
 2. Load ``sam-ba.pro`` from {SRCDIR}
 
-3. Select kit "Desktop Qt 5.8.0 GCC 64bit" and click "Configure Project"
+3. Select kit "Desktop Qt 5.9.0 GCC 64bit" and click "Configure Project"
 
 4. (optional) Change path of J-Link SDK in
 ``plugins/connection/jlink/jlink.pro``.
@@ -121,7 +121,7 @@ progress
 
 2. Load ``sam-ba.pro`` from {SRCDIR}
 
-3. Select kit "Desktop Qt 5.8.0 MingW 32 bit" and click "Configure Project"
+3. Select kit "Desktop Qt 5.9.0 MingW 32 bit" and click "Configure Project"
 
 4. (optional) Change path of J-Link SDK in
 ``plugins\connection\jlink\jlink.pro``.
