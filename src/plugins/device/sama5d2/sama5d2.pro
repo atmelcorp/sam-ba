@@ -27,7 +27,7 @@ include(../device.pri)
 metadata.files = \
     device_sama5d2.json \
     board_sama5d27-som1.json \
-    board_sama5d27-som1-ek1.json \
+    board_sama5d27-som1-ek.json \
     board_sama5d2-xplained.json
 metadata.path = /metadata
 INSTALLS *= metadata
