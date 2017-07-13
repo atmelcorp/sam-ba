@@ -8,6 +8,7 @@ DEVICE_FILES *= \
     SAMA5D27SOM1EK.qml \
     SAMA5D2BootConfigApplet.qml \
     SAMA5D2Config.qml \
+    SAMA5D2PTCEK.qml \
     SAMA5D2.qml \
     SAMA5D2Xplained.qml \
     sama5d2-bcw.js \
@@ -28,6 +29,7 @@ metadata.files = \
     device_sama5d2.json \
     board_sama5d27-som1.json \
     board_sama5d27-som1-ek.json \
+    board_sama5d2-ptc-ek.json \
     board_sama5d2-xplained.json
 metadata.path = /metadata
 INSTALLS *= metadata
