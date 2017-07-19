@@ -199,6 +199,10 @@ QByteArray XmodemHelper::receive(int length)
 		}
 	}
 
+	/* Flush the EOT, Send ACK */
+	readByte(0);
+	writeByte(XMODEM_ACK);
+
 	return data;
 }
 
