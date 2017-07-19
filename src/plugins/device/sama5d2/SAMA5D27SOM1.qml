@@ -23,6 +23,8 @@ import SAMBA.Device.SAMA5D2 3.2
 SAMA5D2 {
 	name: "sama5d27-som1"
 
+	aliases: []
+
 	description: "SAMA5D27-SOM1 System on Module"
 
 	config {

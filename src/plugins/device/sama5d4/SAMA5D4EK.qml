@@ -23,6 +23,8 @@ import SAMBA.Device.SAMA5D4 3.2
 SAMA5D4 {
 	name: "sama5d4-ek"
 
+	aliases: []
+
 	description: "SAMA5D4 Evaluation Kit"
 
 	config {

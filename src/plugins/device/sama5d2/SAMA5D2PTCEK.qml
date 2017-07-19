@@ -23,6 +23,8 @@ import SAMBA.Device.SAMA5D2 3.2
 SAMA5D2 {
 	name: "sama5d2-ptc-ek"
 
+	aliases: []
+
 	description: "SAMA5D2-PTC-EK"
 
 	config {

@@ -23,6 +23,8 @@ import SAMBA.Device.SAMV71 3.2
 SAMV71 {
 	name: "same70-xplained"
 
+	aliases: []
+
 	description: "SAME70 Xplained"
 
 	config {
