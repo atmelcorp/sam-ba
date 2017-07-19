@@ -51,9 +51,6 @@ public:
 	void run();
 
 private:
-	bool loadAllMetadata();
-	bool loadMetadata(QString fileName);
-
 	quint32 parseArguments(const QStringList& arguments);
 
 	void displayVersion();
@@ -76,7 +73,7 @@ private:
 
 	void displayJsCommandLineHelp(QObject* obj);
 	void displayJsCommandLineCommandsHelp(QObject* obj);
-	QObject* findObject(const QList<QObject*>& objects, const QString& name, const QString& what);
+	QObject* findObject(const QList<QObject*>& objects, const QString& name);
 	bool parseObjectArguments(QObject* object, const QString& cmdline, const QStringList& args, const QString& what);
 
 private slots:
@@ -84,9 +81,6 @@ private slots:
 
 private:
 	SambaEngine m_engine;
-	QList<QObject*> m_ports;
-	QList<QObject*> m_devices;
-	QList<QObject*> m_boards;
 
 	quint32 m_status;
 

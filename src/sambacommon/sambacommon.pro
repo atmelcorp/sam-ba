@@ -10,16 +10,20 @@ DEFINES += SAMBACOMMON_LIBRARY
 
 SOURCES += \
     sambacommon.cpp \
+    sambacomponent.cpp \
     sambaengine.cpp \
     sambafile.cpp \
     sambafileinstance.cpp \
+    sambametadata.cpp \
     sambautils.cpp
 
 HEADERS += \
     sambacommon.h \
+    sambacomponent.h \
     sambaengine.h \
     sambafile.h \
     sambafileinstance.h \
+    sambametadata.h \
     sambautils.h
 
 unix:!mac:{

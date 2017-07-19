@@ -12,6 +12,7 @@
  */
 
 #include "sambaengine.h"
+#include "sambametadata.h"
 #include <QFile>
 
 SambaEngine::SambaEngine(QObject *parent)
@@ -27,6 +28,9 @@ SambaEngine::SambaEngine(QObject *parent)
 
 	// add import path
 	m_qmlEngine.addImportPath(QCoreApplication::applicationDirPath() + "/qml");
+
+	// create metadata object
+	m_metadata = new SambaMetadata(this);
 }
 
 void SambaEngine::engineQuit()
@@ -50,6 +54,17 @@ void SambaEngine::engineWarnings(const QList<QQmlError> &warnings)
 
 SambaEngine::~SambaEngine()
 {
+	delete m_metadata;
+}
+
+QList<SambaComponent*> SambaEngine::listComponents(SambaComponentType type)
+{
+	return m_metadata->listComponents(type);
+}
+
+SambaComponent* SambaEngine::findComponent(SambaComponentType type, const QString& name)
+{
+	return m_metadata->findComponent(type, name);
 }
 
 QQmlEngine* SambaEngine::qmlEngine()
@@ -62,14 +77,10 @@ QObject* SambaEngine::createComponentInstance(QQmlComponent* component, QQmlCont
 	if (component->status() != QQmlComponent::Ready)
 	{
 		qCCritical(sambaLogCore) << component->errorString();
-		return 0;
+		return nullptr;
 	}
 
-	QObject* obj = component->create(context);
-	if (!obj)
-		return 0;
-
-	return obj;
+	return component->create(context);
 }
 
 QObject* SambaEngine::createComponentInstance(const QString& script, QQmlContext* context)
@@ -84,3 +95,4 @@ QObject* SambaEngine::createComponentInstance(const QUrl &url, QQmlContext* cont
 	QQmlComponent component(&m_qmlEngine, url);
 	return createComponentInstance(&component, context);
 }
+

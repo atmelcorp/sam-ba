@@ -16,58 +16,9 @@
 #include <QFile>
 #include <iostream>
 
-enum ComponentType {
-	COMPONENT_UNKNOWN,
-	COMPONENT_CONNECTION,
-	COMPONENT_DEVICE,
-	COMPONENT_BOARD,
-};
-
-struct Component {
-	ComponentType type;
-	QObject* object;
-};
-
 static void cerr_msg(const QString& str)
 {
 	std::cerr << str.toLocal8Bit().constData() << std::endl;
-}
-
-static Component parseJson(SambaEngine& engine, const QJsonObject& obj)
-{
-	Component comp = { .type = COMPONENT_UNKNOWN, .object = 0 };
-
-	// parse JSON
-	QString module = obj["module"].toString();
-	QString module_version = obj["module_version"].toString();
-	QString classname = obj["classname"].toString();
-	QString type = obj["type"].toString();
-
-	if (type == "connection")
-		comp.type = COMPONENT_CONNECTION;
-	else if (type == "device")
-		comp.type = COMPONENT_DEVICE;
-	else if (type == "board")
-		comp.type = COMPONENT_BOARD;
-
-	// create component
-	QString script = QString("import %1 %2; %3 { }")
-			.arg(module).arg(module_version).arg(classname);
-	QQmlComponent component(engine.qmlEngine());
-	component.setData(script.toLocal8Bit(), QUrl());
-	if (component.status() != QQmlComponent::Ready) {
-		cerr_msg(script);
-		cerr_msg(component.errorString());
-		return comp;
-	}
-
-	// create instance
-	comp.object = component.beginCreate(engine.qmlEngine()->rootContext());
-	if (comp.object && comp.type == COMPONENT_CONNECTION)
-			comp.object->setProperty("autoConnect", QVariant::fromValue(false));
-	component.completeCreate();
-
-	return comp;
 }
 
 static QStringList callArrayJsFunction(QObject* obj, const QString& functionName)
@@ -116,77 +67,11 @@ SambaTool::SambaTool(int& argc, char** argv)
 {
 	setApplicationName("sam-ba");
 	setApplicationVersion(SAMBA_VERSION);
-
-	loadAllMetadata();
 	m_status = parseArguments(arguments());
 }
 
 SambaTool::~SambaTool()
 {
-	qDeleteAll(m_ports);
-	m_ports.clear();
-
-	qDeleteAll(m_devices);
-	m_devices.clear();
-}
-
-static bool portCompare(const QObject* p1, const QObject* p2)
-{
-	quint32 prio1 = p1->property("priority").toUInt();
-	quint32 prio2 = p2->property("priority").toUInt();
-	return prio1 < prio2;
-}
-
-bool SambaTool::loadAllMetadata()
-{
-	QDir metadataDir(applicationDirPath() + "/metadata");
-	foreach (QString fileName, metadataDir.entryList(QStringList() << "*.json",
-	                                                 QDir::Files))
-	{
-		loadMetadata(metadataDir.absoluteFilePath(fileName));
-	}
-	std::sort(m_ports.begin(), m_ports.end(), portCompare);
-	return true;
-}
-
-bool SambaTool::loadMetadata(QString fileName)
-{
-	QFile file(fileName);
-
-	if (!file.open(QIODevice::ReadOnly)) {
-		cerr_msg(QString("Couldn't open metadata file '%1'.").arg(fileName));
-		return false;
-	}
-
-	QByteArray data = file.readAll();
-	QJsonDocument doc(QJsonDocument::fromJson(data));
-	Component comp = parseJson(m_engine, doc.object());
-	if (!comp.object) {
-		cerr_msg(QString("Couldn't parse metadata file '%1'.").arg(fileName));
-		return false;
-	}
-
-	switch (comp.type) {
-	case COMPONENT_CONNECTION:
-		m_ports << comp.object;
-		return true;
-	case COMPONENT_DEVICE:
-		m_devices << comp.object;
-		return true;
-	case COMPONENT_BOARD:
-		m_boards << comp.object;
-		return true;
-	case COMPONENT_UNKNOWN:
-	default:
-		// ignore, will be handled just after the switch
-		break;
-	}
-
-	cerr_msg(QString("Ignoring metadata file '%1': unknown metadata type or missing properties.")
-	         .arg(fileName));
-	if (comp.object)
-		delete comp.object;
-	return false;
 }
 
 void SambaTool::displayVersion()
@@ -197,14 +82,10 @@ void SambaTool::displayVersion()
 
 void SambaTool::displayPortHelp()
 {
-	QString values;
-	foreach(QObject* port, m_ports)
-	{
-		if (values.size() > 0)
-			values += ", ";
-		values += port->property("name").toString();
-	}
-	cerr_msg(QString("Known ports: %2").arg(values));
+	QStringList ports;
+	foreach(SambaComponent* port, m_engine.listComponents(COMPONENT_CONNECTION))
+		ports << port->name();
+	cerr_msg(QString("Known ports: %2").arg(ports.join(", ")));
 }
 
 void SambaTool::displayJsCommandLineHelp(QObject* obj)
@@ -238,20 +119,6 @@ void SambaTool::displayJsCommandLineCommandsHelp(QObject* obj)
 			cerr_msg(QString());
 		}
 	}
-}
-
-QObject* SambaTool::findObject(const QList<QObject*>& objects, const QString& name, const QString& what)
-{
-	foreach (QObject* obj, objects) {
-		QString objName = obj->property("name").toString();
-		QStringList objAliases = obj->property("aliases").toStringList();
-		if (!objName.compare(name, Qt::CaseInsensitive) ||
-		    objAliases.contains(name, Qt::CaseInsensitive))
-			return obj;
-	}
-
-	cerr_msg(QString("Error: Unknown %1 '%2'.").arg(what).arg(name));
-	return nullptr;
 }
 
 bool SambaTool::parseObjectArguments(QObject* object, const QString& cmdline, const QStringList& args, const QString& what)
@@ -295,9 +162,13 @@ bool SambaTool::parsePortOption(const QString& value)
 	QString name = args.first();
 	args.removeFirst();
 
-	QObject* port = findObject(m_ports, name, "port");
-	if (!port)
+	SambaComponent* comp = m_engine.findComponent(COMPONENT_CONNECTION, name);
+	if (!comp) {
+		cerr_msg(QString("Error: Unknown port '%1'.").arg(name));
 		return false;
+	}
+
+	QObject* port = comp->newInstance();
 
 	if (!parseObjectArguments(port, value, args, "port"))
 		return false;
@@ -309,8 +180,8 @@ bool SambaTool::parsePortOption(const QString& value)
 void SambaTool::displayDeviceHelp()
 {
 	QStringList devices;
-	foreach(QObject* device, m_devices)
-		devices << device->property("name").toString();
+	foreach(SambaComponent* device, m_engine.listComponents(COMPONENT_DEVICE))
+		devices << device->name();
 	cerr_msg(QString("Known devices: %1").arg(devices.join(", ")));
 }
 
@@ -320,9 +191,13 @@ bool SambaTool::parseDeviceOption(const QString& value)
 	QString name = args.first();
 	args.removeFirst();
 
-	QObject* device = findObject(m_devices, name, "device");
-	if (!device)
+	SambaComponent* comp = m_engine.findComponent(COMPONENT_DEVICE, name);
+	if (!comp) {
+		cerr_msg(QString("Error: Unknown device '%1'.").arg(name));
 		return false;
+	}
+
+	QObject* device = comp->newInstance();
 
 	if (!parseObjectArguments(device, value, args, "device"))
 		return false;
@@ -334,8 +209,8 @@ bool SambaTool::parseDeviceOption(const QString& value)
 void SambaTool::displayBoardHelp()
 {
 	QStringList boards;
-	foreach(QObject* board, m_boards)
-		boards << board->property("name").toString();
+	foreach(SambaComponent* board, m_engine.listComponents(COMPONENT_BOARD))
+		boards << board->name();
 	cerr_msg(QString("Known boards: %1").arg(boards.join(", ")));
 }
 
@@ -345,9 +220,13 @@ bool SambaTool::parseBoardOption(const QString& value)
 	QString name = args.first();
 	args.removeFirst();
 
-	QObject* board = findObject(m_boards, name, "board");
-	if (!board)
+	SambaComponent* comp = m_engine.findComponent(COMPONENT_BOARD, name);
+	if (!comp) {
+		cerr_msg(QString("Error: Unknown board '%1'.").arg(name));
 		return false;
+	}
+
+	QObject* board = comp->newInstance();
 
 	if (!parseObjectArguments(board, value, args, "board"))
 		return false;
@@ -679,9 +558,9 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 					return Failed;
 			}
 		} else {
-			QString port(m_ports.first()->property("name").toString());
-			cerr_msg(QString("No port option on command-line, using '%1'.").arg(port));
-			if (!parsePortOption(port))
+			SambaComponent* port(m_engine.listComponents(COMPONENT_CONNECTION).first());
+			cerr_msg(QString("No port option on command-line, using '%1'.").arg(port->name()));
+			if (!parsePortOption(port->name()))
 				return Failed;
 		}
 
