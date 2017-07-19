@@ -175,14 +175,14 @@ QByteArray XmodemHelper::receive(int length)
 
 	while (data.size() < length) {
 		if (!readByte(&b))
-			return QByteArray();
+			return data;
 
 		switch(b) {
 		case XMODEM_XOH: {
 			/* incoming packet */
 			QByteArray pktData = getPacket(length - data.size(), seqno);
 			if (pktData.size() == 0)
-				return QByteArray();
+				return data;
 
 			data.append(pktData);
 			seqno++;
@@ -190,11 +190,12 @@ QByteArray XmodemHelper::receive(int length)
 		}
 		case XMODEM_EOT:
 			writeByte(XMODEM_ACK);
+			return data;
 			break;
 		case XMODEM_CAN:
 		case XMODEM_ESC:
 		default:
-			return QByteArray();
+			return data;
 		}
 	}
 
