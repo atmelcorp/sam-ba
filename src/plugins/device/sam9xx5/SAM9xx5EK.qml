@@ -57,7 +57,7 @@ SAM9xx5 {
 		nandflash {
 			ioset: 1
 			busWidth: 16
-			header: 0xc0082405
+			header: 0xc0c00405
 		}
 	}
 }
