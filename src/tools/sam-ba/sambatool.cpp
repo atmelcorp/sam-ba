@@ -481,7 +481,7 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 
 	// check options cardinality
 	if (parser.values(executeOption).length() > 1) {
-		cerr_msg("Error: Only a single -p/--port option can be present on the command line.");
+		cerr_msg("Error: Only a single -x/--execute option can be present on the command line.");
 		return Failed;
 	}
 	if (parser.values(portOption).length() > 1) {
