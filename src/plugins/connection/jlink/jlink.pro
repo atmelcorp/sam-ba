@@ -50,6 +50,16 @@ else:win32:{
     INSTALLS += jlinklibs
 }
 
+macx:{
+    JLINKDIR = /Users/Shared/JLinkSDK_MacOSX_V502k
+    INCLUDEPATH += $$JLINKDIR/Inc
+    LIBS += -L$$JLINKDIR -ljlinkarm
+
+    jlinklibs.path = /Frameworks
+    jlinklibs.commands = $(COPY) $$JLINKDIR/libjlinkarm.5.dylib \$(INSTALL_ROOT)/Frameworks
+    INSTALLS += jlinklibs
+}
+
 qml.files = \
 	qmldir \
 	JLinkConnection.qml

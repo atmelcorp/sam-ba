@@ -35,5 +35,11 @@ else:win32:{
     target.path = /
 }
 
+
+macx:
+{
+ target.path = /Frameworks
+}
+
 # install
 INSTALLS += target

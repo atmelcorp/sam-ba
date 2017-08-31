@@ -79,3 +79,27 @@ else:win32:{
 	qmlmodules.files = $$[QT_INSTALL_LIBS]/../qml/QtQuick.2
 	INSTALLS += qmlmodules
 }
+
+macx:{
+        qtlibs.path = /Frameworks
+        qtlibs.files = \
+                $$[QT_INSTALL_LIBS]/QtCore.framework \
+                $$[QT_INSTALL_LIBS]/QtGui.framework \
+                $$[QT_INSTALL_LIBS]/QtNetwork.framework \
+                $$[QT_INSTALL_LIBS]/QtQml.framework \
+                $$[QT_INSTALL_LIBS]/QtQuick.framework \
+                $$[QT_INSTALL_LIBS]/QtSerialPort.framework
+        INSTALLS = qtlibs
+
+        otherlibs.path = /Frameworks
+        otherlibs.files = \
+                /usr/local/Cellar/icu4c/59.1/lib//libicudata.dylib \
+                /usr/local/Cellar/icu4c/59.1/lib/libicui18n.dylib \
+                /usr/local/Cellar/icu4c/59.1/lib//libicuuc.dylib
+        INSTALLS = otherlibs
+
+        qmlmodules.path = /qml
+        qmlmodules.files = $$[QT_INSTALL_LIBS]/../qml/QtQuick.2
+        INSTALLS = qmlmodules
+
+}
