@@ -16,7 +16,7 @@ import SAMBA 3.2
 
 Item {
 	function handle_connectionOpened() {
-		Tool.returnCode = 0
+		Script.returnCode = 0
 
 		for (var i = 0; i < Tool.commands.length; i++) {
 			var args = Tool.commands[i]
@@ -34,7 +34,7 @@ Item {
 			else if (typeof errMsg === "string") {
 				Tool.error("Error: Command '" + Tool.commands[i].join(":") +
 						   "': " + errMsg)
-				Tool.returnCode = -1
+				Script.returnCode = -1
 				break
 			}
 		}
@@ -42,7 +42,7 @@ Item {
 
 	function handle_connectionFailed(message) {
 		Tool.error(message)
-		Tool.returnCode = -1
+		Script.returnCode = -1
 	}
 
 	Component.onCompleted: {

@@ -15,10 +15,9 @@
 #define SAMBA_TOOL_CONTEXT_H
 
 #include "sambacommon.h"
-#include "sambascriptcontext.h"
 #include <QObject>
 
-class SambaToolContext : public SambaScriptContext
+class SambaToolContext : public QObject
 {
 	Q_OBJECT
 	Q_PROPERTY(QVariant port READ port NOTIFY portChanged)
@@ -28,7 +27,7 @@ class SambaToolContext : public SambaScriptContext
 
 public:
 	SambaToolContext(QObject* parent = 0)
-	    : SambaScriptContext(parent),
+	    : QObject(parent),
 	      m_commands(QVariantList())
 	{
 	}

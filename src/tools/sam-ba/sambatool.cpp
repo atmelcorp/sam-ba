@@ -12,7 +12,7 @@
  */
 
 #include "sambatool.h"
-#include "sambascriptcontext.h"
+#include "sambatoolcontext.h"
 #include <QFile>
 #include <iostream>
 
@@ -349,6 +349,11 @@ void SambaTool::run()
 		return;
 	}
 
+	QQmlContext context(m_engine.qmlEngine());
+	QObject* scriptProxy = m_engine.createComponentInstance("import SAMBA.Tool 3.2; ScriptProxy {}", &context);
+	QObject* scriptContext = qvariant_cast<QObject*>(scriptProxy->property("script"));
+	delete scriptProxy;
+
 	if ((m_status & (RunMonitor | RunApplet)) != 0)
 	{
 		SambaToolContext toolContext;
@@ -360,11 +365,9 @@ void SambaTool::run()
 			toolContext.setAppletName(m_applet->property("name"));
 		if (m_commands.isValid())
 			toolContext.setCommands(m_commands);
-
 		QObject::connect(&toolContext, SIGNAL(toolError(QString)),
 						 this, SLOT(onToolError(QString)));
 
-		QQmlContext context(m_engine.qmlEngine());
 		context.setContextProperty("Tool", &toolContext);
 
 		QString script;
@@ -375,26 +378,20 @@ void SambaTool::run()
 			script = "import SAMBA.Tool 3.2; AppletCommandHandler {}";
 		}
 		QObject* obj = m_engine.createComponentInstance(script, &context);
-		if (obj) {
-			returnCode = toolContext.returnCode();
+		if (obj)
 			delete obj;
-		}
 	}
 
 	if (m_status & RunUserScript)
 	{
-		SambaScriptContext scriptContext;
-		scriptContext.setArguments(m_userScriptArguments);
-
-		QQmlContext context(m_engine.qmlEngine());
-		context.setContextProperty("Script", &scriptContext);
+		scriptContext->setProperty("arguments", QVariant::fromValue(m_userScriptArguments));
 
 		QObject* obj = m_engine.createComponentInstance(m_userScript, &context);
-		if (obj) {
-			returnCode = scriptContext.returnCode();
+		if (obj)
 			delete obj;
-		}
 	}
+
+	returnCode = scriptContext->property("returnCode").toInt();
 
 	exit((m_status & Failed) ? -1 : returnCode);
 }

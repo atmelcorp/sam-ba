@@ -15,8 +15,7 @@ SOURCES += \
 
 HEADERS += \
     sambatool.h \
-    sambatoolcontext.h \
-    sambascriptcontext.h
+    sambatoolcontext.h
 
 # include/link sambacommon library
 INCLUDEPATH += $$PWD/../../sambacommon
@@ -35,7 +34,8 @@ unix:!mac:{
 qml.files = \
 	qmldir \
 	AppletCommandHandler.qml \
-	MonitorCommandHandler.qml
+	MonitorCommandHandler.qml \
+	ScriptProxy.qml
 qml.path = /qml/SAMBA/Tool
 
 # install executable

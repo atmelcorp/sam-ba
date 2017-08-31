@@ -16,7 +16,6 @@
 
 #include "sambacommon.h"
 #include "sambaengine.h"
-#include "sambatoolcontext.h"
 #include <QObject>
 #include <QUrl>
 #include <QtQml>

@@ -1,4 +1,5 @@
 import QtQuick 2.3
+import SAMBA 3.2
 
 /* Sample script to demonstrate custom script return code
  *

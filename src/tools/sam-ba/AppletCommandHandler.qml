@@ -35,7 +35,7 @@ Item {
 			else if (typeof errMsg === "string") {
 				Tool.error("Error: Command '" + Tool.commands[i].join(":") +
 				           "': " + errMsg)
-				Tool.returnCode = -1
+				Script.returnCode = -1
 				break
 			}
 		}
@@ -43,7 +43,7 @@ Item {
 
 	function handle_connectionFailed()
 	{
-		Tool.returnCode = -1
+		Script.returnCode = -1
 	}
 
 	Component.onCompleted: {

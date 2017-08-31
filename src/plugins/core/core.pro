@@ -28,7 +28,8 @@ qml.files = qmldir \
     Applet.qml \
     Connection.qml \
     Device.qml \
-    Utils.qml
+    Utils.qml \
+    Script.qml
 
 # install
 target.path = $$DESTPATH
