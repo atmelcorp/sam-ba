@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Atmel Corporation.
+ * Copyright (c) 2017, Atmel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -11,7 +11,6 @@
  * more details.
  */
 
-#include "sambacommon.h"
+#include "sambacore.h"
 
 Q_LOGGING_CATEGORY(sambaLogCore, "samba.core")
-Q_LOGGING_CATEGORY(sambaLogQml, "samba.qml")

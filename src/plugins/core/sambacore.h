@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Atmel Corporation.
+ * Copyright (c) 2017, Atmel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -11,22 +11,12 @@
  * more details.
  */
 
-#ifndef SAMBAFILE_H
-#define SAMBAFILE_H
+#ifndef SAMBA_CORE_H
+#define SAMBA_CORE_H
 
-#include "sambacommon.h"
-#include "sambafileinstance.h"
-#include <QObject>
+#include <QtCore/qglobal.h>
+#include <QLoggingCategory>
 
-class SAMBACOMMONSHARED_EXPORT SambaFile : public QObject
-{
-	Q_OBJECT
+Q_DECLARE_LOGGING_CATEGORY(sambaLogCore)
 
-public:
-	explicit SambaFile(QObject* parent = 0);
-
-	Q_INVOKABLE SambaFileInstance* open(const QString& pathOrUrl, bool write);
-	Q_INVOKABLE qint64 size(const QString& pathOrUrl) const;
-};
-
-#endif // SAMBAFILE_H
+#endif // SAMBA_CORE_H

@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 
-SUBDIRS = sambacommon plugins tools
+SUBDIRS = plugins tools

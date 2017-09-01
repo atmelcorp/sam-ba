@@ -11,19 +11,21 @@
  * more details.
  */
 
-#ifndef SAMBA_COMMON_GLOBAL_H
-#define SAMBA_COMMON_GLOBAL_H
+#ifndef SAMBAFILE_H
+#define SAMBAFILE_H
 
-#include <QtCore/qglobal.h>
-#include <QLoggingCategory>
+#include "sambafileinstance.h"
+#include <QObject>
 
-#if defined(SAMBACOMMON_LIBRARY)
-#  define SAMBACOMMONSHARED_EXPORT Q_DECL_EXPORT
-#else
-#  define SAMBACOMMONSHARED_EXPORT Q_DECL_IMPORT
-#endif
+class SambaFile : public QObject
+{
+	Q_OBJECT
 
-Q_DECLARE_LOGGING_CATEGORY(sambaLogCore)
-Q_DECLARE_LOGGING_CATEGORY(sambaLogQml)
+public:
+	explicit SambaFile(QObject* parent = 0);
 
-#endif // SAMBA_COMMON_GLOBAL_H
+	Q_INVOKABLE SambaFileInstance* open(const QString& pathOrUrl, bool write);
+	Q_INVOKABLE qint64 size(const QString& pathOrUrl) const;
+};
+
+#endif // SAMBAFILE_H

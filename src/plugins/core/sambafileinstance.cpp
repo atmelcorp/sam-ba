@@ -11,7 +11,7 @@
  * more details.
  */
 
-#include "sambacommon.h"
+#include "sambacore.h"
 #include "sambafileinstance.h"
 #include <QUrl>
 #include <QFile>

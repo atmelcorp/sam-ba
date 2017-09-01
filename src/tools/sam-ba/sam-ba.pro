@@ -11,18 +11,17 @@ DEFINES += SAMBA_VERSION=\\\"$$VERSION$$EXTRAVERSION\\\"
 
 SOURCES += \
     main.cpp \
+    sambacomponent.cpp \
+    sambaengine.cpp \
+    sambametadata.cpp \
     sambatool.cpp
 
 HEADERS += \
+    sambacomponent.h \
+    sambaengine.h \
+    sambametadata.h \
     sambatool.h \
     sambatoolcontext.h
-
-# include/link sambacommon library
-INCLUDEPATH += $$PWD/../../sambacommon
-DEPENDPATH += $$PWD/../../sambacommon
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../sambacommon/release/ -lsambacommon3
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../sambacommon/debug/ -lsambacommon3
-else:unix: LIBS += -L$$OUT_PWD/../../sambacommon/ -lsambacommon
 
 # set RPATH on Linux
 unix:!mac:{

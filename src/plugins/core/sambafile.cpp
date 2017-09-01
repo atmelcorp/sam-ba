@@ -11,6 +11,7 @@
  * more details.
  */
 
+#include "sambacore.h"
 #include "sambafile.h"
 #include <QUrl>
 

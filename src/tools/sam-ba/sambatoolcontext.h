@@ -14,8 +14,8 @@
 #ifndef SAMBA_TOOL_CONTEXT_H
 #define SAMBA_TOOL_CONTEXT_H
 
-#include "sambacommon.h"
 #include <QObject>
+#include <QVariant>
 
 class SambaToolContext : public QObject
 {

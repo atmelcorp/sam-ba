@@ -15,6 +15,15 @@
 #include "sambafile.h"
 #include "sambautils.h"
 
+/*
+static QObject* metadata_instance_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+	Q_UNUSED(engine)
+	Q_UNUSED(scriptEngine)
+	return new SambaMetadata();
+}
+*/
+
 static QObject* file_instance_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
 	Q_UNUSED(engine)

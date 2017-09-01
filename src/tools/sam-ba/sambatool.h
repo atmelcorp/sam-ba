@@ -14,7 +14,6 @@
 #ifndef SAMBA_TOOL_H
 #define SAMBA_TOOL_H
 
-#include "sambacommon.h"
 #include "sambaengine.h"
 #include <QObject>
 #include <QUrl>

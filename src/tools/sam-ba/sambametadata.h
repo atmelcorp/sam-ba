@@ -14,14 +14,13 @@
 #ifndef SAMBA_METADATA_H
 #define SAMBA_METADATA_H
 
-#include "sambacommon.h"
 #include "sambacomponent.h"
 #include <QObject>
 #include <QtQml>
 
 class SambaEngine;
 
-class SAMBACOMMONSHARED_EXPORT SambaMetadata
+class SambaMetadata
 {
 public:
 	SambaMetadata(SambaEngine* engine);

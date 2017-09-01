@@ -14,15 +14,18 @@
 #ifndef SAMBA_ENGINE_H
 #define SAMBA_ENGINE_H
 
-#include "sambacommon.h"
 #include "sambacomponent.h"
+#include <QLoggingCategory>
 #include <QObject>
-#include <QUrl>
+#include <QtCore/qglobal.h>
 #include <QtQml>
+#include <QUrl>
+
+Q_DECLARE_LOGGING_CATEGORY(sambaLogQml)
 
 class SambaMetadata;
 
-class SAMBACOMMONSHARED_EXPORT SambaEngine : public QObject
+class SambaEngine : public QObject
 {
 	Q_OBJECT
 

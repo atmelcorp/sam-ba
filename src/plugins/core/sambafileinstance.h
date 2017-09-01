@@ -14,12 +14,11 @@
 #ifndef SAMBAFILEINSTANCE_H
 #define SAMBAFILEINSTANCE_H
 
-#include "sambacommon.h"
 #include <QByteArray>
 #include <QFile>
 #include <QObject>
 
-class SAMBACOMMONSHARED_EXPORT SambaFileInstance : public QObject
+class SambaFileInstance : public QObject
 {
 	Q_OBJECT
 

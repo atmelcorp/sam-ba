@@ -6,7 +6,6 @@ description = Atmel SAM-BA
 version = 3.2.0
 
 headerdirs = \
-	../src/sambacommon \
 	../src/plugins/applet \
 	../src/plugins/core \
 	../src/plugins/connection/serial \
@@ -17,7 +16,6 @@ headerdirs = \
 	../src/plugins/device/sama5d4 \
 	../src/plugins/device/samv71
 sourcedirs = . \
-	../src/sambacommon \
 	../src/plugins/applet \
 	../src/plugins/core \
 	../src/plugins/connection/serial \

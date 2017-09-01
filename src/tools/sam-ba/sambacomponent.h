@@ -14,7 +14,6 @@
 #ifndef SAMBA_COMPONENT_H
 #define SAMBA_COMPONENT_H
 
-#include "sambacommon.h"
 #include <QObject>
 #include <QtQml>
 
@@ -27,7 +26,7 @@ enum SambaComponentType {
 
 class SambaEngine;
 
-class SAMBACOMMONSHARED_EXPORT SambaComponent
+class SambaComponent
 {
 public:
 	SambaComponent(SambaEngine* engine);

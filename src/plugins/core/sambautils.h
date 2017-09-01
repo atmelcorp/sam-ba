@@ -14,10 +14,10 @@
 #ifndef SAMBA_UTILS_H
 #define SAMBA_UTILS_H
 
-#include "sambacommon.h"
 #include <QObject>
+#include <QVariant>
 
-class SAMBACOMMONSHARED_EXPORT SambaUtils : public QObject
+class SambaUtils : public QObject
 {
 	Q_OBJECT
 

@@ -15,6 +15,8 @@
 #include "sambametadata.h"
 #include <QFile>
 
+Q_LOGGING_CATEGORY(sambaLogQml, "samba.qml")
+
 SambaEngine::SambaEngine(QObject *parent)
     : QObject(parent)
 {
@@ -76,7 +78,7 @@ QObject* SambaEngine::createComponentInstance(QQmlComponent* component, QQmlCont
 {
 	if (component->status() != QQmlComponent::Ready)
 	{
-		qCCritical(sambaLogCore) << component->errorString();
+		qCCritical(sambaLogQml) << component->errorString();
 		return nullptr;
 	}
 
