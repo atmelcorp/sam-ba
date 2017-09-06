@@ -488,7 +488,7 @@ Item {
 
 		if (applet !== newapplet) {
 			if (!appletUpload(newapplet))
-				throw new Error("Applet " + name + " could not be loaded")
+				throw new Error("Applet " + appletName + " could not be loaded")
 		}
 
 		applet.initialize()
