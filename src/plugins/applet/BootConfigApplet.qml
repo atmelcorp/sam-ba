@@ -107,10 +107,10 @@ Applet {
 		// value (required)
 		if (args[1].length === 0)
 			return "Invalid value parameter (empty)"
-		var value = configValueFromText(index, args[1])
-		if (typeof value === "undefined")
-			value = Utils.parseInteger(args[1])
+		var value = Utils.parseInteger(args[1])
 		if (isNaN(value))
+			value = configValueFromText(index, args[1])
+		if (isNaN(value) || typeof value === "undefined")
 			return "Invalid value parameter"
 		var text = configValueToText(index, value)
 		if (typeof text === "undefined")
