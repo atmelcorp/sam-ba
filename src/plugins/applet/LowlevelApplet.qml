@@ -28,4 +28,20 @@ Applet {
 		Array.prototype.push.apply(args, [0, 0, 0])
 		return args
 	}
+
+	/* -------- Command Line Handling -------- */
+
+	/*! \internal */
+	function commandLineCommands() {
+		return [ ]
+	}
+
+	/*! \internal */
+	function commandLineCommandHelp(command) {
+	}
+
+	/*! \internal */
+	function commandLineCommand(command, args) {
+		return "Unknown command."
+	}
 }

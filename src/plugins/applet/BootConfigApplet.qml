@@ -122,15 +122,11 @@ Applet {
 
 	/*! \internal */
 	function commandLineCommand(command, args) {
-		if (command === "readcfg") {
+		if (command === "readcfg")
 			return commandLineCommandReadBootConfig(args);
-		}
-		else if (command === "writecfg") {
+		else if (command === "writecfg")
 			return commandLineCommandWriteBootConfig(args);
-		}
-		else {
-			return defaultCommandLineCommandHandler(command, args)
-		}
+		else
+			return "Unknown command."
 	}
-
 }

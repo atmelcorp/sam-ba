@@ -34,4 +34,20 @@ Applet {
 		Array.prototype.push.apply(args, config)
 		return args
 	}
+
+	/* -------- Command Line Handling -------- */
+
+	/*! \internal */
+	function commandLineCommands() {
+		return [ ]
+	}
+
+	/*! \internal */
+	function commandLineCommandHelp(command) {
+	}
+
+	/*! \internal */
+	function commandLineCommand(command, args) {
+		return "Unknown command."
+	}
 }
