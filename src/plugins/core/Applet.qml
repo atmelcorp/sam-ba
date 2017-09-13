@@ -759,69 +759,6 @@ Item {
 	}
 
 	/*! \internal */
-	function callReadBootCfg(index)
-	{
-		var status, cmd
-
-		cmd = command("readBootCfg")
-		if (cmd) {
-			status = connection.appletExecute(cmd, [index])
-			if (status !== 0)
-				throw new Error("Read Boot Config command failed (status=" +
-						status + ")")
-			return connection.appletMailboxRead(0)
-		} else {
-			throw new Error("Applet does not support 'Read Boot Config' command")
-		}
-	}
-
-	/*!
-		\qmlmethod int Applet::readBootCfg(int index)
-		\brief Read the boot configuration
-
-		Read and returns the boot configuration at index \a index using the applet
-		'Read Boot Config' command.
-
-		Throws an \a Error if the applet has no 'Read Boot Config' command or
-		if an error occured during calling the applet command
-	*/
-	function readBootCfg(index)
-	{
-		return callReadBootCfg(index)
-	}
-
-	/*! \internal */
-	function callWriteBootCfg(index, value)
-	{
-		var status, cmd
-
-		cmd = command("writeBootCfg")
-		if (cmd) {
-			status = connection.appletExecute(cmd, [index, value])
-			if (status !== 0)
-				throw new Error("Write Boot Config command failed (status=" +
-						status + ")")
-		} else {
-			throw new Error("Applet does not support 'Write Boot Config' command")
-		}
-	}
-
-	/*!
-		\qmlmethod void Applet::writeBootCfg(int index, int value)
-		\brief Write the boot configuration
-
-		Write the boot configuration \a value at index \a index using the
-		applet 'Write Boot Config' command.
-
-		Throws an \a Error if the applet has no 'Write Boot Config' command or
-		if an error occured during calling the applet command
-	*/
-	function writeBootCfg(index, value)
-	{
-		callWriteBootCfg(index, value)
-	}
-
-	/*! \internal */
 	function computeErasePlan(start, end, overflow) {
 		var supported = []
 		var i, size
