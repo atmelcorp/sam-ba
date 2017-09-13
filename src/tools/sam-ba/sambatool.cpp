@@ -61,6 +61,7 @@ static QStringList callArrayJsFunction(QObject* obj, const QString& functionName
 SambaTool::SambaTool(int& argc, char** argv)
     : QCoreApplication(argc, argv),
       m_engine(this),
+      m_traceLevel(3),
       m_port(0),
       m_device(0),
       m_applet(0)
@@ -354,6 +355,8 @@ void SambaTool::run()
 	QObject* scriptContext = qvariant_cast<QObject*>(scriptProxy->property("script"));
 	delete scriptProxy;
 
+	scriptContext->setProperty("traceLevel", m_traceLevel);
+
 	if ((m_status & (RunMonitor | RunApplet)) != 0)
 	{
 		SambaToolContext toolContext;
@@ -412,6 +415,11 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 	QCommandLineOption helpOption(QStringList() << "h" << "help",
 	                                 "Displays this help.");
 	parser.addOption(helpOption);
+
+	QCommandLineOption traceLevelOption(QStringList() << "t" << "tracelevel",
+	                                 "Set trace level to <trace_level>.",
+	                                 "trace_level");
+	parser.addOption(traceLevelOption);
 
 	QCommandLineOption executeOption(QStringList() << "x" << "execute",
 	                                 "Execute script <script-file>.",
@@ -474,6 +482,10 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 		cerr_msg(QString());
 		cerr_msg(parser.helpText());
 		return Exit;
+	}
+
+	if (parser.isSet(traceLevelOption)) {
+		m_traceLevel = parser.value(traceLevelOption).toUInt();
 	}
 
 	// check options cardinality
