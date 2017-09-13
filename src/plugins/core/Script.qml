@@ -34,4 +34,10 @@ Item {
 		command/script execution is complete.
 	*/
 	property var returnCode: 0
+
+	/*!
+		\qmlproperty int Script::traceLevel
+		\brief The trace level that will be used for applets
+	*/
+	property var traceLevel: 3
 }

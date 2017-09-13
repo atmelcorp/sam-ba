@@ -45,12 +45,6 @@ Item {
 	property var connection
 
 	/*!
-		\qmlproperty string Applet::traceLevel
-		\brief The trace level that will be set during applet initialization
-	*/
-	property var traceLevel: 3
-
-	/*!
 		\qmlproperty string Applet::codeUrl
 		\brief The applet binary file URL
 	*/
@@ -181,7 +175,7 @@ Item {
 		    typeof serial_ioset === "undefined") {
 			serial_instance = serial_ioset = 0xffffffff
 		}
-		return [ connection.appletConnectionType, traceLevel,
+		return [ connection.appletConnectionType, Script.traceLevel,
 		         serial_instance, serial_ioset ]
 	}
 
