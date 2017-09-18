@@ -18,8 +18,8 @@ SerialConnection {
 		print("-- previous boot config --")
 		printBootConfig();
 
-		// Use BUREG0 as boot configuration word
-		applet.writeBootCfg(BootCfg.BSCR, BSCR.fromText("VALID,BUREG0"))
+		// Disable BUREG
+		applet.writeBootCfg(BootCfg.BSCR, 0)
 
 		// write new Boot Configuration Word in FUSE
 		// TODO: Set the correct boot config word value and uncomment
