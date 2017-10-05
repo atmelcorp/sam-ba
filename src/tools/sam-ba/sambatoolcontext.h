@@ -21,7 +21,6 @@ class SambaToolContext : public QObject
 {
 	Q_OBJECT
 	Q_PROPERTY(QVariant port READ port NOTIFY portChanged)
-	Q_PROPERTY(QVariant device READ device NOTIFY deviceChanged)
 	Q_PROPERTY(QVariant appletName READ appletName NOTIFY appletNameChanged)
 	Q_PROPERTY(QVariant commands READ commands NOTIFY commandsChanged)
 
@@ -40,16 +39,6 @@ public:
 	{
 		m_port = port;
 		emit portChanged();
-	}
-
-	QVariant device() const {
-		return m_device;
-	}
-
-	void setDevice(QVariant device)
-	{
-		m_device = device;
-		emit deviceChanged();
 	}
 
 	QVariant appletName() const {
@@ -79,14 +68,12 @@ public:
 
 signals:
 	void portChanged();
-	void deviceChanged();
 	void appletNameChanged();
 	void commandsChanged();
 	void toolError(const QString& message);
 
 private:
 	QVariant m_port;
-	QVariant m_device;
 	QVariant m_appletName;
 	QVariant m_commands;
 };

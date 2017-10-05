@@ -360,16 +360,17 @@ void SambaTool::run()
 	if ((m_status & (RunMonitor | RunApplet)) != 0)
 	{
 		SambaToolContext toolContext;
-		if (m_port)
+		if (m_port) {
+			if (m_device)
+				m_port->setProperty("device", QVariant::fromValue<QObject*>(m_device));
 			toolContext.setPort(QVariant::fromValue<QObject*>(m_port));
-		if (m_device)
-			toolContext.setDevice(QVariant::fromValue<QObject*>(m_device));
+		}
 		if (m_applet)
 			toolContext.setAppletName(m_applet->property("name"));
 		if (m_commands.isValid())
 			toolContext.setCommands(m_commands);
 		QObject::connect(&toolContext, SIGNAL(toolError(QString)),
-						 this, SLOT(onToolError(QString)));
+		                 this, SLOT(onToolError(QString)));
 
 		context.setContextProperty("Tool", &toolContext);
 

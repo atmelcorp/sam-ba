@@ -47,7 +47,6 @@ Item {
 	}
 
 	Component.onCompleted: {
-		Tool.port.device = Tool.device
 		Tool.port.connectionOpened.connect(handle_connectionOpened)
 		Tool.port.connectionFailed.connect(handle_connectionFailed)
 		Tool.port.open()
