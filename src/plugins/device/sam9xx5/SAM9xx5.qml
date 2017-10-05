@@ -115,6 +115,8 @@ import SAMBA.Device.SAM9xx5 3.2
 	\endqml
 */
 Device {
+	family: "sam9xx5"
+
 	name: "sam9xx5"
 
 	aliases: [ "sam9g15", "sam9g25", "sam9g35",

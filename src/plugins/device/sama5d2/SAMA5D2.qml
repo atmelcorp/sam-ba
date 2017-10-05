@@ -121,6 +121,8 @@ import SAMBA.Device.SAMA5D2 3.2
 	\endqml
 */
 Device {
+	family: "sama5d2"
+
 	name: "sama5d2"
 
 	aliases: [ "sama5d21", "sama5d22", "sama5d23", "sama5d24",

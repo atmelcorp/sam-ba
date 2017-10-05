@@ -95,6 +95,8 @@ import SAMBA.Device.SAMV71 3.2
 
 */
 Device {
+	family: "samv71"
+
 	name: "samv71"
 
 	aliases: ["same70", "sams70", "samv70"]

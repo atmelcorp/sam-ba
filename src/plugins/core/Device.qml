@@ -27,6 +27,12 @@ Item {
 	property var connection
 
 	/*!
+		\qmlproperty string Device::family
+		\brief The device family
+	*/
+	property var family
+
+	/*!
 		\qmlproperty string Device::name
 		\brief The device name
 	*/
