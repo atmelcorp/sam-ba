@@ -1,5 +1,28 @@
 # Atmel SAM-BA - SAM Boot Assistant
 
+## Version 3.2.1
+
+### Bugfixes
+
+- Fixed NAND header value for SAM9xx5EK.
+- Fixed parsing of numeric arguments to writecfg commands to BootConfig applet.
+- Fixed SAMA5D2 fuse boot configuration example to disable BSCR/BUREG
+
+### Enhancements
+
+- All applets rebuilt using softpack 2.10.  This brings support for non-ONFI
+  NAND memories and more SPI/QSPI NOR memories using SFDP.
+- Applet trace level can be set from command-line (-t, --trace) or QML
+  (Script.traceLevel).
+- New Fuse example for SAMA5D2
+
+### API Changes
+
+- Applet trace level is now in the Script singleton object.
+- Internal shared library sambacommand was removed
+
+
+
 ## Version 3.2.0
 
 ### Bugfixes
@@ -102,4 +125,3 @@ Notable changes:
   SAMA5D2 device is to be unconfigured, but the "sama5d2-xplained" board
   property can be set to get the same configuration as previous version.
 - boot configuration on the SAMA5D2 now uses an applet and a different syntax.
-
