@@ -538,10 +538,6 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 			cerr_msg("Error: Cannot use -m/--monitor option with -a/--applet or -c/--command options.");
 			return Failed;
 		}
-		if (parser.isSet(deviceOption))
-			cerr_msg("Warning: Option -d/--device is ignored when executing monitor commands.");
-		if (parser.isSet(boardOption))
-			cerr_msg("Warning: Option -b/--board is ignored when executing monitor commands.");
 	}
 
 	if (parser.isSet(executeOption)) {
