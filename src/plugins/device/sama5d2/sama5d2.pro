@@ -17,6 +17,7 @@ DEVICE_FILES *= \
     applets/README.txt \
     applets/applet-bootconfig_sama5d2-generic_sram.bin \
     applets/applet-extram_sama5d2-generic_sram.bin \
+    applets/applet-internalrc_sama5d2-generic_sram.bin \
     applets/applet-lowlevel_sama5d2-generic_sram.bin \
     applets/applet-nandflash_sama5d2-generic_sram.bin \
     applets/applet-qspiflash_sama5d2-generic_sram.bin \

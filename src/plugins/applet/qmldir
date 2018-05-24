@@ -3,6 +3,7 @@ BootConfigApplet 3.2 BootConfigApplet.qml
 ExtRamApplet 3.2 ExtRamApplet.qml
 ExtRamConfig 3.2 ExtRamConfig.qml
 InternalFlashApplet 3.2 InternalFlashApplet.qml
+InternalRCApplet 3.2 InternalRCApplet.qml
 LowlevelApplet 3.2 LowlevelApplet.qml
 LowlevelConfig 3.2 LowlevelConfig.qml
 NANDFlashApplet 3.2 NANDFlashApplet.qml
