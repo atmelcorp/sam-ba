@@ -32,9 +32,9 @@ struct mpu_regs {
 /* Order is important: probing stops on first matching device */
 static const struct mpu_regs mpu_regs[] = {
 	{ JLINK_CORE_ARM926EJ_S, "SAM9xx5", 0xfffff240, 0x819a05a1, 0xffffffff, 0xfffffe44, 0 },
-	{ JLINK_CORE_CORTEX_A5, "SAMA5D2x", 0xfc069000, 0x8a5c08c0, 0xffffffe0, 0xf8048044, 0xf8030058 },
-	{ JLINK_CORE_CORTEX_A5, "SAMA5D4x", 0xfc069040, 0x8a5c07c0, 0xfffffff0, 0xfc068644, 0 },
-	{ JLINK_CORE_CORTEX_A5, "SAMA5D3x", 0xffffee40, 0x8a5c07c2, 0xffffffff, 0xfffffe44, 0 },
+	{ JLINK_CORE_CORTEX_A5, "SAMA5D2", 0xfc069000, 0x8a5c08c0, 0xffffffe0, 0xf8048044, 0xf8030058 },
+	{ JLINK_CORE_CORTEX_A5, "SAMA5D4", 0xfc069040, 0x8a5c07c0, 0xfffffff0, 0xfc068644, 0 },
+	{ JLINK_CORE_CORTEX_A5, "SAMA5D3", 0xffffee40, 0x8a5c07c2, 0xffffffff, 0xfffffe44, 0 },
 	{ JLINK_CORE_CORTEX_M7, "SAME70", 0x400e0940, 0xa1000000, 0xfff00000, 0x400e1850, 0 },
 	{ JLINK_CORE_CORTEX_M7, "SAMS70", 0x400e0940, 0xa1100000, 0xfff00000, 0x400e1850, 0 },
 	{ JLINK_CORE_CORTEX_M7, "SAMV71", 0x400e0940, 0xa1200000, 0xfff00000, 0x400e1850, 0 },
@@ -71,7 +71,7 @@ static void jlink_debug_log(const char* sErr)
 SambaConnectionJlinkHelper::SambaConnectionJlinkHelper(QQuickItem* parent)
 	: QQuickItem(parent),
 	  m_swd(false),
-	  m_core(-1)
+	  m_core(JLINK_CORE_ANY)
 {
 	JLINKARM_EnableLog(jlink_debug_log);
 	JLINKARM_EnableLogCom(jlink_debug_log);
@@ -122,7 +122,7 @@ QStringList SambaConnectionJlinkHelper::availableSerialNumbers()
 	return list;
 }
 
-void SambaConnectionJlinkHelper::open()
+void SambaConnectionJlinkHelper::open(const QString& deviceFamily)
 {
 	if (serialNumber().isEmpty())
 	{
@@ -180,6 +180,29 @@ void SambaConnectionJlinkHelper::open()
 			emit connectionFailed("Could not select JTAG interface");
 			return;
 		}
+	}
+
+	m_core = JLINK_CORE_ANY;
+	for (unsigned i = 0; mpu_regs[i].cidr_reg; i++)
+	{
+		if (!deviceFamily.compare(mpu_regs[i].name, Qt::CaseInsensitive))
+		{
+			m_core = mpu_regs[i].core;
+			JLINKARM_CORE_Select(m_core);
+			break;
+		}
+	}
+	if (m_core == (int)JLINK_CORE_ANY) {
+		JLINKARM_Close();
+		emit connectionFailed("Unknown device family");
+		return;
+	}
+
+	if (JLINKARM_Connect() < 0)
+	{
+		JLINKARM_Close();
+		emit connectionFailed(QString().sprintf("Could not connect J-Link with serial '%u'", serial));
+		return;
 	}
 
 	JLINKARM_Halt();

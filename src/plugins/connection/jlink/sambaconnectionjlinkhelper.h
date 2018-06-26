@@ -39,7 +39,7 @@ public:
 
 	Q_INVOKABLE QStringList availableSerialNumbers();
 
-	Q_INVOKABLE void open();
+	Q_INVOKABLE void open(const QString& deviceFamily);
 	Q_INVOKABLE void close();
 
 	Q_INVOKABLE QVariant readu8(quint32 address);

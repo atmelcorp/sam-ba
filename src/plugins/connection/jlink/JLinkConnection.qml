@@ -52,7 +52,10 @@ Connection {
 	\sa Connection::open()
 	*/
 	function open() {
-		helper.open()
+		if (typeof device !== "undefined")
+			helper.open(device.family)
+		else
+			handle_helper_connectionFailed("No device or board is set!")
 	}
 
 	/*!
