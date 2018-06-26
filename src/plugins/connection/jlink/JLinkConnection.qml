@@ -181,7 +181,7 @@ Connection {
 			// fall-through
 		case 1:
 			if (args[0].length > 0) {
-				port = args[0];
+				serialNumber = args[0];
 			}
 			// fall-through
 		case 0:
