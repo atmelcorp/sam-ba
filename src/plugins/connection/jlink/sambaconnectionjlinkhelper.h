@@ -26,6 +26,7 @@ class Q_DECL_EXPORT SambaConnectionJlinkHelper : public QQuickItem
 	Q_OBJECT
 	Q_PROPERTY(QString serialNumber READ serialNumber WRITE setSerialNumber NOTIFY serialNumberChanged)
 	Q_PROPERTY(bool swd READ swd WRITE setSwd NOTIFY swdChanged)
+	Q_PROPERTY(qint32 speed READ speed WRITE setSpeed NOTIFY speedChanged)
 
 public:
 	SambaConnectionJlinkHelper(QQuickItem *parent = 0);
@@ -36,6 +37,9 @@ public:
 
 	bool swd() const;
 	void setSwd(bool swd);
+
+	qint32 speed() const;
+	void setSpeed(qint32 speed);
 
 	Q_INVOKABLE QStringList availableSerialNumbers();
 
@@ -58,6 +62,7 @@ public:
 signals:
 	void serialNumberChanged();
 	void swdChanged();
+	void speedChanged();
 	void connectionOpened();
 	void connectionFailed(const QString& message);
 	void connectionClosed();
@@ -65,6 +70,7 @@ signals:
 private:
 	QString m_serialNumber;
 	bool m_swd;
+	qint32 m_speed;
 	int m_core;
 };
 

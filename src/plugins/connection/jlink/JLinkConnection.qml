@@ -49,6 +49,12 @@ Connection {
 	property alias swd: helper.swd
 
 	/*!
+	\qmlproperty string JLinkConnection::speed
+	\brief The speed of connection in kHz.
+	*/
+	property alias speed: helper.speed
+
+	/*!
 	\sa Connection::open()
 	*/
 	function open() {
@@ -168,6 +174,13 @@ Connection {
 	/*! \internal */
 	function commandLineParse(args) {
 		switch (args.length) {
+		case 3:
+			if (args[2].length > 0) {
+				speed = parseInt(args[2])
+				if (isNaN(speed))
+					return "Invalid speed (not a number)"
+			}
+			// fall-through
 		case 2:
 			if (args[1].length > 0) {
 				var proto = args[1].toLowerCase();
@@ -194,12 +207,13 @@ Connection {
 	/*! \internal */
 	function commandLineHelp() {
 		return ["Syntax:",
-		        "    j-link:[<S/N>]:[swd|jtag]",
+		        "    j-link:[<S/N>]:[swd|jtag]:[<speed in kHz>]",
 		        "Examples:",
 		        "    j-link             use first J-Link device found",
 		        "    j-link:123456      use J-Link with serial number 123456",
 		        "    j-link:123456:swd  use J-Link with serial number 123456, in SWD mode",
 		        "    j-link::swd        use first J-Link device found, in SWD mode",
-		        "    j-link::jtag       use first J-Link device found, in JTAG mode (JTAG mode is the default)"]
+		        "    j-link::jtag       use first J-Link device found, in JTAG mode (JTAG mode is the default)",
+			"    j-link::jtag:150   use first J-Link device found, in JTAG mode at 150kHz (default is 0 for auto)"]
 	}
 }

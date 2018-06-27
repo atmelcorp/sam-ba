@@ -71,6 +71,7 @@ static void jlink_debug_log(const char* sErr)
 SambaConnectionJlinkHelper::SambaConnectionJlinkHelper(QQuickItem* parent)
 	: QQuickItem(parent),
 	  m_swd(false),
+	  m_speed(0),
 	  m_core(JLINK_CORE_ANY)
 {
 	JLINKARM_EnableLog(jlink_debug_log);
@@ -107,6 +108,20 @@ void SambaConnectionJlinkHelper::setSwd(bool swd)
 	{
 		m_swd = swd;
 		emit swdChanged();
+	}
+}
+
+qint32 SambaConnectionJlinkHelper::speed() const
+{
+	return m_speed;
+}
+
+void SambaConnectionJlinkHelper::setSpeed(qint32 speed)
+{
+	if (m_speed != speed)
+	{
+		m_speed = speed;
+		emit speedChanged();
 	}
 }
 
@@ -158,8 +173,8 @@ void SambaConnectionJlinkHelper::open(const QString& deviceFamily)
 		return;
 	}
 
-	// Set JLINK JTAG speed to 100 kHz
-	JLINKARM_SetSpeed(100);
+	// Set JLINK JTAG speed
+	JLINKARM_SetSpeed(m_speed > 0 ? m_speed : 100);
 
 	if (m_swd)
 	{
@@ -268,7 +283,8 @@ void SambaConnectionJlinkHelper::open(const QString& deviceFamily)
 			emit connectionFailed("Unsupported device");
 		}
 
-		JLINKARM_SetSpeed(JLINKARM_SPEED_AUTO);
+		if (m_speed <= 0)
+			JLINKARM_SetSpeed(JLINKARM_SPEED_AUTO);
 
 		QElapsedTimer timer;
 		timer.start();
