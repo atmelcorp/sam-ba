@@ -1,5 +1,40 @@
 # Atmel SAM-BA - SAM Boot Assistant
 
+## Version 3.2.2
+
+### Bugfixes
+
+- Fixed applets not working on board designs without external MAIN crystal.
+- Fixed J-LINK selection by serial number.
+- Fixed J-LINK connections on SAM9XX5.
+- Fixed *sleep() issue on SAMA5D31 where applets tried using the non-existing
+  TC1.
+- Added new 'internalrc' applet on SAMA5D2 to force the use of the 12MHz
+  internal RC instead of the external MAIN crystal (Needed before programming
+  fuses on SAMA5D27 SOM).
+- Added new 'enablebootpartition' command to 'sdmmc' applet to enable/disable
+  eMMC boot partitions.
+
+### Enhancements
+
+- All applets rebuilt using softpack 2.13 + few additional patches. This brings
+  support for more SPI/QSPI NOR memories.
+- Allow to change the speed of J-Link connections.
+- Added new 'reset' applet.
+- Added new 'enablebootpartition' command to 'sdmmc' applet.
+- Added new 'tag' and 'untag' commands to 'nandflash' applet to set/clear bad
+  block marks.
+
+### API Changes
+
+- SAM-BA now requires J-LINK SDK V6* to build.
+- Extracted the source code for X-Modem support from the serial connection
+  plugin to a dedicated shared library.
+- Reworked the interface and methods of the Connection class to better abstract
+  the sequence of operations executed by the Connection::appletExecute() method.
+
+
+
 ## Version 3.2.1
 
 ### Bugfixes

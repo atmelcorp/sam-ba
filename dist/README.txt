@@ -1,6 +1,6 @@
 # Atmel SAM-BA - SAM Boot Assistant
-Release version: 3.2.1
-Release date: 2017-10
+Release version: 3.2.2
+Release date: 2018-06
 
 ## Overview
 
