@@ -1,4 +1,4 @@
-These SAMA5D4 Applets were built from the Atmel Software Package:
+These SAMA5D3 Applets were built from the Atmel Software Package:
 
 Repository: https://github.com/atmelcorp/atmel-software-package
 Commit: 65146d0e62565d23acaa80354ce7a329f2a1137d
