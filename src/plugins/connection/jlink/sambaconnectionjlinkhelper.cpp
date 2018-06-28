@@ -31,7 +31,7 @@ struct mpu_regs {
 /* Register definitions */
 /* Order is important: probing stops on first matching device */
 static const struct mpu_regs mpu_regs[] = {
-	{ JLINK_CORE_ARM926EJ_S, "SAM9xx5", 0xfffff240, 0x819a05a1, 0xffffffff, 0xfffffe44, 0 },
+	{ JLINK_CORE_ARM9, "SAM9xx5", 0xfffff240, 0x819a05a1, 0xffffffff, 0xfffffe44, 0 },
 	{ JLINK_CORE_CORTEX_A5, "SAMA5D2", 0xfc069000, 0x8a5c08c0, 0xffffffe0, 0xf8048044, 0xf8030058 },
 	{ JLINK_CORE_CORTEX_A5, "SAMA5D4", 0xfc069040, 0x8a5c07c0, 0xfffffff0, 0xfc068644, 0 },
 	{ JLINK_CORE_CORTEX_A5, "SAMA5D3", 0xffffee40, 0x8a5c07c2, 0xffffffff, 0xfffffe44, 0 },
@@ -209,11 +209,11 @@ void SambaConnectionJlinkHelper::open(const QString& deviceFamily)
 	while (!JLINKARM_IsHalted()) {}
 
 	m_core = JLINKARM_CORE_GetFound();
-	if ((m_core == JLINK_CORE_ARM926EJ_S) ||
+	if ((m_core == JLINK_CORE_ARM9) ||
 	    (m_core == JLINK_CORE_CORTEX_A5) ||
 	    (m_core == JLINK_CORE_CORTEX_M7))
 	{
-		if ((m_core == JLINK_CORE_ARM926EJ_S) ||
+		if ((m_core == JLINK_CORE_ARM9) ||
 		    (m_core == JLINK_CORE_CORTEX_A5)) {
 			// Configure SVC Mode without IRQ & FIQ
 			JLINKARM_WriteReg(ARM_REG_CPSR, F_BIT | I_BIT | ARM_MODE_SVC);
@@ -389,7 +389,7 @@ bool SambaConnectionJlinkHelper::write(quint32 address, const QByteArray& data)
 
 bool SambaConnectionJlinkHelper::go(quint32 address)
 {
-	if ((m_core == JLINK_CORE_ARM926EJ_S) ||
+	if ((m_core == JLINK_CORE_ARM9) ||
 	    (m_core == JLINK_CORE_CORTEX_A5))
 	{
 		if (!JLINKARM_IsHalted())
