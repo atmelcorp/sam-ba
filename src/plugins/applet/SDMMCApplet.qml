@@ -21,7 +21,8 @@ Applet {
 	commands: [
 		AppletCommand { name:"initialize"; code:0 },
 		AppletCommand { name:"readPages"; code:0x32 },
-		AppletCommand { name:"writePages"; code:0x33 }
+		AppletCommand { name:"writePages"; code:0x33 },
+		AppletCommand { name:"enableBootPartition"; code:0x37 }
 	]
 
 	/*! \internal */
@@ -117,5 +118,72 @@ Applet {
 		        "    sdmmc           use default board settings",
 		        "    sdmmc:0:1:1:8:5 use fully custom settings (SDMMC0, IOSET1, first boot partition, 8-bit, 1.8V/3.3V)",
 		        "    sdmmc:0::1      use default board settings but force use of SDMMC0, first boot partition"]
+	}
+
+	/*! \internal */
+	function commandLineCommands() {
+		 var commands = defaultCommandLineCommands()
+		 commands.push("enablebootpartition")
+		 return commands
+	}
+
+	/*! \internal */
+	function commandLineCommandHelp(command) {
+		 if (command === "enablebootpartition") {
+			return ["* enablebootpartition - enable/disable eMMC boot partition",
+				"Syntax:",
+				"    enablebootpartition:[<partition>]",
+				"Examples:",
+				"    enablebootpartition    disable boot partitions",
+				"    enablebootpartition:1  enable boot partition 1",
+				"    enablebootpartition:2  enable boot partition 2"]
+		 }
+		 else {
+			return defaultCommandLineCommandHelp(command)
+		 }
+	}
+
+	/*! \internal */
+	function commandLineCommandEnableBootPartition(args) {
+		var boot_partition
+		var cmd, status
+
+		switch(args.length) {
+		case 1:
+			if (args[0].length > 0) {
+				boot_partition = Utils.parseInteger(args[0])
+				if (isNaN(boot_partition) || boot_partition < 0 || boot_partition > 2)
+					return "Invalid boot partition (expected 0, 1 or 2)."
+			}
+			// fall-through
+		case 0:
+			break
+		default:
+			return "Invalid number of arguments (expected 0 or 1)."
+		}
+
+		if (typeof boot_partition === "undefined")
+			boot_partition = 0
+
+		cmd = command("enableBootPartition")
+		if (cmd) {
+			status = connection.appletExecute(cmd, [boot_partition])
+			if (status === 0)
+				memoryPages = connection.appletMailboxRead(0)
+			else
+				return "Enable Boot Partition command failed (status=" + status + ")"
+		} else {
+			return "Applet does not support 'Enable Boot Partition' command"
+		}
+	}
+
+	/*! \internal */
+	function commandLineCommand(command, args) {
+		if (command === "enablebootpartition") {
+			return commandLineCommandEnableBootPartition(args)
+		}
+		else {
+			return defaultCommandLineCommand(command, args)
+		}
 	}
 }
