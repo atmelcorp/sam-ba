@@ -133,6 +133,12 @@ Device {
 			codeAddr: 0x20401000
 			mailboxAddr: 0x20401004
 			entryAddr: 0x20401080
+		},
+		ResetApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-reset_samv71-generic_sram.bin")
+			codeAddr: 0x20401000
+			mailboxAddr: 0x20401004
+			entryAddr: 0x20401080
 		}
 	]
 

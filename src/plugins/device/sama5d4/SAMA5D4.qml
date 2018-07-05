@@ -155,6 +155,12 @@ Device {
 			mailboxAddr: 0x200004
 			entryAddr: 0x200000
 			nandHeaderHelp: "For information on NAND header values, please refer to SAMA5D4 datasheet section \"12.4.4 Detailed Memory Boot Procedures\"."
+		},
+		ResetApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-reset_sama5d4-generic_sram.bin")
+			codeAddr: 0x200000
+			mailboxAddr: 0x200004
+			entryAddr: 0x200000
 		}
 	]
 

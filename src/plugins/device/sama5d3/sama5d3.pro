@@ -12,6 +12,7 @@ DEVICE_FILES *= \
     applets/applet-extram_sama5d3-generic_sram.bin \
     applets/applet-lowlevel_sama5d3-generic_sram.bin \
     applets/applet-nandflash_sama5d3-generic_sram.bin \
+    applets/applet-reset_sama5d3-generic_sram.bin \
     applets/applet-sdmmc_sama5d3-generic_sram.bin \
     applets/applet-serialflash_sama5d3-generic_sram.bin
 

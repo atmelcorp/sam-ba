@@ -13,7 +13,8 @@ DEVICE_FILES *= \
     applets/applet-bootconfig_samv71-generic_sram.bin \
     applets/applet-extram_samv71-generic_sram.bin \
     applets/applet-internalflash_samv71-generic_sram.bin \
-    applets/applet-lowlevel_samv71-generic_sram.bin
+    applets/applet-lowlevel_samv71-generic_sram.bin \
+    applets/applet-reset_samv71-generic_sram.bin
 
 include(../device.pri)
 

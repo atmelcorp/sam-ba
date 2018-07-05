@@ -185,6 +185,12 @@ Device {
 			codeAddr: 0x220000
 			mailboxAddr: 0x220004
 			entryAddr: 0x220000
+		},
+		ResetApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-reset_sama5d2-generic_sram.bin")
+			codeAddr: 0x220000
+			mailboxAddr: 0x220004
+			entryAddr: 0x220000
 		}
 	]
 

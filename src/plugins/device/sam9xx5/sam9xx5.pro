@@ -11,6 +11,7 @@ DEVICE_FILES *= \
     applets/applet-lowlevel_sam9x25-generic_sram.bin \
     applets/applet-extram_sam9x25-generic_sram.bin \
     applets/applet-nandflash_sam9x25-generic_ddram.bin \
+    applets/applet-reset_sam9x25-generic_sram.bin \
     applets/applet-sdmmc_sam9x25-generic_ddram.bin \
     applets/applet-serialflash_sam9x25-generic_ddram.bin
 

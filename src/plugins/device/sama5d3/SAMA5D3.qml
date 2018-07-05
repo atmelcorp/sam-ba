@@ -155,6 +155,12 @@ Device {
 			mailboxAddr: 0x300004
 			entryAddr: 0x300000
 			nandHeaderHelp: "For information on NAND header values, please refer to SAMA5D3 datasheet section \"11.4.4 Detailed Memory Boot Procedures\"."
+		},
+		ResetApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-reset_sama5d3-generic_sram.bin")
+			codeAddr: 0x300000
+			mailboxAddr: 0x300004
+			entryAddr: 0x300000
 		}
 	]
 

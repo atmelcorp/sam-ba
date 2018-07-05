@@ -37,4 +37,10 @@ Item {
 		\brief The command timeout (in milliseconds)
 	*/
 	property var timeout: 10000
+
+	/*!
+		\qmlproperty bool AppletCommand::isReset
+		\brief We don't return to the SAM-BA monitor after a 'reset' command
+	*/
+	property var isReset: false
 }

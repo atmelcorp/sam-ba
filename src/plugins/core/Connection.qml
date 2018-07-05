@@ -496,6 +496,11 @@ Item {
 		if (!go(applet.entryAddr))
 			return
 
+		if (cmd.isReset) {
+			mailbox = new Uint32Array(32)
+			return 0
+		}
+
 		// wait for device to go back to monitor
 		if (!waitForMonitor(cmd.timeout))
 			return
