@@ -65,6 +65,18 @@ Connection {
 	property alias baudRate: helper.baudRate
 
 	/*!
+	\qmlproperty int SerialConnection::mailboxAddr
+	\brief The address of the applet mailbox.
+	*/
+	property alias mailboxAddr: helper.mailboxAddr
+
+	/*!
+	\qmlproperty int SerialConnection::cmdCode
+	\brief The applet command code.
+	*/
+	property alias cmdCode: helper.cmdCode
+
+	/*!
 	\qmlproperty int SerialConnection::maxChunkSize
 	\brief The maximum size of the data chunks when reading from the device
 
@@ -158,6 +170,18 @@ Connection {
 	*/
 	function waitForMonitor(timeout) {
 		return helper.waitForMonitor(timeout)
+	}
+
+	/*!
+	\sa Connection::appletExecute()
+	*/
+	function appletExecute(cmd, args) {
+		if (!applet)
+			return
+
+		cmdCode = cmd.code
+		mailboxAddr = applet.mailboxAddr
+		return defaultAppletExecute(cmd, args)
 	}
 
 	/*! \internal */

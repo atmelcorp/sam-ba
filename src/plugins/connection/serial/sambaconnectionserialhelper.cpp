@@ -34,6 +34,8 @@ SambaConnectionSerialHelper::SambaConnectionSerialHelper(QQuickItem* parent)
 	: QQuickItem(parent),
 	  m_port(""),
 	  m_baudRate(0),
+	  m_mailboxAddr(0),
+	  m_cmdCode(~0),
 	  m_maxChunkSize(16384)
 {
 }
@@ -68,6 +70,34 @@ void SambaConnectionSerialHelper::setBaudRate(qint32 baudRate)
 	{
 		m_baudRate = baudRate;
 		emit baudRateChanged();
+	}
+}
+
+quint32 SambaConnectionSerialHelper::mailboxAddr() const
+{
+	return m_mailboxAddr;
+}
+
+void SambaConnectionSerialHelper::setMailboxAddr(quint32 mailboxAddr)
+{
+	if (m_mailboxAddr != mailboxAddr)
+	{
+		m_mailboxAddr = mailboxAddr;
+		emit mailboxAddrChanged();
+	}
+}
+
+quint32 SambaConnectionSerialHelper::cmdCode() const
+{
+	return m_cmdCode;
+}
+
+void SambaConnectionSerialHelper::setCmdCode(quint32 cmdCode)
+{
+	if (m_cmdCode != cmdCode)
+	{
+		m_cmdCode = cmdCode;
+		emit cmdCodeChanged();
 	}
 }
 
@@ -375,9 +405,12 @@ bool SambaConnectionSerialHelper::waitForMonitor(int timeout)
 		return false;
 
 	if (m_at91) {
-		return true;
+		QVariant value = readu32(m_mailboxAddr, timeout);
+		bool ok = false;
+		quint32 ack = value.toUInt(&ok);
+		return (ok && (ack == ~m_cmdCode));
 	} else {
 		QByteArray response = readSerial(1, timeout);
-		return (response.size() > 1) && (response.at(0) == 6);
+		return (response.size() == 1) && (response.at(0) == 6);
 	}
 }

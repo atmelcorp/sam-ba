@@ -27,6 +27,8 @@ class Q_DECL_EXPORT SambaConnectionSerialHelper : public QQuickItem
 	Q_OBJECT
 	Q_PROPERTY(QString port READ port WRITE setPort NOTIFY portChanged)
 	Q_PROPERTY(qint32 baudRate READ baudRate WRITE setBaudRate NOTIFY baudRateChanged)
+	Q_PROPERTY(quint32 mailboxAddr READ mailboxAddr WRITE setMailboxAddr NOTIFY mailboxAddrChanged)
+	Q_PROPERTY(quint32 cmdCode READ cmdCode WRITE setCmdCode NOTIFY cmdCodeChanged)
 
 public:
 	SambaConnectionSerialHelper(QQuickItem *parent = 0);
@@ -37,6 +39,12 @@ public:
 
 	qint32 baudRate() const;
 	void setBaudRate(qint32 baudRate);
+
+	quint32 mailboxAddr() const;
+	void setMailboxAddr(quint32 mailboxAddr);
+
+	quint32 cmdCode() const;
+	void setCmdCode(quint32 cmdCode);
 
 	Q_INVOKABLE QStringList availablePorts();
 
@@ -59,6 +67,8 @@ public:
 signals:
 	void portChanged();
 	void baudRateChanged();
+	void mailboxAddrChanged();
+	void cmdCodeChanged();
 	void connectionOpened(bool at91);
 	void connectionFailed(const QString& message);
 	void connectionClosed();
@@ -72,6 +82,8 @@ private:
 	bool m_at91;
 	QString m_port;
 	qint32 m_baudRate;
+	quint32 m_mailboxAddr;
+	quint32 m_cmdCode;
 	qint32 m_maxChunkSize;
 	QSerialPort m_serial;
 };

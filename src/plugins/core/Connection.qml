@@ -179,6 +179,12 @@ Item {
 	property var applet
 
 	/*!
+		\qmlproperty Mailbox Connection::mailbox
+		\brief The applet mailbox, or \tt undefined if the applet has not been executed yet.
+	*/
+	property var mailbox
+
+	/*!
 		\qmlsignal Connection::connectionOpened()
 		\brief This signal is triggered when the connection has been opened successfully.
 	*/
@@ -366,9 +372,9 @@ Item {
 	*/
 	function appletMailboxRead(index)
 	{
-		if (!applet || index > 32)
+		if (!applet || index >= 30 || typeof mailbox !== "object" || typeof mailbox[index] !== "number")
 			return 0
-		return readu32(applet.mailboxAddr + (index + 2) * 4);
+		return mailbox[index + 2]
 	}
 
 	/*!
@@ -405,6 +411,106 @@ Item {
 	}
 
 	/*!
+		\qmlmethod bool Connection::appletMailboxSend()
+		\brief Send the content of the applet mailbox.
+
+		Returns true on success, false otherwise.
+	*/
+	function appletMailboxSend()
+	{
+		var mbxOffset = 0
+
+		for (var i = 0; i < mailbox.length; i++) {
+			if (!writeu32(applet.mailboxAddr + mbxOffset, Utils.parseInteger(mailbox[i])))
+				return false
+			mbxOffset += 4
+		}
+
+		return true
+	}
+
+	/*!
+		\qmlmethod bool Connection::appletMailboxReceive(int timeout)
+		\brief Receive the content of the applet mailbox.
+
+		Returns true on success, false otherwise.
+	*/
+	function appletMailboxReceive(timeout)
+	{
+		var mbxOffset = 0
+		var startTime = new Date().getTime()
+		var elapsed = 0
+
+		mailbox = new Uint32Array(32)
+		for (var i = 0; i < mailbox.length; i++) {
+			var value = readu32(applet.mailboxAddr + mbxOffset, timeout - elapsed)
+			if (typeof value !== "number")
+				return false
+
+			mailbox[i] = value
+			mbxOffset += 4
+			elapsed = new Date().getTime() - startTime
+		}
+
+		return true
+	}
+
+	/*!
+		\qmlmethod void Connection::defaultAppletExecute(AppletCommand command, var arguments)
+		\brief Default implementation for Connection::appletExecute()
+
+		Returns the applet return code. No value is returned if no
+		applet is loaded, if the arguments types are invalid or if the
+		applet command has not completed before the timeout was reached.
+	*/
+	function defaultAppletExecute(cmd, args)
+	{
+		if (!applet)
+			return
+
+		mailbox = new Uint32Array(32)
+		var index = 0;
+
+		// write applet command / status
+		mailbox[index++] = cmd.code
+		mailbox[index++] = 0xffffffff
+
+		// write applet arguments
+		if (Array.isArray(args)) {
+			var numArgs = Math.min(args.length, 30)
+			for (var i = 0; i < numArgs; i++)
+				mailbox[index++] = Utils.parseInteger(args[i])
+		}
+		else if (typeof args === "number") {
+			mailbox[index++] = Utils.parseInteger(args)
+		}
+		else
+		{
+			return
+		}
+
+		if (!appletMailboxSend())
+			return
+
+		// run applet
+		if (!go(applet.entryAddr))
+			return
+
+		// wait for device to go back to monitor
+		if (!waitForMonitor(cmd.timeout))
+			return
+
+		// refresh mailbox
+		if (!appletMailboxReceive(cmd.timeout))
+			return
+
+		if (mailbox[0] === (0xffffffff - cmd.code)) {
+			// return applet status
+			return mailbox[1]
+		}
+	}
+
+	/*!
 		\qmlmethod int Connection::appletExecute(AppletCommand command, var arguments)
 		\brief Execute applet \a command with \a arguments and poll for
 		completion until the command has completed or its timeout is expired.
@@ -423,53 +529,7 @@ Item {
 	*/
 	function appletExecute(cmd, args)
 	{
-		if (!applet)
-			return
-
-		var mbxOffset = 0
-
-		// write applet command / status
-		writeu32(applet.mailboxAddr + mbxOffset, cmd.code)
-		mbxOffset += 4
-		writeu32(applet.mailboxAddr + mbxOffset, 0xffffffff)
-		mbxOffset += 4
-
-		// write applet arguments
-		if (Array.isArray(args)) {
-			for (var i = 0; i < args.length; i++) {
-				writeu32(applet.mailboxAddr + mbxOffset, Utils.parseInteger(args[i]));
-				mbxOffset += 4;
-			}
-		}
-		else if (typeof args === "number") {
-			writeu32(applet.mailboxAddr + mbxOffset, Utils.parseInteger(args))
-			mbxOffset += 4
-		}
-		else
-		{
-			return
-		}
-
-		// run applet
-		go(applet.entryAddr)
-
-		// wait for device to go back to monitor
-		var startTime = new Date().getTime()
-		waitForMonitor(cmd.timeout)
-
-		// wait for completion (waitForMonitor is not always reliable depending
-		// on the connection type)
-		var elapsed = 0
-		while (elapsed < cmd.timeout) {
-			var ack = readu32(applet.mailboxAddr, cmd.timeout - elapsed);
-			if (ack === (0xffffffff - cmd.code)) {
-				// return applet status
-				return readu32(applet.mailboxAddr + 4)
-			}
-
-			Utils.msleep(5)
-			elapsed = new Date().getTime() - startTime
-		}
+		return defaultAppletExecute(cmd, args)
 	}
 
 	/*!
