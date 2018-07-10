@@ -6,10 +6,15 @@ TARGET = samba_conn_serial
 
 DESTPATH = /qml/SAMBA/Connection/Serial
 
-SOURCES += sambaconnectionserialhelper.cpp \
-    xmodemhelper.cpp
-HEADERS += sambaconnectionserialhelper.h \
-    xmodemhelper.h
+SOURCES += sambaconnectionserialhelper.cpp
+HEADERS += sambaconnectionserialhelper.h
+
+INCLUDEPATH += $$PWD/../xmodem
+DEPENDPATH += $$PWD/../xmodem
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../xmodem/release -lsamba_conn_xmodem
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../xmodem/debug -lsamba_conn_xmodem
+else:unix: LIBS += -L$$OUT_PWD/../xmodem -lsamba_conn_xmodem
 
 # set RPATH on Linux
 unix:!mac:{
