@@ -281,7 +281,7 @@ Item {
 
 		Returns true on success, false otherwise.
 	*/
-	function writeu8(address, data, timeout) {
+	function writeu8(address, data) {
 		return false
 	}
 
@@ -721,7 +721,7 @@ Item {
 			return "Invalid value parameter (not a number)."
 		if (!writeu8(addr, (value & 0xff) >>> 0))
 			return "Failed to run command."
-		print("write16(" + Utils.hex(addr, 8) + "," +
+		print("write8(" + Utils.hex(addr, 8) + "," +
 		             Utils.hex(value, 2) + ")")
 	}
 
