@@ -146,10 +146,15 @@ Applet {
 
 		var value = readBootCfg(index)
 		var text = configValueToText(index, value)
-		if (typeof text === "undefined")
-			print(configParams[index] + "=" + Utils.hex(value, 8))
-		else
-			print(configParams[index] + "=" + Utils.hex(value, 8) + " / " + text)
+		if (isNaN(value) || typeof value === "undefined") {
+			if (typeof text === "string")
+				print(configParams[index] + "=" + text)
+		} else {
+			if (typeof text === "undefined")
+				print(configParams[index] + "=" + Utils.hex(value, 8))
+			else
+				print(configParams[index] + "=" + Utils.hex(value, 8) + " / " + text)
+		}
 	}
 
 	/*! \internal */
@@ -173,13 +178,18 @@ Applet {
 		var value = Utils.parseInteger(args[1])
 		if (isNaN(value))
 			value = configValueFromText(index, args[1])
-		if (isNaN(value) || typeof value === "undefined")
+		if (isNaN(value) && typeof value === "undefined")
 			return "Invalid value parameter"
 		var text = configValueToText(index, value)
-		if (typeof text === "undefined")
-			print("Setting " + configParams[index] + " to " + Utils.hex(value, 8))
-		else
-			print("Setting " + configParams[index] + " to " + Utils.hex(value, 8) + " (" + text + ")")
+		if (isNaN(value)) {
+			if (typeof text === "string")
+				print("Setting " + configParams[index] + " to " + text)
+		} else {
+			if (typeof text === "undefined")
+				print("Setting " + configParams[index] + " to " + Utils.hex(value, 8))
+			else
+				print("Setting " + configParams[index] + " to " + Utils.hex(value, 8) + " (" + text + ")")
+		}
 		writeBootCfg(index, value)
 	}
 

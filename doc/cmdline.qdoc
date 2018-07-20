@@ -132,7 +132,7 @@ Running applet commands requires several parameters on the command line:
 The list of supported devices can be displayed by using "\e{sam-ba -d help}".
 Running this command with SAM-BA 3.2 will display:
 \code
-Known devices: sam9xx5, sama5d2, sama5d3, sama5d4, samv71
+Known devices: sam9x60, sam9xx5, sama5d2, sama5d3, sama5d4, samv71
 \endcode
 For ease of use, several aliases are accepted by the tool: for example using
 "sama5d2" is equivalent to "sama5d27".

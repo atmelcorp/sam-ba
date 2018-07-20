@@ -11,6 +11,7 @@ headerdirs = \
 	../src/plugins/connection/serial \
 	../src/plugins/connection/jlink \
 	../src/plugins/device/sam9xx5 \
+	../src/plugins/device/sam9x60 \
 	../src/plugins/device/sama5d2 \
 	../src/plugins/device/sama5d3 \
 	../src/plugins/device/sama5d4 \
@@ -21,6 +22,7 @@ sourcedirs = . \
 	../src/plugins/connection/serial \
 	../src/plugins/connection/jlink \
 	../src/plugins/device/sam9xx5 \
+	../src/plugins/device/sam9x60 \
 	../src/plugins/device/sama5d2 \
 	../src/plugins/device/sama5d3 \
 	../src/plugins/device/sama5d4 \

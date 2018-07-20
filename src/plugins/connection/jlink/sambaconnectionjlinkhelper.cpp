@@ -32,6 +32,7 @@ struct mpu_regs {
 /* Order is important: probing stops on first matching device */
 static const struct mpu_regs mpu_regs[] = {
 	{ JLINK_CORE_ARM9, "SAM9xx5", 0xfffff240, 0x819a05a1, 0xffffffff, 0xfffffe44, 0 },
+	{ JLINK_CORE_ARM9, "SAM9X60", 0xfffff240, 0x819b00a0, 0xffff00e0, 0xffffff84, 0 },
 	{ JLINK_CORE_CORTEX_A5, "SAMA5D2", 0xfc069000, 0x8a5c08c0, 0xffffffe0, 0xf8048044, 0xf8030058 },
 	{ JLINK_CORE_CORTEX_A5, "SAMA5D4", 0xfc069040, 0x8a5c07c0, 0xfffffff0, 0xfc068644, 0 },
 	{ JLINK_CORE_CORTEX_A5, "SAMA5D3", 0xffffee40, 0x8a5c07c2, 0xffffffff, 0xfffffe44, 0 },

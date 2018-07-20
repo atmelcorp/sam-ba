@@ -114,6 +114,9 @@ to refer to the \l{SAM-BA API Reference} and
 \li \l{SAMBA.Device.SAM9xx5 Module}
 \li Contains support for SAM9xx5 device
 \row
+\li \l{SAMBA.Device.SAM9X60 Module}
+\li Contains support for SAM9X60 device
+\row
 \li \l{SAMBA.Device.SAMA5D2 Module}
 \li Contains support for SAMA5D2 device
 \row

@@ -1,0 +1,8 @@
+/*!
+\qmlmodule SAMBA.Device.SAM9X60 3.2
+\title SAMBA.Device.SAM9X60 Module
+
+The SAMBA.Device.SAM9X60 module contains an implementation of the
+SAMBA::Device type for the SAM9X60.
+device.
+*/

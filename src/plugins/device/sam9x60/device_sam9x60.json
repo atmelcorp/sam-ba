@@ -1,0 +1,6 @@
+{
+	"module": "SAMBA.Device.SAM9X60",
+	"module_version": "3.2",
+	"classname": "SAM9X60",
+	"type": "device"
+}
