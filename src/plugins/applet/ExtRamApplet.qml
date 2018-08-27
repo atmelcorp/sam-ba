@@ -38,6 +38,24 @@ Applet {
 	/* -------- Command Line Handling -------- */
 
 	/*! \internal */
+	function commandLineParse(args) {
+		if (args.length > 1)
+			return "Invalid number of arguments."
+
+		var config = device.config.extram
+
+		if (args.length >= 1) {
+			if (args[0].length > 0) {
+				config.preset = Utils.parseInteger(args[0]);
+				if (isNaN(config.preset))
+					return "Invalid preset (not a number)."
+			}
+		}
+
+		return true
+	}
+
+	/*! \internal */
 	function commandLineCommands() {
 		return [ ]
 	}
