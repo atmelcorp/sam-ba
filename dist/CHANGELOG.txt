@@ -1,5 +1,19 @@
 # Atmel SAM-BA - SAM Boot Assistant
 
+## Version 3.2.3
+
+### Bugfixes
+
+- Fixed 'extram' applet so the 'preset' parameter can be set from the command
+  line.
+- Added missing JLinkARM.dll file in win32 archive.
+
+### API Changes
+
+- No changes were made to the QML API
+
+
+
 ## Version 3.2.2
 
 ### Bugfixes
