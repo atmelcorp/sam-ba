@@ -55,6 +55,16 @@ Applet {
 		return true
 	}
 
+	/* \internal */
+	function commandLineHelp() {
+		return ["Syntax: extram:[<preset>]",
+			"Parameters:",
+			"    preset  External RAM chip",
+			"Examples:",
+			"    extram    use default board settings",
+			"    extram:1  use preset 1 for type of external RAM"]
+	}
+
 	/*! \internal */
 	function commandLineCommands() {
 		return [ ]
