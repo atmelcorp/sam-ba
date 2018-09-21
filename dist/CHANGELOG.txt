@@ -1,5 +1,26 @@
 # Microchip SAM-BA - SAM Boot Assistant
 
+## Version 3.3-beta1
+
+#### Bugfixes
+
+- Fixed dist/dist.pro to use $[QT_INSTALL_QML]
+
+#### Enhancements
+
+- Added support to sam9x60 device
+- Made 'jlink' sub-project optional
+- Made 'doc' sub-project optional
+- Rework HTML documents
+
+#### API Changes
+
+- No changes were made to the QML API
+- Added the new SecureConnection class to handle connections to the secure
+  SAM-BA monitor
+
+
+
 ## Version 3.2.3
 
 ### Bugfixes
