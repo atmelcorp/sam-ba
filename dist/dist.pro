@@ -42,7 +42,7 @@ unix:{
 	INSTALLS += otherlibs
 
 	qmlmodules.path = /qml
-	qmlmodules.files = $$[QT_INSTALL_LIBS]/../qml/QtQuick.2
+	qmlmodules.files = $$[QT_INSTALL_QML]/QtQuick.2
 	INSTALLS += qmlmodules
 }
 else:win32:{
@@ -76,6 +76,6 @@ else:win32:{
 	INSTALLS += otherlibs
 
 	qmlmodules.path = /qml
-	qmlmodules.files = $$[QT_INSTALL_LIBS]/../qml/QtQuick.2
+	qmlmodules.files = $$[QT_INSTALL_QML]/QtQuick.2
 	INSTALLS += qmlmodules
 }
