@@ -2,6 +2,7 @@
 
 TOP_DIR=$(pwd)
 APPLET_DIR="$TOP_DIR/src/plugins/device"
+[ -n "$DEVICE" ] && APPLET_DIR="$APPLET_DIR/$DEVICE"
 BUILD_DIR="$TOP_DIR/softpack"
 
 [ -n "$GIT_REPOSITORY" ] || GIT_REPOSITORY="https://github.com/atmelcorp/atmel-software-package.git"
