@@ -7,6 +7,7 @@ DEVICE_FILES *= \
     SAM9X60.qml \
     SAM9X60BootConfigApplet.qml \
     SAM9X60Config.qml \
+    SAM9X60EK.qml \
     SAM9X60LowlevelApplet.qml \
     SAM9X60LowlevelConfig.qml \
     sam9x60-bcp.js \
@@ -26,7 +27,8 @@ DEVICE_FILES *= \
 include(../device.pri)
 
 metadata.files = \
-    device_sam9x60.json
+    device_sam9x60.json \
+    board_sam9x60-ek.json
 metadata.path = /metadata
 INSTALLS *= metadata
 
