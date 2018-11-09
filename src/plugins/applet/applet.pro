@@ -16,6 +16,7 @@ qml.files = \
     ResetApplet.qml \
     SDMMCApplet.qml \
     SDMMCConfig.qml \
+    SecureBootConfigApplet.qml \
     SerialConfig.qml \
     SerialFlashApplet.qml \
     SerialFlashConfig.qml
