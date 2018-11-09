@@ -8,4 +8,6 @@ SAM9X60Config 3.2 SAM9X60Config.qml
 SAM9X60EK 3.2 SAM9X60EK.qml
 SAM9X60LowlevelApplet 3.2 SAM9X60LowlevelApplet.qml
 SAM9X60LowlevelConfig 3.2 SAM9X60LowlevelConfig.qml
+SAM9X60SecureBootConfigApplet 3.2 SAM9X60SecureBootConfigApplet.qml
+SBCP 3.2 sam9x60-sbcp.js
 UHCP 3.2 sam9x60-uhcp.js
