@@ -25,7 +25,12 @@ DEVICE_FILES *= \
     applets/applet-reset_sam9x60-generic_sram.bin \
     applets/applet-sdmmc_sam9x60-generic_ddram.bin \
     applets/applet-securebootconfig_sam9x60-generic_sram.bin \
-    applets/applet-serialflash_sam9x60-generic_ddram.bin
+    applets/applet-serialflash_sam9x60-generic_ddram.bin \
+    applets/applet-bootconfig_sam9x60-generic_sram.cip \
+    applets/applet-extram_sam9x60-generic_sram.cip \
+    applets/applet-lowlevel_sam9x60-generic_sram.cip \
+    applets/applet-reset_sam9x60-generic_sram.cip \
+    applets/applet-securebootconfig_sam9x60-generic_sram.cip
 
 include(../device.pri)
 

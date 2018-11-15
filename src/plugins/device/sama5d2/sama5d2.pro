@@ -23,7 +23,16 @@ DEVICE_FILES *= \
     applets/applet-qspiflash_sama5d2-generic_sram.bin \
     applets/applet-reset_sama5d2-generic_sram.bin \
     applets/applet-sdmmc_sama5d2-generic_sram.bin \
-    applets/applet-serialflash_sama5d2-generic_sram.bin
+    applets/applet-serialflash_sama5d2-generic_sram.bin \
+    applets/applet-bootconfig_sama5d2-generic_sram.cip \
+    applets/applet-extram_sama5d2-generic_sram.cip \
+    applets/applet-internalrc_sama5d2-generic_sram.cip \
+    applets/applet-lowlevel_sama5d2-generic_sram.cip \
+    applets/applet-nandflash_sama5d2-generic_sram.cip \
+    applets/applet-qspiflash_sama5d2-generic_sram.cip \
+    applets/applet-reset_sama5d2-generic_sram.cip \
+    applets/applet-sdmmc_sama5d2-generic_sram.cip \
+    applets/applet-serialflash_sama5d2-generic_sram.cip
 
 include(../device.pri)
 

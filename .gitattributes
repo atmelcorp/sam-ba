@@ -3,4 +3,5 @@
 *.bat text eol=crlf
 *.inf text eol=crlf
 *.bin binary
+*.cip binary
 *.cat binary

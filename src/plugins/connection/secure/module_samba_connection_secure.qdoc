@@ -1,0 +1,7 @@
+/*!
+\qmlmodule SAMBA.Connection.Secure 3.2
+\title SAMBA.Connection.Secure Module
+
+The SAMBA.Connection.Secure module contains an implementation of the
+SAMBA::Connection type using a secured USB link to communicate with the device.
+*/

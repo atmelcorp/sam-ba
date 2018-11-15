@@ -1,0 +1,5 @@
+module SAMBA.Connection.Secure
+depends SAMBA 3.2
+plugin samba_conn_secure
+classname SambaConnectionSecurePlugin
+SecureConnection 3.2 SecureConnection.qml

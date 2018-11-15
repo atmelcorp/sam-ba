@@ -14,7 +14,13 @@ DEVICE_FILES *= \
     applets/applet-nandflash_sama5d3-generic_sram.bin \
     applets/applet-reset_sama5d3-generic_sram.bin \
     applets/applet-sdmmc_sama5d3-generic_sram.bin \
-    applets/applet-serialflash_sama5d3-generic_sram.bin
+    applets/applet-serialflash_sama5d3-generic_sram.bin \
+    applets/applet-extram_sama5d3-generic_sram.cip \
+    applets/applet-lowlevel_sama5d3-generic_sram.cip \
+    applets/applet-nandflash_sama5d3-generic_sram.cip \
+    applets/applet-reset_sama5d3-generic_sram.cip \
+    applets/applet-sdmmc_sama5d3-generic_sram.cip \
+    applets/applet-serialflash_sama5d3-generic_sram.cip
 
 include(../device.pri)
 
