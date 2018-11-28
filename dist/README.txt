@@ -45,6 +45,7 @@ This release supports the following platforms:
 This release contains several examples:
 
 - examples/sam9xx5: examples for SAM9xx5 (NAND, SD/MMC, SPI Flash)
+- examples/sam9x60: examples for SAM9X60 (NAND, SD/MMC, SPI/QSPI Flash)
 - examples/sama5d2: examples for SAMA5D2 (boot configuration, NAND, SD/MMC, SPI/QSPI Flash)
 - examples/sama5d3: examples for SAMA5D3 (NAND, SD/MMC, SPI Flash)
 - examples/sama5d4: examples for SAMA5D4 (NAND, SD/MMC, SPI Flash, PIO)
