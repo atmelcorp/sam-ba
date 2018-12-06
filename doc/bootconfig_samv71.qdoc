@@ -1,0 +1,10 @@
+/*!
+\page bootconfig_samv71.html
+\title SAM-BA bootconfig applet for SAMV71 devices
+\brief This document explains how to run SAMV71 bootconfig applet commands
+
+\section1 Applet initialization
+
+The \e {bootconfig} applet for SAMV71 doesn't accept any parameter to be initialized.
+
+*/

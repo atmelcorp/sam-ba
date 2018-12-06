@@ -1,0 +1,79 @@
+/*!
+\page devices.html
+\title Selecting the target device/board
+
+\section1 The "\e{-d, --device}" option
+
+The "\e{-d, --device}" should be passed to the command line unless either the
+"\e{-b, --board}" option or \l {script.html#the-x-execute-option} {"\e{-x, -execute}"} option is provided.
+
+The list of the supported devices can be displayed with the following command:
+
+\code
+$ sam-ba -p serial -d help
+Known devices: sam9x60, sam9xx5, sama5d2, sama5d3, sama5d4, samv71
+\endcode
+
+
+\section1 The "\e{-b, --board}" option
+
+The "\e{-b, --board}" option can be substituted to the "\e{-d, --device}" option.
+More precisely, a board extends a device with default configuration and settings
+such as the console instance/ioset for applets to print traces or memory
+controllers instance/ioset to be used to drive and program the external NVM.
+
+The list of the supported boards can be displayed wit the following command:
+
+\code
+$ sam-ba -p serial -b help
+Known boards: sam9x60-ek, sam9xx5-ek, sama5d2-ptc-ek, sama5d2-xplained, sama5d27-som1, sama5d27-som1-ek, sama5d3-ek, sama5d3-xplained, sama5d4-ek, sama5d4-xplained, same70-xplained, samv71-xplained
+\endcode
+
+\section1 Selecting the applet console
+
+Two optional parameters can be provided on the command line after either the
+"\e{-d, --device}" or "\e{-b, --board}" options: the console \e {instance} and
+\e {ioset}. They override the default settings and tell any applet which
+DBGU/UART/USART/FLEXCOM_USART device and which I/O pins to be used for console
+outputs. When the "\e{-d, --device}" option is used, by default, console outputs
+are disabled.
+
+\code
+sam-ba -p <port> -d <device>:help
+
+$ sam-ba -p serial -d sama5d2:help
+Syntax: sama5d2:[<instance>]:[<ioset>]
+Parameters:
+    instance   Serial console peripheral number
+    ioset      Serial console I/O set
+Examples:
+    sama5d2       use default device/board settings
+    sama5d2:1:2   use fully custom settings (peripheral number 1, I/O set 2)
+    sama5d2::2    use default device/board settings but force use of I/O set 2
+Note:
+    Peripheral numbers and I/O sets are device specific. Please see device documentation in 'doc' directory.
+\endcode
+
+Supported console {<instance>, <ioset>} pairs are device specific; please refer to
+the \e {Serial Console Configuration} section of the device configuration:
+\list
+\li \l {SAM9xx5Config} {SAM9xx5 configuration}
+\li \l {SAM9X60Config} {SAM9X60 configuration}
+\li \l {SAMA5D2Config} {SAMA5D2 configuration}
+\li \l {SAMA5D3Config} {SAMA5D3 configuration}
+\li \l {SAMA5D4Config} {SAMA5D4 configuration}
+\li \l {SAMV71Config} {SAMV71 configuration}
+\endlist
+
+\section1 Supported Devices and Boards
+The sam-ba program supports the following Microchip SAM MPUs:
+
+\list
+\li \l {sam9x60.html} {SAM9X60}
+\li \l {sam9xx5.html} {SAM9XX5}
+\li \l {sama5d2.html} {SAMA5D2}
+\li \l {sama5d3.html} {SAMA5D3}
+\li \l {sama5d4.html} {SAMA5D4}
+\li \l {samv71.html} {SAMV71}
+\endlist
+*/

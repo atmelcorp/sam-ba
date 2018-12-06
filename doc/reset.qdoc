@@ -1,0 +1,18 @@
+/*!
+\page reset.html
+\title SAM-BA reset applet
+\brief This document explains how to execute the \b {reset} applet
+
+\section1 Resetting the target
+
+The \b {reset} applet writes into the Control Register (CR) of the Reset
+Controller (RSTC) to reset the SAM MPU device on the target. Depending on the
+board design, other peripherals such as external NVM may or may not be reset as
+well.
+
+\code
+sam-ba -p <port> -d <device> -a reset
+
+$ sam-ba -p serial -d sama5d2 -a reset
+\endcode
+*/

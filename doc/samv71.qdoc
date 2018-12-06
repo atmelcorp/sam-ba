@@ -1,0 +1,19 @@
+/*!
+\page samv71.html
+\title SAMV71
+
+The list of supported applets can be displayed with the following command:
+
+\code
+$ sam-ba -p serial -d samv71 -a help
+Known applets: bootconfig, lowlevel, extram, internalflash, reset
+\endcode
+
+\list
+\li \l {bootconfig_samv71.html} {bootconfig}
+\li \l {extram.html} {extram}
+\li \l {internalflash.html} {internalflash}
+\li \l {lowlevel.html} {lowlevel}
+\li \l {reset.html} {reset}
+\endlist
+*/

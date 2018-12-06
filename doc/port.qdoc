@@ -1,0 +1,96 @@
+/*!
+\page port.html
+\title Connecting to the target device
+
+\section1 The "\e{-p, --port}" option
+
+The "\e{-p, --port}" option should be provided when either the
+\l {monitor.html#the-m-monitor-option} {"\e{-m, --monitor}"} or the \l {applet.html#the-a-applet-option} {"\e{-a, --applet}"} option is passed to the command line.
+If omitted, the \e{serial} connection is chosen.
+
+The option should not be used with the \l {script.html#the-x-execute-option} {"\e{-x, --execute}"} option since its QML
+script already specifies which port should be used.
+
+The "\e{-p, --port}" option tells the sam-ba tool how to connect to the target.
+Also, this option may specify which host peripheral should be used.
+
+Supported port can be listed using the "\e{sam-ba -p help}" command:
+\code
+$ sam-ba -p help
+Know ports: serial, j-link, secure
+\endcode
+
+\section2 Connecting through a serial port
+
+\section3 Connecting to the non-secure SAM-BA monitor
+
+The "\e{-p serial}" option must be provided if the connection to the (non-secure)
+SAM-BA monitor should be established through either the ROM code console
+(DBGU/UART/USART port) or the USB device port of the target.
+
+By default, sam-ba tries to guess the best port for connecting to the target;
+AT91 USB if available, DBGU/UART/USART otherwise. However the host peripheral
+can explicitly be provided on the command line if needed.
+
+The "\e{sam-ba -p serial:help}" command displays all supported serial port
+options:
+\code
+$ sam-ba -p serial:help
+Syntax:
+    serial:[<port>]:[<baudrate>]
+Examples:
+    serial                serial port (will use first AT91 USB if found otherwise first serial port)
+    serial:COM80          serial port on COM80
+    serial:ttyUSB0:57600  serial port on /dev/ttyUSB0, baudrate 57600
+\endcode
+
+\section3 Connecting to the secure SAM-BA monitor
+
+The "\e{-p secure}" option must be provided if the connection to the secure
+SAM-BA monitor should be established through either the ROM code console
+(DBGU/UART/USART port) or the USB device port of the target.
+
+By default, sam-ba tries to guess the best port for connecting to the target;
+AT91 USB if available, DBGU/UART/USART otherwise. However the host peripheral
+can explicitly be provided on the command line if needed.
+
+The "\e{sam-ba -p secure:help}" command displays all supported secure port
+options:
+\code
+$ sam-ba -p secure:help
+Syntax:
+    secure:[<port>]:[<baudrate>]:[<verbose>]
+Examples:
+    secure          serial port (will use first AT91 USB if found otherwise first serial port)
+    secure:COM80    serial port on COM80
+    secure:ttyACM0  serial port on /dev/ttyACM0
+    secure:::1      serial port (display communication between sam-ba and the secure SAM-BA monitor of the target)
+\endcode
+
+\section2 Connecting through the J-Link port
+
+The "\e{-p j-link}" option should be provided if the connection should be
+established through the J-Link port of the target, hence by-passing the
+SAM-BA monitor.
+
+By default, sam-ba selects the first SAM-ICE interface probed on the host.
+However, when many SAM-ICE peripherals are connected to the host, a
+serial-number can be passed on the command line to selected the right one.
+
+The "\e{sam-ba -p j-link:help}" command displays all supported j-link port
+options:
+\code
+$ sam-ba -p j-link:help
+Syntax:
+    j-link:[<S/N>]:[swd|jtag]:[<speed in kHz>]
+Examples:
+    j-link             use first J-Link device found
+    j-link:123456      use J-Link with serial number 123456
+    j-link:123456:swd  use J-Link with serial number 123456, in SWD mode
+    j-link::swd        use first J-Link device found, in SWD mode
+    j-link::jtag       use first J-Link device found, in JTAG mode (JTAG mode is the default)
+    j-link::jtag:150   use first J-Link device found, in JTAG mode at 150kHz (default is 0 for auto)
+\endcode
+
+\b {The J-Link port is closed when the secure SAM-BA monitor is running.}
+*/

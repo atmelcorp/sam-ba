@@ -1,0 +1,20 @@
+/*!
+\page sama5d3.html
+\title SAMA5D3
+
+The list of supported applets can be displayed with the following command:
+
+\code
+$ sam-ba -p serial -d sama5d3 -a help
+Known applets: lowlevel, extram, sdmmc, serialflash, nandflash, reset
+\endcode
+
+\list
+\li \l {extram.html} {extram}
+\li \l {lowlevel.html} {lowlevel}
+\li \l {nandflash.html} {nandflash}
+\li \l {reset.html} {reset}
+\li \l {serialflash.html} {serialflash}
+\li \l {sdmmc.html} {sdmmc}
+\endlist
+*/

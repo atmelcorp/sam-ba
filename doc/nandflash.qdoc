@@ -1,0 +1,252 @@
+/*!
+\page nandflash.html
+\title SAM-BA nandflash applet
+\brief This document explains how to initialize the nandflash applet and how to run its commands
+
+The \e {nandflash} applet drives the Static Memory Controller (SMC) or the
+NAND Flash Controller (NFC) to program an external \b {raw} NAND flash memory
+embedded on the board and connected to the SAM MPU device.
+
+\section1 Applet initialization
+
+The list of parameters to initialize the \e {nandflash} applet can be displayed
+with the following command:
+
+\code
+sam-ba -p <port> -d <device> -a nandflash:help
+
+$ sam-ba -p serial -d sama5d2 -a nandflash:help
+Syntax: nandflash:[<ioset>]:[<bus_width>]:[<header>]
+Parameters:
+    ioset      I/O set
+    bus_width  NAND bus width (8/16)
+    header     NAND header value
+Examples:
+    nandflash                 use default board settings
+    nandflash:2:8:0xc0098da5  use fully custom settings (IOSET2, 8-bit bus, header is 0xc0098da5)
+    nandflash:::0xc0098da5    use default board settings but force header to 0xc0098da5
+\endcode
+
+\section2 I/O Set
+
+The \e{ioset} parameter is an index that represents a group of I/O pins muxed to
+the SMC/NFC. The I/O set values are device specific; please refer to the
+\e {nandflash} section of the device configuration:
+\list
+\li \l {SAM9xx5Config} {SAM9xx5 configuration}
+\li \l {SAM9X60Config} {SAM9X60 configuration}
+\li \l {SAMA5D2Config} {SAMA5D2 configuration}
+\li \l {SAMA5D3Config} {SAMA5D3 configuration}
+\li \l {SAMA5D4Config} {SAMA5D4 configuration}
+\endlist
+
+\section2 Bus Width
+
+The \e{bus_width} parameter represents the number of data pins of the NAND flash.
+Supported values are either 8 (8-bit NAND flash) or 16 (16-bit NAND flash).
+
+\section2 PMECC Header
+
+The \e{header} parameter is a 32-bit word descirbed below:
+
+\table
+\row
+\li 31
+\li 30
+\li 29
+\li 28
+\li 27
+\li 26
+\li 25
+\li 24
+\row
+\li {4, 1} key
+\li -
+\li {3, 1} eccOffset
+\row
+\li 23
+\li 22
+\li 21
+\li 20
+\li 19
+\li 18
+\li 17
+\li 16
+\row
+\li {6, 1} eccOffset
+\li {2, 1} sectorSize
+\row
+\li 15
+\li 14
+\li 13
+\li 12
+\li 11
+\li 10
+\li 9
+\li 8
+\row
+\li {3, 1} eccBitReq
+\li {5, 1} spareSize
+\row
+\li 7
+\li 6
+\li 5
+\li 4
+\li 3
+\li 2
+\li 1
+\li 0
+\row
+\li {4, 1} spareSize
+\li {3, 1} nbSectorPerPage
+\li usePmecc
+\endtable
+
+\section3 usePmecc bits[0]
+
+\list
+\li 0: Do not use PMECC to detect and correct the data.
+\li 1: use PMECC to detect and correct the data.
+\endlist
+
+\section3 nbSectorPerPage bits[3:1]
+
+Number of Sectors per Page
+\list
+\li 0: 1 page per sector
+\li 1: 2 pages per sector
+\li 2: 4 pages per sector
+\li 3: 8 pages per sector
+\li 4: 16 pages per sector
+\endlist
+
+\section3 spareSize bits[12:4]
+
+Size of the spare zone in bytes
+
+\section3 eccBitReq bits[15:13]
+
+Number of ECC bits required
+\list
+\li 0: 2-bit ECC
+\li 1: 4-bit ECC
+\li 2: 8-bit ECC
+\li 3: 12-bit ECC
+\li 4: 24-bit ECC
+\li 5: 32-bit ECC
+\endlist
+
+\section3 sectorSize bits[17:16]
+
+Size of the Sector
+\list
+\li 0: For 512 bytes per sector
+\li 1: For 1024 bytes per sector
+\endlist
+
+\section3 eccOffset bits[26:18]
+
+Offset of the first ECC byte in the spare zone.
+A value below 2 is not allowed and is considred as 2.
+
+\section3 key bits[31:28]
+
+Value 0xC must be written here to validate the content of the whole word.
+
+\section1 Supported commands
+
+The list of commands supported by the \e{nandflash} applet can be displayed
+with the following commands:
+
+\code
+sam-ba -p <port> -d <device> -a nandflash -c help
+
+$ sam-ba -p serial -d sama5d2 -a nandflash -c help
+\endcode
+
+\section2 The erase command
+
+The \e{erase} command resets to 0xFF a range of erase blocks. The size of
+those erase blocks depends on the manufacturer and memory part. Typical erase
+block sizes are 128KiB or 256KiB of data, not including their associated spare.
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a nandflash -c erase:help
+* erase - erase all or part of the memory
+Syntax:
+    erase:[<addr>]:[<length>]
+Examples:
+    erase                 erase all
+    erase:4096            erase from 4096 to end
+    erase:0x1000:0x10000  erase from 0x1000 to 0x11000
+    erase::0x1000         erase from 0 to 0x1000
+\endcode
+
+\section2 The write and writeboot commands
+
+The \e{write} and \e{writeboot} commands program data from a binary file into
+the NAND flash pages. The blocks containing the pages to be programmed should
+be erased first with the \e{erase} command.
+Padding bytes are added to align programmed data to the page boundary.
+The page size is computed from the PMECC header.
+Prior to what both comamnds do, the \e{writeboot} command also modifies the
+relevant unused ARM exception vector to store the size of the bootstrap binary,
+as required by the ROM code during the boot process.
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a nandflash -c write:help
+* write - write to memory from a file
+Syntax:
+    write:<filename>:[<addr>]
+Examples:
+    write:bootstrap.bin         write bootstrap.bin to start of memory
+    write:u-boot.bin:0x10000    write u-boot.bin at offset 0x10000
+
+$ sam-ba -p serial -b sam9x60-ek -a nandflash -c writeboot:help
+Syntax:
+    writeboot:<filename>
+Example:
+    writeboot:bootstrap.bin     write bootstrap.bin as boot program at start of memory
+\endcode
+
+\section2 The read command
+
+The \e{read} command loads data from the NAND flash into a binary file.
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a nandflash -c read:help
+* read - read from memory to a file
+Syntax:
+    read:<filename>:[<addr>]:[<length>]
+Examples:
+    read:firmware.bin              read all to firmware.bin
+    read:firmware.bin:0x1000       read from 0x1000 to end into firmware.bin
+    read:firmware.bin:0x1000:1024  read 1024 bytes from 0x1000 into firmware.bin
+    read:firmware.bin::1024        read 1024 bytes from start of memory into firmware.bin
+\endcode
+
+\section2 The verify and verifyboot commands
+
+The \e{verify} and \e{verifyboot} compare the data programmed in the NAND flash
+with the content of a given binary file. Unlike the \e{verify} command, the
+\e{verifyboot} command ignores the actual value of the relevant unused ARM
+exception vector in the binary file and does as if the value were the size of the
+binary file.
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a nandflash -c verify:help
+* verify - verify memory from a file
+Syntax:
+    verify:<filename>:[<addr>]
+Examples:
+    verify:firmware.bin         verify that start of memory matches firmware.bin
+    verify:firmware.bin:0x1000  verify that memory at offset 0x1000 matches firmware.bin
+
+$ sam-ba -p serial -b sam9x60-ek -a nandflash -c verifyboot:help
+* verifyboot - verify boot program from a file
+Syntax:
+    verifyboot:<filename>
+Example:
+    verifyboot:bootstrap.bin    verify that start of memory matches boot program bootstrap.bin
+\endcode
+*/

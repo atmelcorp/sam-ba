@@ -1,0 +1,118 @@
+/*!
+\page extram.html
+\title SAM-BA extram applet
+\brief This document explains how to initiliaze the lowlevel applet and how to run its commands
+
+The \e {extram} applet initializes the external RAM. The
+\l {lowlevel.html} {\e {lowlevel}} applet should be executed prior to executing
+the \e {extram} applet, as the timings used to initiliaze the external RAM assume
+a bus clock frequency as configured by the \l {lowlevel.html} {\e {lowlevel}} applet.
+
+\section1 Applet initialization
+
+The \e {extram} applet accepts a single \e{preset} parameter, which tells
+the applet which SDRAM chip model is connected to the SAM MPU device.
+
+\code
+sam-ba -p <port> -d <device> -a extram:help
+
+$ sam-ba -p serial -d sama5d2 -a extram:help
+Syntax: extram:[<preset>]
+Parameters:
+    preset  External RAM chip
+Examples:
+    extram    use default board settings
+    extram:1  use preset 1 for type of external RAM
+\endcode
+
+\section2 Supported \e{preset}
+
+\table
+\header
+\li Preset
+\li SDRAM type
+\li Model
+\li System bus frequencies (MHz)
+\row
+\li 0
+\li DDR2
+\li MT47H128M8
+\li 200, 166, 150, 133
+\row
+\li 1
+\li DDR2
+\li MT47H64M16
+\li 200, 166, 150, 133
+\row
+\li 2
+\li DDR2
+\li MT47H128M16 (x2)
+\li 200, 166, 150, 133
+\row
+\li 3
+\li LPDDR2
+\li MT42L128M16 (x2)
+\li 200, 166, 133
+\row
+\li 4
+\li DDR3
+\li MT41K128M16 (x2)
+\li 166
+\row
+\li 5
+\li LPDDR3
+\li EDF8164A3MA
+\li 166
+\row
+\li 6
+\li SDR
+\li IS42S16100E
+\li 150
+\row
+\li 7
+\li SDR
+\li W981216BH
+\row
+\li 8
+\li DDR2
+\li W971G16SG
+\li 200, 166, 150, 133
+\row
+\li 9
+\li DDR2
+\li W972GG6KB (x2)
+\li 200, 166, 150, 133
+\row
+\li 10
+\li SDR
+\li AS4C16M16SA
+\li 150
+\row
+\li 11
+\li LPDDR
+\li MT46H64M16
+\li 200
+\row
+\li 12
+\li DDR2
+\li W972GG6KB
+\li 200, 166, 150, 133
+\row
+\li 0x10000
+\li SDR
+\li MT48LC16M16
+\row
+\li 0x20000
+\li SDR
+\li MT48LC16M16 (x2)
+\row
+\li 0x30000
+\li LPSDR
+\li MT48H32M16
+\li 166
+\endtable
+
+\section1 Supported commands
+
+The \e {extram} applet doesn't support any command.
+*/

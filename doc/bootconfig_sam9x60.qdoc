@@ -1,0 +1,170 @@
+/*!
+\page bootconfig_sam9x60.html
+\title SAM-BA bootconfig applet for SAM9X60 devices
+\brief This document explains how to run SAM9X60 bootconfig applet commands
+
+\section1 Applet initialization
+
+The \e {bootconfig} applet for SAM9X60 doesn't accept any parameter to be initialized.
+
+\section1 Supported commands
+
+The list of all supported commands can be displayed by the following command:
+\code
+$ sam-ba -p serial -d sam9x60 -a bootconfig -c help
+\endcode
+
+\section2 The readcfg command
+
+The \e{readcfg} command reads either the current \b{Boot Configuration Packet (BCP)}
+or the current \b{User Hardware Configuration Packet (UHCP)} from the User Area of
+the OTPC. If the emulation mode of the OTPC is enabled then packets in the User Area
+are stored in the internal SRAM1. Otherwise packets are stored inside the OTP matrix.
+
+The \e{readcfg} command can also read the \b{Boot Sequence Control Register (BSCR)}
+to check whether the emulation mode will be enabled by the ROM code on the next
+reset, before reading its BCP.
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -c readcfg:help
+ * readcfg - read boot configuration
+Syntax:
+    readcfg:(bcp-otp|bcp-emul|uhcp-otp|uhcp-emul|bscr)
+Examples:
+    readcfg:bcp-otp   read the boot config packet from OTP matrix
+    readcfg:bcp-emul  read the boot config packet from OTP emulation mode
+    readcfg:uhcp-otp  read the user hardware config packet from OTP matrix
+    readcfg:uhcp-emul read the user hardware config packet from OTP emulation mode
+    readcfg:bscr      read the boot sequence control register (BSCR)
+\endcode
+
+\section2 The writecfg command
+
+The \e{writecfg} command programs either the \b{Boot Configuration Packet (BCP)} or the
+\b {User Hardware Configuration Packet (UHCP)} into the User Area of the OTPC.
+If the emulation mode of the OTPC is enabled then packets in the User Area are stored
+in the internal SRAM1. Otherwise packets are stored inside the OTP matrix.
+
+The \e{writecfg} command can also program the \b{Boot Sequence Control Register (BSCR)}
+to tell the ROM code whether it should enable the emulation mode before reading its BCP.
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -c writecfg:help
+* writecfg - write boot configuration
+Syntax:
+    writecfg:(bcp-otp|bcp-emul|uhcp-otp|uhcp-emul|bscr):<value>
+
+    <value> := <bscr_value> | <boot_config_text> | <user_hw_config_text>
+
+    <bscr_value> := "EMULATION_DISABLED" | "EMULATION_ENABLED"
+
+    <boot_config_text> := <global_settings> | [ <global_settings> "," ] [ <boot_sequence> ]
+
+    <global_settings> := <global_setting> | <global_setting> "," <global_settings>
+
+    <global_setting> := "MONITOR_DISABLED" | <console_ioset>
+
+    <console_ioset> := "DBGU" | "FLEXCOM0_USART_IOSET1" | ... | "FLEXCOM12_USART_IOSET1"
+
+    <boot_sequence> := <boot_entry> | <boot_entry> "," <boot_sequence>
+
+    <boot_entry> := <spi_entry> | <qspi_entry> | <sdmmc_entry> | <nfc_entry>
+
+    <spi_entry> := <spi0_entry> | <spi1_entry> | <spi2_entry> | <spi3_entry> | <spi4_entry> | <spi5_entry>
+
+    <spi0_entry> := "FLEXCOM0_SPI_IOSET1" | "FLEXCOM0_SPI_IOSET2"
+
+    <spi1_entry> := "FLEXCOM1_SPI_IOSET1" | "FLEXCOM1_SPI_IOSET2"
+
+    <spi2_entry> := "FLEXCOM2_SPI_IOSET1" | "FLEXCOM2_SPI_IOSET2"
+
+    <spi3_entry> := "FLEXCOM3_SPI_IOSET1" | "FLEXCOM3_SPI_IOSET2"
+
+    <spi4_entry> := "FLEXCOM4_SPI_IOSET1" | "FLEXCOM4_SPI_IOSET2" | "FLEXCOM4_SPI_IOSET3" | "FLEXCOM4_SPI_IOSET4" | "FLEXCOM4_SPI_IOSET5" | "FLEXCOM4_SPI_IOSET6"
+
+    <spi5_entry> := "FLEXCOM5_SPI_IOSET1" | "FLEXCOM5_SPI_IOSET2" | "FLEXCOM5_SPI_IOSET3" | "FLEXCOM5_SPI_IOSET4" | "FLEXCOM5_SPI_IOSET5"
+
+    <qspi_entry> := "QSPI0_IOSET1" | "QSPI0_IOSET1_XIP"
+
+    <sdmmc_entry> := <sdmmc_controller> [ '_' <card_detect_pin> ]
+
+    <sdmmc_controller> := "SDMMC0_IOSET1", "SDMMC1_IOSET1"
+
+    <card_detect_pin> := "P" <pio_instance> <pin_number>
+
+    <pio_instance> := "A" | "B" | "C" | "D"
+
+    <pin_number> := "0" | "1" | "2" | "3" | "4" | "5" | ... | "29" | "30" | "31"
+
+    <nfc_entry> := "NFC_IOSET1" | "NFC_IOSET2"
+
+    <user_hw_config_text> := "" | <user_hw_setting> | <user_hw_setting> "," <user_hw_config_text>
+
+    <user_hw_setting> := "JTAGDIS" | "URDDIS" | "UPGDIS" | "URFDIS" |
+                         "UHCINVDIS" | "UHCLKDIS" | "UHCPGDIS" |
+                         "BCINVDIS" | "BCLKDIS" | "BCPGDIS" |
+                         "SBCINVDIS" | "SBCLKDIS" | "SBCPGDIS" |
+                         "CINVDIS" | "CLKDIS" | "CPGDIS"
+
+Examples:
+    writecfg:bscr:EMULATION_ENABLED                           enable OTP emulation mode
+    writecfg:bscr:EMULATION_DISABLED                          disable OTP emulation mode
+    writecfg:bcp-emul:DBGU                                    emtpy boot config (console on DBGU) stored in OTP emulation mode
+    writecfg:bcp-otp:FLEXCOM0_USART_IOSET1,SDMMC1_IOSET1_PA10 boot config with console on FLEXCOM0, boot from SDMMC1 (PA10 as card-detect pin) stored in OTP matrix
+\endcode
+
+\section2 The invalidatecfg command
+
+The \e{invalidatecfg} command invalidates either the current \b{Boot Configuration Packet (BCP)}
+or the current \b{User Hardware Configuration Packet (UHCP)}. An invalidated
+packet is ignored by the OTPC and the ROM code.
+
+\code
+* invalidatecfg - invalidate the boot config packet
+Syntax:
+    invalidatecfg:(bcp-otp|bcp-emul|uhcp-otp|uhcp-emul)
+Examples:
+    invalidatecfg:bcp-otp   invalidate the boot config packet in OTP matrix
+    invalidatecfg:bcp-emul  invalidate the boot config packet in OTP emulation mode
+    invalidatecfg:uhcp-otp  invalidate the user hardware config packet in OTP matrix
+    invalidatecfg:uhcp-emul invalidate the user hardware config packet in OTP emulation mode
+\endcode
+
+\section2 The lockcfg command
+
+The \e{lockcfg} command tells the OTPC to compute the checksum of either the
+current \b{Boot Configuration Packet (BCP)} or the current \b{User Hardware
+Configuration Packet (UHCP)} to discard any further modification of this
+packet, except invalidating it.
+
+\code
+* lockcfg - lock the boot config packet
+Syntax:
+    lockcfg:(bcp-otp|bcp-emul|uhcp-otp|uhcp-emul)
+Examples:
+    lockcfg:bcp-otp   lock the boot config packet in OTP matrix
+    lockcfg:bcp-emul  lock the boot config packet in OTP emulation mode
+    lockcfg:uhcp-otp  lock the user hardware config packet in OTP matrix
+    lockcfg:uhcp-emul lock the user hardware config packet in OTP emulation mode
+\endcode
+
+\section2 The refreshcfg command
+
+The \e{refreshcfg} command tells the OTPC to either enable or disable its
+emulation mode before scanning again all packets in the User Area.
+
+\code
+* refreshcfg - refresh the OTP matrix or emulation mode
+Syntax:
+    refreshcfg:(otp|emul)
+Examples:
+    refreshcfg:otp   disable the OTP emulation mode, if needed, then refresh the OTPC
+    refreshcfg:emul  enable the OTP emulation mode, if needed, then refresh the OTPC
+\endcode
+
+\section2 The resetemul command
+
+The \e{resetemul} command must be called once for all before any other
+command accessing the SRAM1, including the \e{refreshcfg:emul} command.
+Indeed the \e{resetemul} command resets to zero the whole SRAM1.
+*/

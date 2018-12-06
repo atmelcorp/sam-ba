@@ -3,15 +3,67 @@
 \title SAM-BA Documentation
 \brief This document contains information on SAM-BA
 
-\section1 Using SAM-BA Command Line
+Microchip SAM Boot Assistant (SAM-BA) software provides an open set of tools
+for programming Microchip ARM Thumb-based microprocessors. Once the SAM-BA
+monitor, a in-system programmer, is executed on the target device, customers
+can use SAM-BA as a tool to re-program the MPU, without connecting to the
+debugger.
 
-Most common SAM-BA action can be done using SAM-BA command line.
-Please see \l{cmdline.html}{Command Line Documentation} for information on the SAM-BA command line usage.
+Table of contents:
 
-\section1 Scripting SAM-BA
-
-SAM-BA uses Qt5 QML language for scripting.
-
-See \l{scripting.html}{Scripting Documentation} for details on QML API provided by SAM-BA.
-
+\list
+\li \l {gettingstarted.html} {Getting Started}
+    \list
+    \li \l {port.html} {Connecting to the target device/board}
+        \list
+	\li \l {port.html#the-p-port_option} {The "\e{-p, --port}" option}
+	    \list
+            \li \l {port.html#connecting-through-a-serial-port} {Connecting through a serial port}
+            \li \l {port.html#connecting-through-the-j-link-port} {Connecting through the J-Link port}
+	    \endlist
+        \endlist
+    \li \l {devices.html} {Selecting the target device/board}
+        \list
+	\li \l {devices.html#the-d-device-option} {The "\e{-d, --device}" option}
+        \li \l {devices.html#the-b-board-option} {The "\e{-b, --board}" option}
+	\li \l {devices.html#selecting-the-applet-console} {Selecting the applet console}
+        \endlist
+    \li \l {monitor.html} {Executing monitor commands}
+        \list
+	\li \l {monitor.html#the-m-monitor-option} {The "\e{-m, --monitor}" option}
+	\endlist
+    \li \l {applet.html} {Executing applets}
+        \list
+	\li \l {applet.html#the-a-applet-option} {The "\e{-a, --applet}" option}
+	\li \l {applet.html#the-c-command-option} {The "\e{-c, --command}" option}
+	\li \l {applet.html#the-t-tracelevel-option} {The "\e{-t, --tracelevel}" option}
+	\endlist
+    \li \l {script.html} {Executing scripts}
+        \list
+	\li \l {script.html#the-x-execute-option} {The "\e{-x, --execute}" option}
+	\endlist
+    \endlist
+\li \l {devices.html#supported-devices-and-boards} {Supported Devices and Boards}
+    \list
+    \li \l {sam9x60.html} {SAM9X60}
+    \li \l {sam9xx5.html} {SAM9XX5}
+    \li \l {sama5d2.html} {SAMA5D2}
+    \li \l {sama5d3.html} {SAMA5D3}
+    \li \l {sama5d4.html} {SAMA5D4}
+    \li \l {samv71.html} {SAMV71}
+    \endlist
+\li \l {scripting.html} {Scripting SAM-BA with QML}
+\li \l {Glossary}
+    \list
+    \li \l {glossary.html#applets} {Applets}
+    \li \l {glossary.html#board} {Board}
+    \li \l {glossary.html#bootstrap} {Bootstrap}
+    \li \l {glossary.html#device} {Device}
+    \li \l {glossary.html#host} {Host}
+    \li \l {glossary.html#non-volatile-memory-nvm} {Non-Volatile Memory (NVM)}
+    \li \l {glossary.html#rom-code} {ROM code}
+    \li \l {glossary.html#sam-ba-monitor} {SAM-BA monitor}
+    \li \l {glossary.html#target} {Target}
+    \endlist
+\endlist
 */

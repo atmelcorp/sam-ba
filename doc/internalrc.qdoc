@@ -1,0 +1,22 @@
+/*!
+\page internalrc.html
+\title SAM-BA internalrc applet
+\brief This document explains how to initialize the internalrc applet and how to run its commands
+
+The \e {internalrc} applet forces the selection of the internal 12MHz RC,
+instead of any external crystal oscillator, as the source the MAIN clock (MAINCK).
+
+This is a work-around that must be called once for all after each reset before
+programming any fuse word in the Secure Fuse Controller (SFC) on board designs
+using an external crystal oscillator with a frequency different from 12MHz.
+Indeed, internal timings of the SFC for programming fuse words are only valid
+for MAINCK running at 12MHz.
+
+\section1 Applet initialization
+
+The \e {internalrc} applet doesn't accept any parameter to be initialized.
+
+\section1 Supported commands
+
+The \e {internalrc} applet doesn't support any command.
+*/

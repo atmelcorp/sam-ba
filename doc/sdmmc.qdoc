@@ -1,0 +1,161 @@
+/*!
+\page sdmmc.html
+\title SAM-BA sdmmc applet
+\brief This document explains how to initialize the sdmmc applet and how to run its commands
+
+The \e {sdmcc} applet drives any High Speed Multimedia Card Interface (HSMCIx)
+or the Secure Digital Multi-Media Card (SDMMCx) to program an external SD Card or
+e.MMC embedded on the board and connected to the SAM MPU device.
+
+\section1 Applet initialization
+
+The list of parameters to initialize the \e {sdmmc} applet can be displayed
+with the following command:
+
+\code
+sam-ba -p <port> -d <device> -a sdmmc:help
+
+$ sam-ba -p serial -d sama5d2 -a sdmmc:help
+Syntax: sdmmc:[<instance>]:[<ioset>]:[<partition>]:[<bus_width>]:[<voltages>]
+Parameters:
+    instance   SDMMC controller number
+    ioset      SDMMC I/O set
+    partition  Partition number (0=user partition, x>0=boot partition x)
+    bus_width  Data bus width (0=controller max, 1=1-bit, 4=4-bit, 8=8-bit)
+    voltages   Supported voltages (bitfield: 1=1.8V, 2=3.0V, 4=3.3V)
+Examples:
+    sdmmc           use default board settings
+    sdmmc:0:1:1:8:5 use fully custom settings (SDMMC0, IOSET1, first boot partition, 8-bit, 1.8V/3.3V)
+    sdmmc:0::1      use default board settings but force use of SDMMC0, first boot partition
+\endcode
+
+\section2 Instance and I/O Set
+
+An instance parameter \e {x} tells the \e {sdmmc} applet to use the \e {HSMCIx} or
+\e {SDMMCx} controller. The \e {ioset} parameter is an index that represents a group of
+I/O pins muxed to the HSMCIx/SDMMCx controller. The {Instance, I/O set} pairs are
+device specific; please refer to the \e {sdmmc} section of the device configuration:
+\list
+\li \l {SAM9X60Config} {SAM9X60 configuration}
+\li \l {SAMA5D2Config} {SAMA5D2 configuration}
+\li \l {SAMA5D3Config} {SAMA5D3 configuration}
+\li \l {SAMA5D4Config} {SAMA5D4 configuration}
+\endlist
+
+\section2 Partition
+
+The \e {partition} parameter is only relevant for e.MMC and must be set to zero
+for SD Cards. For e.MMC it represents the memory area where data should be
+erased/read from/written into. The 3 possibles values are:
+\list
+\li 0: user partition
+\li 1: boot partition 1
+\li 2: boot partition 2
+\endlist
+
+\section2 Bus Width
+
+The \e {bus_width} parameter represents the number of data pins used to transfer data
+to the SD Card/e.MMC. Possible values are:
+\list
+\li 1: single data I/O
+\li 4: 4 data I/O
+\li 8: 8 data I/O
+\endlist
+
+\section2 Voltage
+
+The \e {voltage} parameter is a bitmask of supported voltages for the SD Card/e.MMC.
+Possible voltages are encoded with the following bitmasks:
+\list
+\li 1: 1.8V
+\li 2: 3.0V
+\li 4: 3.3V
+\endlist
+
+\section1 Supported commands
+
+The list of commands supported by the \e{sdmmc} applet can be displayed
+with the following commands:
+
+\code
+sam-ba -p <port> -d <device> -a sdmmc -c help
+
+$ sam-ba -p serial -d sama5d2 -a sdmmc -c help
+\endcode
+
+\section2 The write and writeboot commands
+
+The \e{write} and \e{writeboot} commands program data from a binary file into
+the SD Card or e.MMC.
+Prior to what both command do, the \e{writeboot} command also modifies the
+relevant unused ARM exception vector to store the size of the bootstrap binary,
+as required by the ROM code during the boot process.
+
+\b {The \e {writeboot} command should be used only when programming a bootstrap
+into some e.MMC boot partition, whereas the \e {write} command should be used
+instead to program an SD Card image into either any SD Card or the user partition
+of any e.MMC.}
+
+\b {The sdcard.img file contains the raw data of the SD Card. It must begin with
+a Master Boot Record (MBR) and its valid partition table. The first partition
+must be formatted in FAT12, FAT16 or FAT32. This FATx file-system must include
+a \e {boot.bin} file in the root folder. This \e {boot.bin} file is actually the
+bootstrap as loaded then executed by the ROM code.}
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a sdmmc -c write:help
+* write - write to memory from a file
+Syntax:
+    write:<filename>:[<addr>]
+Examples:
+    write:sdcard.img            write sdcard.img to start of memory
+
+$ sam-ba -p serial -b sam9x60-ek -a sdmmc -c writeboot:help
+Syntax:
+    writeboot:<filename>
+Example:
+    writeboot:bootstrap.bin     write bootstrap.bin as boot program at start of memory
+\endcode
+
+\section2 The read command
+
+The \e{read} command loads data from the SD Card/e.MMC into a binary file.
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a sdmmc -c read:help
+* read - read from memory to a file
+Syntax:
+    read:<filename>:[<addr>]:[<length>]
+Examples:
+    read:firmware.bin              read all to firmware.bin
+    read:firmware.bin:0x1000       read from 0x1000 to end into firmware.bin
+    read:firmware.bin:0x1000:1024  read 1024 bytes from 0x1000 into firmware.bin
+    read:firmware.bin::1024        read 1024 bytes from start of memory into firmware.bin
+\endcode
+
+\section2 The verify and verifyboot commands
+
+The \e{verify} and \e{verifyboot} compare the data programmed in the SD Card/e.MMC
+with the content of a given binary file. Unlike the \e{verify} command, the
+\e{verifyboot} command ignores the actual value of the relevant unused ARM
+exception vector in the binary file and does as if the value were the size of the
+binary file.
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a sdmmc -c verify:help
+* verify - verify memory from a file
+Syntax:
+    verify:<filename>:[<addr>]
+Examples:
+    verify:sdcard.img           verify that start of memory matches sdcard.img
+    verify:firmware.bin:0x1000  verify that memory at offset 0x1000 matches firmware.bin
+
+$ sam-ba -p serial -b sam9x60-ek -a sdmmc -c verifyboot:help
+* verifyboot - verify boot program from a file
+Syntax:
+    verifyboot:<filename>
+Example:
+    verifyboot:bootstrap.bin     verify that start of memory matches boot program bootstrap.bin
+\endcode
+*/

@@ -1,0 +1,34 @@
+/*!
+\page gettingstarted.html
+\title Getting Started
+
+SAM-BA includes a command line interface that provides support for the most
+common actions:
+\list
+\li reading / writing to arbitrary memory addresses and/or peripherals
+\li uploading applets and using them to erase/read/write external memories
+\endlist
+
+The command line interface is designed to be self-documenting.
+
+The main commands can be listed using the "\e{sam-ba --help}" command:
+\code
+$ sam-ba --help
+Usage: sam-ba [options]
+
+Options:
+  -v, --version                          Displays version information.
+  -h, --help                             Displays this help.
+  -t, --tracelevel <trace_level>         Set applet trace level to <trace_level>.
+  -x, --execute <script.qml>             Execute script <script-file>.
+  -p, --port <port[:options:...]>        Communicate with device using <port>.
+  -d, --device <device>                  Connected device is <device>.
+  -b, --board <board>                    Connected board is <board>.
+  -m, --monitor <command[:options:...]>  Run monitor command <command>.
+  -a, --applet <applet[:options:...]>    Load and initialize applet <applet>.
+  -c, --command <command[:args:...]>     Run command <command>.
+\endcode
+
+Additional help can be obtained for most commands by supplying a "help"
+parameter that will display their usage.
+*/

@@ -1,0 +1,64 @@
+/*!
+\page glossary.html
+\title Glossary
+
+\section1 Applets
+
+\b {Applets} are binary programs that can be loaded through the sam-ba connection
+into some RAM region of the \b {target} before being executed. \b {Applets} extend
+the \b {SAM-BA monitor} to provide more features. The main usage of \b {applets} is to
+program the \b {bootstrap} into some \b {Non-Volatile Memory (NVM)}.
+
+\section1 Board
+
+Within the context of the sam-ba program, the \b {board} is the hardware design
+which embeds a SAM MPU \b {device}.
+
+\section1 Bootstrap
+
+The \b {bootstrap} is the 2nd stage bootloader (or directly the user application),
+executed immediatly after the \b {ROM code}.
+It is a program linked to be executed from the base address of the internal SRAM0.
+
+\section1 Device
+
+Within the context of the sam-ba program, the \b {device} represents the SAM MPU
+that drives the \b {board}. It is a Microchip SoC like SAMA5D2.
+
+\section1 Host
+
+The \b {host} is the system running the sam-ba program. It is likely a
+Windows/Linux PC workstation.
+
+\section1 Non-Volatile Memory (NVM)
+
+\b {Non-Volatile Memory} are used to store the bootstrap needed by the boot sequence
+process. \b {NVM} are driven by internal controllers of the SAM MPU, such as QSPIx,
+SDMMCx, FLEXCOMx SPI, ...
+
+\section1 ROM code
+
+The \b {ROM code} is the 1st stage boot-loader or firmware running on the
+\b {target} at power-on or reset.
+It is responsible for the basic initialization of the \b {target} and for
+loading then executing a \b {bootstrap} loaded from an external
+\b {Non-Volatile Memory (NVM)} into the internal SRAM0.
+If no such \b {bootstrap} is found, then the \b {ROM code} executes its
+\b {SAM-BA monitor}.
+
+\section1 SAM-BA monitor
+
+The \b {SAM-BA monitor} is a sub-process of the \b {ROM code}, waiting for
+connection of the sam-ba program from either the \b {ROM code} console port or
+from the USB device port of the \b {target}.
+Once connected, the \b {SAM-BA monitor} provides a interactive interface and a set of
+basic commands to read from / write into the \b {target} memories or its peripheral
+registers.
+Besides, the \b {SAM-BA monitor} can also download \b {applets} through the sam-ba
+connection before executing them.
+
+\section1 Target
+
+The \b {target} is the SAM-based \b {board} to be programmed with the sam-ba program.
+
+*/

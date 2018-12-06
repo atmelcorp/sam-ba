@@ -1,0 +1,71 @@
+/*!
+\page lowlevel.html
+\title SAM-BA lowlevel applet
+\brief This document explains how to initialize the lowlevel applet and how to run its commands
+
+The \e {lowlevel} applet initializes the device clock tree: PLLA, CPU clock,
+Master clock (MCK), ...
+The targetted frequencies are specific to each device.
+This applet should be executed only once afer reset, prior to the
+\l {extram.html} {\e {extram}} applet.
+
+\section1 Applet initialization
+
+The \e {lowlevel} applet doesn't accept any parameter to be initialized.
+The only exception is for SAM9X60 devices. In this later case, the list of
+supported parameters to initialize the applet can be displayed with the
+following command:
+\code
+$ sam-ba -p serial -d sam9x60 -a lowlevel:help
+Syntax: lowlevel:[<preset>]
+Parameters:
+    preset  System clock configuration
+Examples:
+    lowlevel    use default board settings if defined, preset 0 otherwise
+    lowlevel:0  use preset 0 for system clock configuration
+\endcode
+
+\section2 CPU and Master clock frequencies
+
+\table
+\header
+\li Device
+\li Preset
+\li CPU clock (MHz)
+\li Master clock (MHz)
+\row
+\li SAM9xx5
+\li N/A
+\li 300
+\li 150
+\row
+\li SAM9X60
+\li 0
+\li 600
+\li 200
+\row
+\li SAM9X60
+\li 1
+\li 500
+\li 166
+\row
+\li SAMA5D2
+\li N/A
+\li 498
+\li 166
+\row
+\li SAMA5D3
+\li N/A
+\li 528
+\li 133
+\row
+\li SAMA5D4
+\li N/A
+\li 600
+\li 200
+\endtable
+
+\section1 Supported commands
+
+The \e {lowlevel} applet doesn't support any command.
+*/

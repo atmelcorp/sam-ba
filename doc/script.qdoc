@@ -1,0 +1,22 @@
+/*!
+\page script.html
+
+\title Executing scripts
+
+\section1 The "\e{-x, --execute}" option
+
+The "\e{-x, --execute}" option is used to execute a QML script.
+This option cannot be used with any of the \l {monitor.html#the-m-monitor-option} {"\e{-m, --monitor}"},
+\l {applet.html#the-a-applet-option} {"\e{-a, --applet}"}, \l {port.html#the-p-port_option} {"\e{-p, --port}"}, \l {devices.html#the-d-device-option} {"\e{-d, --device}"} or
+\l {devices.html#the-b-board-option} {"\e{-b, --board}"} options but can still be used with the \l {applet.html#the-t-tracelevel-option} {"\e{-t, --tracelevel}"}
+option.
+
+The "\e{-x, --execute}" option must be followed by the filename of the QML script to be executed.
+This option doesn't accept any additional parameter.
+
+\code
+sam-ba -x <qmlfile>
+
+$ sam-ba -x script.qml
+\endcode
+*/

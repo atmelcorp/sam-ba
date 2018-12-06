@@ -1,0 +1,92 @@
+/*!
+\page applet.html
+\title Executing applets
+
+\section1 The "\e{-a, --applet}" option
+
+The "\e{-a, --applet}" option is used to execute an applet.
+This option cannot be used with \l {monitor.html#the-m-monitor-option} {"\e{-m, --monitor}"} or \l {script.html#the-x-execute-option} {"\e{-x, --execute}"} options.
+
+The "\e{-a, --applet}" option must be followed by the name of the applet to be executed.
+This option is used to load an applet into some RAM region then to initialize it.
+The initialization of the applet may required additionnal parameters. They are passed
+through the command line by appending them after the applet name, separated with colons
+"\e{:}".
+
+\code
+sam-ba -p <port> -d <device> -a <applet>[:<arg1>:<arg2>:<arg3>:...]
+
+$ sam-ba -p serial -d sama5d2 -a lowlevel
+$ sam-ba -p serial -d sama5d2 -a extram
+$ sam-ba -p serial -d sama5d2 -a qspiflash:0:1:50
+$ sam-ba -p serial -b sama5d2-xplained -a qspiflash
+$ sam-ba -p serial -d sama5d2 -a sdmmc:0:1:1:8:5
+$ sam-ba -p serial -b sama5d2-xplaiend -a sdmmc
+\endcode
+
+The list of supported applets depends on the selected device.
+This list can be displayed for a given device with the following command:
+
+\code
+sam-ba -p <port> -d <device> -a help
+
+$ sam-ba -p serial -d sama5d2 -a help
+Known applets: bootconfig, lowlevel, extram, serialflash, qspiflash, nandflash, sdmmc, internalrc, reset
+\endcode
+
+Please click on the relevant device in the \l {devices.html#supported-devices-and-boards} {Supported Devices and Boards}
+section to get the list of all supported applets for this device.
+
+The list of parameters (and their default values) to initialized an applet can
+be displayed with the following commands:
+
+\code
+sam-ba -p <port> -d <device> -a <applet>:help
+
+$ sam-ba -p serial -d sama5d2 -a qspiflash:help
+Syntax: qspiflash:[<instance>]:[<ioset>]:[<frequency>]
+Parameters:
+    instance   QSPI controller instance
+    ioset      QSPI I/O set
+    frequency  QSPI clock frequency in MHz
+Examples:
+    qspiflash         use default board settings
+    qspiflash:0:3:66  use fully custom settings (QSPI0, IOSET3, 66Mhz)
+    qspiflash:::20    use default board settings but force frequency to 20Mhz
+\endcode
+
+\section1 the "\e{-c, --command}" option
+
+Most applets support different commands. Hence, the sequence of applet commands
+to be executed should be provided with a list of one or more "\e{-c, --command}"
+options, following the "\e{-a, --applet}" option on the command line.
+
+Like the applet initialization done with the "\e{-a, --applet}" option, applet
+commands may required additional parameters, which are appended to the command
+name, separated by colons "\e{:}".
+
+\code
+sam-ba -p <port> -d <device> -a <applet> [-c <command1>[:<arg1_1>:<arg1_2>:...] -c <command2>[:<arg2_1>:<arg2_2>:...] -c <command3>[:<arg3_1>:<arg3_2>:...] ...]
+
+$ sam-ba -p serial -b sama5d2-xplained -a bootconfig -c writecfg:bscr:valid,bureg0 -c writecfg:bureg0:QSPI0_IOSET1,EXT_MEM_BOOT
+$ sam-ba -p serial -b sama5d2-xplained -a qspiflash -c erase -c writeboot:bootstrap.bin -c write:u-boot.bin:0x8000
+\endcode
+
+\section1 the "\e{-t, --tracelevel}" option
+
+The "\e{-t, --tracelevel}" option is used to control the verbosity level of
+applet traces printed on the target console. The different levels are:
+
+\list
+\li 0: no trace
+\li 1: fatal error
+\li 2: error
+\li 3: warning
+\li 4: info
+\li 5: debug
+\endlist
+
+\code
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a qspiflash -c erase:0:0x10000
+\endcode
+*/

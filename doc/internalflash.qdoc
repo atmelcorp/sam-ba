@@ -1,0 +1,108 @@
+/*!
+\page internalflash.html
+\title SAM-BA internalflash applet
+\brief
+
+The \e {internalflash} applet drive the flash controller to progam the internal
+flash memory of the SAM MCU device.
+
+\section1 Applet initialization
+
+The \e {internalflash} applet doesn't accept any parameter to be intialized.
+
+\section1 Supported commands
+
+The list of commands supported by the \e{internalflash} applet can be displayed
+with the following commands:
+
+\code
+sam-ba -p <port> -d <device> -a internalflash -c help
+
+$ sam-ba -p serial -d samv71 -a internalflash -c help
+\endcode
+
+\section2 The erase command
+
+The \e{erase} command resets to 0xFF a range of erase blocks. The size of
+those erase blocks is given in the product datasheet.
+
+\code
+$ sam-ba -p serial -b samv71-xplained -a internalflash -c erase:help
+* erase - erase all or part of the memory
+Syntax:
+    erase:[<addr>]:[<length>]
+Examples:
+    erase                 erase all
+    erase:4096            erase from 4096 to end
+    erase:0x1000:0x10000  erase from 0x1000 to 0x11000
+    erase::0x1000         erase from 0 to 0x1000
+\endcode
+
+\section2 The write and writeboot commands
+
+The \e{write} and \e{writeboot} commands program data from a binary file into
+the internal flash pages. The blocks containing the pages to be programmed should
+be erased first with the \e{erase} command.
+Padding bytes are added to align programmed data to the page boundary.
+The page size is given by the product datasheet.
+Prior to what both commands do, the \e{writeboot} command also modifies the
+relevant unused ARM exception vector to store the size of the bootstrap binary,
+as required by the ROM code during the boot process.
+
+\code
+$ sam-ba -p serial -b samv71-xplained -a internalflash -c write:help
+* write - write to memory from a file
+Syntax:
+    write:<filename>:[<addr>]
+Examples:
+    write:bootstrap.bin         write bootstrap.bin to start of memory
+    write:u-boot.bin:0x10000    write u-boot.bin at offset 0x10000
+
+$ sam-ba -p serial -b samv71-xplained -a internalflash -c writeboot:help
+Syntax:
+    writeboot:<filename>
+Example:
+    writeboot:bootstrap.bin     write bootstrap.bin as boot program at start of memory
+\endcode
+
+\section2 The read command
+
+The \e{read} command loads data from the internal flash into a binary file.
+
+\code
+$ sam-ba -p serial -b samv71-xplained -a internalflash -c read:help
+* read - read from memory to a file
+Syntax:
+    read:<filename>:[<addr>]:[<length>]
+Examples:
+    read:firmware.bin              read all to firmware.bin
+    read:firmware.bin:0x1000       read from 0x1000 to end into firmware.bin
+    read:firmware.bin:0x1000:1024  read 1024 bytes from 0x1000 into firmware.bin
+    read:firmware.bin::1024        read 1024 bytes from start of memory into firmware.bin
+\endcode
+
+\section2 The verify and verifyboot commands
+
+The \e{verify} and \e{verifyboot} compare the data programmed in the internal flash
+with the content of a given binary file. Unlike the \e{verify} command, the
+\e{verifyboot} command ignores the actual value of the relevant unused ARM
+exception vector in the binary file and does as if the value were the size of the
+binary file.
+
+\code
+$ sam-ba -p serial -b samv71-xplained -a internalflash -c verify:help
+* verify - verify memory from a file
+Syntax:
+    verify:<filename>:[<addr>]
+Examples:
+    verify:firmware.bin         verify that start of memory matches firmware.bin
+    verify:firmware.bin:0x1000  verify that memory at offset 0x1000 matches firmware.bin
+
+$ sam-ba -p serial -b samv71-xplained -a internalflash -c verifyboot:help
+* verifyboot - verify boot program from a file
+Syntax:
+    verifyboot:<filename>
+Example:
+    verifyboot:bootstrap.bin    verify that start of memory matches boot program bootstrap.bin
+\endcode
+*/

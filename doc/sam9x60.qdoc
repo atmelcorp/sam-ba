@@ -1,0 +1,170 @@
+/*!
+\page sam9x60.html
+\title SAM9X60
+
+\section1 Supported applets
+
+The list of supported applets can be displayed with the following command:
+
+\code
+$ sam-ba -p serial -d sam9x60 -a help
+Known applets: bootconfig, lowlevel, extram, sdmmc, serialflash, qspiflash, nandflash, reset
+\endcode
+
+\list
+\li \l {bootconfig_sam9x60.html} {bootconfig}
+\li \l {extram.html} {extram}
+\li \l {lowlevel.html} {lowlevel}
+\li \l {nandflash.html} {nandflash}
+\li \l {qspiflash.html} {qspiflash}
+\li \l {reset.html} {reset}
+\li \l {serialflash.html} {serialflash}
+\li \l {sdmmc.html} {sdmmc}
+\endlist
+
+\section1 External RAM initialization
+
+Prior to execute any of the \l {nandflash.html} {nandflash}, \l {qspiflash.html} {qspiflash},
+\l {serialflash.html} {serialflash} or \l {sdmmc.html} {sdmmc} applets, the external RAM must be initialized.
+This can be achieved by first executing the \l {lowlevel.html} {lowlevel} applet then the \l {extram.html} {extram} applet.
+Those applets only need to be executed once for all after each power-on or reset.
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a lowlevel
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a extram
+\endcode
+
+\section1 Programming a raw NAND flash
+
+In the following example, we program the \e{at91bootstrap.bin}, \e{u-boot.bin}, \e{zImage}, \e{at91-sam9x60ek.dtb} and \e{rootfs.ubi} files into
+the embedded NAND flash of a SAM9X60-EK board:
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a nandflash -c erase
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a nandflash -c writeboot:at91bootstrap.bin -c verifyboot:at91bootstrap.bin
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a nandflash -c write:u-boot.bin:0x00040000 -c verify:u-boot.bin:0x00040000
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a nandflash -c write:at91-sam9x60ek.dtb:0x00180000 -c verify:at91-sam9x60ek.dtb:0x00180000
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a nandflash -c write:zImage:0x00200000 -c verify:zImage:0x00200000
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a nandflash -c write:rootfs.ubi:0x00800000 -c verify:rootfs.ubi:0x00800000
+\endcode
+
+\section1 Programming a QSPI NOR flash
+
+In the following example, we program the \e{at91bootstrap.bin}, \e{u-boot.bin}, \e{zImage} and \e{at91-sam9x60ek.dtb} files into
+the embedded QSPI NOR flash of the SAM9X60-EK board:
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a qspiflash -c erase
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a qspiflash -c writeboot:at91bootstrap.bin -c verifyboot:at91bootstrap.bin
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a qspiflash -c write:u-boot.bin:0x00040000 -c verify:u-boot.bin:0x00040000
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a qspiflash -c write:at91-sam9x60ek.dtb:0x00180000 -c verify:at91-sam9x60ek.dtb:0x00180000
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a qspiflash -c write:zImage:0x00200000 -c verify:zImage:0x00200000
+\endcode
+
+The QSPI NOR flash memory is too small to store the Linux root file-system; this should be programmed into another NVM.
+
+\section1 Programming a SPI NOR flash
+
+In the following example, we program the \e{at91bootstrap.bin}, \e{u-boot.bin}, \e{zImage} and \e{at91-sam9x60ek.dtb} files into
+some SPI NOR flash connected to the FLEXCOM0_SPI of a SAM9X60-based board:
+
+\code
+$ sam-ba -p serial -d sam9x60 -t 5 -a serialflash:0:1:50 -c erase
+$ sam-ba -p serial -d sam9x60 -t 5 -a serialflash:0:1:50 -c writeboot:at91bootstrap.bin -c verifyboot:at91bootstrap.bin
+$ sam-ba -p serial -d sam9x60 -t 5 -a serialflash:0:1:50 -c write:u-boot.bin:0x00008000 -c verify:u-boot.bin:0x00008000
+$ sam-ba -p serial -d sam9x60 -t 5 -a serialflash:0:1:50 -c write:at91-sam9x60ek.dtb:0x00060000 -c verify:at91-sam9x60ek.dtb:0x00060000
+$ sam-ba -p serial -d sam9x60 -t 5 -a serialflash:0:1:50 -c write:zImage:0x0006c000 -c verify:zImage:0x0006c000
+\endcode
+
+SPI NOR flashes are too small to store the Linux root file-system; this should be programmed into another NVM.
+
+\section1 Programming a SDCard or e.MMC user partition
+
+In the following example, the \e{sdcard.img} file is a raw image of a SD Card,
+hence starting with a Master Boot Record (MBR) containing a valid partition table.
+The first partition is formatted with a FAT32 file-system, which gathers four files in its root directory:
+\list
+\li a \e{boot.bin} file: the \e{at91bootstrap.bin} file renammed into \e{boot.bin}
+\li a \e{u-boot.bin} file: the u-boot binary image, loaded then executed by \e{boot.bin}
+\li a \e{zImage} file: the compressed image of a Linux kernel, loaded then executed by u-boot
+\li a \e{at91-sam9x60ek.dtb}: the device-tree binary for the Linux kernel, loaded by u-boot at the same time as the \e{zImage} file
+\endlist
+The second partition is formatted in EXT4 and contains the root file-system used by the Linux kernel
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a sdmmc -c write:sdcard.img
+\endcode
+
+\section1 Tuning the boot sequence
+
+The list of boot media tested by the ROM code to load then execute a bootstrap
+can be tuned with the \l {bootconfig_sam9x60.html} {bootconfig} applet.
+
+\section2 Booting from a raw NAND flash in emulation mode
+
+In the next example, we want to boot only from the 8-bit raw NAND flash memory
+of a SAM9X60-EK board, hence connected on the D16-D23 pins of the EBI.
+The Boot Configuration Packet is programmed into the internal SRAM1, used by the
+OTPC for its emulation mode. We also write the BSCR with the relevant value to
+tell the ROM code that it must enable the OTPC emulation mode before reading its
+Boot Config Packet.
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a bootconfig -c resetemul -c writecfg:bcp-emul:DBGU,NFC_IOSET1 -c writecfg:bscr:EMULATION_ENABLED
+\endcode
+
+The Boot Configuration Packet remains in SRAM1 and the value of the BSCR is kept
+as long as VDDBU is supplied.
+
+\section2 Permanently booting from a SD Card
+
+In the next example, we want to boot only from a SD Card plugged into the SD
+Card slot (SDMMC0) of a SAM9X60-EK board.
+The Boot Configuration Packet is programmed into the OTP matrix to be persistent.
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a bootconfig -c writecfg:bcp-otp:DBGU,SDMMC0_IOSET1
+\endcode
+
+\section2 Ordering the boot media
+
+The order of boot media during the ROM code boot sequence matches the position
+of each associated controller in comma \e{","} separated list provided as
+argument of the \e{writecfg} command.
+
+The boot sequence contains up to 7 entries.
+
+In this example, we provide the sam-ba command to program the following boot
+sequence:
+\list 1
+\li SDMMC0 ioset1
+\li SDMMC1 ioset1
+\li QSPI0 ioset1
+\li FLEXCOM0_SPI ioset1
+\li NFC ioset1
+\endlist
+
+\code
+$ sam-ba -p serial -d sam9x60 -a bootconfig -c writecfg:bcp-otp:DBGU,SDMMC0_IOSET1,SDMMC1_IOSET1,QSPI0_IOSET1,FLEXCOM0_SPI_IOSET1,NFC_IOSET1
+\endcode
+
+\section1 Permanently disabling the JTAG port
+
+The JTAG access can be disabled by setting the relevant bit into the User
+Hardware Configuation Packet of the OTPC. The \e{UHCINVDIS} and \e{UHCPGDIS} bits should be
+set as well to forbid the current User Hardware Configuration Packet to be invalidated or
+a new User Hardware Configuration Packet to be programmed, hence discarding the previous
+packet.
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a bootconfig -c writecfg:uhcp-otp:JTAGDIS,UHCINVDIS,UHCPGDIS
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a bootconfig -c lockcfg:uhcp-otp
+\endcode
+
+The modifications of the User Hardware Configuration Packet are not taking into
+account until either the next reboot or refreshing the User Area of the OTPC:
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a bootconfig -c refreshcfg:otp
+\endcode
+*/

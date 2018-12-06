@@ -1,0 +1,70 @@
+/*!
+\page monitor.html
+\title Executing monitor commands
+
+\section1 The "\e{-m, --monitor}" option
+
+The "\e{-m, --monitor}" option is used to execute a basic monitor commands.
+This option cannot be used with \l {applet.html#the-a-applet-option} {"\e{-a, --applet}"} or \l {script.html#the-x-execute-option} {"\e{-x, --execute}"} options.
+However many "\e{-m --monitor}" options can be passed on the same command line.
+
+Monitor commands depend on the selected \l {port.html#the-p-port_option} {"\e{-p, --port}"} option.
+The "\e{sam-ba -p <port> -m help}" command displays all supported monitor
+commands for the given <port> connection:
+\code
+$ sam-ba -p serial -m help
+* read8 - read a byte
+Syntax:
+    read8:<addr>
+Example:
+    read8:0x200000  read a byte at address 0x200000
+
+* read16 - read a half-word (16-bit)
+Syntax:
+    read16:<addr>
+Example:
+    read16:0x200000  read a half-word at address 0x200000
+
+* read32 - read a word (32-bit)
+Syntax:
+    read32:<addr>
+Example:
+    read32:0x200000  read a word at address 0x200000
+
+* read - read data into a file
+Syntax:
+    read:<filename>:<addr>:<length>
+Example:
+    read:test.bin:0x200000:512  read 512 bytes from address 0x200000 into file test.bin
+
+* write8 - write a byte
+Syntax:
+    write8:<addr>:<value>
+Example:
+    write8:0x200000:0x12  write byte 0x12 at address 0x200000
+
+* write16 - write a half-word (16-bit)
+Syntax:
+    write16:<addr>:<value>
+Example:
+    write16:0x200000:0x1234  write half-word 0x1234 at address 0x200000
+
+* write32 - write a word (32-bit)
+Syntax:
+    write32:<addr>:<value>
+Example:
+    write32:0x200000:0x12345678  write word 0x12345678 at address 0x200000
+
+* write - write data from a file
+Syntax:
+    write:<filename>:<addr>
+Example:
+    write:test.bin:0x200000  write data from file test.bin to address 0x200000
+
+* execute - execute code
+Syntax:
+    execute:<addr>
+Example:
+    execute:0x200000  execute code at 0x200000
+\endcode
+*/
