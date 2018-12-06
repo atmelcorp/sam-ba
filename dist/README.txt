@@ -1,10 +1,10 @@
-# Atmel SAM-BA - SAM Boot Assistant
+# Microchip SAM-BA - SAM Boot Assistant
 Release version: 3.2.3
 Release date: 2018-09
 
 ## Overview
 
-The SAM-BA tool is a programming tool for the Atmel MPUs/MCUs.
+The SAM-BA tool is a programming tool for the Microchip MPUs/MCUs.
 
 Please note that all presented APIs / command line options are subject to
 change from one version to another.

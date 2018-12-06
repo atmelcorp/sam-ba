@@ -78,7 +78,7 @@ SambaTool::~SambaTool()
 void SambaTool::displayVersion()
 {
 	cerr_msg(QString("SAM-BA Command Line Tool v%1").arg(applicationVersion()));
-	cerr_msg("Copyright 2015-2017 ATMEL Corporation");
+	cerr_msg("Copyright 2018 Microchip Technology");
 }
 
 void SambaTool::displayPortHelp()

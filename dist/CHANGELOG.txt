@@ -1,4 +1,4 @@
-# Atmel SAM-BA - SAM Boot Assistant
+# Microchip SAM-BA - SAM Boot Assistant
 
 ## Version 3.2.3
 

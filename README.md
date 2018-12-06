@@ -1,9 +1,9 @@
-Atmel SAM-BA
+Microchip SAM-BA
 ------------
 
 # Overview
 
-This repository contains the sources of the Atmel SAM-BA tool.
+This repository contains the sources of the Microchip SAM-BA tool.
 
 This tool is built using Qt5 and is command-line only for now.
 
