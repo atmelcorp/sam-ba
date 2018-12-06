@@ -2,7 +2,7 @@ import SAMBA 3.2
 import SAMBA.Connection.JLink 3.2
 import SAMBA.Device.SAMA5D2 3.2
 
-JlinkConnection {
+JLinkConnection {
 	//port: "99999999"
 
 	device: SAMA5D2 {
