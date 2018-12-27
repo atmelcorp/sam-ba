@@ -228,6 +228,17 @@ Item {
 	}
 
 	/*!
+		\qmlmethod bool Connection::toSecureMonitor()
+		\brief Tells whether we connect to the secure SAM-BA monitor.
+
+		Returns true if the connection is established to the secure SAM-BA
+		monitor, false otherwise.
+	*/
+	function toSecureMonitor() {
+		return false
+	}
+
+	/*!
 		\qmlmethod int Connection::readu8(int address, int timeout)
 		\brief Read a single unsigned byte at the given \a address.
 

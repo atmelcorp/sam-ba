@@ -199,7 +199,7 @@ Item {
 		It is intended to be overridden by Applet sub-classes/instances.
 	*/
 	function prepareBootFile(file) {
-		file.enable6thVectorPatching(true)
+		file.enable6thVectorPatching(!connection.toSecureMonitor())
 	}
 
 	/*! \internal */

@@ -51,7 +51,7 @@ Applet {
 
 	/*! \internal */
 	function prepareBootFile(file) {
-		file.enable6thVectorPatching(true)
+		file.enable6thVectorPatching(!connection.toSecureMonitor())
 
 		// prepare nand header
 		var header = new ArrayBuffer(52 * 4)

@@ -69,6 +69,13 @@ Connection {
 	}
 
 	/*!
+	\sa Connection::toSecureMonitor()
+	*/
+	function toSecureMonitor() {
+		return true
+	}
+
+	/*!
 	\sa Connection::appletUpload
 	*/
 	function appletUpload(new_applet)
