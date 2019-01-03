@@ -244,6 +244,9 @@ void SambaConnectionSerialHelper::close()
 {
 	if (m_serial.isOpen())
 	{
+		// Try to switch to terminal (ASCII) mode
+		writeSerial(QString("T#"));
+
 		m_serial.close();
 		emit connectionClosed();
 	}
