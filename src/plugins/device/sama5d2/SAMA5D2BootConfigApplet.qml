@@ -95,7 +95,7 @@ BootConfigApplet {
 			        "        DISABLE_MONITOR,",
 			        "        SECURE_MODE,",
 			        "    Tokens with a star (*) are selected by default if no token from the same line is provided (field value is 0).",
-			        "    Please refer to SAMA5D2 Datasheet section \"15.4 Boot configuration\" for information on boot settings."]
+			        "    Please refer to SAMA5D2 Datasheet section \"16.5 Boot configuration\" for information on boot settings."]
 		}
 	}
 }

@@ -248,7 +248,7 @@ The SAMA5D2 boot configuration can also be set using the command line via the
 boot config applet. The \e{readcfg} and \e{writecfg} commands can be used to
 get/set the Boot Sequence Register (BSCR) and the Boot Config Word either in
 BUREG registers or in FUSE. Please refer to SAMA5D2 Datasheet section
-"15.4 Boot configuration" for more details on the SAMA5D2 boot sequence.
+"16.5 Boot configuration" for more details on the SAMA5D2 boot sequence.
 
 To configure the boot to use BSCR/BUREG1 and boot on SPI0 IOSET2 or SDMMC0 and
 keep the default UART and JTAG settings, the following command can be used
