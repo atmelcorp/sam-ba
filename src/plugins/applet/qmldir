@@ -13,7 +13,6 @@ QSPIFlashConfig 3.2 QSPIFlashConfig.qml
 ResetApplet 3.2 ResetApplet.qml
 SDMMCApplet 3.2 SDMMCApplet.qml
 SDMMCConfig 3.2 SDMMCConfig.qml
-SecureBootConfigApplet 3.2 SecureBootConfigApplet.qml
 SerialConfig 3.2 SerialConfig.qml
 SerialFlashApplet 3.2 SerialFlashApplet.qml
 SerialFlashConfig 3.2 SerialFlashConfig.qml
