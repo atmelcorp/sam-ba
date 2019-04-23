@@ -1,6 +1,6 @@
 # Microchip SAM-BA - SAM Boot Assistant
-Release version: 3.3-beta1
-Release date: 2018-12
+Release version: 3.3-beta2
+Release date: 2019-09
 
 ## Overview
 

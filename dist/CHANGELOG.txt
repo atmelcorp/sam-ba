@@ -1,5 +1,27 @@
 # Microchip SAM-BA - SAM Boot Assistant
 
+## Version 3.3-beta2
+
+#### Bugfixes
+
+- Fixed the 'writeboot' command when using the 'secure' port
+
+#### Enhancements
+
+- Updated all applets on SAM9X60 so they are linked to be run in internal SRAM0
+  instead of external RAM (ROM code v1.1 and later).
+- Modified command line parser to require either -d or -b option with -a and -m
+  options to allow different help messages to be displayed depending on the
+  device familly.
+- Extended 'secure' port with device specific monitor commands for SAMA5D2 and
+  SAM9X60.
+
+#### API Changes
+
+- Merged the SecureBootConfigApplet into the BootConfigApplet
+
+
+
 ## Version 3.3-beta1
 
 #### Bugfixes
