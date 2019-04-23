@@ -29,7 +29,7 @@ BootConfigApplet {
 	]
 
 	// parameter indexes must match applet index argument
-	configParams: [ "BSCR", "BCP-EMUL", "BCP-OTP", "UHCP-EMUL", "UHCP-OTP" ]
+	configParams: [ "BSCR", "BCP-EMUL", "BCP-OTP", "UHCP-EMUL", "UHCP-OTP", "SBCP-EMUL", "SBCP-OTP" ]
 
 	/*! \internal */
 	function readBootCfg(index) {
@@ -48,6 +48,10 @@ BootConfigApplet {
 		case 4:
 			packetLen = 2 * 4
 			break
+		case 5:
+		case 6:
+			packetLen = 8 * 4
+			break;
 		}
 
 		var data = connection.appletBufferRead(packetLen)
@@ -78,6 +82,9 @@ BootConfigApplet {
 		case 3:
 		case 4:
 			return UHCP.fromText(text)
+		case 5:
+		case 6:
+			return SBCP.fromText(text)
 		}
 	}
 
@@ -92,6 +99,9 @@ BootConfigApplet {
 		case 3:
 		case 4:
 			return UHCP.toText(value)
+		case 5:
+		case 6:
+			return SBCP.toText(value)
 		}
 	}
 
@@ -113,14 +123,17 @@ BootConfigApplet {
 				"    readcfg:bcp-emul  read the boot config packet from OTP emulation mode",
 				"    readcfg:uhcp-otp  read the user hardware config packet from OTP matrix",
 				"    readcfg:uhcp-emul read the user hardware config packet from OTP emulation mode",
+				"    readcfg:sbcp-otp  read the secure boot config packet from OTP matrix",
+				"    readcfg:sbcp-emul read the secure boot config packet from OTP emulation mode",
 				"    readcfg:bscr      read the boot sequence register (BSCR)"]
 		}
 		else if (command === "writecfg") {
 			return [" * writecfg - write boot configuration",
 				"Syntax:",
-				"    writecfg:(bcp-otp|bcp-emul|uhcp-otp|uhcp-emul|bscr):<value>",
-				"",
-				"    <value> := <bscr_value> | <boot_config_text> | <user_hw_config_text>",
+				"    writecfg:(bcp-otp|bcp-emul):<boot_config_text>",
+				"    writecfg:(uhcp-otp|uhcp-emul):<user_hw_config_text>",
+				"    writecfg:(sbcp-otp|sbcp-emul):",
+				"    writecfg:bscr:<bscr_value>",
 				"",
 				"    <bscr_value> := \"EMULATION_DISABLED\" | \"EMULATION_ENABLED\"",
 				"",
@@ -175,28 +188,34 @@ BootConfigApplet {
 				"Examples:",
 				"    writecfg:bscr:EMULATION_ENABLED                           enable OTP emulation mode",
 				"    writecfg:bscr:EMULATION_DISABLED                          disable OTP emulation mode",
-				"    writecfg:bcp-emul:DBGU                                    emtpy boot config (console on DBGU) stored in OTP emulation mode",
-				"    writecfg:bcp-otp:FLEXCOM0_USART_IOSET1,SDMMC1_IOSET1_PA10 boot config with console on FLEXCOM0, boot from SDMMC1 (PA10 as card-detect pin) stored in OTP matrix"]
+				"    writecfg:bcp-emul:DBGU                                    empty boot config (console on DBGU) stored in OTP emulation mode",
+				"    writecfg:bcp-otp:FLEXCOM0_USART_IOSET1,SDMMC1_IOSET1_PA10 boot config with console on FLEXCOM0, boot from SDMMC1 (PA10 as card-detect pin) stored in OTP matrix",
+				"    writecfg:sbcp-emul:                                       empty secure boot config stored in OTP emulation mode",
+				"    writecfg:sbcp-otp:                                        empty secure boot config stored in OTP matrix"]
 		}
 		else if (command === "invalidatecfg") {
 			return ["* invalidatecfg - invalidate the boot config packet",
 				"Syntax:",
-				"    invalidatecfg:(bcp-otp|bcp-emul|uhcp-otp|uhcp-emul)",
+				"    invalidatecfg:(bcp-otp|bcp-emul|uhcp-otp|uhcp-emul|sbcp-otp|sbcp-emul)",
 				"Examples:",
 				"    invalidatecfg:bcp-otp   invalidate the boot config packet in OTP matrix",
 				"    invalidatecfg:bcp-emul  invalidate the boot config packet in OTP emulation mode",
 				"    invalidatecfg:uhcp-otp  invalidate the user hardware config packet in OTP matrix",
-				"    invalidatecfg:uhcp-emul invalidate the user hardware config packet in OTP emulation mode"]
+				"    invalidatecfg:uhcp-emul invalidate the user hardware config packet in OTP emulation mode",
+				"    invalidatecfg:sbcp-otp  invalidate the secure boot config packet in OTP matrix",
+				"    invalidatecfg:sbcp-emul invalidate the secure boot config packet in OTP emulation mode"]
 		}
 		else if (command === "lockcfg") {
 			return ["* lockcfg - lock the boot config packet",
 				"Syntax:",
-				"    lockcfg:(bcp-otp|bcp-emul|uhcp-otp|uhcp-emul)",
+				"    lockcfg:(bcp-otp|bcp-emul|uhcp-otp|uhcp-emul|sbcp-top|sbcp-emul)",
 				"Examples:",
 				"    lockcfg:bcp-otp   lock the boot config packet in OTP matrix",
 				"    lockcfg:bcp-emul  lock the boot config packet in OTP emulation mode",
 				"    lockcfg:uhcp-otp  lock the user hardware config packet in OTP matrix",
-				"    lockcfg:uhcp-emul lock the user hardware config packet in OTP emulation mode"]
+				"    lockcfg:uhcp-emul lock the user hardware config packet in OTP emulation mode",
+				"    lockcfg:sbcp-otp  lock the secure boot config packet in OTP matrix",
+				"    lockcfg:sbcp-emul lock the secure boot config packet in OTP emulation mode"]
 		}
 		else if (command === "refreshcfg") {
 			return ["* refreshcfg - refresh the OTP matrix or emulation mode",
