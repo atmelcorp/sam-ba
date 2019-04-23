@@ -102,12 +102,6 @@ Device {
 			codeAddr: 0x300000
 			mailboxAddr: 0x300004
 			entryAddr: 0x300000
-		},
-		SAM9X60SecureBootConfigApplet {
-			codeUrl: Qt.resolvedUrl("applets/applet-securebootconfig_sam9x60-generic_sram.bin")
-			codeAddr: 0x300000
-			mailboxAddr: 0x300004
-			entryAddr: 0x300000
 		}
 	]
 

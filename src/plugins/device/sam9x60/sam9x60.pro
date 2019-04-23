@@ -10,7 +10,6 @@ DEVICE_FILES *= \
     SAM9X60EK.qml \
     SAM9X60LowlevelApplet.qml \
     SAM9X60LowlevelConfig.qml \
-    SAM9X60SecureBootConfigApplet.qml \
     sam9x60-bcp.js \
     sam9x60-bootcfg.js \
     sam9x60-bscr.js \
@@ -24,7 +23,6 @@ DEVICE_FILES *= \
     applets/applet-qspiflash_sam9x60-generic_sram.bin \
     applets/applet-reset_sam9x60-generic_sram.bin \
     applets/applet-sdmmc_sam9x60-generic_sram.bin \
-    applets/applet-securebootconfig_sam9x60-generic_sram.bin \
     applets/applet-serialflash_sam9x60-generic_sram.bin \
     applets/applet-bootconfig_sam9x60-generic_sram.cip \
     applets/applet-extram_sam9x60-generic_sram.cip \
@@ -33,7 +31,6 @@ DEVICE_FILES *= \
     applets/applet-qspiflash_sam9x60-generic_sram.cip \
     applets/applet-reset_sam9x60-generic_sram.cip \
     applets/applet-sdmmc_sam9x60-generic_sram.cip \
-    applets/applet-securebootconfig_sam9x60-generic_sram.cip \
     applets/applet-serialflash_sam9x60-generic_sram.cip
 
 include(../device.pri)
