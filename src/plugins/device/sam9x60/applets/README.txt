@@ -1,13 +1,13 @@
 These SAM9X60 Applets were built from the Atmel Software Package:
 
 Repository: https://github.com/atmelcorp/atmel-software-package
-Commit: 0585df770171cd6425ffc6995a3b5e337cc9588b
+Commit: 8baaafaffc6410e6f2347ac20075b19f15805f44
 
 To get the sources and rebuild an applet (using GCC):
 
 1. get the software package source git checkout:
         git clone https://github.com/atmelcorp/atmel-software-package
-        git checkout 0585df770171cd6425ffc6995a3b5e337cc9588b
+        git checkout 8baaafaffc6410e6f2347ac20075b19f15805f44
 
 2. build the applet (for example: serialflash):
         cd samba_applets/serialflash
