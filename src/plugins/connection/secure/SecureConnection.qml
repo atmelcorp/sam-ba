@@ -313,11 +313,20 @@ Connection {
 
 	/*! \internal */
 	function commandLineCommands() {
-		return ["version", "custom", "enable_secure", "write_customer_key"]
+		var common_commands = ["version", "custom", "enable_secure", "write_customer_key"]
+		var device_commands = device.commandLineSecureCommands()
+		var commands = common_commands.concat(device_commands)
+		var unique_commands = commands.filter(function(elem, index, self) {
+			return index == self.indexOf(elem)
+		})
+		return unique_commands
 	}
 
 	/*! \internal */
 	function commandLineCommandHelp(command) {
+		if (device.hasSecureCommand(command))
+			return device.commandLineSecureCommandHelp(command)
+
 		if (command === "version") {
 			return ["* version - display the ROM code version",
 			        "Syntax:",
@@ -342,6 +351,9 @@ Connection {
 
 	/*! \internal */
 	function commandLineCommand(command, args) {
+		if (device.hasSecureCommand(command))
+			return device.commandLineSecureCommand(command, args)
+
 		if (command === "version")
 			return commandLineCommandVersion(args)
 		else if (command === "custom")

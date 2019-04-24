@@ -138,4 +138,26 @@ Item {
 		        "Note:",
 		        "    Peripheral numbers and I/O sets are device specific. Please see device documentation in 'doc' directory."]
 	}
+
+	/*! \internal */
+	function commandLineSecureCommands() {
+		return []
+	}
+
+	/*! \internal */
+	function commandLineSecureCommandHelp(command) {
+		// do nothing
+	}
+
+	/*! \internal */
+	function commandLineSecureCommand(command, args) {
+		// do nothing
+	}
+
+	/*! \internal */
+	function hasSecureCommand(command) {
+		var commands = commandLineSecureCommands()
+
+		return commands.indexOf(command) !== -1
+	}
 }
