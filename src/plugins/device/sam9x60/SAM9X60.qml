@@ -113,6 +113,42 @@ Device {
 	function initialize() {
 	}
 
+	/*!
+		\brief List SAM9X60 specific commands for its secure SAM-BA monitor
+	*/
+	function commandLineSecureCommands() {
+		return ["write_rsa_hash", "enable_pairing"]
+	}
+
+	/*!
+		\brief Show help for monitor commands supported by a SecureConnection
+	*/
+	function commandLineSecureCommandHelp(command) {
+		if (command === "write_rsa_hash") {
+			return ["* write_rsa_hash - write the RSA hash into the device",
+			        "Syntax:",
+			        "    write_rsa_hash:<file>"]
+		}
+		if (command === "enable_pairing") {
+			return ["* enable_pairing - enable pairing mode",
+				"Syntax:",
+				"    enable_pairing"]
+		}
+	}
+
+	/*!
+		\brief Handle monitor commands through a SecureConnection
+
+		Handle secure commands specific to the secure SAM-BA monitor
+		of SAM9X60 devices.
+	*/
+	function commandLineSecureCommand(command, args) {
+		if (command === "write_rsa_hash")
+			return connection.commandLineCommandWriteRSAHash(args)
+		if (command === "enable_pairing")
+			return connection.commandLineCommandSetPairingMode(args)
+	}
+
 	SAM9X60Config {
 		id: config
 	}
