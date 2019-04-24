@@ -222,6 +222,92 @@ Device {
 			print("Warning: Invalid CIDR, no known SAMA5D2 chip detected!")
 	}
 
+	/*! \internal */
+	function commandLineCommandWriteFullCustomerKey(args) {
+		if (args.length !== 1)
+			return "Invalid number of arguments (expected 1)."
+
+		return connection.executeCustomCommand("WFCK", "write", args[0])
+	}
+
+	/*!
+		\brief List SAMA5D2 specific commands for its secure SAM-BA monitor
+	*/
+	function commandLineSecureCommands() {
+		return ["write_full_customer_key", "write_rsa_hash", "enable_pairing", "enable_boot_from_ext_memory", "disable_jtag", "disable_monitor", "store_keys_in_fuses", "set_secure_debug"]
+	}
+
+	/*!
+		\brief Show help for monitor commands supported by a SecureConnection
+	*/
+	function commandLineSecureCommandHelp(command) {
+		if (command === "write_full_customer_key") {
+			return ["* write_full_customer_key - write the full customer key into the device",
+				"Syntax:",
+				"    write_full_customer_key:<file>"]
+		}
+		if (command === "write_rsa_hash") {
+			return ["* write_rsa_hash - write the RSA hash into the device",
+			        "Syntax:",
+			        "    write_rsa_hash:<file>"]
+		}
+		if (command === "enable_pairing") {
+			return ["* enable_pairing - enable pairing mode",
+				"Syntax:",
+				"    enable_pairing"]
+		}
+		if (command === "enable_boot_from_ext_memory") {
+			return ["* enable_boot_from_ext_memory - enable the boot sequence and try to boot from some external memory",
+				"Syntax:",
+				"    enable_boot_from_ext_memory"]
+		}
+		if (command === "disable_jtag") {
+			return ["* disable_jtag - permanently disable JTAG port",
+				"Syntax:",
+				"    disable_jtag"]
+		}
+		if (command === "disable_monitor") {
+			return ["* disable_monitor - disable the secure SAM-BA monitor",
+				"Syntax:",
+				"    disable_monitor"]
+		}
+		if (command === "store_keys_in_fuses") {
+			return ["* store_keys_in_fuses - set 'KEY_IN_FUSE' bit in the Boot Config word",
+				"Syntax:",
+				"    store_keys_in_fuses"]
+		}
+		if (command === "set_secure_debug") {
+			return ["* set_secure_debug - set 'SECURE_DEBUG' bit (bit 30) in SFC_DR[16] ",
+				"Syntax:",
+				"    set_secure_debug"]
+		}
+	}
+
+	/*!
+		\brief Handle monitor commands through a SecureConnection
+
+		Handle secure commands specific to the secure SAM-BA monitor
+		of SAMA5D2 devices.
+	*/
+	function commandLineSecureCommand(command, args) {
+		if (command === "write_full_customer_key")
+			return commandLineCommandWriteFullCustomerKey(args)
+		if (command === "write_rsa_hash")
+			return connection.commandLineCommandWriteRSAHash(args)
+		if (command === "enable_pairing")
+			return connection.commandLineCommandSetPairingMode(args)
+		if (command === "enable_boot_from_ext_memory")
+			return connection.commandLineCommandNoArgs("SEMB", args)
+		if (command === "disable_jtag")
+			return connection.commandLineCommandNoArgs("SJTD", args)
+		if (command === "disable_monitor")
+			return connection.commandLineCommandNoArgs("SMDI", args)
+		if (command === "store_keys_in_fuses")
+			return connection.commandLineCommandNoArgs("SKIF", args)
+		if (command === "set_secure_debug")
+			return connection.commandLineCommandNoArgs("SSDB", args)
+	}
+
 	SAMA5D2Config {
 		id: config
 	}
