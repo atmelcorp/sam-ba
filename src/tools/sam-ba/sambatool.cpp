@@ -308,6 +308,9 @@ void SambaTool::run()
 		return;
 	}
 
+	if (m_port && m_device)
+		m_port->setProperty("device", QVariant::fromValue<QObject*>(m_device));
+
 	if (m_status & ShowPortHelp) {
 		displayPortHelp();
 		m_status |= Exit;
@@ -360,11 +363,8 @@ void SambaTool::run()
 	if ((m_status & (RunMonitor | RunApplet)) != 0)
 	{
 		SambaToolContext toolContext;
-		if (m_port) {
-			if (m_device)
-				m_port->setProperty("device", QVariant::fromValue<QObject*>(m_device));
+		if (m_port)
 			toolContext.setPort(QVariant::fromValue<QObject*>(m_port));
-		}
 		if (m_applet)
 			toolContext.setAppletName(m_applet->property("name"));
 		if (m_commands.isValid())
@@ -635,10 +635,18 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 				cerr_msg("Error: Cannot run monitor commands because no port is set.");
 				status |= Failed;
 			}
+			if (!m_device) {
+				cerr_msg("Error: Cannot run monitor commands because neither device nor board are set.");
+				status |= Failed;
+			}
 		}
 		if (status & ShowMonitorCmdHelp) {
 			if (!m_port) {
 				cerr_msg("Error: Cannot show monitor commands because no port is set.");
+				status |= Failed;
+			}
+			if (!m_device) {
+				cerr_msg("Error: Cannot show monitor commands because neither device nor board are set.");
 				status |= Failed;
 			}
 		}
@@ -668,12 +676,20 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 				cerr_msg("Error: Cannot run applet commands because no port is set.");
 				status |= Failed;
 			}
+			if (!m_device) {
+				cerr_msg("Error: Cannot run applet commands because neither device nor board are set.");
+				status |= Failed;
+			}
 			if (!m_applet) {
 				cerr_msg("Error: Cannot run applet commands because no applet is set.");
 				status |= Failed;
 			}
 		}
 		if (status & ShowAppletCmdHelp) {
+			if (!m_device) {
+				cerr_msg("Error: Cannot show applet commands because neither device nor board are set.");
+				status |= Failed;
+			}
 			if (!m_applet) {
 				cerr_msg("Error: Cannot show applet commands because no applet is set.");
 				status |= Failed;
