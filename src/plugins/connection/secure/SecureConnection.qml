@@ -312,6 +312,27 @@ Connection {
 	}
 
 	/*! \internal */
+	function commandLineCommandWriteRSAHash(args) {
+		if (args.length !== 1)
+			return "Invalid number of arguments (expected 1)."
+
+		return executeCustomCommand("WRHA", "write", args[0])
+	}
+
+	/*! \internal */
+	function commandLineCommandNoArgs(cmd, args) {
+		if (args.length !== 0)
+			return "Invalid number of arguments (expected none)."
+
+		return executeCustomCommand(cmd)
+	}
+
+	/*! \internal */
+	function commandLineCommandSetPairingMode(args) {
+		return commandLineCommandNoArgs("SPAI", args)
+	}
+
+	/*! \internal */
 	function commandLineCommands() {
 		var common_commands = ["version", "custom", "enable_secure", "write_customer_key"]
 		var device_commands = device.commandLineSecureCommands()
