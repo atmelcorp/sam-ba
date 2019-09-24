@@ -187,6 +187,35 @@ Device {
 			print("Warning: Invalid CIDR, no known SAMA5D4 chip detected!")
 	}
 
+	/*!
+		\brief List SAMA5D4 specific commands for its secure SAM-BA monitor
+	*/
+	function commandLineSecureCommands() {
+		return ["enable_secure"]
+	}
+
+	/*!
+		\brief Show help for monitor commands supported by a SecureConnection
+	*/
+	function commandLineSecureCommandHelp(command) {
+		if (command === "enable_secure") {
+			return ["* enable_secure - enable secure mode",
+			        "Syntax:",
+			        "    enable_secure:<file>"]
+		}
+	}
+
+	/*!
+		\brief Handle monitor commands through a SecureConnection
+
+		Handle secure commands specific to the secure SAM-BA monitor
+		of SAMA5D4 devices.
+	*/
+	function commandLineSecureCommand(command, args) {
+		if (command === "enable_secure")
+			return connection.commandLineCommandEnableSecure(args)
+	}
+
 	SAMA5D4Config {
 		id: config
 	}

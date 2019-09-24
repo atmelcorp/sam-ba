@@ -334,7 +334,7 @@ Connection {
 
 	/*! \internal */
 	function commandLineCommands() {
-		var common_commands = ["version", "custom", "enable_secure", "write_customer_key"]
+		var common_commands = ["version", "custom", "write_customer_key"]
 		var device_commands = device.commandLineSecureCommands()
 		var commands = common_commands.concat(device_commands)
 		var unique_commands = commands.filter(function(elem, index, self) {
@@ -358,11 +358,6 @@ Connection {
 			        "Syntax:",
 			        "    custom:<command>:[<direction>]:[<file>]"]
 		}
-		else if (command === "enable_secure") {
-			return ["* enable_secure - enable secure mode",
-			        "Syntax:",
-			        "    enable_secure:<file>"]
-		}
 		else if (command === "write_customer_key") {
 			return ["* write_customer_key - write the customer key into the device",
 			        "Syntax:",
@@ -379,8 +374,6 @@ Connection {
 			return commandLineCommandVersion(args)
 		else if (command === "custom")
 			return commandLineCommandCustom(args)
-		else if (command === "enable_secure")
-			return commandLineCommandEnableSecure(args)
 		else if (command === "write_customer_key")
 			return commandLineCommandWriteCustomerKey(args)
 		else
