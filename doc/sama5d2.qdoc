@@ -37,7 +37,7 @@ The list of supported applets can be displayed with the following command:
 
 \code
 $ sam-ba -p serial -d sama5d2 -a help
-Known applets: bootconfig, lowlevel, extram, serialflash, qspiflash, nandflash, sdmmc, internalrc, reset
+Known applets: bootconfig, lowlevel, extram, serialflash, qspiflash, nandflash, sdmmc, internalrc, reset, readuniqueid
 \endcode
 
 \table
@@ -69,6 +69,10 @@ Known applets: bootconfig, lowlevel, extram, serialflash, qspiflash, nandflash, 
 \li \l {qspiflash.html} {qspiflash}
 \li Manage (Q)SPI NOR flash memories connected to the QSPI controller
 \li \l {sama5d2.html#programming-a-qspi-nor-flash} {Programming a QSPI NOR flash}
+\row
+\li \l {readuniqueid.html} {readuniqueid}
+\li Read the device unique ID
+\li
 \row
 \li \l {reset.html} {reset}
 \li Reset the target device

@@ -13,6 +13,7 @@ qml.files = \
     NANDFlashConfig.qml \
     QSPIFlashApplet.qml \
     QSPIFlashConfig.qml \
+    ReadUniqueIDApplet.qml \
     ResetApplet.qml \
     SDMMCApplet.qml \
     SDMMCConfig.qml \

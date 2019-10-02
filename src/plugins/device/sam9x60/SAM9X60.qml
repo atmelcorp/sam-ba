@@ -102,6 +102,12 @@ Device {
 			codeAddr: 0x300000
 			mailboxAddr: 0x300004
 			entryAddr: 0x300000
+		},
+		ReadUniqueIDApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-readuniqueid_sam9x60-generic_sram.bin")
+			codeAddr: 0x300000
+			mailboxAddr: 0x300004
+			entryAddr: 0x300000
 		}
 	]
 

@@ -1,0 +1,17 @@
+/*!
+\page readuniqueid.html
+\title SAM-BA readuniqueid applet
+\brief This document explains how to execute the \b {readuniqueid} applet
+
+\section1 Reading the device unique ID
+
+The \b {readuniqueid} applet displays the device unique ID and optionally saves
+it into a binary file.
+
+\code
+sam-ba -p <port> -d <device> -a readuniqueid[:<filename>]
+
+$ sam-ba -p serial -d sama5d2 -a readuniqueid
+$ sam-ba -p serial -d sama5d2 -a readuniqueid:uid.bin
+\endcode
+*/

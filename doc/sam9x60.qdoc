@@ -36,7 +36,7 @@ The list of supported applets can be displayed with the following command:
 
 \code
 $ sam-ba -p serial -d sam9x60 -a help
-Known applets: bootconfig, lowlevel, extram, sdmmc, serialflash, qspiflash, nandflash, reset
+Known applets: bootconfig, lowlevel, extram, sdmmc, serialflash, qspiflash, nandflash, reset, readuniqueid
 \endcode
 
 \table
@@ -63,6 +63,10 @@ Known applets: bootconfig, lowlevel, extram, sdmmc, serialflash, qspiflash, nand
 \li \l {qspiflash.html} {qspiflash}
 \li Manage (Q)SPI NOR flash memories connected to the QSPI controller
 \li \l {sam9x60.html#programming-a-qspi-nor-flash} {Programming a QSPI NOR flash}
+\row
+\li \l {readuniqueid.html} {readuniqueid}
+\li Read the device unique ID
+\li
 \row
 \li \l {reset.html} {reset}
 \li Reset the target device

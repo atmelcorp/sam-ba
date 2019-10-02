@@ -10,6 +10,7 @@ NANDFlashApplet 3.2 NANDFlashApplet.qml
 NANDFlashConfig 3.2 NANDFlashConfig.qml
 QSPIFlashApplet 3.2 QSPIFlashApplet.qml
 QSPIFlashConfig 3.2 QSPIFlashConfig.qml
+ReadUniqueIDApplet 3.2 ReadUniqueIDApplet.qml
 ResetApplet 3.2 ResetApplet.qml
 SDMMCApplet 3.2 SDMMCApplet.qml
 SDMMCConfig 3.2 SDMMCConfig.qml

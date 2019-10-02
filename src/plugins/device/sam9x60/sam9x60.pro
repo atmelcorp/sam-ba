@@ -21,6 +21,7 @@ DEVICE_FILES *= \
     applets/applet-lowlevel_sam9x60-generic_sram.bin \
     applets/applet-nandflash_sam9x60-generic_sram.bin \
     applets/applet-qspiflash_sam9x60-generic_sram.bin \
+    applets/applet-readuniqueid_sam9x60-generic_sram.bin \
     applets/applet-reset_sam9x60-generic_sram.bin \
     applets/applet-sdmmc_sam9x60-generic_sram.bin \
     applets/applet-serialflash_sam9x60-generic_sram.bin \
@@ -29,6 +30,7 @@ DEVICE_FILES *= \
     applets/applet-lowlevel_sam9x60-generic_sram.cip \
     applets/applet-nandflash_sam9x60-generic_sram.cip \
     applets/applet-qspiflash_sam9x60-generic_sram.cip \
+    applets/applet-readuniqueid_sam9x60-generic_sram.cip \
     applets/applet-reset_sam9x60-generic_sram.cip \
     applets/applet-sdmmc_sam9x60-generic_sram.cip \
     applets/applet-serialflash_sam9x60-generic_sram.cip
