@@ -6,6 +6,10 @@
 The \e {serialflash} applet drives any SPIx or FLEXCOMx_SPI controller to program an external SPI \b {NOR} flash
 memory embedded on the board and connected to the SAM MPU device.
 
+\section1 Supported SPI NOR flash memories
+
+The list of all SPI NOR flash memories supported by the \e {serialflash} applet is available \l {https://github.com/atmelcorp/atmel-software-package/blob/v2.17/drivers/nvm/spi-nor/spi-nor-ids.c#L141} {here}.
+
 \section1 Applet initialization
 
 The list of parameters to initialize the \e {serialflash} applet can be displayed

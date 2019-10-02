@@ -6,6 +6,10 @@
 The \e {qspiflash} applet drives any QSPIx controller to program an external QSPI \b {NOR} flash
 memory embedded on the board and connected to the SAM MPU device.
 
+\section1 Supported QSPI NOR flash memories
+
+The list of all QSPI NOR flash memories supported by the \e {qspiflash} applet is available \l {https://github.com/atmelcorp/atmel-software-package/blob/v2.17/drivers/nvm/spi-nor/spi-nor-ids.c#L141} {here}.
+
 \section1 Applet initialization
 
 The list of parameters to initialize the \e {qspiflash} applet can be displayed
