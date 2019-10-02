@@ -117,7 +117,7 @@ BootConfigApplet {
 		if (command === "readcfg") {
 			return [" * readcfg - read boot configuration",
 				"Syntax:",
-				"    readcfg:(bcp-otp|bcp-emul|uhcp-otp|uhcp-emul|bscr)",
+				"    readcfg:(bcp-otp|bcp-emul|uhcp-otp|uhcp-emul|sbcp-emul|sbcp-otp|bscr)",
 				"Examples:",
 				"    readcfg:bcp-otp   read the boot config packet from OTP matrix",
 				"    readcfg:bcp-emul  read the boot config packet from OTP emulation mode",

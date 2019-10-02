@@ -1,6 +1,34 @@
 /*!
 \page sam9x60.html
-\title SAM9X60
+\title Getting started with SAM-BA on SAM9X60 devices
+
+\section1 Connecting to the SAM-BA monitor
+
+For USB connection, the host running \e {sam-ba} should be connected to the \b {USB
+device port} of the SAM9X60 board design. On SAM9X60-EK boards, this port is
+labeled \b {USBA (J7)}.
+
+\b {The USB device port must not be confused with other USB connectors such as
+VBUS_JLINK (J22)}
+
+\section1 Predefined boards and customer board designs
+
+The \e {sam-ba} program comes with a predefined \e {sam9x60-ek} board that sets default values
+for different settings such as the \e {applet console} or memory controller \e {instances}
+and \e {iosets}.
+
+This predefined board can be selected with the \e {-b sam9x60-ek}
+option on the \e {sam-ba} command line.
+
+However the \e {-d sam9x60} option should be used instead on customer board
+designs not to load any default settings. Instead, additional parameters may be
+passed to the \l {SAM9X60Config#serial-console-configuration} {-d sam9x60:<console_instance>:<console_ioset> } option to select
+the \e {applet console}. The \e {applet console}, when enabled, is used by any
+applet to print its traces.
+
+Also, default memory controller settings, if any, can be overridden too passing
+additionnal arguments to the \l {applet.html#the-a-applet-option} {-a <applet>}
+option for the applet mananing the memory controller.
 
 \section1 Supported applets
 
@@ -11,28 +39,293 @@ $ sam-ba -p serial -d sam9x60 -a help
 Known applets: bootconfig, lowlevel, extram, sdmmc, serialflash, qspiflash, nandflash, reset
 \endcode
 
-\list
+\table
+\header
+\li Applet
+\li Short description
+\li Examples
+\row
 \li \l {bootconfig_sam9x60.html} {bootconfig}
+\li Manage boot configuration of the device, select boot media
+\li \l {sam9x60.html#programming-a-boot-configuration-packet} {Programming a Boot Configuration packet}
+\row
 \li \l {extram.html} {extram}
+\li Initialize the external RAM (not needed by any other applets)
+\li
+\row
 \li \l {lowlevel.html} {lowlevel}
+\li Setup the clock tree (only needed by the \e {extram} applet)
+\row
 \li \l {nandflash.html} {nandflash}
+\li Manage raw NAND flash memories connected to the EBI and driven by the SMC
+\li \l {sam9x60.html#programming-a-raw-nand-flash} {Programming a raw NAND flash}
+\row
 \li \l {qspiflash.html} {qspiflash}
+\li Manage (Q)SPI NOR flash memories connected to the QSPI controller
+\li \l {sam9x60.html#programming-a-qspi-nor-flash} {Programming a QSPI NOR flash}
+\row
 \li \l {reset.html} {reset}
-\li \l {serialflash.html} {serialflash}
+\li Reset the target device
+\row
 \li \l {sdmmc.html} {sdmmc}
-\endlist
+\li Manage e.MMC and SD Cards connected to some SDMMC instance
+\li \l {sam9x60.html#programming-a-sdcard-or-e-mmc-user-partition} {Programming a SD Card or e.MMC}
+\row
+\li \l {serialflash.html} {serialflash}
+\li Manage (Q)SPI NOR flash memories connected to some FLEXCOM SPI instance
+\li \l {sam9x60.html#programming-a-spi-nor-flash} {Programming a SPI NOR flash}
+\endtable
 
-\section1 External RAM initialization
+\section1 OTPC Emulation mode
 
-Prior to execute any of the \l {nandflash.html} {nandflash}, \l {qspiflash.html} {qspiflash},
-\l {serialflash.html} {serialflash} or \l {sdmmc.html} {sdmmc} applets, the external RAM must be initialized.
-This can be achieved by first executing the \l {lowlevel.html} {lowlevel} applet then the \l {extram.html} {extram} applet.
-Those applets only need to be executed once for all after each power-on or reset.
+During developments and tests, we recommend the user to enable the OTPC
+emulation mode. Doing so, the OTPC controller replaces its OTP matrix by SRAM1
+to store all user area packets, including the \l {sam9x60.html#boot-configuration}
+{Boot Configuration} packet, the \l {sam9x60.html#secure-boot-configuration} {Secure Boot Configuration} packet
+and the \l {sam9x60.html#user-hardware-configuration} {User Hardware Configuration} packet.
+
+The \l {bootconfig_sam9x60.html} {bootconfig} applet provides the user with helper commands to manage the
+OTPC emulation mode.
+
+As SRAM1 is powered by VDDBU, data are kept after reset, including user area
+packets of the OTPC emulation mode. However, those packets remain ignored by
+the ROM code unless the proper value is written into the BSCR register, for
+instance by executing the \l {bootconfig_sam9x60.html#the-writecfg-command} {writecfg:bscr:EMULATION_ENABLED} command:
 
 \code
-$ sam-ba -p serial -b sam9x60-ek -t 5 -a lowlevel
-$ sam-ba -p serial -b sam9x60-ek -t 5 -a extram
+$ sam-ba -p serial -b sam9x60-ek -t 5 -a bootconfig -c writecfg:bscr:EMULATION_ENABLED
 \endcode
+
+\b {Setting bit 0 (EMULATION_ENABLED) in the BSCR does not enable the OTPC
+emulation mode immediately}: it only tells the ROM code to enable the OTPC
+emulation mode on the next reset before fetching the \l {sam9x60.html#boot-configuration}
+{Boot Configuration} packet and any other user area packet.
+
+\b {WARNING: once any user area packet has been programmed into the OTP matrix, the emulation
+mode can never be enabled again. Be careful before writing a packet in the OTPC matrix !}
+
+To prevent the user from writing a packet into the OTP matrix by mistake, SAM-BA
+requires the user to append an explicit \e {emul} or \e {otp} suffix to the packet type
+telling whether this packet is stored into the OTP matrix or into SRAM1.
+
+\table
+\header
+\li Packet type / Stored in
+\li SRAM1 (emulation mode)
+\li OTP matrix
+\row
+\li \l {sam9x60.html#boot-configuration} {Boot Configuration}
+\li bcp-emul
+\li bcp-otp
+\row
+\li \l {sam9x60.html#secure-boot-configuration} {Secure Boot Configuration}
+\li sbcp-emul
+\li sbcp-otp
+\row
+\li \l {sam9x60.html#user-hardware-configuration} {User Hardware Configuration}
+\li uhcp-emul
+\li uhcp-otp
+\endtable
+
+Before writing a first packet in emulation mode, SRAM1 must be reset to zero.
+This is the purpose of the \l {bootconfig_sam9x60.html#the-resetemul-command} {resetemul} command:
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -c resetemul
+\endcode
+
+Once SRAM1 has been reset, the user should request the OTPC to scan again,
+hence refresh, packets in the user area by running a \l {bootconfig_sam9x60.html#the-refreshcfg-command} {refreshcfg:emul}
+command.
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -t 5 -c refreshcfg:emul
+\endcode
+
+Unlike the \l {bootconfig_sam9x60.html#the-writecfg-command} {writecfg:bscr:EMULATION_ENABLED}, the \l {bootconfig_sam9x60.html#the-refreshcfg-command} {refreshcfg:emul}
+command enables the OTPC emulation mode \b {immediately}, till the next power-on/reset
+or till disable again by the \l {bootconfig_sam9x60.html#the-refreshcfg-command} {refreshcfg:otp} command.
+
+\section1 Boot Configuration
+
+The ROM code of SAM9X60 devices is the 1st stage boot loader responsible for the
+system boot. Hence, the ROM code fetches the \l {sam9x60.html#active-boot-configuration-packet}
+{active Boot Configuration packet} from the OTPC in order to get boot settings such
+as the \l {sam9x60.html#rom-code-console} {ROM code console} and the
+\l {sam9x60.html#nvm-boot-sequence} {NVM boot sequence}.
+
+\section2 Active Boot Configuration packet
+
+ROM code boot settings are stored in an OTPC packet of \e {Boot Configuration} type.
+Like any other OTPC packet, \e {Boot Configuration} packets can be read, programmed,
+locked or invalidated.
+
+The \b {latest valid} \e {Boot Configuration} packet is the \b {active} \e {Boot Configuration}
+packet. That is to say the ROM code fetches its boot settings from this packet.
+
+If no valid \e {Boot Configuration} packet is programmed in the OTPC, then the ROM
+code uses its \l {sam9x60.html#rom-code-console} {default console} and
+\l {sam9x60.html#nvm-boot-sequence} {default boot sequence} .
+
+\section2 ROM Code console
+
+The \e {Boot Configuration} packet tells the ROM code which RS-232 UART is to be used
+for the console. For instance, the "RomBOOT" string is always printed on power-on or reset
+on this console. Also, the ROM code console is used by SAM-BA monitors to
+communicate with the \e {sam-ba} program when USB is not available.
+
+On SAM9X60, the default \e {ROM code console} is DBGU but it can be set to some FLEXCOMx
+USART. Please note that the \e {ROM code console} may be different from the \l {sam9x60.html#predefined-boards-and-customer-board-designs} {applet console}
+
+\section2 NVM boot sequence
+
+The Non-Volatile Memory (NVM) boot sequence is the list of controllers managing
+external NVM where the ROM code tries to load the user application (or 2nd stage
+boot loader) from.
+
+On SAM9X60, the default boot sequence is:
+\list 1
+\li SDMMC0 (e.MMC / SD Card)
+\li SDMMC1 (e.MMC / SD Card)
+\li QSPI (QSPI NOR flash)
+\li FLEXCOM0 SPI (SPI NOR flash)
+\li SMC (raw NAND flash)
+\endlist
+
+\section2 Programming a Boot Configuration packet
+
+The user can program his first \e {Boot Configuration} packet with the \l {bootconfig_sam9x60.html#the-writecfg-command} {writecfg:bcp-emul / writecfg:bcp-otp} command:
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -t 5 -c writecfg:bcp-emul:QSPI0_IOSET1
+\endcode
+
+In this example, DBGU is implicitly chosen as the \e {ROM code console} and QSPI0 is
+the only boot media in the boot sequence.
+
+If the user wants to try to boot from a NAND flash first, then from SDMMC1 then
+the \e {sam-ba} command will be:
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -t 5 -c writecfg:bcp-emul:NFC_IOSET1,SDMMC1_IOSET1
+\endcode
+
+\b {The \l {bootconfig_sam9x60.html#the-writecfg-command} {writecfg} command fails on purpose to create a new packet if an active packet of the same type already
+exists \e {but cannot be updated}. This packet must be invalidated first by the \l {bootconfig_sam9x60.html#the-invalidatecfg-command} {invalidatecfg} command before creating a new valid packet.}
+
+\section2 Reading back the Boot Configuration packet
+
+If an active \e {Boot Configuration} packet is available from the OTPC, this packet
+can be read-back with the \l {bootconfig_sam9x60.html#the-readcfg-command} {readcfg:bcp-emul / readcfg:bcp-otp} command:
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -t 5 -c readcfg:bcp-emul
+\endcode
+
+\b {If no active \e {Boot Configuration} packet is available from the OTPC, then this
+command reports an error. Especially, the default boot configuration used by the
+ROM code is \e {not} returned. Only the active \e {Boot Configuration} packet
+programmed in the OTPC can be returned.}
+
+\section2 Updating the Boot Configuration packet
+
+Only 32-bit zero words can be updated in OTPC packet payloads.
+For instance, if the boot sequence is not full, the user can append another entry
+to the boot sequence. However, previous entries must be left unchanged.
+As an example, assuming the current boot sequence is "NFC_IOSET1,SDMMC1_IOSET1",
+the user can still append a "SDMMC0_IOSET1" entry with the \l {bootconfig_sam9x60.html#the-writecfg-command} {writecfg:bcp-emul / writecfg:bcp-otp} command:
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -t 5 -c writecfg:bcp-emul:NFC_IOSET1,SDMMC1_IOSET1,SDMMC0_IOSET1
+\endcode
+
+The update or the creation of new \e {Boot Configuration} packet can be persistently disabled
+by setting the \e {BCPGDIS} bit of the \l {sam9x60.html#user-hardware-configuration} {User Hardware Configuration} packet.
+
+\section2 Locking the Boot Configuration packet
+
+Locking a packet discards any further modification of this packet, except its
+invalidation. Hence, once locked, a packet can no longer be updated.
+Locking the \e {Boot Configuration} packet is done by the \l {bootconfig_sam9x60.html#the-lockcfg-command} {lockcfg:bcp-emul / lockcfg:bcp-otp} command:
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -t 5 -c lockcfg:bcp-emul
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -t 5 -c writecfg:bcp-emul:NFC_IOSET1,SDMMC1_IOSET1,SDMMC0_IOSET1,FLEXCOM0_SPI_IOSET1
+\endcode
+
+The second command fails since the \e {Boot Configuration} packet has been locked
+by the first command.
+
+Locking of \e {Boot Configuration} packets can be persistently disabled
+by setting the \e {BCLKDIS} bit of the \l {sam9x60.html#user-hardware-configuration} {User Hardware Configuration} packet.
+
+\section2 Invalidating the \e {Boot Configuration} packet
+
+The \e {Boot Configuration} packet can be tagged as invalid so it is ignored by
+the OTPC when it scans the user area, hence ignored by the ROM code on futher
+power-on/reset.
+This is achieved with the \l {bootconfig_sam9x60.html#the-invalidatecfg-command} {invalidatecfg:bcp-emul / invalidatecfg:bcp-otp} command
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -t 5 -c invalidatecfg:bcp-emul
+\endcode
+
+Packet invalidation cannot be reverted, however a new packet of the same type
+can be programmed with a new \l {bootconfig_sam9x60.html#the-writecfg-command} {writecfg:bcp-emul/ writecfg:otp-emul} command. In case of \e {Boot Configuration} packets, the latest packet
+that has been programmed but not invalidated yet is the active \e {Boot
+Configuration} packet.
+
+\code
+$ sam-ba -p serial -ba sam9x60 -a bootconfig -t 5 -c writecfg:bcp-emul:NFC_IOSET1
+\endcode
+
+The invalidation of \e {Boot Configuration} packets can be persistently disabled
+by setting the \e {BCINVDIS} bit of the \l {sam9x60.html#user-hardware-configuration} {User Hardware Configuration} packet.
+
+\section1 User Hardware Configuration
+
+The \e {User Hardware Configuration} packet is designed for the user to persistently
+disable the JTAG port or some OTPC features and commands.
+
+Like with the \e {Boot Configuration} packet, \e {sam-ba} provides commands to \l {bootconfig_sam9x60.html#the-writecfg-command} {create},
+\l {bootconfig_sam9x60.html#the-readcfg-command} {read-back}, \l {bootconfig_sam9x60.html#the-writecfg-command} {update}, \l {bootconfig_sam9x60.html#the-lockcfg-command} {lock} and \l {bootconfig_sam9x60.html#the-invalidatecfg-command} {invalidate} the \e {User Hardware Configuration} packet.
+
+\b {When a \e {User Hardware Configuration} packet has been created or updated,
+the packet is not taken into account by the OTPC controller until the next
+power-on/reset or until a refresh operation has been triggered by the
+\l {bootconfig_sam9x60.html#the-refreshcfg-command} {refreshcfg} command}.
+
+After each refresh, The payload of the active \e {User Hardware Configuration} packet is visible from
+\e {OTPC_UHC0R} and \e {OTPC_UHC1R} registers. Please refer to the OTPC section of the
+SAM9X60 datasheet for the exact description of those registers.
+
+\b {The \e {User Hardware Configuration} packet should be programmed at the end of the
+production to persistenly disable OTPC features such as programming, locking or
+invalidating given types of packet that may be used as breaches into the
+security of the customer device.}
+
+This is done with the \l {bootconfig_sam9x60.html#the-writecfg-command} {writecfg:uhcp-emul / writecfg:uhcp-otp} command:
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -t 5 -c writecfg:uhcp-emul:JTAGDIS,BCPGDIS,BCINVDIS,UHCPGDIS,UHCINVDIS
+\endcode
+
+\section1 Secure Boot Configuration
+
+To enable the secure boot mode on SAM9X60 devices, an initial \e {Secure Boot Configuration} packet must be created
+with the \l {bootconfig_sam9x60.html#the-writecfg-command} {writecfg:sbcp-emul / writecfg:sbcp-otp} command:
+
+\code
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -t 5 -c writecfg:sbcp-emul:SECURE_BOOT_ENABLED
+\endcode
+or shortly:
+\code
+$ sam-ba -p serial -b sam9x60-ek -a bootconfig -t 5 -c writecfg:sbcp-emul:
+\endcode
+
+\b {Don't forget the final colon (\e {:}) after \e {sbcp-emul} as the \e {writecfg} command expects 2 arguments; the 2nd argument being left to its default \e {SECURE_BOOT_ENABLED} value.}
+
+For further details on how to configure the secure boot mode, refer to \l {sam9x60.html#secure-boot-mode} {Secure Boot Mode}.
 
 \section1 Programming a raw NAND flash
 
@@ -48,6 +341,27 @@ $ sam-ba -p serial -b sam9x60-ek -t 5 -a nandflash -c write:zImage:0x00200000 -c
 $ sam-ba -p serial -b sam9x60-ek -t 5 -a nandflash -c write:rootfs.ubi:0x00800000 -c verify:rootfs.ubi:0x00800000
 \endcode
 
+\b {If the raw NAND flash is connected to a custom board design, then additional
+parameters should be passed to the \e {-a nandflash} option in above examples.}
+
+The list of those parameters is given by the command:
+
+\code
+$ sam-ba -p serial -d sam9x60 -a nandflash:help
+Syntax: nandflash:[<ioset>]:[<bus_width>]:[<header>]
+Parameters:
+    ioset      I/O set
+    bus_width  NAND bus width (8/16)
+    header     NAND header value
+Examples:
+    nandflash                 use default board settings
+    nandflash:2:8:0xc0098da5  use fully custom settings (IOSET2, 8-bit bus, header is 0xc0098da5)
+    nandflash:::0xc0098da5    use default board settings but force header to 0xc0098da5
+For information on NAND header values, please refer to SAM9X60 datasheet section "11.4.7.1.1 Method 1 (recommended): NAND Flash Specific Header Detection".
+\endcode
+
+Supported \e {<ioset>} for the NAND flash on SAM9X60 devices are listed \l {SAM9X60Config#nand-flash-configuration} {here}.
+
 \section1 Programming a QSPI NOR flash
 
 In the following example, we program the \e{at91bootstrap.bin}, \e{u-boot.bin}, \e{zImage} and \e{at91-sam9x60ek.dtb} files into
@@ -61,7 +375,27 @@ $ sam-ba -p serial -b sam9x60-ek -t 5 -a qspiflash -c write:at91-sam9x60ek.dtb:0
 $ sam-ba -p serial -b sam9x60-ek -t 5 -a qspiflash -c write:zImage:0x00200000 -c verify:zImage:0x00200000
 \endcode
 
-The QSPI NOR flash memory is too small to store the Linux root file-system; this should be programmed into another NVM.
+Most QSPI NOR flash memories are too small to store the Linux root file-system; this should be programmed into another NVM.
+
+\b {If the QSPI NOR flash memory is connected to a custom board design, then
+additional parameters should be passed to the \e {-a qspiflash} option in above examples.}
+
+The list of those parameters is given by the command:
+
+\code
+$ sam-ba -p serial -d sam9x60 -a qspiflash:help
+Syntax: qspiflash:[<instance>]:[<ioset>]:[<frequency>]
+Parameters:
+    instance   QSPI controller instance
+    ioset      QSPI I/O set
+    frequency  QSPI clock frequency in MHz
+Examples:
+    qspiflash         use default board settings
+    qspiflash:0:3:66  use fully custom settings (QSPI0, IOSET3, 66Mhz)
+    qspiflash:::20    use default board settings but force frequency to 20Mhz
+\endcode
+
+Supported \e {<instance>} and \e {<ioset>} for QSPI on SAM9X60 devices are listed \l {SAM9X60Config#qspi-flash-configuration} {here}.
 
 \section1 Programming a SPI NOR flash
 
@@ -76,7 +410,28 @@ $ sam-ba -p serial -d sam9x60 -t 5 -a serialflash:0:1:50 -c write:at91-sam9x60ek
 $ sam-ba -p serial -d sam9x60 -t 5 -a serialflash:0:1:50 -c write:zImage:0x0006c000 -c verify:zImage:0x0006c000
 \endcode
 
-SPI NOR flashes are too small to store the Linux root file-system; this should be programmed into another NVM.
+SPI NOR flashes are likely to be too small to store the Linux root file-system; this should be programmed into another NVM.
+
+\b {If the SPI NOR flash memory is connected to a custom board design, then
+additional parameters should be passed to the \e {-a serialflash} option in above examples.}
+
+The list of those parameters is given by the command:
+
+\code
+$ sam-ba -p serial -d sam9x60 -a serialflash:help
+Syntax: serialflash:[<instance>]:[<ioset>]:[<npcs>]:[<frequency>]
+Parameters:
+    instance   SPI controller instance
+    ioset      I/O set
+    npcs       SPI chip select number
+    frequency  SPI clock frequency in MHz
+Examples:
+    serialflash           use default board settings
+    serialflash:0:1:0:66  use fully custom settings (SPI0, IOSET1, NPCS0, 66Mhz)
+    serialflash::::20     use default board settings but force frequency to 20Mhz
+\endcode
+
+Supported \e {<instance>}, \e {<ioset>} and \e {<npcs>} for SPI on SAM9X60 devices are listed \l {SAM9X60Config#spi-serial-flash-configuration} {here}.
 
 \section1 Programming a SDCard or e.MMC user partition
 
@@ -95,76 +450,126 @@ The second partition is formatted in EXT4 and contains the root file-system used
 $ sam-ba -p serial -b sam9x60-ek -t 5 -a sdmmc -c write:sdcard.img
 \endcode
 
-\section1 Tuning the boot sequence
+\b {If the SD Card or e.MMC memory is connected to a customer board design, then
+additional parameters should be passed to the \e {-a sdmmc} option in above examples.}
 
-The list of boot media tested by the ROM code to load then execute a bootstrap
-can be tuned with the \l {bootconfig_sam9x60.html} {bootconfig} applet.
-
-\section2 Booting from a raw NAND flash in emulation mode
-
-In the next example, we want to boot only from the 8-bit raw NAND flash memory
-of a SAM9X60-EK board, hence connected on the D16-D23 pins of the EBI.
-The Boot Configuration Packet is programmed into the internal SRAM1, used by the
-OTPC for its emulation mode. We also write the BSCR with the relevant value to
-tell the ROM code that it must enable the OTPC emulation mode before reading its
-Boot Config Packet.
+The list of those parameters is given by the command:
 
 \code
-$ sam-ba -p serial -b sam9x60-ek -t 5 -a bootconfig -c resetemul -c writecfg:bcp-emul:DBGU,NFC_IOSET1 -c writecfg:bscr:EMULATION_ENABLED
+$ sam-ba -p serial -d sam9x60 -a sdmmc:help
+Syntax: sdmmc:[<instance>]:[<ioset>]:[<partition>]:[<bus_width>]:[<voltages>]
+Parameters:
+    instance   SDMMC controller number
+    ioset      SDMMC I/O set
+    partition  Partition number (0=user partition, x>0=boot partition x)
+    bus_width  Data bus width (0=controller max, 1=1-bit, 4=4-bit, 8=8-bit)
+    voltages   Supported voltages (bitfield: 1=1.8V, 2=3.0V, 4=3.3V)
+Examples:
+    sdmmc           use default board settings
+    sdmmc:0:1:1:8:5 use fully custom settings (SDMMC0, IOSET1, first boot partition, 8-bit, 1.8V/3.3V)
+    sdmmc:0::1      use default board settings but force use of SDMMC0, first boot partition
 \endcode
 
-The Boot Configuration Packet remains in SRAM1 and the value of the BSCR is kept
-as long as VDDBU is supplied.
+Supported \e {<instance>} and \e {<ioset>} for SDMMC on SAM9X60 devices are listed \l {SAM9X60Config#sd-mmc-configuration} {here}.
 
-\section2 Permanently booting from a SD Card
+\section1 Secure Boot Mode
 
-In the next example, we want to boot only from a SD Card plugged into the SD
-Card slot (SDMMC0) of a SAM9X60-EK board.
-The Boot Configuration Packet is programmed into the OTP matrix to be persistent.
+First step to benefit from secure boot features of SAM9X60 devices is to enable
+this secure boot mode as describe in section \l {sam9x60.html#secure-boot-configuration} {Secure Boot Configuration}.
+
+Once the \e {Secure Boot Configuration} packet has been written, the device must
+be reset so the ROM code executes its secure SAM-BA monitor:
 
 \code
-$ sam-ba -p serial -b sam9x60-ek -t 5 -a bootconfig -c writecfg:bcp-otp:DBGU,SDMMC0_IOSET1
+$ sam-ba -p serial -d sam9x60 -a reset
 \endcode
 
-\section2 Ordering the boot media
+\b {From this point, the ROM code no longer executes its non-secure SAM-BA monitor
+but instead runs its secure SAM-BA monitor. Hence, the
+\l {port.html#connecting-to-the-non-secure-sam-ba-monitor} {serial} or
+\l {port.html#connecting-through-the-j-link-port} {j-link}
+ports cannot be used;
+the \l {port.html#connecting-to-the-secure-sam-ba-monitor} {secure} port must be
+used instead.}
 
-The order of boot media during the ROM code boot sequence matches the position
-of each associated controller in comma \e{","} separated list provided as
-argument of the \e{writecfg} command.
+Then, another mandatory step is to program the customer key into the device.
+This customer key is wrapped into a ciphered and signed customer key message.
 
-The boot sequence contains up to 7 entries.
+\b {This so called customer key message is actually generated from the \e {640-bit} customer key
+by the \e {secure-sam-ba-cipher.py} tool. This tool is distributed under NDA, hence
+not covered by this documentation.}
 
-In this example, we provide the sam-ba command to program the following boot
-sequence:
-\list 1
-\li SDMMC0 ioset1
-\li SDMMC1 ioset1
-\li QSPI0 ioset1
-\li FLEXCOM0_SPI ioset1
-\li NFC ioset1
-\endlist
+As stated, the customer key message is ciphered to protect the customer key from
+eavesdropping during device provisioning in factory and is also signed so the
+customer key message can be authenticated by the ROM code.
+Only the \e {secure-sam-ba-cipher.py} tool with a license provided by Microchip can
+generate genuine customer key messages.
+
+Assumming the customer key message is packaged inside a \e {customer-key.cip} file,
+programming the customer key into the SAM9X60 device must be done by \e {sam-ba} with
+this command:
 
 \code
-$ sam-ba -p serial -d sam9x60 -a bootconfig -c writecfg:bcp-otp:DBGU,SDMMC0_IOSET1,SDMMC1_IOSET1,QSPI0_IOSET1,FLEXCOM0_SPI_IOSET1,NFC_IOSET1
+$ sam-ba -p secure -b sam9x60-ek -m write_customer_key:customer-key.cip
 \endcode
 
-\section1 Permanently disabling the JTAG port
+At this point and on further resets, the ROM code expects the bootstrap or user
+application stored into the external NVM to be both \b {ciphered with AES-256-CBC}
+and \b {signed with AES-256-CMAC}.
 
-The JTAG access can be disabled by setting the relevant bit into the User
-Hardware Configuation Packet of the OTPC. The \e{UHCINVDIS} and \e{UHCPGDIS} bits should be
-set as well to forbid the current User Hardware Configuration Packet to be invalidated or
-a new User Hardware Configuration Packet to be programmed, hence discarding the previous
-packet.
+Optionally, the shared key signature algorithm can be replaced by a public key
+algorithm. More precisely, the AES-256-CMAC signature is replaced by a \b {RSA
+signature} that will be verified by the ROM code at each boot to authenticate
+the bootstrap or user application.
+
+Indeed, a \b {chain of X.509 \e {version 3} certificates in DER format} is
+concatenated to the bootstrap and its RSA signature.
+
+The first certicate in this chain is called the root certificate and must be a
+\b {self-signed} certificate.
+
+Besides, except the root certificate, each certificate in the chain is signed,
+hence authenticated, by the previous certificate in the chain. So the root
+certificate, more precisely its public key, is the root of trust since it,
+directly or indirectly, authenticates all certificates in the chain.
+
+The \e {secure-sam-ba-cipher.py} tool can compute a SHA-256 digest of the public key
+of the root certificate. Like the customer key with the customer key message,
+this digest is wrapped into a ciphered and signed message called the RSA hash
+message.
+
+\b {The generation of the RSA hash message by \e {secure-sam-ba-ciher.py} is not
+covered by this documentation.}
+
+Then, assuming the SHA-256 digest of the public key of the X.509 root
+certificate is packaged inside a \e {root-cert-hash.cip} file, programming the
+digest into the SAM9X60 device must be done by \e {sam-ba} with the following command:
 
 \code
-$ sam-ba -p serial -b sam9x60-ek -t 5 -a bootconfig -c writecfg:uhcp-otp:JTAGDIS,UHCINVDIS,UHCPGDIS
-$ sam-ba -p serial -b sam9x60-ek -t 5 -a bootconfig -c lockcfg:uhcp-otp
+$ sam-ba -p secure -b sam9x60-ek -m write_rsa_hash:root-cert-hash.cip
 \endcode
 
-The modifications of the User Hardware Configuration Packet are not taking into
-account until either the next reboot or refreshing the User Area of the OTPC:
+After that and for each boot, the ROM code still deciphers the bootstrap or
+the user application with the AES-256-CBC algorithm using the same shared key as
+before but no longer authenticates it with an AES-256-CMAC signature.
 
-\code
-$ sam-ba -p serial -b sam9x60-ek -t 5 -a bootconfig -c refreshcfg:otp
-\endcode
+Instead, it computes the SHA-256 digest of the public key of the root
+certificate with the same algorithm used by the \e {secure-sam-ba-cipher.py} tool.
+Then, the ROM code authenticates the root certificate by comparing the computed
+digest with the one that has been programmed into the OTPC with the \e {write_rsa_hash} command.
+
+If both digests match then the root certificate is authenticated by the ROM code.
+Next, the ROM code authenticates each X.509 certificate of the chain by verifying
+its signature with the public key of the previous X.509 certificate in the chain.
+
+Finally, when all X.509 certificates in the chain have been authenticated, the
+ROM code uses the public key stored into the last certificate of the chain to
+verify the RSA signature of the bootstrap or user application stored in NVM.
+
+\b {To speed-up the boot process, the X.509 certificate chain can be limited to
+a \e {single} X.509 \e {self-signed} certificate. In such case, this certificate
+is both the root certificate and the certificate used to authenticate the
+bootstrap or user application.}
+
+\b {Both 2048 and 4096-bit RSA signatures are supported by the SAM9X60 devices.}
 */
