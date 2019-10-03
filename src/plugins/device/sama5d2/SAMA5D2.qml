@@ -172,7 +172,7 @@ Device {
 			codeAddr: 0x220000
 			mailboxAddr: 0x220004
 			entryAddr: 0x220000
-			nandHeaderHelp: "For information on NAND header values, please refer to SAMA5D2 datasheet section \"15.4.6 Detailed Memory Boot Procedures\"."
+			nandHeaderHelp: "For information on NAND header values, please refer to SAMA5D2 datasheet section \"16.4.7.1 NAND Flash Boot: NAND Flash Detection\"."
 		},
 		SDMMCApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-sdmmc_sama5d2-generic_sram.bin")
