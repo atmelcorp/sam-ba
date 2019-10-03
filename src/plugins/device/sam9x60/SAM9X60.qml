@@ -95,7 +95,7 @@ Device {
 			codeAddr: 0x300000
 			mailboxAddr: 0x300004
 			entryAddr: 0x300000
-			nandHeaderHelp: "For information on NAND header values, please refer to SAM9X60 datasheet section \"10.4.4 Detailed Memory Boot Procedures\"."
+			nandHeaderHelp: "For information on NAND header values, please refer to SAM9X60 datasheet section \"11.4.7.1.1 Method 1 (recommended): NAND Flash Specific Header Detection\"."
 		},
 		ResetApplet {
 			codeUrl: Qt.resolvedUrl("applets/applet-reset_sam9x60-generic_sram.bin")
