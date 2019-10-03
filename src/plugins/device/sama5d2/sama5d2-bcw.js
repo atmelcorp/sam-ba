@@ -140,6 +140,15 @@ var JTAG_IOSET4         = 3 << 16
     \brief Boot Config Word bits for enabling boot on external memories. */
 var EXT_MEM_BOOT = 1 << 18
 
+/*! \qmlproperty int BCW::KEYS_IN_FUSES
+    \brief Boot Config Word bit for selecting the storage area for customer keys.
+
+    This bit is read-only.
+    0: customer keys are programmed in SECURAM and can be reprogrammed.
+    1: customer keys are programmed in fuses (SFC_DR[]) once for all.
+ */
+var KEYS_IN_FUSES       = 1 << 20
+
 /*! \qmlproperty int BCW::QSPI_XIP_MODE
     \brief Boot Config Word bits for enabling XIP mode on QSPI Flash. */
 var QSPI_XIP_MODE       = 1 << 21
@@ -155,8 +164,52 @@ var DISABLE_BSCR        = 1 << 22
     \brief Boot Config Word bits for disabling SAM-BA Monitor. */
 var DISABLE_MONITOR     = 1 << 24
 
+var EXPAND_MODE_MASK    = 3 << 25
+/*! \qmlproperty int BCW::EXPAND_MODE_DEFAULT
+    \brief Boot Config Word bits for selecting the default customer key expansion algorithm.
+
+    Those bits are read-only.
+ */
+var EXPAND_MODE_DEFAULT = 0 << 25
+/*! \qmlproperty int BCW::EXPAND_MODE_FULL
+    \brief Boot Config Word bits for selecting the full customer key expansion algorithm.
+
+    Those bits are read-only.
+ */
+var EXPAND_MODE_FULL    = 1 << 25
+/*! \qmlproperty int BCW::EXPAND_MODE_UID
+    \brief Boot Config Word bits for selecting the pairing mode for customer key expansion algorithm.
+
+    Those bits are read-only.
+ */
+var EXPAND_MODE_UID     = 2 << 25
+
+var SIGN_MODE_MASK      = 1 << 27
+/*!
+    \qmlproperty int BCW::SIGN_CMAC
+    \brief Boot Config Word bit for signing the bootstrap with AES-256-CMAC.
+
+    This bit is read-only.
+*/
+var SIGN_MODE_CMAC      = 0 << 27
+/*!
+    \qmlproperty int BCW::SIGN_RSA
+    \brief Boot Config Word bit for signing the bootstrap with RSA.
+
+    This bit is read-only.
+*/
+var SIGN_MODE_RSA       = 1 << 27
+
+/*!
+    \qmlproperty int BCW::KEYS_WRITTEN
+    \brief Boot Config Word bit showing whether the custormer keys have been programmed.
+
+    This bit is read-only.
+*/
+var KEYS_WRITTEN        = 1 << 28
+
 /*! \qmlproperty int BCW::SECURE_MODE
-    \brief Boot Config Word bits for enabling Secure Mode. */
+    \brief Boot Config Word bit for enabling Secure Mode. */
 var SECURE_MODE         = 1 << 29
 
 /*!
@@ -308,8 +361,33 @@ function toText(value) {
 	if (value & DISABLE_MONITOR)
 		text.push("DISABLE_MONITOR")
 
-	if (value & SECURE_MODE)
+	if (value & SECURE_MODE) {
 		text.push("SECURE_MODE")
+
+		if (value & KEYS_WRITTEN)
+			text.push("KEYS_WRITTEN")
+
+		if (value & KEYS_IN_FUSES)
+			text.push("KEYS_IN_FUSES")
+
+		switch (value & SIGN_MODE_MASK) {
+		case SIGN_MODE_CMAC:
+			text.push("SIGN_MODE_CMAC")
+			break
+		case SIGN_MODE_RSA:
+			test.push("SIGN_MODE_RSA")
+			break
+		}
+
+		switch (value & EXPAND_MODE_MASK) {
+		case EXPAND_MODE_FULL:
+			text.push("EXPAND_MODE_FULL")
+			break
+		case EXPAND_MODE_UID:
+			text.push("EXPAND_MODE_UID")
+			break
+		}
+	}
 
 	return text.join(",")
 }
