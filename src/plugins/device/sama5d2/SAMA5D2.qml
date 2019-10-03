@@ -234,7 +234,7 @@ Device {
 		\brief List SAMA5D2 specific commands for its secure SAM-BA monitor
 	*/
 	function commandLineSecureCommands() {
-		return ["write_full_customer_key", "write_rsa_hash", "enable_pairing", "enable_boot_from_ext_memory", "disable_jtag", "disable_monitor", "store_keys_in_fuses", "set_secure_debug"]
+		return ["write_full_customer_key", "write_rsa_hash", "enable_pairing", "enable_boot_from_ext_memory", "disable_bscr", "disable_jtag", "disable_monitor", "store_keys_in_fuses", "set_secure_debug"]
 	}
 
 	/*!
@@ -260,6 +260,11 @@ Device {
 			return ["* enable_boot_from_ext_memory - enable the boot sequence and try to boot from some external memory",
 				"Syntax:",
 				"    enable_boot_from_ext_memory"]
+		}
+		if (command === "disable_bscr") {
+			return ["* disable_bscr - permanently disable boot from BSCR and BUREGx",
+				"Syntax:",
+				"    disable_bscr"]
 		}
 		if (command === "disable_jtag") {
 			return ["* disable_jtag - permanently disable JTAG port",
@@ -298,6 +303,8 @@ Device {
 			return connection.commandLineCommandSetPairingMode(args)
 		if (command === "enable_boot_from_ext_memory")
 			return connection.commandLineCommandNoArgs("SEMB", args)
+		if (command === "disable_bscr")
+			return connection.commandLineCommandNoArgs("SBSD", args)
 		if (command === "disable_jtag")
 			return connection.commandLineCommandNoArgs("SJTD", args)
 		if (command === "disable_monitor")
