@@ -1,6 +1,37 @@
 /*!
 \page sama5d2.html
-\title SAMA5D2
+\title Getting started with SAM-BA on SAMA5D2 devices
+
+\section1 Connecting to the SAM-BA monitor
+
+For USB connection, the host running \e {sam-ba} should be connected to the \b {USB
+device port} of the SAMA5D2 board design. on SAMA5D2-Xplained boards, this port
+is labeled \b {A5-USB-A (J23)}.
+
+\b {The USB device port must not be confused with other USB connectors such as
+EDBG-USB (J14)}.
+
+\section1 Predefined boards and customer board designs
+
+The \e {sam-ba} program comes with predefined \e {sama5d2-xplained}, \e {sama5d2-ptc-ek}
+and \e {sama5d27-som1-ek} boards that set default values for different settings
+such as the \e {applet console} or memory controller \e {instances} and \e {iosets}.
+
+Those predefined boards can be selected wit the \e {-b sama5d2-xplained},
+\e {-b sama5d2-ptc-ek} or \e {-b sama5d27-som1-ek} options on the \e {sam-ba} command
+line.
+
+However the \e {-d sama5d2} option should be used instead on customer board
+designs not to load any default settings. Instead, additionnal parameters may be
+passed to the \l {SAMA5D2Config#serial-console-configuration} {-d sama5d2:<console_instance>:<console_ioset> } option to select
+the \e {applet console}. The \e {applet console}, when enabled, is used by any
+applet to print its traces.
+
+Also, default memory controller settings, if any, can be overridden too, passing
+additionnal arguments to the \l {applet.html#the-a-applet-option} {-a <applet>}
+option for the applet managing the memory controller.
+
+\section1 Supported applets
 
 The list of supported applets can be displayed with the following command:
 
@@ -9,15 +40,615 @@ $ sam-ba -p serial -d sama5d2 -a help
 Known applets: bootconfig, lowlevel, extram, serialflash, qspiflash, nandflash, sdmmc, internalrc, reset
 \endcode
 
-\list
+\table
+\header
+\li Applet
+\li Short description
+\li Examples
+\row
 \li \l {bootconfig_sama5d2.html} {bootconfig}
+\li Manage boot configuration of the device, select boot media
+\li \l {sama5d2.html#programming-a-boot-configuration-word} {Programming a Boot Configuration word}
+\row
 \li \l {extram.html} {extram}
+\li Initialize the external RAM (not needed by any other applets)
+\li
+\row
 \li \l {internalrc.html} {internalrc}
+\li \b {MUST be called once per boot before programming any fuse in \e {SFC_DR[]} registers of the \e {Secure Flash Controller (SFC)}}
+\li
+\row
 \li \l {lowlevel.html} {lowlevel}
+\li Setup the clock tree (only needed by the \e {extram} applet)
+\li
+\row
 \li \l {nandflash.html} {nandflash}
+\li Manage raw NAND flash memories connected to the EBI and driven by the SMC
+\li \l {sama5d2.html#programming-a-raw-nand-flash} {Programming a raw NAND flash}
+\row
 \li \l {qspiflash.html} {qspiflash}
+\li Manage (Q)SPI NOR flash memories connected to the QSPI controller
+\li \l {sama5d2.html#programming-a-qspi-nor-flash} {Programming a QSPI NOR flash}
+\row
 \li \l {reset.html} {reset}
-\li \l {serialflash.html} {serialflash}
+\li Reset the target device
+\li
+\row
 \li \l {sdmmc.html} {sdmmc}
+\li Manage e.MMC and SD Cards connected to some SDMMC instance
+\li \l {sama5d2.html#programming-a-sdcard-or-e-mmc-user-partition} {Programming a SD Card or e.MMC}
+\row
+\li \l {serialflash.html} {serialflash}
+\li Manage (Q)SPI NOR flash memories connected to some FLEXCOM SPI instance
+\li \l {sama5d2.html#programming-a-spi-nor-flash} {Programming a SPI NOR flash}
+\endtable
+
+\section1 Boot Configuration
+
+The ROM code of SAMA5D2 devices is the 1st stage boot loader responsible for the
+system boot. Hence, the ROM code fetches the \l {sama5d2.html#boot-configuration-word}
+{Boot Configuration word} in order to get boot settings such as the
+\l {sama5d2.html#rom-code-console} {ROM code console}
+and the active controllers in the \l {sama5d2.html#-nvm-boot-sequence} {NVM boot sequence}.
+
+\section2 Boot Configuration word
+
+On power-on or reset, the ROM code first reads the \e {SFC_DR[16]} register of
+the Secure Flash Controller (SFC)  and tests its \e {BSCR_DISABLE} bit (bit 22).
+
+This fuse bit is 0 on factory defaults.
+
+If the \e {BSCR_DISABLE} bit is set, then the value of the \e {SFC_DR[16]}
+register is used as the \e {Boot Configuration} word.
+
+Otherwise, \b {the ROM code samples the value of the \e {BSCR} register on power-on
+or reset}. If the \e {VALID} bit (bit 2) is set in the \e {sample} value, then
+\e {BSCR[1:0]} bits selects which \e {BUREGx} register is used by the ROM code
+to load its \e {Boot Configuration} word.
+
+During developments and tests, we recommend the user to configure the \e {BSCR}
+register in order to program the \e {Boot Configuration} word into some \e {BUREGx}.
+Indeed, \e {BUREGx} registers can be written and updated any number of times,
+whereas the \e {SFC_DR[16]} register is stored in fuses, hence bits set to 1 cannot
+be reset to 0.
+
+The \l {bootconfig_sama5d2.html} {bootconfig} applet provides the user with
+helper commands to manage the Boot Configuration word and its storage in a
+SAMA5D2 device.
+
+As \e {BUREGx} registers are powered by VDDBBU, hence backed up, their values are
+kept after reset. However, those registers remain ignored by the ROM code unless
+the proper value is written into the \e {BSCR} register, for intance by executing the
+\l {bootconfig_sama5d2.html#the-writecfg-command} {writecfg:bscr:buregX,valid} command:
+
+\code
+$ sam-ba -p serial -d sama5d2 -a bootconfig -c writecfg:bscr:bureg0,valid
+\endcode
+
+Also the user can check whether the ROM code is configured to fetch its \l {sama5d2.html#boot-configuration} {Boot Configuration} word from any \e {BUREGx}
+register by reading back the \e {BSCR} register with the \l {bootconfig_sama5d2.html#the-readcfg-command} {readcfg:bscr} command:
+
+\code
+$ sam-ba -p serial -d sama5d2 -a bootconfig -c readcfg:bscr
+\endcode
+
+\b {WARNING: New values or register selections for the \e {Boot Configuration}
+word are \e {not} taken into account by non-secure or secure SAM-BA monitors
+until the next power-on or reset!}
+
+\section2 ROM Code console
+
+The \e {Boot Configuration} word tells the ROM code which RS-232 UART is to be used
+for the console. For instance, the "RomBOOT" string is always printed on power-on or reset
+on this console. Also, the ROM code console is used by SAM-BA monitors to
+communicate with the \e {sam-ba} program when USB is not available.
+
+On SAMA5D2, the default \e {ROM code console} is UART1 but it can be set to another
+U(S)ART. Please note that the \e {ROM code console} may be different from the \l {sama5d2.html#predefined-boards-and-customer-board-designs} {applet console}
+
+\section2 NVM boot sequence
+
+The Non-Volatile Memory (NVM) boot sequence selects the controllers mananing
+external NVM where the ROM code tries to load the user applicaiton (or 2nd stage
+boot loader) from.
+
+On SAMA5D2, boot sequence is:
+\table
+\header
+\li Position
+\li Controller
+\li Memory type
+\li Selected by default
+\row
+\li 1
+\li SDMMC1
+\li e.MMC or SD Card
+\li yes (ioset 1)
+\row
+\li 2
+\li SDMMC0
+\li e.MMC or SD Card
+\li yes (ioset 1)
+\row
+\li 3
+\li NFC
+\li raw NAND flash
+\li no
+\row
+\li 4
+\li SPI0 (chip-select 0)
+\li SPI NOR flash (AT25/M25P compatible)
+\li no
+\row
+\li 5
+\li SPI1 (chip-select 0)
+\li SPI NOR flash (AT25/M25P compatible)
+\li no
+\row
+\li 6
+\li QSPI0
+\li QSPI NOR flash (JESD216B comtabible)
+\li no
+\row
+\li 7
+\li QSPI1
+\li QSPI NOR flash (JESD216B compatible)
+\li no
+\endtable
+
+\section2 Programming a Boot Configuration word
+
+The user can program his first \e {Boot Configuration} word with the \l {bootconfig_sama5d2.html#the-writecfg-command} {writecfg:fuse / writecfg:buregx} command:
+
+\b {WARNING: Before executing any \l {bootconfig_sama5d2.html#the-writecfg-command}
+{writecfg:fuse} command, the user \e {MUST} execute the \l {internalrc.html}
+{internalrc} applet once per boot.}
+
+\code
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a internalrc
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a bootconfig -c writecfg:fuse:QSPI0_IOSET3,EXT_MEM_BOOT
+\endcode
+
+or
+
+\code
+$ sam-ba -p serial -b sama5d27-som1-ek -t 5 -a bootconfig -c writecfg:bureg0:SDMMC1_IOSET1,QSPI1_IOSET2,EXT_MEM_BOOT
+\endcode
+
+In both examples, UART1 is implicitly chosen as the \e {ROM code console} and
+the boot from external memories is enabled too by the \b {\e {EXT_MEM_BOOT}} token.
+
+Then the 1st example selects QSPI0 ioset3 on a SAMA5D2 Xplained board as the
+only boot medium in the boot sequence whereas the 2nd example selects SDMMC1
+ioset1 and QSPI1 ioset2 on a SAMA5D2 SOM1 EK board as boot media.
+
+\section2 Reading back the Boot Configuration word
+
+The \e {Boot Configuration} word can be read-back from \e {SFC_DR[16]} or
+\e {BUREGx} registers with the \l {bootconfig_sama5d2.html#the-readcfg-command} {readcfg:fuse / readcfg:buregx} command:
+
+\code
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a bootconfig -c readcfg:fuse
+\endcode
+
+or
+
+\code
+$ sam-ba -p serial -b sama5d27-som1-ek -t 5 -a bootconfig -c readcfg:bureg0
+\endcode
+
+\section1 Programming a QSPI NOR flash
+
+In the following example, we program the \e{at91bootstrap.bin}, \e{u-boot.bin}, \e{zImage} and \e{at91-sama5d2_xplained.dtb} files into
+the embedded QSPI NOR flash of the SAMA5D2 Xplained board:
+
+\code
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a qspiflash -c erase
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a qspiflash -c writeboot:at91bootstrap.bin -c verifyboot:at91bootstrap.bin
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a qspiflash -c write:u-boot.bin:0x00040000 -c verify:u-boot.bin:0x00040000
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a qspiflash -c write:at91-sama5d2_xplained.dtb:0x00180000 -c verify:at91-sama5d2_xplained.dtb:0x00180000
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a qspiflash -c write:zImage:0x00200000 -c verify:zImage:0x00200000
+\endcode
+
+Most QSPI NOR flash memories are too small to store the Linux root file-system; this should be programmed into another NVM.
+
+\b {If the QSPI NOR flash memory is connected to a custom board design, then
+additional parameters should be passed to the \e {-a qspiflash} option in above examples.}
+
+The list of those parameters is given by the command:
+
+\code
+$ sam-ba -p serial -d sama5d2 -a qspiflash:help
+Syntax: qspiflash:[<instance>]:[<ioset>]:[<frequency>]
+Parameters:
+    instance   QSPI controller instance
+    ioset      QSPI I/O set
+    frequency  QSPI clock frequency in MHz
+Examples:
+    qspiflash         use default board settings
+    qspiflash:0:3:66  use fully custom settings (QSPI0, IOSET3, 66Mhz)
+    qspiflash:::20    use default board settings but force frequency to 20Mhz
+\endcode
+
+Supported \e {<instance>} and \e {<ioset>} for QSPI on SAMA5D2 devices are listed \l {SAMA5D2Config#qspi-flash-configuration} {here}.
+
+\section1 Programming a SPI NOR flash
+
+In the following example, we program the \e{at91bootstrap.bin}, \e{u-boot.bin}, \e{zImage} and \e{at91-sama5d2-xplained.dtb} files into
+the embedded SPI NOR flash of the SAMA5D2 Xplained board:
+
+\code
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a serialflash -c erase
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a serialflash -c writeboot:at91bootstrap.bin -c verifyboot:at91bootstrap.bin
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a serialflash -c write:u-boot.bin:0x00008000 -c verify:u-boot.bin:0x00008000
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a serialflash -c write:at91-sama5d2-xplained.dtb:0x00060000 -c verify:at91-sama5d2-xplained.dtb:0x00060000
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a serialflash -c write:zImage:0x0006c000 -c verify:zImage:0x0006c000
+\endcode
+
+SPI NOR flashes are likely to be too small to store the Linux root file-system; this should be programmed into another NVM.
+
+\b {If the SPI NOR flash memory is connected to a custom board design, then
+additional parameters should be passed to the \e {-a serialflash} option in above examples.}
+
+The list of those parameters is given by the command:
+
+\code
+$ sam-ba -p serial -d sama5d2 -a serialflash:help
+Syntax: serialflash:[<instance>]:[<ioset>]:[<npcs>]:[<frequency>]
+Parameters:
+    instance   SPI controller instance
+    ioset      I/O set
+    npcs       SPI chip select number
+    frequency  SPI clock frequency in MHz
+Examples:
+    serialflash           use default board settings
+    serialflash:0:1:0:66  use fully custom settings (SPI0, IOSET1, NPCS0, 66Mhz)
+    serialflash::::20     use default board settings but force frequency to 20Mhz
+\endcode
+
+Supported \e {<instance>}, \e {<ioset>} and \e {<npcs>} for SPI on SAMA5D2 devices are listed \l {SAMA5D2Config#spi-serial-flash-configuration} {here}.
+
+\section1 Programming a SDCard or e.MMC user partition
+
+In the following example, the \e{sdcard.img} file is a raw image of a SD Card,
+hence starting with a Master Boot Record (MBR) containing a valid partition table.
+The first partition is formatted with a FAT32 file-system, which gathers four files in its root directory:
+\list
+\li a \e{boot.bin} file: the \e{at91bootstrap.bin} file renammed into \e{boot.bin}
+\li a \e{u-boot.bin} file: the u-boot binary image, loaded then executed by \e{boot.bin}
+\li a \e{zImage} file: the compressed image of a Linux kernel, loaded then executed by u-boot
+\li a \e{at91-sama5d2-xplained.dtb}: the device-tree binary for the Linux kernel, loaded by u-boot at the same time as the \e{zImage} file
 \endlist
+The second partition is formatted in EXT4 and contains the root file-system used by the Linux kernel
+
+\code
+$ sam-ba -p serial -b sama5d2-xplained -t 5 -a sdmmc -c write:sdcard.img
+\endcode
+
+\b {If the SD Card or e.MMC memory is connected to a customer board design, then
+additional parameters should be passed to the \e {-a sdmmc} option in above examples.}
+
+The list of those parameters is given by the command:
+
+\code
+$ sam-ba -p serial -d sama5d2 -a sdmmc:help
+Syntax: sdmmc:[<instance>]:[<ioset>]:[<partition>]:[<bus_width>]:[<voltages>]
+Parameters:
+    instance   SDMMC controller number
+    ioset      SDMMC I/O set
+    partition  Partition number (0=user partition, x>0=boot partition x)
+    bus_width  Data bus width (0=controller max, 1=1-bit, 4=4-bit, 8=8-bit)
+    voltages   Supported voltages (bitfield: 1=1.8V, 2=3.0V, 4=3.3V)
+Examples:
+    sdmmc           use default board settings
+    sdmmc:0:1:1:8:5 use fully custom settings (SDMMC0, IOSET1, first boot partition, 8-bit, 1.8V/3.3V)
+    sdmmc:0::1      use default board settings but force use of SDMMC0, first boot partition
+\endcode
+
+Supported \e {<instance>} and \e {<ioset>} for SDMMC on SAMA5D2 devices are listed \l {SAMA5D2Config#sd-mmc-configuration} {here}.
+
+\section1 Programming a raw NAND flash
+
+In the following example, we program the \e{at91bootstrap.bin}, \e{u-boot.bin}, \e{zImage}, \e{at91-sama5d2-ptc-ek.dtb} and \e{rootfs.ubi} files into
+the embedded NAND flash of a SAMA5D2-PTC-EK board:
+
+\code
+$ sam-ba -p serial -b sama5d2-ptc-ek -t 5 -a nandflash -c erase
+$ sam-ba -p serial -b sama5d2-ptc-ek -t 5 -a nandflash -c writeboot:at91bootstrap.bin -c verifyboot:at91bootstrap.bin
+$ sam-ba -p serial -b sama5d2-ptc-ek -t 5 -a nandflash -c write:u-boot.bin:0x00040000 -c verify:u-boot.bin:0x00040000
+$ sam-ba -p serial -b sama5d2-ptc-ek -t 5 -a nandflash -c write:at91-sama5d2-ptc-ek.dtb:0x00180000 -c verify:at91-sama5d2-ptc-ek.dtb:0x00180000
+$ sam-ba -p serial -b sama5d2-ptc-ek -t 5 -a nandflash -c write:zImage:0x00200000 -c verify:zImage:0x00200000
+$ sam-ba -p serial -b sama5d2-ptc-ek -t 5 -a nandflash -c write:rootfs.ubi:0x00800000 -c verify:rootfs.ubi:0x00800000
+\endcode
+
+\b {If the raw NAND flash is connected to a custom board design, then additional
+parameters should be passed to the \e {-a nandflash} option in above examples.}
+
+The list of those parameters is given by the command:
+
+\code
+$ sam-ba -p serial -d sama5d2 -a nandflash:help
+Syntax: nandflash:[<ioset>]:[<bus_width>]:[<header>]
+Parameters:
+    ioset      I/O set
+    bus_width  NAND bus width (8/16)
+    header     NAND header value
+Examples:
+    nandflash                 use default board settings
+    nandflash:2:8:0xc0098da5  use fully custom settings (IOSET2, 8-bit bus, header is 0xc0098da5)
+    nandflash:::0xc0098da5    use default board settings but force header to 0xc0098da5
+For information on NAND header values, please refer to SAMA5D2 datasheet section "16.4.7.1 NAND Flash Boot: NAND Flash Detection".
+\endcode
+
+Supported \e {<ioset>} for the NAND flash on SAMA5D2 devices are listed \l {SAMA5D2Config#nand-flash-configuration} {here}.
+
+\section1 Secure Boot Mode
+
+First step to benefit from secure boot features of SAMA5D2 devices is to enable
+this secure boot mode by setting the \e {SECURE_MODE} bit in the
+\l {sama5d2.html#boot-configuration} {Boot Configuration} word.
+
+For instance, if the \e {Boot Configuration} word is storing in the \e {BUREG0}
+register and QSPI0 ioset3 is the only boot medium, then the \e {sam-ba} command is:
+
+\code
+$ sam-ba -p serial -d sama5d2 -a bootconfig -c writecfg:bscr:bureg0,valid -c writecfg:bureg0:SECURE_MODE,QSPI0_IOSET3
+\endcode
+
+On the other hand, if the \e {Boot Configuration} word is stored in the \e {SFC_DR[16]}
+register (fuses), still with QSPI0 ioset3 as the only boot medium, then the \e {sam-ba} command becomes:
+
+\code
+$ sam-ba -p serial -d sama5d2 -a internalrc
+$ sam-ba -p serial -d sama5d2 -a bootconfig -c writecfg:bscr:0 -c writecfg:fuse:SECURE_MODE,QSPI0_IOSET3
+\endcode
+
+Once the \e {SECURE_MODE} bit has been set into the \e {Boot Configuration}
+word, the device must be reset so the ROM code executes its secure SAM-BA monitor:
+
+\code
+$ sam-ba -p serial -d sama5d2 -a reset
+\endcode
+
+\b {From this point, the ROM code no longer executes its non-secure SAM-BA monitor
+but instead runs its secure SAM-BA monitor. Hence, the
+\l {port.html#connecting-to-the-non-secure-sam-ba-monitor} {serial} or
+\l {port.html#connecting-through-the-j-link-port} {j-link}
+ports cannot be used;
+the \l {port.html#connecting-to-the-secure-sam-ba-monitor} {secure} port must be
+used instead.}
+
+Once in the secure SAM-BA monitor, some built-in commands update bits or
+bit-fields in the \e {Boot Configuration} word to enable or disable associated
+secure-boot features.
+
+\table
+\header
+\li Built-in Command
+\li Updated bits or bit-fields of the \e {Boot Configuration} word
+\row
+\li \l {sama5d2.html#enabling-the-boot-from-external-nvm} {enable_boot_from_ext_memory}
+\li \e {EXT_MEM_BOOT}
+\row
+\li \l {sama5d2.html#disabling-the-secure-sam-ba-monitor} {disable_monitor}
+\li \e {DISABLE_MONITOR}
+\row
+\li \l {sama5d2.html#storing-keys-in-either-securam-or-fuses} {store_keys_in_fuses}
+\li \e {KEYS_IN_FUSES}
+\row
+\li \l {sama5d2.html#programming-the-customer-keys} {write_customer_key}
+\li \e {KEYS_WRITTEN}
+\row
+\li \l {sama5d2.html#programming-the-customer-keys} {write_full_customer_key}
+\li \e {KEYS_WRITTEN}, \e {EXPAND_MODE_FULL}
+\row
+\li \l {sama5d2.html#selecting-rsa-signatures} {write_rsa_hash}
+\li \e {SIGN_MODE_RSA}
+\endtable
+
+Other built-in commands \e {always} update bits or bit-fields in the
+\e {SFC_DR[16]} register, even if the \e {Boot Configuration} word is stored in
+some \e {BUREGx} register.
+
+\table
+\header
+\li Built-in Command
+\li Updated bits or bit-fields of the \e {SFC_DR[16]} register
+\row
+\li \l {sama5d2.html#persistently-disabling-the-buregx-registers} {disable_bscr}
+\li \e {DISABLE_BSCR}
+\row
+\li \l {sama5d2.html#persistently-disabling-the-jtag-port} {disable_jtag}
+\li \e {DISABLE_JTAG}
+\row
+\li \l {sama5d2.html#setting-the-secure-debug-bit} {set_secure_debug}
+\li \e {SECURE_DEBUG}
+\row
+\endtable
+
+\b {WARNING: Before running any built-in command that may program fuses through
+any \e {SFC_DR[]} registers, the user \e {MUST} execute the \l {internalrc.html}
+{internalrc} applet once per boot.}
+
+\section2 Storing keys in either SECURAM or fuses
+
+The user must decide whether customer keys, and the RSA hash if RSA signature is
+selected, should be stored either in:
+\list
+\li \e {SECURAM}, so they can be reprogrammed if needed.
+\li fuses (accessed through \e {SFC_DR[]} registers), \b {once for all}.
+\endlist
+
+By default, the \e {KEYS_IN_FUSES} bit is 0 in the \e {Boot Configuration} word,
+hence customer keys and RSA hash are stored in \e {SECURAM}.
+
+However, if customer keys and RSA hash must be stored into fuses, then the user must set
+the \e {KEYS_IN_FUSES} bit in the \e {Boot Configuration} word \b {before} programming
+the \l {sama5d2.html#programming-the-customer-keys} {customer keys} or the
+\l {sama5d2.html#selecting-rsa-signatures} {RSA hash}.
+
+This \e {should not} be done with the \l {bootconfig_sama5d2.html#the-writecfg-command} {writecfg}
+command but \e {should} be done with the following \e {sam-ba} command instead:
+
+\code
+$ sam-ba -p secure -d sama5d2 -m store_keys_in_fuses
+\endcode
+
+\section2 Programming the Customer Keys
+
+Then, another mandatory step is to program the customer key into the device.
+This customer key is wrapped into a ciphered and signed customer key message.
+
+\b {This so called customer key message is actually generated from the \e {256-bit} or \e {384-bit} customer key
+by the \e {secure-sam-ba-cipher.py} tool. This tool is distributed under NDA, hence
+not covered by this documentation.}
+
+As stated, the customer key message is ciphered to protect the customer key from
+eavesdropping during device provisioning in factory and is also signed so the
+customer key message can be authenticated by the ROM code.
+Only the \e {secure-sam-ba-cipher.py} tool with a license provided by Microchip can
+generate genuine customer key messages.
+
+Assumming the customer key message is packaged inside a \e {customer-key.cip} file,
+programming the customer key into the SAMA5D2 device must be done by \e {sam-ba} with
+one of those commands:
+
+\b {WARNING: Before programming the Customer Keys, be sure to select the proper \l {sama5d2.html#storing-keys-in-either-securam-or-fuses} {storage area}.}
+
+\table
+\header
+\li Customer Key size
+\li \e {sam-ba} command
+\row
+\li 256 bits
+\li
+\code
+$ sam-ba -p secure -d sama5d2 -m write_customer_key:customer-key.cip
+\endcode
+\row
+\li 384 bits
+\li
+\code
+$ sam-ba -p secure -d sama5d2 -m write_full_customer_key:customer-key.cip
+\endcode
+
+\b {The Full Customer Key is \e {not} compatible with RSA signature}
+\endtable
+
+At this point and on further resets, the ROM code expects the bootstrap or user
+application stored into the external NVM to be both \b {ciphered with AES-256-CBC}
+and \b {signed with AES-256-CMAC}.
+
+\section2 Selecting RSA signatures
+
+Optionally, the shared key signature algorithm can be replaced by a public key
+algorithm. More precisely, the AES-256-CMAC signature is replaced by a \b {RSA
+signature} that will be verified by the ROM code at each boot to authenticate
+the bootstrap or user application.
+
+Indeed, a \b {chain of X.509 \e {version 3} certificates in DER format} is
+concatenated to the bootstrap and its RSA signature.
+
+The first certicate in this chain is called the root certificate and must be a
+\b {self-signed} certificate.
+
+Besides, except the root certificate, each certificate in the chain is signed,
+hence authenticated, by the previous certificate in the chain. So the root
+certificate, more precisely its public key, is the root of trust since it,
+directly or indirectly, authenticates all certificates in the chain.
+
+The \e {secure-sam-ba-cipher.py} tool can compute a SHA-256 digest of the public key
+of the root certificate. Like the customer key with the customer key message,
+this digest is wrapped into a ciphered and signed message called the RSA hash
+message.
+
+\b {The generation of the RSA hash message by \e {secure-sam-ba-ciher.py} is not
+covered by this documentation.}
+
+Then, assuming the SHA-256 digest of the public key of the X.509 root
+certificate is packaged inside a \e {root-cert-hash.cip} file, programming the
+digest into the SAMA5D2 device must be done by \e {sam-ba} with the following command:
+
+\b {WARNING: Before programming the SHA-256 digest of the public key, be sure to select the proper \l {sama5d2.html#storing-keys-in-either-securam-or-fuses} {storage area}.}
+
+\code
+$ sam-ba -p secure -d sama5d2 -m write_rsa_hash:root-cert-hash.cip
+\endcode
+
+After that and for each boot, the ROM code still deciphers the bootstrap or
+the user application with the AES-256-CBC algorithm using the same shared key as
+before but no longer authenticates it with an AES-256-CMAC signature.
+
+Instead, it computes the SHA-256 digest of the public key of the root
+certificate with the same algorithm used by the \e {secure-sam-ba-cipher.py} tool.
+Then, the ROM code authenticates the root certificate by comparing the computed
+digest with the one that has been programmed into the \e {SFC_DR[]} registers or
+SECURAM with the \e {write_rsa_hash} command.
+
+If both digests match then the root certificate is authenticated by the ROM code.
+Next, the ROM code authenticates each X.509 certificate of the chain by verifying
+its signature with the public key of the previous X.509 certificate in the chain.
+
+Finally, when all X.509 certificates in the chain have been authenticated, the
+ROM code uses the public key stored into the last certificate of the chain to
+verify the RSA signature of the bootstrap or user application stored in NVM.
+
+\b {To speed-up the boot process, the X.509 certificate chain can be limited to
+a \e {single} X.509 \e {self-signed} certificate. In such case, this certificate
+is both the root certificate and the certificate used to authenticate the
+bootstrap or user application.}
+
+\b {Both 2048 and 4096-bit RSA signatures are supported by the SAMA5D2 devices.}
+
+\section2 Enabling the boot from external NVM
+
+Once customer keys, and the RSA hash if needed, has been programmed in the
+SAMA5D2 device, the user should set the \e {EXT_MEM_BOOT} bit in the
+\e {Boot Configuration} word, if not done yet:
+
+\code
+$ sam-ba -p secure -d sama5d2 -m enable_boot_from_ext_memory
+\endcode
+
+\section2 Disabling the secure SAM-BA monitor
+
+The user can also disable the secure SAM-BA monitor by setting the \e {DISABLE_MONITOR} bit
+in the \e {Boot Configuration} word.
+
+\b {This bit is not taken into account by the ROM code until the next power-on or reset.}
+
+\code
+$ sam-ba -p secure -d sama5d2 -m disable_monitor
+\endcode
+
+\section2 Persistently disabling the BUREGx registers
+
+The \e {DISABLE_BSCR} bit (bit 22) of the \e {SFC_DR[16]} register requires the
+ROM code to ignore the \e {BSCR} register, hence any \e {Boot Configuration}
+word value that could have been written into any \e {BUREGx} register.
+Indeed, setting this bit forces the ROM code to fetch its \e {Boot Configuration}
+word from the \e {SFC_DR[16]} register only:
+
+\code
+$ sam-ba -p secure -d sama5d2 -m disable_bscr
+\endcode
+
+\section2 Persistently disabling the JTAG port
+
+The \e {DISABLE_JTAG} bit (bit 31) of the \e {SFC_DR[16]} register disables the JTAG port
+\b {once for all}. Indeed, this fuse controls the hardware lock of the JTAG port.
+
+\code
+$ sam-ba -p secure -d sama5d2 -m disable_jtag
+\endcode
+
+\section2 Setting the SECURE_DEBUG bit
+
+The \e {SECURE_DEBUG} bit (bit 30) of the \e {SFC_DR[16} register can be set with
+the following command:
+
+\code
+$ sam-ba -p secure -d sama5d2 -m set_secure_debug
+\endcode
+
 */
