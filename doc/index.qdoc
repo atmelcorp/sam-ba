@@ -12,7 +12,7 @@ debugger.
 Table of contents:
 
 \list
-\li \l {gettingstarted.html} {Getting Started}
+\li \l {cli.html} {Command Line Interface}
     \list
     \li \l {port.html} {Connecting to the target device/board}
         \list
@@ -45,12 +45,12 @@ Table of contents:
     \endlist
 \li \l {devices.html#supported-devices} {Supported Devices}
     \list
-    \li \l {sam9x60.html} {SAM9X60}
-    \li \l {sam9xx5.html} {SAM9XX5}
-    \li \l {sama5d2.html} {SAMA5D2}
-    \li \l {sama5d3.html} {SAMA5D3}
-    \li \l {sama5d4.html} {SAMA5D4}
-    \li \l {samv71.html} {SAMV71}
+    \li \l {sam9x60.html} {Getting started with SAM-BA on SAM9X60 devices}
+    \li \l {sam9xx5.html} {Getting started with SAM-BA on SAM9XX5 devices}
+    \li \l {sama5d2.html} {Getting started with SAM-BA on SAMA5D2 devices}
+    \li \l {sama5d3.html} {Getting started with SAM-BA on SAMA5D3 devices}
+    \li \l {sama5d4.html} {Getting started with SAM-BA on SAMA5D4 devices}
+    \li \l {samv71.html} {Getting started with SAM-BA on SAMV71 devices}
     \endlist
 \li \l {scripting.html} {Scripting SAM-BA with QML}
 \li \l {Glossary}

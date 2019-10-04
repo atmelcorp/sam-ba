@@ -1,15 +1,15 @@
 /*!
-\page gettingstarted.html
-\title Getting Started
+\page cli.html
+\title Command Line Interface
 
-SAM-BA includes a command line interface that provides support for the most
+SAM-BA includes a \e {command line interface} that provides support for the most
 common actions:
 \list
 \li reading / writing to arbitrary memory addresses and/or peripherals
 \li uploading applets and using them to erase/read/write external memories
 \endlist
 
-The command line interface is designed to be self-documenting.
+The \e {command line interface} is designed to be self-documenting.
 
 The main commands can be listed using the "\e{sam-ba --help}" command:
 \code
