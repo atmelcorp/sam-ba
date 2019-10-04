@@ -6,7 +6,7 @@ APPLET_DIR="$TOP_DIR/src/plugins/device"
 BUILD_DIR="$TOP_DIR/softpack"
 
 [ -n "$GIT_REPOSITORY" ] || GIT_REPOSITORY="https://github.com/atmelcorp/atmel-software-package.git"
-[ -n "$GIT_COMMIT" ] || [ -n "$GIT_TAG" ] || GIT_COMMIT="65146d0e62565d23acaa80354ce7a329f2a1137d"
+[ -n "$GIT_COMMIT" ] || [ -n "$GIT_TAG" ] || GIT_TAG="v2.17"
 
 pushd $APPLET_DIR
 APPLETS=$(find . -type f -name "*-generic_*.bin")
