@@ -54,26 +54,26 @@ Note:
     Peripheral numbers and I/O sets are device specific. Please see device documentation in 'doc' directory.
 \endcode
 
-Supported console {<instance>, <ioset>} pairs are device specific; please refer to
+Supported console {\e {<instance>}, \e {<ioset>}} pairs are device specific; please refer to
 the \e {Serial Console Configuration} section of the device configuration:
 \list
-\li \l {SAM9xx5Config} {SAM9xx5 configuration}
-\li \l {SAM9X60Config} {SAM9X60 configuration}
-\li \l {SAMA5D2Config} {SAMA5D2 configuration}
-\li \l {SAMA5D3Config} {SAMA5D3 configuration}
-\li \l {SAMA5D4Config} {SAMA5D4 configuration}
-\li \l {SAMV71Config} {SAMV71 configuration}
+\li \l {SAM9xx5Config#serial-console-configuration} {SAM9xx5 Serial Console Configuration}
+\li \l {SAM9X60Config#serial-console-configuration} {SAM9X60 Serial Console Configuration}
+\li \l {SAMA5D2Config#serial-console-configuration} {SAMA5D2 Serial Console Configuration}
+\li \l {SAMA5D3Config#serial-console-configuration} {SAMA5D3 Serial Console Configuration}
+\li \l {SAMA5D4Config#serial-console-configuration} {SAMA5D4 Serial Console Configuration}
+\li \l {SAMV71Config#serial-console-configuration} {SAMV71 Serial Console Configuration}
 \endlist
 
 \section1 Supported Devices
 The sam-ba program supports the following Microchip SAM devices:
 
 \list
-\li \l {sam9x60.html} {SAM9X60}
-\li \l {sam9xx5.html} {SAM9XX5}
-\li \l {sama5d2.html} {SAMA5D2}
-\li \l {sama5d3.html} {SAMA5D3}
-\li \l {sama5d4.html} {SAMA5D4}
-\li \l {samv71.html} {SAMV71}
+\li \l {sam9x60.html} {Getting started with SAM-BA on SAM9X60}
+\li \l {sam9xx5.html} {Getting started with SAM-BA on SAM9XX5}
+\li \l {sama5d2.html} {Getting started with SAM-BA on SAMA5D2}
+\li \l {sama5d3.html} {Getting started with SAM-BA on SAMA5D3}
+\li \l {sama5d4.html} {Getting started with SAM-BA on SAMA5D4}
+\li \l {samv71.html} {Getting started with SAM-BA on SAMV71}
 \endlist
 */
