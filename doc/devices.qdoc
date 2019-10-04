@@ -65,8 +65,8 @@ the \e {Serial Console Configuration} section of the device configuration:
 \li \l {SAMV71Config} {SAMV71 configuration}
 \endlist
 
-\section1 Supported Devices and Boards
-The sam-ba program supports the following Microchip SAM MPUs:
+\section1 Supported Devices
+The sam-ba program supports the following Microchip SAM devices:
 
 \list
 \li \l {sam9x60.html} {SAM9X60}

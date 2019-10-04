@@ -43,7 +43,7 @@ Table of contents:
 	\li \l {script.html#the-x-execute-option} {The "\e{-x, --execute}" option}
 	\endlist
     \endlist
-\li \l {devices.html#supported-devices-and-boards} {Supported Devices and Boards}
+\li \l {devices.html#supported-devices} {Supported Devices}
     \list
     \li \l {sam9x60.html} {SAM9X60}
     \li \l {sam9xx5.html} {SAM9XX5}

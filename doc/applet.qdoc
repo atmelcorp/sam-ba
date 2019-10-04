@@ -34,7 +34,7 @@ $ sam-ba -p serial -d sama5d2 -a help
 Known applets: bootconfig, lowlevel, extram, serialflash, qspiflash, nandflash, sdmmc, internalrc, reset
 \endcode
 
-Please click on the relevant device in the \l {devices.html#supported-devices-and-boards} {Supported Devices and Boards}
+Please click on the relevant device in the \l {devices.html#supported-devices} {Supported Devices}
 section to get the list of all supported applets for this device.
 
 The list of parameters (and their default values) to initialized an applet can
