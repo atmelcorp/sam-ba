@@ -1,5 +1,23 @@
 # Microchip SAM-BA - SAM Boot Assistant
 
+## Version 3.3
+
+#### Bugfixes
+
+#### Enhancements
+
+- Rebuilt all applets from softpack v2.17.
+- Kept on improving the HTML and command line documentation.
+- Added Getting Started HTML pages for SAMA5D2 and SAM9X60 devices.
+- Documented the secure boot mode on SAMA5D2 and SAM9X60 devices.
+- Added a new 'ReadUniqueId' applet to read the device unique ID.
+
+#### API Changes
+
+- No changes were made to the QML API
+
+
+
 ## Version 3.3-beta2
 
 #### Bugfixes

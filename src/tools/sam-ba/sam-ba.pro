@@ -6,7 +6,7 @@ QT += core qml quick
 TARGET = sam-ba
 
 VERSION = 3.3
-EXTRAVERSION = -beta2
+EXTRAVERSION =
 DEFINES += SAMBA_VERSION=\\\"$$VERSION$$EXTRAVERSION\\\"
 
 SOURCES += \
