@@ -86,6 +86,7 @@ private:
 
 	QUrl m_userScript;
 	QStringList m_userScriptArguments;
+	QString m_workingDir;
 
 	QObject* m_port;
 	QObject* m_device;

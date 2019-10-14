@@ -389,6 +389,9 @@ void SambaTool::run()
 	if (m_status & RunUserScript)
 	{
 		scriptContext->setProperty("arguments", QVariant::fromValue(m_userScriptArguments));
+		/* change working dir if -w option is present */
+		if (!m_workingDir.isEmpty())
+			QDir::setCurrent(m_workingDir);
 
 		QObject* obj = m_engine.createComponentInstance(m_userScript, &context);
 		if (obj)
@@ -457,6 +460,11 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 	                                 "command[:args:...]");
 	parser.addOption(commandOption);
 
+	QCommandLineOption workDirOption(QStringList() << "w" << "workdir",
+	                                 "Set working directory.",
+	                                 "<working directory>");
+	parser.addOption(workDirOption);
+
 	// check if command line is empty
 	if (arguments.length() < 2) {
 		displayVersion();
@@ -510,13 +518,25 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 		cerr_msg("Error: Only a single -a/--applet option can be present on the command line.");
 		return Failed;
 	}
+	if (parser.values(workDirOption).length() > 1) {
+		cerr_msg("Error: Only a single -w/--working_dir option can be present on the command line.");
+		return Failed;
+	}
 
 	// check options incompatibilities
 	if (parser.isSet(executeOption)) {
 		if (parser.isSet(portOption) || parser.isSet(deviceOption) ||
 		    parser.isSet(boardOption) || parser.isSet(monitorOption) ||
 		    parser.isSet(appletOption) || parser.isSet(commandOption)) {
-			cerr_msg("Error: Option -x/--execute must be the only option on the command line.");
+			cerr_msg("Error: Option -x/--execute accepts only -w/--working_dir option.");
+			return Failed;
+		}
+	}
+	else if (parser.isSet(workDirOption)) {
+		if (parser.isSet(portOption) || parser.isSet(deviceOption) ||
+		    parser.isSet(boardOption) || parser.isSet(monitorOption) ||
+		    parser.isSet(appletOption) || parser.isSet(commandOption) || !parser.isSet(executeOption)) {
+			cerr_msg("Error: Option -w/--working_dir must be in conjuction with -x/--execute script option.");
 			return Failed;
 		}
 	}
@@ -541,13 +561,23 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 	}
 
 	if (parser.isSet(executeOption)) {
-		QFile userScript(parser.value(executeOption));
+		QFileInfo userScript(parser.value(executeOption));
 		if (!userScript.exists()) {
 			cerr_msg(QString("Error: User script '%1' not found.").arg(userScript.fileName()));
 			return Failed;
 		}
-		m_userScript = QUrl::fromLocalFile(userScript.fileName());
+		m_userScript = QUrl::fromLocalFile(userScript.absoluteFilePath());
 		m_userScriptArguments = parser.positionalArguments();
+
+		if (parser.isSet(workDirOption)) {
+			QDir workDir(parser.value(workDirOption));
+			if (!workDir.exists()) {
+				cerr_msg(QString("Error: Working directory '%1' not found.").arg(workDir.absolutePath()));
+				return Failed;
+			}
+			m_workingDir = workDir.absolutePath() + QString("/");
+		}
+
 		return RunUserScript;
 	}
 	else {
