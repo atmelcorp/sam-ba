@@ -1,0 +1,57 @@
+/*!
+\page pairingmode_sam9x60.html
+\title SAM-BA pairingmode applet
+\brief This document explains how to initialize the pairming mode applet and how to run its commands
+
+The \e {pairingmode} applet translates some bootstrap master image into another
+bootstrap image, which is paired to the target device.
+
+Hence, the \e {pairingmode} applet can be run \e {only} through a connection to the
+secure SAM-BA monitor as it assumes the bootstrap master image to be ciphered
+with the AES-256-CBC algorithm using the secret customer key.
+
+This customer key \e {must} have been programmed into the target device, with the
+\l {sam9x60.html#secure-boot-mode} {write_customer_key} built-in monitor command, prior to execute the \e {pairingmode}
+applet.
+
+Also the paring mode must be enabled \e {after} the customer key has been programmed,
+running the \l {sam9x60.html#enabling-the-pairing-mode} {enable_pairing} built-in monitor command.
+
+\section1 Applet initialization
+
+The \e {pairingmode} applet accepts a single mandatory parameter, \e {algo}.
+
+\code
+$ sam-ba -p secure -d sam9x60 -a pairingmode:help
+Syntax: pairingmode:[<algo>]
+Parameters:
+    algo            Signature algorithm for authentication (cmac or rsa)
+Examples:
+    pairingmode:cmac  Signature algorithm is set to AES-256-CMAC
+    pairingmode:rsa   Signature algorithm is set to RSA
+\endcode
+
+\section1 Supported commands
+
+The list of commands supported by the \e {pairingmode} applet can be displayed
+with the following command:
+
+\code
+$ sam-ba -p secure -d sam9x60 -a pairingmode -c help
+\endcode
+
+\section2 The translate command
+
+The \e {translate} command transforms the input stream of binary data, loaded from the
+bootstrap master image file \e {<master_input>}, into the output stream of binary data, saved into the bootstrap
+paired image file \e {<paired_output>}.
+
+\code
+$ sam-ba -p secure -d sam9x60 -a pairingmode -c translate:help
+* translate - convert a bootstrap master image into a bootstrap paired image
+Syntax:
+    translate:<master_input>:<paired_output>
+Examples:
+    translate:at91bootstrap.cip:at91bootstrap_paired.cip
+\endcode
+*/

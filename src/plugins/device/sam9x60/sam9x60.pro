@@ -10,6 +10,7 @@ DEVICE_FILES *= \
     SAM9X60EK.qml \
     SAM9X60LowlevelApplet.qml \
     SAM9X60LowlevelConfig.qml \
+    SAM9X60PairingModeApplet.qml \
     sam9x60-bcp.js \
     sam9x60-bootcfg.js \
     sam9x60-bscr.js \
@@ -29,6 +30,7 @@ DEVICE_FILES *= \
     applets/applet-extram_sam9x60-generic_sram.cip \
     applets/applet-lowlevel_sam9x60-generic_sram.cip \
     applets/applet-nandflash_sam9x60-generic_sram.cip \
+    applets/applet-pairingmode_sam9x60-generic_sram.cip \
     applets/applet-qspiflash_sam9x60-generic_sram.cip \
     applets/applet-readuniqueid_sam9x60-generic_sram.cip \
     applets/applet-reset_sam9x60-generic_sram.cip \

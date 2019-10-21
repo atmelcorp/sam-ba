@@ -60,6 +60,10 @@ Known applets: bootconfig, lowlevel, extram, sdmmc, serialflash, qspiflash, nand
 \li Manage raw NAND flash memories connected to the EBI and driven by the SMC
 \li \l {sam9x60.html#programming-a-raw-nand-flash} {Programming a raw NAND flash}
 \row
+\li \l {pairingmode_sam9x60.html} {pairingmode}
+\li Translate a bootstrap master image into a bootstrap paired image
+\li
+\row
 \li \l {qspiflash.html} {qspiflash}
 \li Manage (Q)SPI NOR flash memories connected to the QSPI controller
 \li \l {sam9x60.html#programming-a-qspi-nor-flash} {Programming a QSPI NOR flash}
@@ -576,4 +580,15 @@ is both the root certificate and the certificate used to authenticate the
 bootstrap or user application.}
 
 \b {Both 2048 and 4096-bit RSA signatures are supported by the SAM9X60 devices.}
+
+\section2 Enabling the pairing mode
+
+The \e {pairing mode} enhances the secure boot mode with an anti-cloning protection
+for the target device.
+
+The user can enable this mode with the following built-in monitor command:
+
+\code
+$ sam-ba -p secure -d sam9x60 -m enable_pairing
+\endcode
 */

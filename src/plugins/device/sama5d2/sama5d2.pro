@@ -9,6 +9,7 @@ DEVICE_FILES *= \
     SAMA5D2BootConfigApplet.qml \
     SAMA5D2Config.qml \
     SAMA5D2PTCEK.qml \
+    SAMA5D2PairingModeApplet.qml \
     SAMA5D2.qml \
     SAMA5D2Xplained.qml \
     sama5d2-bcw.js \
@@ -30,6 +31,7 @@ DEVICE_FILES *= \
     applets/applet-internalrc_sama5d2-generic_sram.cip \
     applets/applet-lowlevel_sama5d2-generic_sram.cip \
     applets/applet-nandflash_sama5d2-generic_sram.cip \
+    applets/applet-pairingmode_sama5d2-generic_sram.cip \
     applets/applet-qspiflash_sama5d2-generic_sram.cip \
     applets/applet-readuniqueid_sama5d2-generic_sram.cip \
     applets/applet-reset_sama5d2-generic_sram.cip \

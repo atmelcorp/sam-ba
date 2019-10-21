@@ -8,6 +8,7 @@ LowlevelApplet 3.2 LowlevelApplet.qml
 LowlevelConfig 3.2 LowlevelConfig.qml
 NANDFlashApplet 3.2 NANDFlashApplet.qml
 NANDFlashConfig 3.2 NANDFlashConfig.qml
+PairingModeApplet 3.2 PairingModeApplet.qml
 QSPIFlashApplet 3.2 QSPIFlashApplet.qml
 QSPIFlashConfig 3.2 QSPIFlashConfig.qml
 ReadUniqueIDApplet 3.2 ReadUniqueIDApplet.qml

@@ -66,6 +66,10 @@ Known applets: bootconfig, lowlevel, extram, serialflash, qspiflash, nandflash, 
 \li Manage raw NAND flash memories connected to the EBI and driven by the SMC
 \li \l {sama5d2.html#programming-a-raw-nand-flash} {Programming a raw NAND flash}
 \row
+\li \l {pairingmode_sama5d2.html} {pairingmode}
+\li Translate a bootstrap master image into a bootstrap paired image
+\li
+\row
 \li \l {qspiflash.html} {qspiflash}
 \li Manage (Q)SPI NOR flash memories connected to the QSPI controller
 \li \l {sama5d2.html#programming-a-qspi-nor-flash} {Programming a QSPI NOR flash}
@@ -448,6 +452,9 @@ secure-boot features.
 \row
 \li \l {sama5d2.html#selecting-rsa-signatures} {write_rsa_hash}
 \li \e {SIGN_MODE_RSA}
+\row
+\li \l {sama5d2.html#enabling-the-pairing-mode} {enable_pairing}
+\li \e {EXPAND_MODE_UID}
 \endtable
 
 Other built-in commands \e {always} update bits or bit-fields in the
@@ -536,7 +543,7 @@ $ sam-ba -p secure -d sama5d2 -m write_customer_key:customer-key.cip
 $ sam-ba -p secure -d sama5d2 -m write_full_customer_key:customer-key.cip
 \endcode
 
-\b {The Full Customer Key is \e {not} compatible with RSA signature}
+\b {The Full Customer Key is \e {not} compatible with neither RSA signature nor pairing mode}
 \endtable
 
 At this point and on further resets, the ROM code expects the bootstrap or user
@@ -655,4 +662,15 @@ the following command:
 $ sam-ba -p secure -d sama5d2 -m set_secure_debug
 \endcode
 
+\section2 Enabling the pairing mode
+
+The \e {pairing mode} enhances the secure boot mode with an anti-cloning protection
+for the target device.
+
+The user can enable this mode by setting the value \e {EXPAND_MODE_UID} to the \e {EXPAND_MODE} bit-field
+in the \e {Boot Configuration} word with the following command:
+
+\code
+$ sam-ba -p secure -d sama5d2 -m enable_pairing
+\endcode
 */

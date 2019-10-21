@@ -11,6 +11,7 @@ qml.files = \
     LowlevelConfig.qml \
     NANDFlashApplet.qml \
     NANDFlashConfig.qml \
+    PairingModeApplet.qml \
     QSPIFlashApplet.qml \
     QSPIFlashConfig.qml \
     ReadUniqueIDApplet.qml \

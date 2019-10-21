@@ -197,6 +197,13 @@ Device {
 			codeAddr: 0x220000
 			mailboxAddr: 0x220004
 			entryAddr: 0x220000
+		},
+		SAMA5D2PairingModeApplet {
+			codeUrl: Qt.resolvedUrl("applets/applet-pairingmode_sama5d2-generic_sram.bin")
+			codeAddr: 0x220000
+			mailboxAddr: 0x220004
+			entryAddr: 0x220000
+			connectionType: connectionTypeSecureOnly
 		}
 	]
 
