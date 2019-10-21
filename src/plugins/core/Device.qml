@@ -69,12 +69,41 @@ Item {
 	}
 
 	/*!
+		\qmlmethod list<string> Device::securedAppletNames()
+		Return a list of the names of all the secured applets.
+	*/
+	function securedAppletNames() {
+		var names = []
+		for (var i = 0; i < applets.length; i++)
+			if (applets[i].connectionType === applets[i].connectionTypeAll ||
+			    applets[i].connectionType === applets[i].connectionTypeSecureOnly)
+				names.push(applets[i].name)
+		return names
+	}
+
+	/*!
+		\qmlmethod list<string> Device::nonSecuredAppletNames()
+		Return a list of the names of all the non-secured applets.
+	*/
+	function nonSecuredAppletNames() {
+		var names = []
+		for (var i = 0; i < applets.length; i++)
+			if (applets[i].connectionType === applets[i].connectionTypeAll ||
+			    applets[i].connectionType === applets[i].connectionTypeNonSecureOnly)
+				names.push(applets[i].name)
+		return names
+	}
+
+	/*!
 		\qmlmethod Applet Device::applet(string name)
 		Returns the applet with name \a name or \a undefined if not found.
 	*/
 	function applet(name) {
 		for (var i = 0; i < applets.length; i++)
-			if (applets[i].name === name)
+			if (applets[i].name === name &&
+			    ((applets[i].connectionType === applets[i].connectionTypeAll) ||
+			     (applets[i].connectionType === applets[i].connectionTypeNonSecureOnly && !connection.toSecureMonitor()) ||
+			     (applets[i].connectionType === applets[i].connectionTypeSecureOnly && connection.toSecureMonitor())))
 				return applets[i]
 		return
 	}

@@ -58,6 +58,24 @@ static QStringList callArrayJsFunction(QObject* obj, const QString& functionName
 	return returnedValue.toStringList();
 }
 
+static bool callBooleanJsFunction(QObject* obj, const QString& functionName, bool defaultValue = false)
+{
+	const char *func = QString("%1()").arg(functionName).toLocal8Bit();
+	if (obj->metaObject()->indexOfMethod(func) == -1) {
+		return defaultValue;
+	}
+	func = functionName.toLocal8Bit();
+	QVariant returnedValue;
+	if (!QMetaObject::invokeMethod(obj, func,
+				       Q_RETURN_ARG(QVariant, returnedValue))) {
+		return defaultValue;
+	}
+	if (!returnedValue.canConvert(QVariant::Bool)) {
+		return defaultValue;
+	}
+	return returnedValue.toBool();
+}
+
 SambaTool::SambaTool(int& argc, char** argv)
     : QCoreApplication(argc, argv),
       m_engine(this),
@@ -243,7 +261,9 @@ void SambaTool::displayAppletHelp()
 		return;
 	}
 
-	QStringList names = callArrayJsFunction(m_device, "appletNames");
+	bool isSecured = callBooleanJsFunction(m_port, "toSecureMonitor");
+	const char *functionName = isSecured ? "securedAppletNames" : "nonSecuredAppletNames";
+	QStringList names = callArrayJsFunction(m_device, functionName);
 	cerr_msg(QString("Known applets: %1").arg(names.join(", ")));
 }
 
@@ -254,6 +274,15 @@ QObject* SambaTool::findApplet(const QString& name)
 		         .arg(name));
 		return nullptr;
 	}
+
+	if (!m_port) {
+		cerr_msg(QString("Error: Could not find applet '%1': No port is set!")
+			 .arg(name));
+		return nullptr;
+	}
+
+	m_port->setProperty("device", QVariant::fromValue<QObject*>(m_device));
+	m_device->setProperty("connection", QVariant::fromValue<QObject*>(m_port));
 
 	if (m_device->metaObject()->indexOfMethod("applet(QVariant)") == -1) {
 		cerr_msg(QString("Error: Could not find applet '%1': Invalid number of arguments for 'applet' method.")
@@ -308,8 +337,10 @@ void SambaTool::run()
 		return;
 	}
 
-	if (m_port && m_device)
+	if (m_port && m_device) {
 		m_port->setProperty("device", QVariant::fromValue<QObject*>(m_device));
+		m_device->setProperty("connection", QVariant::fromValue<QObject*>(m_port));
+	}
 
 	if (m_status & ShowPortHelp) {
 		displayPortHelp();

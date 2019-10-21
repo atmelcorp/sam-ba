@@ -68,6 +68,21 @@ Item {
 	*/
 	property var entryAddr
 
+	/*! \internal */
+	readonly property int connectionTypeAll: 0
+
+	/*! \internal */
+	readonly property int connectionTypeSecureOnly: 1
+
+	/*! \internal */
+	readonly property int connectionTypeNonSecureOnly: 2
+
+	/*!
+		\qmlproperty enumeration Applet::connectionType
+		\brief Types of connection supported by the applet
+	*/
+	property int connectionType: connectionTypeAll
+
 	/*!
 		\qmlproperty string Applet::bufferAddr
 		\brief The address at which the applet buffer is located
