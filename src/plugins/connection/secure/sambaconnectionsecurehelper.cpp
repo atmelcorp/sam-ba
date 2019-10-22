@@ -181,7 +181,10 @@ QByteArray SambaConnectionSecureHelper::readSerial(int len, int timeout)
 		{
 			remaining = timeout - timer.elapsed();
 			if (remaining < 0)
+			{
+				qCDebug(m_sambaLogConnSecure).noquote().nospace() << "TIMEOUT";
 				break;
+			}
 		}
 		m_serial.waitForReadyRead(10);
 		int available = m_serial.bytesAvailable();
