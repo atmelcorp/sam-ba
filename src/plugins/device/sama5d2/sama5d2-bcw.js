@@ -375,7 +375,7 @@ function toText(value) {
 			text.push("SIGN_MODE_CMAC")
 			break
 		case SIGN_MODE_RSA:
-			test.push("SIGN_MODE_RSA")
+			text.push("SIGN_MODE_RSA")
 			break
 		}
 
