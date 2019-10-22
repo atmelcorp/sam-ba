@@ -20,6 +20,8 @@
 #define ATMEL_USB_VID 0x03eb
 #define SAMBA_USB_PID 0x6124
 
+#define MAX_DISPLAY_BYTES 32
+
 static bool serial_is_at91(const QSerialPortInfo& info)
 {
 	return info.hasVendorIdentifier()
@@ -226,8 +228,10 @@ bool SambaConnectionSecureHelper::readReply(QString& verb, qint32& status, quint
 
 bool SambaConnectionSecureHelper::writeData(const QByteArray &data)
 {
-	if (m_verboseLevel > 1)
+	if (m_verboseLevel > 2)
 		qCDebug(m_sambaLogConnSecure).noquote().nospace() << "SECURE<<" << data.toHex();
+	else if (m_verboseLevel == 2)
+		qCDebug(m_sambaLogConnSecure).noquote().nospace() << "SECURE<<" << data.mid(0, qMin(data.size(), MAX_DISPLAY_BYTES)).toHex() << " [...] (" << data.size() << " bytes)";
 
 	if (m_at91) {
 		writeSerial(data);
@@ -249,8 +253,10 @@ QByteArray SambaConnectionSecureHelper::readData(quint32 length, int timeout)
 		data = xmodem.receive(length);
 	}
 
-	if (m_verboseLevel > 1)
+	if (m_verboseLevel > 2)
 		qCDebug(m_sambaLogConnSecure).noquote().nospace() << "SECURE>>" << data.toHex();
+	else if (m_verboseLevel == 2)
+		qCDebug(m_sambaLogConnSecure).noquote().nospace() << "SECURE>>" << data.mid(0, qMin(data.size(), MAX_DISPLAY_BYTES)).toHex() << " [...] (" << data.size() << " bytes)";
 
 	return data;
 }
