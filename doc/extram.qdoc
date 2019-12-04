@@ -25,49 +25,41 @@ Examples:
     extram:1  use preset 1 for type of external RAM
 \endcode
 
-\section2 Supported \e{preset}
+\section2 \e{preset} list
 
 \table
 \header
 \li Preset
 \li SDRAM type
 \li Model
-\li System bus frequencies (MHz)
 \row
 \li 0
 \li DDR2
 \li MT47H128M8
-\li 200, 166, 150, 133
 \row
 \li 1
 \li DDR2
-\li MT47H64M16
-\li 200, 166, 150, 133
+\li MT47H64M16 (x1)
 \row
 \li 2
 \li DDR2
 \li MT47H128M16 (x2)
-\li 200, 166, 150, 133
 \row
 \li 3
 \li LPDDR2
 \li MT42L128M16 (x2)
-\li 200, 166, 133
 \row
 \li 4
 \li DDR3
 \li MT41K128M16 (x2)
-\li 166
 \row
 \li 5
 \li LPDDR3
 \li EDF8164A3MA
-\li 166
 \row
 \li 6
 \li SDR
 \li IS42S16100E
-\li 150
 \row
 \li 7
 \li SDR
@@ -75,41 +67,241 @@ Examples:
 \row
 \li 8
 \li DDR2
-\li W971G16SG
-\li 200, 166, 150, 133
+\li W971G16SB
 \row
 \li 9
 \li DDR2
 \li W972GG6KB (x2)
-\li 200, 166, 150, 133
 \row
 \li 10
 \li SDR
 \li AS4C16M16SA
-\li 150
 \row
 \li 11
-\li LPDDR
-\li MT46H64M16
-\li 200
+\li DDR3
+\li MT41K128M16 (x1)
 \row
 \li 12
 \li DDR2
+\li W972GG6KB (x1)
+\row
+\li 13
+\li LPDDR2
+\li AD220032D
+\row
+\li 14
+\li LPDDR2
+\li AD210032D
+\row
+\li 15
+\li DDR2
+\li W9712G6KB
+\row
+\li 16
+\li DDR2
+\li W9751G6KB
+\row
+\li 17
+\li DDR2
+\li MT47H64M16 (x2)
+\endtable
+
+\section2 SAMV71
+
+All chip timings are computed for a system bus clock running at \b{150 MHz}.
+
+\table
+\header
+\li SDRAM type
+\li Model
+\li Preset(s)
+\row
+\li SDR
+\li IS42S16100E
+\li 6
+\row
+\li SDR
+\li AS4C16M16SA
+\li 10
+\endtable
+
+\section2 SAM9xx5
+
+All chip timings are computed for a system bus clock running at \b{133 MHz}.
+
+\table
+\header
+\li SDRAM type
+\li Model
+\li Preset(s)
+\row
+\li DDR2
+\li MT17H128M8
+\li 0
+\row
+\li DDR2
+\li MT47H64M16
+\li 1, 17
+\row
+\li DDR2
+\li MT47H128M16
+\li 2
+\row
+\li DDR2
+\li W971GG6SB
+\li 8
+\row
+\li DDR2
 \li W972GG6KB
-\li 200, 166, 150, 133
+\li 9, 12
+\endtable
+
+\section2 SAM9X60
+
+All chip timings are computed for a system busclock running at \b{200 MHz}.
+
+\table
+\header
+\li SDRAM type
+\li Model
+\li Preset(s)
 \row
-\li 0x10000
-\li SDR
-\li MT48LC16M16
+\li DDR2
+\li MT47H64M16
+\li 1, 17
 \row
-\li 0x20000
-\li SDR
-\li MT48LC16M16 (x2)
+\li DDR2
+\li W972GG6KB
+\li 9, 12
+\endtable
+
+\section2 SAMA5D3
+
+All chip timings are computed for a system bus clock running at \b{133 MHz}.
+
+\table
+\header
+\li SDRAM type
+\li Model
+\li Preset(s)
 \row
-\li 0x30000
-\li LPSDR
-\li MT48H32M16
-\li 166
+\li DDR2
+\li MT17H128M8
+\li 0
+\row
+\li DDR2
+\li MT47H64M16
+\li 1, 17
+\row
+\li DDR2
+\li MT47H128M16
+\li 2
+\row
+\li DDR2
+\li W971GG6SB
+\li 8
+\row
+\li DDR2
+\li W972GG6KB
+\li 9, 12
+\row
+\li LPDDR2
+\li MT42L128M16
+\li 3
+\endtable
+
+\section2 SAMA5D4
+
+All chip timings are computed for a system bus clock running at \b{200 MHz}.
+
+\table
+\header
+\li SDRAM type
+\li Model
+\li Preset(s)
+\row
+\li DDR2
+\li MT17H128M8
+\li 0
+\row
+\li DDR2
+\li MT47H64M16
+\li 1, 17
+\row
+\li DDR2
+\li MT47H128M16
+\li 2
+\row
+\li DDR2
+\li W971GG6SB
+\li 8
+\row
+\li DDR2
+\li W972GG6KB
+\li 9, 12
+\row
+\li LPDDR2
+\li MT42L128M16
+\li 3
+\endtable
+
+\section2 SAMA5D2
+
+All chip timings are computed for a system bus clock runnint at \b{166 MHz}.
+
+\table
+\header
+\li SDRAM type
+\li Model
+\li Preset(s)
+\row
+\li DDR2
+\li MT17H128M8
+\li 0
+\row
+\li DDR2
+\li MT47H64M16
+\li 1, 17
+\row
+\li DDR2
+\li MT47H128M16
+\li 2
+\row
+\li DDR2
+\li W971GG6SB
+\li 8
+\row
+\li DDR2
+\li W972GG6KB
+\li 9, 12
+\row
+\li DDR2
+\li W9712G6KB
+\li 15
+\row
+\li DDR2
+\li W9751G6KB
+\li 16
+\row
+\li LPDDR2
+\li MT42L128M16
+\li 3
+\row
+\li LPDDR2
+\li AD220032D
+\li 13
+\row
+\li LPDDR2
+\li AD210032D
+\li 14
+\row
+\li DDR3
+\li MT41K128M16
+\li 4
+\row
+\li LPDDR3
+\li EDF8164A3MA
+\li 5
 \endtable
 
 \section1 Supported commands
