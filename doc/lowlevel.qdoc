@@ -34,10 +34,15 @@ Examples:
 \li CPU clock (MHz)
 \li Master clock (MHz)
 \row
-\li SAM9xx5
+\li SAMV71
 \li N/A
 \li 300
 \li 150
+\row
+\li SAM9xx5
+\li N/A
+\li 399
+\li 133
 \row
 \li SAM9X60
 \li 0
