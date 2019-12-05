@@ -1,6 +1,33 @@
 /*!
 \page sama5d3.html
-\title SAMA5D3
+\title Getting started with SAM-BA on SAMA5D3 devices
+
+\section1 Connecting to the SAM-BA monitor
+
+For USB connection, the host running \e {sam-ba} should be connected to the \b {USB
+device port} of the SAMA5D3 board design. On SAMA5D3-Xplained boards, this port
+is labeled \b {USB-A (J6)}.
+
+\section1 Predefined boards and customer board designs
+
+The \e {sam-ba} program comes with predefined \e {sama5d3-xplained} and
+\e {sama5d3-ek} boards that set default values for different settings
+such as the \e {applet console} or memory controller \e {instances}.
+
+Those predefined boards can be selected with the \e {-b sama5d3-xplained} or
+\e {-b sama5d3-ek} options on the \e {sam-ba} command line.
+
+However the \e {-d sama5d3} option should be used instead on customer board
+designs not to load any default settings. Instead, additionnal parameters may be
+passed to the \l {SAMA5D3Config#serial-console-configuration} {-d sama5d3:<console_instance>:<console_ioset> } option to select
+the \e {applet console}. The \e {applet console}, when enabled, is used by any
+applet to print its traces.
+
+Also, default memory controller settings, if any, can be overridden too, passing
+additional arguments to the \l {applet.html#the-a-applet-option} {-a <applet>}
+option for the applet managing the memory controller.
+
+\section1 Supported applets
 
 The list of supported applets can be displayed with the following command:
 
@@ -9,12 +36,188 @@ $ sam-ba -p serial -d sama5d3 -a help
 Known applets: lowlevel, extram, sdmmc, serialflash, nandflash, reset
 \endcode
 
-\list
+\table
+\header
+\li Applet
+\li Short description
+\li Examples
+\row
 \li \l {extram.html} {extram}
+\li Initialize the external RAM (not needed by any other applets)
+\li
+\row
 \li \l {lowlevel.html} {lowlevel}
+\li Setup the clock tree (only needed by the \e {extram} applet)
+\li
+\row
 \li \l {nandflash.html} {nandflash}
+\li Manage raw NAND flash memories connected to the EBI and driven by the NFC
+\li \l {sama5d3.html#programming-a-raw-nand-flash} {Programming a raw NAND flash}
+\row
 \li \l {reset.html} {reset}
-\li \l {serialflash.html} {serialflash}
+\li Reset the target device
+\li
+\row
 \li \l {sdmmc.html} {sdmmc}
+\li Manage e.MMC and SD Cards connected to some HSMCI instance
+\li \l {sama5d3.html#programming-a-sdcard-or-e-mmc-user-partition} {Programming a SD Card or e.MMC}
+\row
+\li \l {serialflash.html} {serialflash}
+\li Manage (Q)SPI NOR flash memories connected to some SPI instance
+\li \l {sama5d3.html#programming-a-spi-nor-flash} {Programming a SPI NOR flash}
+\endtable
+
+\section1 Linux4SAM demos
+
+Examples to follow are all based on material provided by \l {https://www.linux4sam.org/bin/view/Linux4SAM/Sama5d3XplainedMainPage#Demo} {Linux4SAM demos}
+for SAMA5D3 Xplained boards or custom builds from \l {https://www.linux4sam.org/bin/view/Linux4SAM/Sama5d3XplainedMainPage#Build_From_source_code} {Linux4SAM sources}.
+
+\table
+\header
+\li File name(s)
+\li Description
+\row
+\li at91bootstrap-sama5d3_xplained.bin or BOOT.bin
+\li at91bootstrap loaded in SRAM0 then executed by the ROM Code
+\row
+\li u-boot.bin or u-boot-sama5d3-xplained.bin
+\li u-boot loaded in external RAM then executed by at91bootstrap
+\row
+\li u-boot-env.bin or uboot.env
+\li u-boot environment variables loaded by u-boot
+\row
+\li sama5d3_xplained.itb
+\li a FIT image containing the Linux kernel image and its device-tree binary
+\row
+\li microchip-headless-image-sama5d3-xplained.ubi
+\li the Linux root file-system (NAND flash only)
+\endtable
+
+\section1 Programming a SPI NOR flash
+
+\code
+$ sam-ba -p serial -b sama5d3-xplained -t 5 -a serialflash -c erase
+$ sam-ba -p serial -b sama5d3-xplained -t 5 -a serialflash -c writeboot:at91bootstrap-sama5d3_xplained.bin -c verifyboot:at91bootstrap-sama5d3_xplained.bin.bin
+$ sam-ba -p serial -b sama5d3-xplained -t 5 -a serialflash -c write:u-boot-env.bin:0x00006000 -c verify:u-boot-env.bin:0x00006000
+$ sam-ba -p serial -b sama5d3-xplained -t 5 -a serialflash -c write:u-boot-sama5d3-xplained.bin:0x00008000 -c verify:u-boot-sama5d3-xplained.bin:0x00008000
+$ sam-ba -p serial -b sama5d3-xplained -t 5 -a serialflash -c write:sama5d3_xplained.itb:0x000A8000 -c verify:sama5d3_xplained.itb:0x000A8000
+\endcode
+
+SPI NOR flashes are likely to be too small to store the Linux root file-system; this should be programmed into another NVM.
+
+\b {If the SPI NOR flash memory is connected to a custom board design, then
+additional parameters should be passed to the \e {-a serialflash} option in above examples.}
+
+The list of thos parameters is given by the command:
+
+\code
+$ sam-ba -p serial -d sama5d3 -a serialflash:help
+Syntax: serialflash:[<instance>]:[<ioset>]:[<npcs>]:[<frequency>]
+Parameters:
+    instance   SPI controller instance
+    ioset      I/O set
+    npcs       SPI chip select number
+    frequency  SPI clock frequency in MHz
+Examples:
+    serialflash           use default board settings
+    serialflash:0:1:0:66  use fully custom settings (SPI0, IOSET1, NPCS0, 66Mhz)
+    serialflash::::20     use default board settings but force frequency to 20Mhz
+\endcode
+
+Supported \e {<instance>}, \e{<ioset>} and \e {<npcs>} for SPI on SAMA5D3 device are listed \l {SAMA5D3Config#spi-serial-flash-configuration} {here}.
+
+\section1 Programming a SDCard or e.MMC user partition
+
+In the following example, the \e{sdcard.img} file is a raw image of a SD Card,
+hence starting with a Master Boot Record (MBR) containing a valid partition table.
+The first partition is formatted with a FAT32 file-system, which gathers at least four files in its root directory:
+\list
+\li BOOT.bin
+\li u-boot.bin
+\li uboot.env
+\li sama5d3_xplained.itb
 \endlist
+The second partition is formatted in EXT4 and contains the root file-system used by the Linux kernel.
+
+\code
+$ sam-ba -p serial -b sama5d3-xplained -t 5 -a sdmmc -c write:sdcard.img
+\endcode
+
+\b {If the SD Card or e.MMC memory is connected to a customer board design, then
+additional parameters should be passed to the \e {-a sdmmc} option in above examples.}
+
+The list of those parameters is given by the command:
+
+\code
+$ sam-ba -p serial -d sama5d3 -a sdmmc:help
+Syntax: sdmmc:[<instance>]:[<ioset>]:[<partition>]:[<bus_width>]:[<voltages>]
+Parameters:
+    instance   SDMMC controller number
+    ioset      SDMMC I/O set
+    partition  Partition number (0=user partition, x>0=boot partition x)
+    bus_width  Data bus width (0=controller max, 1=1-bit, 4=4-bit, 8=8-bit)
+    voltages   Supported voltages (bitfield: 1=1.8V, 2=3.0V, 4=3.3V)
+Examples:
+    sdmmc           use default board settings
+    sdmmc:0:1:1:8:5 use fully custom settings (SDMMC0, IOSET1, first boot partition, 8-bit, 1.8V/3.3V)
+    sdmmc:0::1      use default board settings but force use of SDMMC0, first boot partition
+\endcode
+
+Supported \e {<instance>} and \e {<ioset>} for SDMMC on SAMA5D3 device are listed \l {SAMA5D3Config#sd-mmc-configuration} {here}.
+
+\section1 Programming a raw NAND flash
+
+\code
+$ sam-ba -p serial -b sama5d3-xplained -t 5 -a nandflash -c erase
+$ sam-ba -p serial -b sama5d3-xplained -t 5 -a nandflash -c writeboot:at91bootstrap-sama5d3_xplained.bin -c verifyboot:at91bootstrap-sama5d3_xplained.bin
+$ sam-ba -p serial -b sama5d3-xplained -t 5 -a nandflash -c write:u-boot-sama5d3-xplained.bin:0x00040000 -c verify:u-boot-sama5d3-xplained.bin:0x00040000
+$ sam-ba -p serial -b sama5d3-xplained -t 5 -a nandflash -c write:u-boot-env.bin:0x00140000 -c verify:u-boot-env.bin:0x00140000
+$ sam-ba -p serial -b sama5d3-xplained -t 5 -a nandflash -c write:sama5d3_xplained.itb:0x00180000 -c verify:sama5d3_xplained.itb:0x00180000
+$ sam-ba -p serial -b sama5d3-xplained -t 5 -a nandflash -c write:microchip-headless-image-sama5d3-xplained.ubi:0x00800000 -c verify:microchip-headless-image-sama5d3-xplained.ubi:0x00800000
+\endcode
+
+\b {If the raw NAND flash is connected to a custom board design, then additional
+parameters should be passed to the \e {-a nandflash} option in above examples.}
+
+The list of those parameters is given by the command:
+
+\code
+$ sam-ba -p serial -d sama5d3 -a nandflash:help
+Syntax: nandflash:[<ioset>]:[<bus_width>]:[<header>]
+Parameters:
+    ioset      I/O set
+    bus_width  NAND bus width (8/16)
+    header     NAND header value
+Examples:
+    nandflash                 use default board settings
+    nandflash:2:8:0xc0098da5  use fully custom settings (IOSET2, 8-bit bus, header is 0xc0098da5)
+    nandflash:::0xc0098da5    use default board settings but force header to 0xc0098da5
+For information on NAND header values, please refer to SAMA5D3 datasheet section "11.4.4 Detailed Memory Boot Procedures".
+\endcode
+
+Supported \e {<ioset>} for the NAND flash on SAMA5D3 devices are listed \l {SAMA5D3Config#nand-flash-configuration} {here}.
+
+\section1 Secure Boot Mode
+
+\b {In secure boot mode, the ROM code no longer executes its non-secure SAM-BA monitor
+but instead runs its secure SAM-BA monitor. Hence, the
+\l {port.html#connecting-to-the-non-secure-sam-ba-monitor} {serial} or
+\l {port.html#connecting-through-the-j-link-port} {j-link}
+ports cannot be used;
+the \l {port.html#connecting-to-the-secure-sam-ba-monitor} {secure} port must be
+used instead.}
+
+First, the secure boot mode must be enabled:
+
+\code
+$ sam-ba -p secure -d sama5d3 -m enable_secure:set-secure-mode.cip
+\endcode
+
+Once the secure boot mode has been enabled, the customer-key must be  programmed into fuses.}
+
+Then the \e{sam-ba} command to program the customer key is:
+
+\code
+$ sam-ba -p secure -d sama5d3 -m write_customer_key:customer-key.cip
+\endcode
 */
