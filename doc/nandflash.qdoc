@@ -113,11 +113,11 @@ The \e{header} parameter is a 32-bit word descirbed below:
 
 Number of Sectors per Page
 \list
-\li 0: 1 page per sector
-\li 1: 2 pages per sector
-\li 2: 4 pages per sector
-\li 3: 8 pages per sector
-\li 4: 16 pages per sector
+\li 0: 1 sector per page
+\li 1: 2 sectors per page
+\li 2: 4 sectors per page
+\li 3: 8 sectors per page
+\li 4: 16 sectors per page
 \endlist
 
 \section3 spareSize bits[12:4]
