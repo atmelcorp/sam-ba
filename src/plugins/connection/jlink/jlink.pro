@@ -10,7 +10,7 @@ SOURCES += sambaconnectionjlinkhelper.cpp
 HEADERS += sambaconnectionjlinkhelper.h
 
 unix:{
-    INCLUDEPATH += $$JLINKSDKPATH/Inc
+    INCLUDEPATH += $$JLINKSDKPATH/Inc $$JLINKSDKPATH/Samples_Inc
     LIBS += -L$$JLINKSDKPATH -ljlinkarm
 
     jlinklibs.path = /lib
@@ -20,7 +20,7 @@ unix:{
     QMAKE_RPATH =
 }
 else:win32:{
-    INCLUDEPATH += $$JLINKSDKPATH/Inc
+    INCLUDEPATH += $$JLINKSDKPATH/Inc $$JLINKSDKPATH/Samples_Inc
     LIBS += -L$$JLINKSDKPATH -lJLinkARM
 
     jlinklibs.path = /
