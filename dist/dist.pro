@@ -79,3 +79,11 @@ else:win32:{
 	qmlmodules.files = $$[QT_INSTALL_QML]/QtQuick.2
 	INSTALLS += qmlmodules
 }
+
+# copy multi_sam-ba.py
+script.path = /
+script.files = multi_sam-ba.py
+
+post_script.path = /
+unix:post_script.extra = cd $(INSTALL_ROOT)/; chmod 755 $$script.files
+INSTALLS += script post_script
