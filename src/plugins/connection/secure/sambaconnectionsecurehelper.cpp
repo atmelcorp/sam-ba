@@ -22,6 +22,10 @@
 
 #define MAX_DISPLAY_BYTES 32
 
+#define IS_ALIGNED(value, size) ((((quint32)(value)) & ((quint32)(size) - 1)) == 0)
+
+#define SZ_USB_ENDPOINT 0x200
+
 static bool serial_is_at91(const QSerialPortInfo& info)
 {
 	return info.hasVendorIdentifier()
@@ -32,6 +36,7 @@ static bool serial_is_at91(const QSerialPortInfo& info)
 
 SambaConnectionSecureHelper::SambaConnectionSecureHelper(QQuickItem* parent)
 	: QQuickItem(parent),
+	  m_usb_zlp_quirk(false),
 	  m_port(""),
 	  m_baudRate(0),
 	  m_verboseLevel(0),
@@ -126,6 +131,9 @@ void SambaConnectionSecureHelper::open()
 	}
 
 	m_at91 = serial_is_at91(info);
+
+	QObject &device = *qvariant_cast<QObject *>(parentItem()->property("device"));
+	m_usb_zlp_quirk = device.property("usb_zlp_quirk").toBool();
 
 	m_serial.setPort(info);
 	if (m_baudRate <= 0)
@@ -314,20 +322,37 @@ bool SambaConnectionSecureHelper::executeWriteCommand(const QString& command, co
 
 QByteArray SambaConnectionSecureHelper::executeReadCommand(const QString& command, quint32 length, int timeout)
 {
-	QString verb;
+	quint32 offset = 0;
+	QByteArray data;
 
-	writeCommand(QString().sprintf("%s,0,%x,0,0#", command.toLatin1().constData(), length));
+	do {
+		quint32 len = length;
+		QString verb;
 
-	if (command == "RFIL" && !waitForApplet(timeout))
-		return QByteArray();
+		if (m_at91 && m_usb_zlp_quirk && len &&
+		    IS_ALIGNED(len, SZ_USB_ENDPOINT))
+			len--;
 
-	if (!readReply(verb, m_status, length, timeout))
-		return QByteArray();
+		writeCommand(QString().sprintf("%s,%x,%x,0,0#",
+					       command.toLatin1().constData(),
+					       offset, len));
 
-	if (verb != "CACK" || m_status != 0 || !length)
-		return QByteArray();
+		if (command == "RFIL" && !waitForApplet(timeout))
+			return QByteArray();
 
-	return readData(length, timeout);
+		if (!readReply(verb, m_status, len, timeout))
+			return QByteArray();
+
+		if (verb != "CACK" || m_status != 0 || !len)
+			return QByteArray();
+
+		data.append(readData(len, timeout));
+
+		offset += len;
+		length -= len;
+	} while (length);
+
+	return data;
 }
 
 bool SambaConnectionSecureHelper::go()

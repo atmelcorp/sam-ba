@@ -74,6 +74,7 @@ private:
 
 private:
 	bool m_at91;
+	bool m_usb_zlp_quirk;
 	QString m_port;
 	qint32 m_baudRate;
 	qint32 m_verboseLevel;

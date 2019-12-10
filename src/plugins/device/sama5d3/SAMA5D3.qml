@@ -118,6 +118,8 @@ Device {
 
 	description: "SAMA5D3x series"
 
+	usb_zlp_quirk: true
+
 	/*!
 		\brief The device configuration used by applets (peripherals, I/O sets, etc.)
 		\sa SAMA5D3Config

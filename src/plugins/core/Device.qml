@@ -52,6 +52,13 @@ Item {
 	property var aliases
 
 	/*!
+		\qmlproperty bool Device::usb_zlp_quirk
+		\brief Work-around for devices that don't sent zero-length
+		packets
+	*/
+	property bool usb_zlp_quirk: false
+
+	/*!
 		\qmlproperty string Device::applets
 		\brief A list of all supported applets for the device
 	*/
