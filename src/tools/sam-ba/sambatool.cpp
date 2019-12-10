@@ -457,7 +457,7 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 	parser.addOption(traceLevelOption);
 
 	QCommandLineOption executeOption(QStringList() << "x" << "execute",
-	                                 "Execute script <script-file>.",
+	                                 "Execute script <script.qml>.",
 	                                 "script.qml");
 	parser.addOption(executeOption);
 
