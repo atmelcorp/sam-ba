@@ -491,9 +491,9 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 	                                 "command[:args:...]");
 	parser.addOption(commandOption);
 
-	QCommandLineOption workDirOption(QStringList() << "w" << "workdir",
-	                                 "Set working directory.",
-	                                 "<working directory>");
+	QCommandLineOption workDirOption(QStringList() << "w" << "working-directory",
+	                                 "Set working directory to <DIR>.",
+	                                 "DIR");
 	parser.addOption(workDirOption);
 
 	// check if command line is empty
@@ -550,7 +550,7 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 		return Failed;
 	}
 	if (parser.values(workDirOption).length() > 1) {
-		cerr_msg("Error: Only a single -w/--working_dir option can be present on the command line.");
+		cerr_msg("Error: Only a single -w/--working-directory option can be present on the command line.");
 		return Failed;
 	}
 
@@ -559,7 +559,7 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 		if (parser.isSet(portOption) || parser.isSet(deviceOption) ||
 		    parser.isSet(boardOption) || parser.isSet(monitorOption) ||
 		    parser.isSet(appletOption) || parser.isSet(commandOption)) {
-			cerr_msg("Error: Option -x/--execute accepts only -w/--working_dir option.");
+			cerr_msg("Error: Option -x/--execute accepts only -w/--working-directory option.");
 			return Failed;
 		}
 	}
@@ -567,7 +567,7 @@ quint32 SambaTool::parseArguments(const QStringList& arguments)
 		if (parser.isSet(portOption) || parser.isSet(deviceOption) ||
 		    parser.isSet(boardOption) || parser.isSet(monitorOption) ||
 		    parser.isSet(appletOption) || parser.isSet(commandOption) || !parser.isSet(executeOption)) {
-			cerr_msg("Error: Option -w/--working_dir must be in conjuction with -x/--execute script option.");
+			cerr_msg("Error: Option -w/--working-directory must be in conjuction with -x/--execute script option.");
 			return Failed;
 		}
 	}
