@@ -3,7 +3,7 @@
 
 project = SAM-BA
 description = Microchip SAM-BA
-version = 3.3
+version = 3.3.1
 
 headerdirs = \
 	../src/plugins/applet \

@@ -1,5 +1,46 @@
 # Microchip SAM-BA - SAM Boot Assistant
 
+## Version 3.3.1
+
+#### Bugfixes
+
+- Added a work-around in 'secure' port to deal with missing USB Zero Length
+  Packets in the USB device stack of SAMA5 ROM codes.
+- Fixed the decoding of the Boot Configuration word on SAMA5D2 devices when
+  when the 'SIGN_MODE_RSA' bit is set. This bug affected the 'readcfg' and
+  'writecfg' commands of the 'bootconfig' applet.
+- Fixed typos in the HTML documentation.
+
+#### Enhancements
+
+- Added a new multi_sam-ba.py script to spawn many instances of sam-ba in order
+  to program as many target devices in parallel through USB connections.
+  Known limitation: not yet compatible with the '-x' option that executes a QML
+  script.
+- Added a new 'pairingmode' applet for SAMA5D2 and SAM9X60 devices:
+  this 'pairingmode' applet translates a boostrap 'master' image file, ciphered
+  and signed  with secure-sam-ba-cipher.py, into a bootstrap 'paired' image
+  file, still ciphered and signed but now using a secret key that is unique to
+  each device.
+- Added a new '-w' command line option to change the current working directory
+  before executing the QML script provided to the '-x' option.
+- Added Getting Started HTML pages for SAMA5D3 and SAMA5D4 devices.
+- Documented the secure boot mode on SAMA5D3 on SAMA5D4 devices.
+- Added a "TIMEOUT" debug message in the SecureConnection port.
+- Limited verbosity of debug messages in the SecureConnection port when the
+  trace level is set to 2. The new level 3 now displays debug messages as the
+  former level 2 did.
+- Updated presets in the HTML page documenting the 'extram' applet.
+
+#### API Changes
+
+- Added a new board file for SAMA5D27-WLSOM1-EK boards: '-b sama5d27-wlsom1-ek'
+  option.
+- Added a new board file for SAMA5D2-ICP boards: '-b sama5d2-icp' option.
+  The Winbond W632GU6MB DDR3 chip is not supported yet by the 'extram' applet.
+
+
+
 ## Version 3.3
 
 #### Bugfixes
