@@ -220,7 +220,7 @@ bool SambaConnectionSecureHelper::readReply(QString& verb, qint32& status, quint
 	if (str.length() == 23)
 	{
 		verb = str.mid(0, 4);
-		status = str.mid(5, 8).toLong(0, 16);
+		status = str.mid(5, 8).toLongLong(0, 16);
 		length = str.mid(14, 8).toULong(0, 16);
 		qCDebug(m_sambaLogConnSecure).noquote().nospace() << "SECURE>>" << str;
 		return true;
