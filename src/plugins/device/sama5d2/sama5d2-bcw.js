@@ -418,7 +418,8 @@ function fromText(text) {
 	             "QSPI_XIP_MODE",
 	             "DISABLE_BSCR",
 	             "DISABLE_MONITOR",
-	             "SECURE_MODE"]
+	             "SECURE_MODE",
+	             "KEYS_IN_FUSES"]
 	var values = [QSPI0_IOSET1, QSPI0_IOSET2,
 	              QSPI0_IOSET3, QSPI0_DISABLED,
 	              QSPI1_IOSET1, QSPI1_IOSET2,
@@ -439,7 +440,8 @@ function fromText(text) {
 	              QSPI_XIP_MODE,
 	              DISABLE_BSCR,
 	              DISABLE_MONITOR,
-	              SECURE_MODE]
+	              SECURE_MODE,
+	              KEYS_IN_FUSES]
 	var bcw = 0
 	for (var i = 0; i < entries.length; i++) {
 		var index = names.indexOf(entries[i].toUpperCase())
