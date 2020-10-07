@@ -73,6 +73,7 @@ Configuration value can be either a number or a sequence of tokens separated by 
         DISABLE_BSCR,
         DISABLE_MONITOR,
         SECURE_MODE,
+        KEYS_IN_FUSES,
     Tokens with a star (*) are selected by default if no token from the same line is provided (field value is 0).
     Please refer to SAMA5D2 Datasheet section "16.5 Boot configuration" for information on boot settings.
 \endcode
