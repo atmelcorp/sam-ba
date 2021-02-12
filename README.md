@@ -1,6 +1,11 @@
 Microchip SAM-BA
 ------------
 
+> :warning: This repository is deprecated. As of february 2021, last release is 1.3 year old
+> only 3.3.1 is available here on github while the Microchip repository features
+> [Sam-ba > 3.5](https://www.microchip.com/developmenttools/ProductDetails/PartNO/SAM-BA%20In-system%20Programmer)
+> released the 12/2/2020
+
 # Overview
 
 This repository contains the sources of the Microchip SAM-BA tool.
