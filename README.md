@@ -1,5 +1,5 @@
-Microchip SAM-BA
--------------
+Microchip SAM-BA 3
+------------------
 
-This repository is deprecated.
-Please download SAM-BA from [Microchip website](http://www.microchip.com).
+This repository contains only Microchip SAM-BA release packages.
+For more information about Microchip MPU ecosystem and the products supported by SAM-BA, please visit [Microchip website](http://www.microchip.com).
